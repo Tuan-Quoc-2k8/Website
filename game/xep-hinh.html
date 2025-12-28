@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Xếp hình gạch — 8x8</title>
+<link rel="stylesheet" href="./data/xep-hinh/do-hoa.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <h3>🧩 Game xếp gạch</h3>
+      <div class="board-container">
+        <div class="board" id="board" aria-label="Bảng chơi"></div>
+        <div id="centerMessage"></div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:space-between">
+        <div class="info">
+          <div class="score" id="score">Điểm: 0 • Combo: 0</div>
+          <div class="hint">
+            Đặt gạch để có điểm (ít hơn phá). Khi 1 hàng (dọc/ngang) đầy sẽ phá. 
+            Phá liên tiếp nhiều hàng sẽ được nhân combo!
+          </div>
+        </div>
+      </div>
+
+      <div class="powerups" style="margin-top:12px">
+        <button id="bombBtn">💣 Bom (x3)</button>
+        <button id="swapBtn">🔃 Xáo trộn (x3)</button>
+        <button id="hintBtn">🎲 Thay khối (x3)</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>🎯 Khối & Lưu trữ</h3>
+      <div class="controls">
+        <div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+          <div style="flex:1">
+            <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Hàng chờ (3 khối)</div>
+            <div class="queue" id="queue" aria-label="Hàng chờ khối"></div>
+          </div>
+
+          <div style="width:110px;">
+            <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Kho lưu</div>
+            <div class="storage" id="storage" title="Click để lưu/đổi khối" aria-label="Kho lưu"></div>
+          </div>
+        </div>
+
+        <div class="toolbar" style="margin-top:8px">
+          <button id="rotateBtn">Xoay</button>
+          <button id="storeBtn">Lưu/Đổi</button>
+          <button id="newGame" class="primary">Bắt đầu lại</button>
+        </div>
+
+        <div style="margin-top:10px" class="muted">Ghi chú: Kéo & thả khối để đặt. Nhấn  hoặc dùng phím Q/E để xoay.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Replace modal -->
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-hidden="true">
+    <div class="replace-menu" role="document" aria-modal="true" aria-labelledby="replaceTitle">
+      <div class="replace-header">
+        <div id="replaceTitle" class="replace-title">Chọn khối thay thế</div>
+        <button id="replaceClose" class="replace-close" aria-label="Đóng">✖</button>
+      </div>
+      <div id="replaceGrid" class="replace-grid"></div>
+    </div>
+  </div>
+  
+<script src="./data/xep-hinh/game.js"></script>
+</body>
+</html>
