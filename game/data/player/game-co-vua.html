@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=0.5" />
+<title>♟️ Cờ vua</title>
+<link rel="stylesheet" href="do-hoa.css">
+</head>
+<body>
+  <h1>♟️ Cờ vua</h1>
+  <div class="app">
+    <div id="board" aria-label="Bàn cờ"></div>
+    <aside class="panel">
+      <div class="row"><strong>Lượt:</strong><span id="turn" class="badge">Trắng</span></div>
+      <div class="row"><strong>Trạng thái:</strong><span id="state" class="badge">Sẵn sàng</span></div>
+      <div id="status" class="mono">-</div>
+      <div class="btns">
+        <button id="btnReset">Chơi lại</button>
+        <button id="btnUndo" class="secondary">Hoàn tác</button>
+        <button id="btnFlip" class="secondary">Đảo bàn</button>
+      </div>
+      <details style="margin-top:10px">
+        <summary>Thông tin cập nhật</summary>
+        <ul>
+          <li>Đủ luật cơ bản đầy đủ</li>
+          <li>Highlight nước đi, nước vừa đi, vua bị chiếu.</li>
+          <li>Thông báo thắng khi chiếu hết.</li>
+        </ul>
+      </details>
+      <p class="mono" id="lastMove">Nước vừa đi: —</p>
+    </aside>
+  </div>
+
+  <!-- (Tùy chọn) Hộp chọn phong cấp, hiện đang auto lên Hậu; bật khi muốn -->
+  <div id="promo" class="promo" aria-hidden="true">
+    <div class="card">
+      <div class="opt" data-p="Q">♕</div>
+      <div class="opt" data-p="R">♖</div>
+      <div class="opt" data-p="B">♗</div>
+      <div class="opt" data-p="N">♘</div>
+    </div>
+  </div>
+<script src="phong-tot.js"></script>
+<script src="game.js"></script>
+<p>
+  Thiết kế bởi sinh viên
+</p>
+</body>
+
+</html>
