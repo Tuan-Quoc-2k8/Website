@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuấn - Web Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body data-theme="blue">
+<div id="loading">
+<div class="loading-particles" id="particles"></div>
+<div class="loading-content">
+<div class="loading-logo">TQ</div>
+<div class="loading-text">
+<span>Loading</span>
+<div class="loading-dots">
+<div class="loading-dot"></div>
+<div class="loading-dot"></div>
+<div class="loading-dot"></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;align-items:center">
+<div class="loading-progress">
+<div class="loading-progress-bar"></div>
+</div>
+<div class="loading-percentage">0%</div>
+</div>
+</div>
+</div>
+<div class="nav-overlay"></div>
+<div class="settings-modal" id="settings-modal">
+<div class="settings-content">
+<div class="settings-header">
+<h2 data-lang="settings-title">⚙️ Cài đặt</h2>
+<button class="settings-close" onclick="closeSettings()">×</button>
+</div>
+<div class="settings-section">
+<h3 data-lang="theme-section">🎨 Giao diện</h3>
+<div class="theme-grid">
+<div class="theme-card active" data-theme="blue">
+<div class="theme-color" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)"></div>
+<div class="theme-name" data-lang="theme-blue">Xanh dương</div>
+</div>
+<div class="theme-card" data-theme="purple">
+<div class="theme-color" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"></div>
+<div class="theme-name" data-lang="theme-purple">Tím</div>
+</div>
+<div class="theme-card" data-theme="green">
+<div class="theme-color" style="background:linear-gradient(135deg,#047857,#10b981)"></div>
+<div class="theme-name" data-lang="theme-green">Xanh lá</div>
+</div>
+<div class="theme-card" data-theme="orange">
+<div class="theme-color" style="background:linear-gradient(135deg,#c2410c,#f97316)"></div>
+<div class="theme-name" data-lang="theme-orange">Cam</div>
+</div>
+<div class="theme-card" data-theme="pink">
+<div class="theme-color" style="background:linear-gradient(135deg,#be185d,#ec4899)"></div>
+<div class="theme-name" data-lang="theme-pink">Hồng</div>
+</div>
+</div>
+</div>
+<div class="settings-section">
+<h3 data-lang="mode-section">🌓 Chế độ hiển thị</h3>
+<div class="settings-option">
+<div class="option-label">
+<span class="option-icon">🌙</span>
+<span data-lang="dark-mode">Chế độ tối</span>
+</div>
+<div class="toggle-switch" id="dark-mode-toggle" onclick="toggleDarkMode()"></div>
+</div>
+</div>
+<div class="settings-section">
+<h3 data-lang="lang-section">🌍 Ngôn ngữ</h3>
+<div class="lang-grid">
+<div class="lang-card active" data-lang-code="vi">
+<div class="lang-flag">🇻🇳</div>
+<div class="lang-name">Tiếng Việt</div>
+</div>
+<div class="lang-card" data-lang-code="en">
+<div class="lang-flag">🇬🇧</div>
+<div class="lang-name">English</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<header>
+<div class="container">
+<div class="header-content">
+<a href="#" class="logo" onclick="event.preventDefault();scrollToTop()">
+<div class="logo-img">TQ</div>
+<span class="logo-text" data-lang="site-title">Tuấn</span>
+</a>
+<button class="menu-toggle">☰</button>
+<nav>
+<a href="#about" onclick="event.preventDefault();scrollToSection('about')" data-lang="nav-about">Giới thiệu</a>
+<a href="#skills" onclick="event.preventDefault();scrollToSection('skills')" data-lang="nav-skills">Kỹ năng</a>
+<a href="#projects" onclick="event.preventDefault();scrollToSection('projects')" data-lang="nav-projects">Dự án</a>
+<a href="#contact" onclick="event.preventDefault();scrollToSection('contact')" data-lang="nav-contact">Liên hệ</a>
+<a onclick="openSettings()" data-lang="nav-settings">⚙️ Cài đặt</a>
+</nav>
+</div>
+</div>
+</header>
+<section class="hero">
+<div class="container">
+<div class="hero-content">
+<div class="hero-badge" data-lang="hero-badge">💻 Web Developer</div>
+<h1 data-lang="hero-title">Xin chào, tôi là Tuấn</h1>
+<p data-lang="hero-subtitle">Tôi đang học thiết kế & lập trình web, xây dựng các dự án sáng tạo và chuyên nghiệp</p>
+<div class="hero-cta">
+<a href="#projects" class="btn btn-primary" onclick="event.preventDefault();scrollToSection('projects')" data-lang="hero-cta1">Xem dự án</a>
+<a href="#contact" class="btn btn-secondary" onclick="event.preventDefault();scrollToSection('contact')" data-lang="hero-cta2">Liên hệ</a>
+</div>
+<div class="stats">
+<div class="stat-card">
+<div class="stat-number" data-count="15">0</div>
+<div class="stat-label" data-lang="stat-projects">Dự án</div>
+</div>
+<div class="stat-card">
+<div class="stat-number" data-count="2">0</div>
+<div class="stat-label" data-lang="stat-years">Năm kinh nghiệm</div>
+</div>
+<div class="stat-card">
+<div class="stat-number" id="visit-count">0</div>
+<div class="stat-label" data-lang="stat-visits">Lượt truy cập</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="about">
+<div class="container">
+<div class="section-header">
+<h2 class="section-title" data-lang="about-title">Giới thiệu</h2>
+<p class="section-subtitle" data-lang="about-subtitle">Tìm hiểu thêm về tôi và hành trình phát triển web của tôi</p>
+</div>
+<div class="about-content">
+<div class="about-text">
+<h3 data-lang="about-heading">Chào mừng đến với Portfolio của tôi</h3>
+<p data-lang="about-p1">Tôi là một web developer đam mê, hiện đang xây dựng các dự án để học hỏi và chia sẻ kiến thức về phát triển web.</p>
+<p data-lang="about-p2">Tôi tin vào việc học tập liên tục và luôn tìm kiếm những thử thách mới để cải thiện kỹ năng của mình. Mỗi dự án là một cơ hội để khám phá công nghệ mới.</p>
+<p data-lang="about-p3">Mục tiêu của tôi là tạo ra những website hiện đại, thân thiện với người dùng và mang lại giá trị thực tế.</p>
+</div>
+<div class="about-image" id="about-img"></div>
+</div>
+</div>
+</section>
+<section id="skills">
+<div class="container">
+<div class="section-header">
+<h2 class="section-title" data-lang="skills-title">Kỹ năng & Công nghệ</h2>
+<p class="section-subtitle" data-lang="skills-subtitle">Các công nghệ tôi sử dụng để xây dựng dự án</p>
+</div>
+<div class="skills-grid">
+<div class="skill-card">
+<div class="skill-header">
+<div class="skill-icon">📱</div>
+<div style="flex:1">
+<div class="skill-title">HTML & CSS</div>
+<div class="skill-progress">
+<div class="progress-bar"><div class="progress-fill" style="width:0" data-width="85"></div></div>
+</div>
+</div>
+</div>
+<p class="skill-desc" data-lang="skill-html">Xây dựng cấu trúc website với HTML semantic và tạo giao diện đẹp, responsive với CSS3, Flexbox, Grid và animations.</p>
+</div>
+<div class="skill-card">
+<div class="skill-header">
+<div class="skill-icon">⚡</div>
+<div style="flex:1">
+<div class="skill-title">JavaScript</div>
+<div class="skill-progress">
+<div class="progress-bar"><div class="progress-fill" style="width:0" data-width="75"></div></div>
+</div>
+</div>
+</div>
+<p class="skill-desc" data-lang="skill-js">Thao tác DOM, xử lý sự kiện, tạo tương tác động và xây dựng các tính năng phức tạp với vanilla JavaScript.</p>
+</div>
+<div class="skill-card">
+<div class="skill-header">
+<div class="skill-icon">🎨</div>
+<div style="flex:1">
+<div class="skill-title" data-lang="skill-design-title">Responsive Design</div>
+<div class="skill-progress">
+<div class="progress-bar"><div class="progress-fill" style="width:0" data-width="80"></div></div>
+</div>
+</div>
+</div>
+<p class="skill-desc" data-lang="skill-design">Thiết kế website hoạt động tốt trên mọi thiết bị, từ mobile đến desktop với mobile-first approach.</p>
+</div>
+<div class="skill-card">
+<div class="skill-header">
+<div class="skill-icon">🚀</div>
+<div style="flex:1">
+<div class="skill-title" data-lang="skill-optimization-title">Tối ưu hiệu suất</div>
+<div class="skill-progress">
+<div class="progress-bar"><div class="progress-fill" style="width:0" data-width="70"></div></div>
+</div>
+</div>
+</div>
+<p class="skill-desc" data-lang="skill-optimization">Tối ưu code, giảm thời gian tải trang và cải thiện trải nghiệm người dùng thông qua các kỹ thuật optimization.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="projects">
+<div class="container">
+<div class="section-header">
+<h2 class="section-title" data-lang="projects-title">Dự án của tôi</h2>
+<p class="section-subtitle" data-lang="projects-subtitle">Các dự án tôi đã xây dựng và đang phát triển</p>
+</div>
+<div class="project-filters">
+<button class="filter-btn active" data-filter="all" data-lang="filter-all">Tất cả</button>
+<button class="filter-btn" data-filter="website" data-lang="filter-website">Website</button>
+<button class="filter-btn" data-filter="game" data-lang="filter-game">Game</button>
+</div>
+<div class="projects-grid" id="projects-grid"></div>
+<div class="pagination" id="pagination"></div>
+</div>
+</section>
+<section id="contact">
+<div class="container">
+<div class="section-header">
+<h2 class="section-title" data-lang="contact-title">Liên hệ với tôi</h2>
+<p class="section-subtitle" data-lang="contact-subtitle">Hãy liên hệ nếu bạn muốn làm việc cùng hoặc có câu hỏi</p>
+</div>
+<div class="contact-wrapper">
+<div class="contact-info">
+<div class="contact-item">
+<div class="contact-icon">📧</div>
+<div class="contact-details">
+<h4>Email</h4>
+<p><a href="mailto:xxxxxxxx@gmail.com">xxxxxxxx@gmail.com</a></p>
+</div>
+</div>
+<div class="contact-item">
+<div class="contact-icon">📱</div>
+<div class="contact-details">
+<h4 data-lang="phone-label">Điện thoại</h4>
+<p data-lang="phone-text">Liên hệ qua email</p>
+</div>
+</div>
+<div class="contact-item">
+<div class="contact-icon">📍</div>
+<div class="contact-details">
+<h4 data-lang="location-label">Địa chỉ</h4>
+<p data-lang="location-text">Ho Chi Minh City, Vietnam</p>
+</div>
+</div>
+</div>
+<form class="contact-form" id="contact-form">
+<div class="form-group">
+<label class="form-label" data-lang="form-name">Tên của bạn</label>
+<input type="text" class="form-input" required placeholder="Nguyễn Văn A">
+</div>
+<div class="form-group">
+<label class="form-label">Email</label>
+<input type="email" class="form-input" required placeholder="example@email.com">
+</div>
+<div class="form-group">
+<label class="form-label" data-lang="form-message">Tin nhắn</label>
+<textarea class="form-textarea" required></textarea>
+</div>
+<button type="submit" class="btn btn-primary" style="width:100%" data-lang="form-submit">Gửi tin nhắn</button>
+</form>
+</div>
+</div>
+</section>
+<footer>
+<div class="container">
+<p data-lang="footer-text">© 2025 Tuấn. Made with ❤️ using HTML, CSS & JavaScript</p>
+</div>
+</footer>
+<script>
+/* ============================================
+   CONFIGURATION OPTIONS
+   ============================================
+   
+   aboutImageUrl: 
+   - Set your profile image URL here
+   - Example: 'https://example.com/image.jpg'
+   - Leave empty '' for gradient placeholder
+   
+   projectsPerPage: 
+   - Auto-adjusts based on screen size (3 for mobile, 6 for desktop)
+   - Can be manually set to any number
+   
+   manualVisitCount:
+   - Set to 'none' to use automatic localStorage counter (increments on each visit)
+   - Set to a number to display a fixed count (e.g., 1000, 5000, 10000)
+   - Examples:
+     * manualVisitCount: 'none'  → Auto-increment from localStorage
+     * manualVisitCount: 1500    → Always display 1500
+     * manualVisitCount: 10000   → Always display 10000
+*/
+const CONFIG={aboutImageUrl:'',projectsPerPage:window.innerWidth<=768?3:6,manualVisitCount:'none'};
+const projects=[
+{
+    category:'website',
+    icon:'🌐',
+    image:'',
+    title:'Website Cá nhân',
+    titleEn:'Personal Website',
+    desc:'Website portfolio chuyên nghiệp với thiết kế hiện đại, hỗ trợ đa ngôn ngữ và dark mode.',
+    descEn:'Professional portfolio website with modern design, multi-language support and dark mode.',
+    tags:['HTML','CSS','JavaScript'],
+    badge:'NEW',link:''
+},
+{
+    category:'game',
+    icon:'♟️',image:'',
+    title:'Cờ vua',
+    titleEn:'Chess',
+    desc:'Game cờ vua với AI, hỗ trợ nhiều chế độ chơi và giao diện trực quan.',
+    descEn:'Chess game with AI, supporting multiple game modes and intuitive interface.',
+    tags:['JavaScript','Game Logic','AI'],
+    badge:'UPDATE',
+    link:'./game/chess_master.html'
+},
+{
+    category:'game',
+    icon:'🐍',
+    image:'',
+    title:'Rắn săn mồi',
+    titleEn:'Snake Game',
+    desc:'Game kinh điển với đồ họa mượt mà và nhiều level độ khó.',
+    descEn:'Classic game with smooth graphics and multiple difficulty levels.',
+    tags:['Canvas','Animation'],
+    badge:'UPDATE',
+    link:'./game/Ran-san-moi.html'},
+{category:'game',icon:'⭕',image:'',title:'Cờ caro',titleEn:'Tic Tac Toe',desc:'Game cờ caro với chế độ 2 người chơi và responsive design.',descEn:'Tic Tac Toe game with 2-player mode and responsive design.',tags:['JavaScript','Game'],badge:'',link:'./game/X-O.html'},
+{category:'game',icon:'🧩',image:'',title:'Xếp hình',titleEn:'Puzzle',desc:'Game xếp hình thử thách trí nhớ và khả năng giải quyết vấn đề.',descEn:'Puzzle game that challenges memory and problem-solving skills.',tags:['Puzzle','Logic'],badge:'',link:'./game/xep-hinh.html'},
+{category:'game',icon:'🏇',image:'',title:'Cờ tướng',titleEn:'Chinese Chess',desc:'Game cờ tướng Việt Nam với luật chơi chính xác và AI thông minh.',descEn:'Vietnamese Chinese Chess game with accurate rules and smart AI.',tags:['JavaScript','Strategy'],badge:'UPDATE',link:'./game/co-tuong.html'}
+];
+const t={vi:{'site-title':'Tuấn','nav-about':'Giới thiệu','nav-skills':'Kỹ năng','nav-projects':'Dự án','nav-contact':'Liên hệ','nav-settings':'⚙️ Cài đặt','settings-title':'⚙️ Cài đặt','theme-section':'🎨 Giao diện','theme-blue':'Xanh dương','theme-purple':'Tím','theme-green':'Xanh lá','theme-orange':'Cam','theme-pink':'Hồng','mode-section':'🌓 Chế độ hiển thị','dark-mode':'Chế độ tối','lang-section':'🌍 Ngôn ngữ','hero-badge':'💻 Web Developer','hero-title':'Xin chào, tôi là Tuấn','hero-subtitle':'Tôi đang học thiết kế & lập trình web, xây dựng các dự án sáng tạo và chuyên nghiệp','hero-cta1':'Xem dự án','hero-cta2':'Liên hệ','stat-projects':'Dự án','stat-years':'Năm kinh nghiệm','stat-visits':'Lượt truy cập','about-title':'Giới thiệu','about-subtitle':'Tìm hiểu thêm về tôi và hành trình phát triển web của tôi','about-heading':'Chào mừng đến với Portfolio của tôi','about-p1':'Tôi là một web developer đam mê, hiện đang xây dựng các dự án để học hỏi và chia sẻ kiến thức về phát triển web.','about-p2':'Tôi tin vào việc học tập liên tục và luôn tìm kiếm những thử thách mới để cải thiện kỹ năng của mình. Mỗi dự án là một cơ hội để khám phá công nghệ mới.','about-p3':'Mục tiêu của tôi là tạo ra những website hiện đại, thân thiện với người dùng và mang lại giá trị thực tế.','skills-title':'Kỹ năng & Công nghệ','skills-subtitle':'Các công nghệ tôi sử dụng để xây dựng dự án','skill-html':'Xây dựng cấu trúc website với HTML semantic và tạo giao diện đẹp, responsive với CSS3, Flexbox, Grid và animations.','skill-js':'Thao tác DOM, xử lý sự kiện, tạo tương tác động và xây dựng các tính năng phức tạp với vanilla JavaScript.','skill-design-title':'Responsive Design','skill-design':'Thiết kế website hoạt động tốt trên mọi thiết bị, từ mobile đến desktop với mobile-first approach.','skill-optimization-title':'Tối ưu hiệu suất','skill-optimization':'Tối ưu code, giảm thời gian tải trang và cải thiện trải nghiệm người dùng thông qua các kỹ thuật optimization.','projects-title':'Dự án của tôi','projects-subtitle':'Các dự án tôi đã xây dựng và đang phát triển','filter-all':'Tất cả','filter-website':'Website','filter-game':'Game','access-project':'Truy cập dự án','contact-title':'Liên hệ với tôi','contact-subtitle':'Hãy liên hệ nếu bạn muốn làm việc cùng hoặc có câu hỏi','phone-label':'Điện thoại','phone-text':'Liên hệ qua email','location-label':'Địa chỉ','location-text':'Ho Chi Minh City, Vietnam','form-name':'Tên của bạn','form-message':'Tin nhắn','form-submit':'Gửi tin nhắn','footer-text':'© 2025 Tuấn Quang. Made with ❤️ using HTML, CSS & JavaScript'},en:{'site-title':'Tuan','nav-about':'About','nav-skills':'Skills','nav-projects':'Projects','nav-contact':'Contact','nav-settings':'⚙️ Settings','settings-title':'⚙️ Settings','theme-section':'🎨 Theme','theme-blue':'Blue','theme-purple':'Purple','theme-green':'Green','theme-orange':'Orange','theme-pink':'Pink','mode-section':'🌓 Display Mode','dark-mode':'Dark Mode','lang-section':'🌍 Language','hero-badge':'💻 Web Developer','hero-title':'Hi, I\'m Tuan','hero-subtitle':'I\'m learning web design & development, building creative and professional projects','hero-cta1':'View Projects','hero-cta2':'Contact','stat-projects':'Projects','stat-years':'Years Experience','stat-visits':'Visits','about-title':'About Me','about-subtitle':'Learn more about me and my web development journey','about-heading':'Welcome to My Portfolio','about-p1':'I\'m a passionate web developer, currently building projects to learn and share knowledge about web development.','about-p2':'I believe in continuous learning and always seek new challenges to improve my skills. Each project is an opportunity to explore new technologies.','about-p3':'My goal is to create modern, user-friendly websites that deliver real value.','skills-title':'Skills & Technologies','skills-subtitle':'Technologies I use to build projects','skill-html':'Building website structure with semantic HTML and creating beautiful, responsive interfaces with CSS3, Flexbox, Grid, and animations.','skill-js':'DOM manipulation, event handling, creating dynamic interactions and building complex features with vanilla JavaScript.','skill-design-title':'Responsive Design','skill-design':'Designing websites that work well on all devices, from mobile to desktop with mobile-first approach.','skill-optimization-title':'Performance Optimization','skill-optimization':'Optimizing code, reducing page load time and improving user experience through optimization techniques.','projects-title':'My Projects','projects-subtitle':'Projects I\'ve built and am developing','filter-all':'All','filter-website':'Website','filter-game':'Game','access-project':'Access Project','contact-title':'Contact Me','contact-subtitle':'Get in touch if you want to work together or have questions','phone-label':'Phone','phone-text':'Contact via email','location-label':'Location','location-text':'Ho Chi Minh City, Vietnam','form-name':'Your Name','form-message':'Message','form-submit':'Send Message','footer-text':'© 2025 Tuan. Made with ❤️ using HTML, CSS & JavaScript'}};
+let lang=localStorage.getItem('language')||'vi',currentPage=1,currentFilter='all',filteredProjects=[];
+
+function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+function applyLang(l){document.querySelectorAll('[data-lang]').forEach(e=>{const k=e.getAttribute('data-lang');if(t[l][k])e.textContent=t[l][k]});document.documentElement.lang=l;renderProjects()}
+function animateNum(e,target){let c=0;const inc=target/125;const timer=setInterval(()=>{c+=inc;if(c>=target){e.textContent=target;clearInterval(timer)}else{e.textContent=Math.floor(c)}},16)}
+function filterProjects(filter){currentFilter=filter;currentPage=1;filteredProjects=filter==='all'?projects:projects.filter(p=>p.category===filter);renderProjects();renderPagination()}
+function renderProjects(){const grid=document.getElementById('projects-grid');const start=(currentPage-1)*CONFIG.projectsPerPage;const end=start+CONFIG.projectsPerPage;const pageProjects=filteredProjects.slice(start,end);grid.innerHTML=pageProjects.map(p=>`<div class="project-card show" data-category="${p.category}"><div class="project-img">${p.image?`<img src="${p.image}" alt="${p.title}">`:`<span class="project-img-icon">${p.icon}</span>`}</div><div class="project-body"><h3 class="project-title">${lang==='vi'?p.title:p.titleEn}${p.badge?`<span class="badge-new">${p.badge}</span>`:''}</h3><p class="project-desc">${lang==='vi'?p.desc:p.descEn}</p><div class="project-tags">${p.tags.map(tag=>`<span class="tag">${tag}</span>`).join('')}</div><a href="${p.link}" class="btn btn-primary project-link" ${p.link!=='#'?'target="_blank"':''} data-lang="access-project">${lang==='vi'?'Truy cập dự án':'Access Project'}</a></div></div>`).join('')}
+function renderPagination(){const totalPages=Math.ceil(filteredProjects.length/CONFIG.projectsPerPage);const pag=document.getElementById('pagination');if(totalPages<=1){pag.innerHTML='';return}let html='';html+=`<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>←</button>`;for(let i=1;i<=totalPages;i++){if(i===1||i===totalPages||Math.abs(i-currentPage)<=1){html+=`<button class="page-btn ${i===currentPage?'active':''}" onclick="changePage(${i})">${i}</button>`}else if(Math.abs(i-currentPage)===2){html+=`<span style="padding:0 .5rem">...</span>`}}html+=`<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>→</button>`;pag.innerHTML=html}
+function changePage(page){const totalPages=Math.ceil(filteredProjects.length/CONFIG.projectsPerPage);if(page<1||page>totalPages)return;currentPage=page;renderProjects();renderPagination();scrollToSection('projects')}
+function openSettings(){document.getElementById('settings-modal').classList.add('active');document.body.style.overflow='hidden'}
+function closeSettings(){document.getElementById('settings-modal').classList.remove('active');document.body.style.overflow=''}
+function toggleDarkMode(){document.body.classList.toggle('dark');const toggle=document.getElementById('dark-mode-toggle');toggle.classList.toggle('active');localStorage.setItem('darkMode',document.body.classList.contains('dark')?'true':'false')}
+function setTheme(theme){document.body.setAttribute('data-theme',theme);document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-theme="${theme}"]`).classList.add('active');localStorage.setItem('theme',theme)}
+function setLanguage(l){lang=l;localStorage.setItem('language',l);document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-lang-code="${l}"]`).classList.add('active');applyLang(l)}
+document.addEventListener('DOMContentLoaded',()=>{const aboutImg=document.getElementById('about-img');if(CONFIG.aboutImageUrl){aboutImg.innerHTML=`<img src="${CONFIG.aboutImageUrl}" alt="About">`}const particles=document.getElementById('particles');for(let i=0;i<20;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*3+'s';p.style.setProperty('--x-offset',`${(Math.random()-.5)*100}px`);particles.appendChild(p)}let progress=0;const progressBar=document.querySelector('.loading-progress-bar');const percentage=document.querySelector('.loading-percentage');const progressInterval=setInterval(()=>{progress+=Math.random()*15;if(progress>=100){progress=100;clearInterval(progressInterval)}progressBar.style.width=progress+'%';percentage.textContent=Math.floor(progress)+'%'},100);setTimeout(()=>{document.getElementById('loading').classList.add('hide');document.querySelectorAll('.stat-number[data-count]').forEach(s=>animateNum(s,parseInt(s.getAttribute('data-count'))));const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.querySelectorAll('.progress-fill').forEach(f=>f.style.width=f.getAttribute('data-width')+'%')}})},{threshold:.5});document.querySelectorAll('.skill-card').forEach(c=>obs.observe(c));let v;if(CONFIG.manualVisitCount==='none'){v=parseInt(localStorage.getItem('visitCount')||'0')+1;localStorage.setItem('visitCount',v)}else{v=parseInt(CONFIG.manualVisitCount)||0}animateNum(document.getElementById('visit-count'),v)},2000);const savedTheme=localStorage.getItem('theme')||'blue';setTheme(savedTheme);if(localStorage.getItem('darkMode')==='true'){document.body.classList.add('dark');document.getElementById('dark-mode-toggle').classList.add('active')}applyLang(lang);filteredProjects=[...projects];renderProjects();renderPagination()});
+document.querySelector('.menu-toggle').addEventListener('click',()=>{document.querySelector('nav').classList.toggle('active');document.querySelector('.nav-overlay').classList.toggle('active')});
+document.querySelector('.nav-overlay').addEventListener('click',()=>{document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')});
+document.querySelectorAll('nav a').forEach(l=>l.addEventListener('click',()=>{if(l.getAttribute('onclick')!=='openSettings()'){document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')}}));
+document.querySelectorAll('.skill-card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('active')));
+document.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter-btn').forEach(btn=>btn.classList.remove('active'));b.classList.add('active');filterProjects(b.getAttribute('data-filter'))}));
+document.querySelectorAll('.theme-card').forEach(c=>c.addEventListener('click',()=>setTheme(c.getAttribute('data-theme'))));
+document.querySelectorAll('.lang-card').forEach(c=>c.addEventListener('click',()=>setLanguage(c.getAttribute('data-lang-code'))));
+document.getElementById('settings-modal').addEventListener('click',e=>{if(e.target.id==='settings-modal')closeSettings()});
+document.getElementById('contact-form').addEventListener('submit',e=>{e.preventDefault();const btn=e.target.querySelector('button');const txt=btn.textContent;btn.textContent=lang==='vi'?'Đang gửi...':'Sending...';btn.disabled=true;setTimeout(()=>{btn.textContent=lang==='vi'?'✓ Đã gửi!':'✓ Sent!';setTimeout(()=>{btn.textContent=txt;btn.disabled=false;e.target.reset()},2000)},1500)});
+window.addEventListener('resize',()=>{CONFIG.projectsPerPage=window.innerWidth<=768?3:6;if(window.innerWidth>768){document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')}filterProjects(currentFilter)});
+</script>
+</body>
+</html>
