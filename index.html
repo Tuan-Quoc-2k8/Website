@@ -3,9 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tuấn - Web Developer</title>
+<title>TQ - Web Developer</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/style.css">
+<style>
+:root{--primary:#1e3a8a;--primary-light:#3b82f6;--accent:#06b6d4;--bg:#fff;--card:#f8fafc;--text:#0f172a;--text-sec:#475569;--border:#e2e8f0;--shadow:rgba(15,23,42,0.08)}
+body.dark{--bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--text-sec:#cbd5e1;--border:#334155;--shadow:rgba(0,0,0,0.3)}
+body[data-theme="blue"]{--primary:#1e3a8a;--primary-light:#3b82f6;--accent:#06b6d4}
+body[data-theme="purple"]{--primary:#7c3aed;--primary-light:#a78bfa;--accent:#c084fc}
+body[data-theme="green"]{--primary:#047857;--primary-light:#10b981;--accent:#34d399}
+body[data-theme="orange"]{--primary:#c2410c;--primary-light:#f97316;--accent:#fb923c}
+body[data-theme="pink"]{--primary:#be185d;--primary-light:#ec4899;--accent:#f9a8d4}
+body[data-theme="yellow"]{--primary:#ca8a04;--primary-light:#eab308;--accent:#fbbf24}
+body[data-theme="red"]{--primary:#b91c1c;--primary-light:#ef4444;--accent:#f87171}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}
+h1,h2,h3{font-family:'Be Vietnam Pro',sans-serif;font-weight:700}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+#loading{position:fixed;inset:0;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s;overflow:hidden}
+#loading.hide{opacity:0;pointer-events:none}
+.loading-content{display:flex;flex-direction:column;align-items:center;gap:2rem;position:relative;z-index:2}
+.loading-logo{width:80px;height:80px;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border-radius:20px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:2rem;font-weight:800;animation:logoFloat 2s ease-in-out infinite;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+@keyframes logoFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-20px) rotate(5deg)}}
+.loading-text{color:#fff;font-size:1.5rem;font-weight:600;display:flex;align-items:center;gap:.5rem;animation:textFade 1.5s ease-in-out infinite}
+@keyframes textFade{0%,100%{opacity:.5}50%{opacity:1}}
+.loading-dots{display:flex;gap:.5rem}
+.loading-dot{width:8px;height:8px;background:#fff;border-radius:50%;animation:dotBounce 1.4s ease-in-out infinite}
+.loading-dot:nth-child(1){animation-delay:0s}
+.loading-dot:nth-child(2){animation-delay:.2s}
+.loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes dotBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-15px)}}
+.loading-progress{width:250px;height:4px;background:rgba(255,255,255,.2);border-radius:10px;overflow:hidden;position:relative}
+.loading-progress-bar{height:100%;background:#fff;border-radius:10px;width:0%;animation:progressFill 2s ease-in-out forwards;box-shadow:0 0 10px rgba(255,255,255,.5)}
+@keyframes progressFill{to{width:100%}}
+.loading-percentage{color:#fff;font-size:.9rem;margin-top:.5rem;font-weight:500}
+.loading-particles{position:absolute;inset:0;overflow:hidden}
+.particle{position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;opacity:.6;animation:particleFloat 3s linear infinite}
+@keyframes particleFloat{0%{transform:translateY(100vh) translateX(0) scale(0)}50%{opacity:.8;transform:translateY(50vh) translateX(var(--x-offset,0)) scale(1)}100%{opacity:0;transform:translateY(-10vh) translateX(var(--x-offset,0)) scale(0)}}
+header{position:fixed;top:0;width:100%;background:var(--card);backdrop-filter:blur(10px);box-shadow:0 2px 10px var(--shadow);z-index:1000;transition:all .3s}
+.header-content{display:flex;justify-content:space-between;align-items:center;padding:1rem 0}
+.logo{display:flex;align-items:center;gap:12px;cursor:pointer;text-decoration:none;color:var(--text)}
+.logo-img{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.2rem}
+nav{display:flex;align-items:center;gap:2rem}
+nav a{color:var(--text-sec);text-decoration:none;font-weight:500;transition:color .3s;position:relative;cursor:pointer}
+nav a:hover{color:var(--primary)}
+.menu-toggle{display:none}
+.btn{padding:.5rem 1.25rem;border-radius:8px;font-weight:600;cursor:pointer;transition:all .3s;border:none;font-size:.9rem;text-decoration:none;display:inline-block}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:0 4px 12px rgba(59,130,246,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,.4)}
+.btn-secondary{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-secondary:hover{background:var(--primary);color:#fff}
+.settings-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:9999;animation:fadeIn .3s ease}
+.settings-modal.active{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.settings-content{background:var(--card);border-radius:20px;padding:2rem;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;animation:slideUp .3s ease;box-shadow:0 20px 60px var(--shadow)}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.settings-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+.settings-header h2{font-size:1.8rem;color:var(--text)}
+.settings-close{width:40px;height:40px;border-radius:50%;background:var(--bg);border:none;color:var(--text);font-size:1.5rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+.settings-close:hover{background:var(--border);transform:rotate(90deg)}
+.settings-section{margin-bottom:2rem}
+.settings-section h3{font-size:1.2rem;margin-bottom:1rem;color:var(--text);display:flex;align-items:center;gap:.5rem}
+.settings-option{display:flex;justify-content:space-between;align-items:center;padding:1rem;background:var(--bg);border-radius:12px;margin-bottom:.75rem;transition:all .3s}
+.settings-option:hover{transform:translateX(5px)}
+.option-label{display:flex;align-items:center;gap:.75rem;color:var(--text);font-weight:500}
+.option-icon{font-size:1.5rem}
+.toggle-switch{position:relative;width:50px;height:26px;background:var(--border);border-radius:13px;cursor:pointer;transition:background .3s}
+.toggle-switch.active{background:var(--primary)}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.toggle-switch.active::after{transform:translateX(24px)}
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.75rem}
+.theme-card{padding:1rem;border-radius:12px;border:3px solid var(--border);cursor:pointer;transition:all .3s;text-align:center;background:var(--bg)}
+.theme-card:hover{transform:scale(1.05)}
+.theme-card.active{border-color:var(--primary);box-shadow:0 4px 12px var(--shadow)}
+.theme-color{width:40px;height:40px;border-radius:50%;margin:0 auto .5rem;border:3px solid var(--border)}
+.theme-card.active .theme-color{border-color:#fff;box-shadow:0 0 0 2px var(--primary)}
+.theme-name{font-size:.85rem;font-weight:600;color:var(--text)}
+.lang-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.lang-card{padding:1rem;border-radius:12px;border:3px solid var(--border);cursor:pointer;transition:all .3s;text-align:center;background:var(--bg);display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.lang-card:hover{transform:scale(1.05)}
+.lang-card.active{border-color:var(--primary);box-shadow:0 4px 12px var(--shadow)}
+.lang-flag{font-size:1.5rem;font-weight:800;color:var(--primary)}
+.lang-name{font-size:.9rem;font-weight:600;color:var(--text)}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 0 4rem;position:relative}
+.hero-content{text-align:center;position:relative;z-index:1;animation:fadeUp 1s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.hero-badge{display:inline-block;padding:.5rem 1rem;background:var(--card);border-radius:50px;font-size:.9rem;color:var(--primary);font-weight:600;margin-bottom:1.5rem;box-shadow:0 2px 10px var(--shadow)}
+.hero h1{font-size:clamp(2.5rem,6vw,4rem);margin-bottom:1rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.25rem;color:var(--text-sec);margin-bottom:2rem;max-width:600px;margin-left:auto;margin-right:auto}
+.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-top:3rem}
+.stat-card{text-align:center;padding:2rem;background:var(--card);border-radius:16px;box-shadow:0 4px 12px var(--shadow);transition:transform .3s}
+.stat-card:hover{transform:translateY(-5px)}
+.stat-number{font-size:2.5rem;font-weight:800;color:var(--primary);margin-bottom:.5rem}
+.stat-label{color:var(--text-sec);font-size:.95rem}
+section{padding:5rem 0}
+.section-header{text-align:center;margin-bottom:3rem}
+.section-title{font-size:2.5rem;margin-bottom:1rem}
+.section-subtitle{color:var(--text-sec);font-size:1.1rem;max-width:600px;margin:0 auto}
+.about-content{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.about-text h3{font-size:1.8rem;margin-bottom:1rem}
+.about-text p{margin-bottom:1rem;color:var(--text-sec);line-height:1.8}
+.about-image{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:20px;box-shadow:0 20px 60px var(--shadow);overflow:hidden;position:relative}
+.about-image img{width:100%;height:100%;object-fit:cover}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem}
+.skill-card{background:var(--card);padding:2rem;border-radius:16px;box-shadow:0 4px 12px var(--shadow);transition:all .3s;cursor:pointer}
+.skill-card:hover{transform:translateY(-8px);box-shadow:0 8px 24px var(--shadow)}
+.skill-card.active{border:2px solid var(--primary)}
+.skill-header{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.skill-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem}
+.skill-title{font-size:1.2rem;font-weight:600}
+.skill-progress{margin:1rem 0}
+.progress-bar{width:100%;height:8px;background:var(--border);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;transition:width 1s ease}
+.skill-desc{color:var(--text-sec);font-size:.95rem;line-height:1.6;max-height:0;overflow:hidden;transition:max-height .3s ease}
+.skill-card.active .skill-desc{max-height:200px}
+.project-filters{display:flex;gap:1rem;justify-content:center;margin-bottom:2rem;flex-wrap:wrap}
+.filter-btn{padding:.75rem 1.5rem;background:var(--card);border:2px solid var(--border);border-radius:50px;cursor:pointer;transition:all .3s;font-weight:600}
+.filter-btn:hover,.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2rem;min-height:400px}
+.project-card{
+    background:var(--card);
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 4px 12px var(--shadow);
+    transition:all .3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card.show{display:block}
+.project-card:hover{transform:translateY(-5px);box-shadow:0 8px 20px var(--shadow)}
+.project-img{width:100%;height:200px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:3rem;overflow:hidden;position:relative}
+.project-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.project-img-icon{position:relative;z-index:1}
+.project-body{
+    padding:1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.project-title{font-size:1.3rem;margin-bottom:.5rem}
+.project-desc{color:var(--text-sec);margin-bottom:1rem;font-size:.9rem}
+.project-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.tag{
+    padding:.25rem .75rem;
+    background:var(--primary);
+    color:#fff;
+    border-radius:20px;
+    font-size:.8rem
+}
+.badge-new, .badge-update, .badge-maintenance{
+    background:var(--accent);
+    color:#fff;
+    padding:.25rem .5rem;
+    border-radius:6px;
+    font-size:.7rem;
+    font-weight:700;
+    margin-left:.5rem
+}
+.btn-maintenance{
+    opacity:.65;
+    cursor:not-allowed;
+    width: 100%;
+    margin-top: auto;
+    text-align: center;
+}
+
+.project-link{
+    width:100%;
+    margin-top:auto;
+}
+.pagination{display:flex;justify-content:center;align-items:center;gap:.5rem;margin-top:2rem;flex-wrap:wrap}
+.page-btn{width:40px;height:40px;border-radius:8px;background:var(--card);border:2px solid var(--border);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-weight:600}
+.page-btn:hover,.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.page-btn:disabled{opacity:.5;cursor:not-allowed}
+.contact-wrapper{max-width:800px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.contact-info{display:flex;flex-direction:column;gap:1.5rem}
+.contact-item{display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--card);border-radius:12px;transition:transform .3s}
+.contact-item:hover{transform:translateX(5px)}
+.contact-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;flex-shrink:0}
+.contact-details h4{font-size:1rem;margin-bottom:.25rem}
+.contact-details p{color:var(--text-sec);font-size:.9rem}
+.contact-details a{color:var(--primary);text-decoration:none}
+.contact-form{display:flex;flex-direction:column;gap:1.25rem}
+.form-group{display:flex;flex-direction:column;gap:.5rem}
+.form-label{font-weight:600;color:var(--text);font-size:.9rem}
+.form-input,.form-textarea{padding:.875rem;border:2px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-family:inherit;transition:border-color .3s;font-size:.9rem}
+.form-input:focus,.form-textarea:focus{outline:none;border-color:var(--primary)}
+.form-textarea{min-height:120px;resize:vertical}
+footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-sec);border-top:1px solid var(--border)}
+@media(max-width:768px){
+.menu-toggle{display:block;background:transparent;border:none;font-size:1.5rem;cursor:pointer;color:var(--text)}
+nav{position:fixed;top:0;left:-100%;width:80%;max-width:300px;height:100vh;background:var(--card);flex-direction:column;padding:5rem 2rem 2rem;transition:left .3s;box-shadow:4px 0 20px var(--shadow);align-items:flex-start;z-index:1001}
+nav.active{left:0}
+.nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;opacity:0;pointer-events:none;transition:opacity .3s}
+.nav-overlay.active{opacity:1;pointer-events:auto}
+.about-content{grid-template-columns:1fr}
+.hero h1{font-size:2.5rem}
+.projects-grid{grid-template-columns:1fr}
+.contact-wrapper{grid-template-columns:1fr;gap:2rem}
+.theme-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
 </head>
 <body data-theme="blue">
 <div id="loading">
@@ -58,6 +257,14 @@
 <div class="theme-color" style="background:linear-gradient(135deg,#be185d,#ec4899)"></div>
 <div class="theme-name" data-lang="theme-pink">Hồng</div>
 </div>
+<div class="theme-card" data-theme="yellow">
+<div class="theme-color" style="background:linear-gradient(135deg,#ca8a04,#eab308)"></div>
+<div class="theme-name" data-lang="theme-yellow">Vàng</div>
+</div>
+<div class="theme-card" data-theme="red">
+<div class="theme-color" style="background:linear-gradient(135deg,#b91c1c,#ef4444)"></div>
+<div class="theme-name" data-lang="theme-red">Đỏ</div>
+</div>
 </div>
 </div>
 <div class="settings-section">
@@ -74,7 +281,7 @@
 <h3 data-lang="lang-section">🌍 Ngôn ngữ</h3>
 <div class="lang-grid">
     <div class="lang-card active" data-lang-code="vi">
-        <div class="lang-flag">🇻🇳</div>
+        <div class="lang-flag">VN</div>
         <div class="lang-name">Tiếng Việt</div>
     </div>
 
@@ -83,14 +290,33 @@
         <div class="lang-name">English</div>
     </div>
 
-    <div class="lang-card" data-lang-code="jn">
-        <div class="lang-flag">JN</div>
+    <div class="lang-card" data-lang-code="ko">
+        <div class="lang-flag">KR</div>
+        <div class="lang-name">한국어</div>
+    </div>
+
+    <div class="lang-card" data-lang-code="ja">
+        <div class="lang-flag">JP</div>
         <div class="lang-name">日本語</div>
     </div>
+
+    <div class="lang-card" data-lang-code="zh">
+        <div class="lang-flag">CN</div>
+        <div class="lang-name">中文（简体）</div>
+    </div>
+
 </div>
 </div>
 </div>
 </div>
+<meta property="og:title" content="Tuan Quoc - Web Developer">
+<meta property="og:description" content="Creative web developer portfolio">
+<meta property="og:image" content="https://tuan-quoc-2k8.github.io/Website/img/logo-2.png">
+<meta property="og:url" content="https://tuan-quoc-2k8.github.io/Website/">
+<meta property="og:type" content="website">
+<!-- Favicon -->
+<link rel="icon" href="/img/logo-2.png">
+
 <header>
 <div class="container">
 <div class="header-content">
@@ -120,22 +346,19 @@
 <a href="#contact" class="btn btn-secondary" onclick="event.preventDefault();scrollToSection('contact')" data-lang="hero-cta2">Liên hệ</a>
 </div>
 <div class="stats">
-    <div class="stat-card">
-        <div class="stat-number" data-count="6">0</div>
-        <div class="stat-label" data-lang="stat-projects">Dự án</div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-number" data-count="2">0</div>
-        <div class="stat-label" data-lang="stat-years">Năm kinh nghiệm</div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-number" id="visit-count">0</div>
-        <div class="stat-label" data-lang="stat-visits">Lượt truy cập</div>
-    </div>
+<div class="stat-card">
+<div class="stat-number" data-count="6">0</div>
+<div class="stat-label" data-lang="stat-projects">Dự án</div>
 </div>
-
+<div class="stat-card">
+<div class="stat-number" data-count="2">0</div>
+<div class="stat-label" data-lang="stat-years">Năm kinh nghiệm</div>
+</div>
+<div class="stat-card">
+<div class="stat-number" id="visit-count">0</div>
+<div class="stat-label" data-lang="stat-visits">Lượt truy cập</div>
+</div>
+</div>
 </div>
 </div>
 </section>
@@ -224,6 +447,7 @@
 <button class="filter-btn active" data-filter="all" data-lang="filter-all">Tất cả</button>
 <button class="filter-btn" data-filter="website" data-lang="filter-website">Website</button>
 <button class="filter-btn" data-filter="game" data-lang="filter-game">Game</button>
+<button class="filter-btn" data-filter="css" data-lang="filter-css">CSS</button>
 </div>
 <div class="projects-grid" id="projects-grid"></div>
 <div class="pagination" id="pagination"></div>
@@ -255,7 +479,7 @@
 <div class="contact-icon">📍</div>
 <div class="contact-details">
 <h4 data-lang="location-label">Địa chỉ</h4>
-<p data-lang="location-text">Ho Chi Minh City, Vietnam</p>
+<p data-lang="location-text">Tỉnh Đồng Nai, Việt Nam</p>
 </div>
 </div>
 </div>
@@ -306,77 +530,152 @@
 */
 const CONFIG={aboutImageUrl:'',projectsPerPage:window.innerWidth<=768?3:6,manualVisitCount:'none'};
 const projects=[
-{
-    category:'website',
-    icon:'🌐',
-    image:'',
-    title:'Website Cá nhân',
-    titleEn:'Personal Website',
-    desc:'Website portfolio chuyên nghiệp với thiết kế hiện đại, hỗ trợ đa ngôn ngữ và dark mode.',
-    descEn:'Professional portfolio website with modern design, multi-language support and dark mode.',
-    tags:['HTML','CSS','JavaScript'],
-    badge:'NEW',link:''
-},
+    {
+        category:'website',
+        icon:'🌐',image:'./img/logo-1.png',
+        title:'Website Cá nhân',
+        titleEn:'Personal Website',
+        titleKo:'개인 웹사이트',
+        titleJa:'個人ウェブサイト',
+        titleZh:'个人网站',
+        desc:'Website portfolio chuyên nghiệp với thiết kế hiện đại, hỗ trợ đa ngôn ngữ và dark mode.',
+        descEn:'Professional portfolio website with modern design, multi-language support and dark mode.',
+        descKo:'현대적인 디자인과 다국어 및 다크 모드를 지원하는 전문 포트폴리오 웹사이트입니다.',
+        descJa:'モダンなデザインで、多言語対応とダークモードを備えたプロフェッショナルなポートフォリオサイトです。',
+        descZh:'具有现代设计的专业作品集网站，支持多语言和深色模式。',
+        tags:['HTML','CSS','JavaScript'],
+        badge:'NEW',
+        link:'#'
+    },
 
-{
-    category:'game',
-    icon:'♟️',image:'./img/master-chess-img.png',
-    title:'Cờ vua',
-    titleEn:'Chess',
-    desc:'Game cờ vua với AI, hỗ trợ nhiều chế độ chơi và giao diện trực quan.',
-    descEn:'Chess game with AI, supporting multiple game modes and intuitive interface.',
-    tags:['JavaScript','Game Logic','AI','Mobile / PC'],
-    badge:'UPDATE',
-    link:'./game/chess_master.html'
-},
+    {
+        category:'game',
+        icon:'♟️',image:'./img/master-chess-img.png',
+        title:'Cờ vua',
+        titleEn:'Chess',
+        titleKo:'체스',
+        titleJa:'チェス',
+        titleZh:'国际象棋',
+        desc:'Game cờ vua với AI, hỗ trợ nhiều chế độ chơi và giao diện trực quan.',
+        descEn:'Chess game with AI, supporting multiple game modes and intuitive interface.',
+        descKo:'AI가 포함되어 있으며 다양한 게임 모드와 직관적인 인터페이스를 지원하는 체스 게임입니다.',
+        descJa:'AIを搭載し、複数のゲームモードと直感的なインターフェースを備えたチェスゲームです。',
+        descZh:'包含 AI 的国际象棋游戏，支持多种游戏模式和直观的界面。',
+        tags:['JavaScript','Game Logic','AI'],
+        badge:'UPDATE',
+        link:'./game/chess_master.html'
+    },
 
-{
-    category:'game',
-    icon:'🐍',
-    image:'./img/ran-san-moi-img.png',
-    title:'Rắn săn mồi',
-    titleEn:'Snake Game',
-    desc:'Game kinh điển với đồ họa mượt mà và nhiều level độ khó.',
-    descEn:'Classic game with smooth graphics and multiple difficulty levels.',
-    tags:['Canvas','Animation','Mobile / PC'],
-    badge:'UPDATE',
-    link:'./game/Ran-san-moi.html'
-},
+    {
+        category:'game',
+        icon:'🐍',image:'./img/ran-san-moi-img.png',
+        title:'Rắn săn mồi',
+        titleEn:'Snake Game',
+        titleKo:'스네이크 게임',
+        titleJa:'スネークゲーム',
+        titleZh:'贪吃蛇',
+        desc:'Game kinh điển với đồ họa mượt mà và nhiều level độ khó.',
+        descEn:'Classic game with smooth graphics and multiple difficulty levels.',
+        descKo:'부드러운 그래픽과 다양한 난이도를 갖춘 클래식 게임입니다.',
+        descJa:'滑らかなグラフィックと複数の難易度を備えたクラシックゲームです。',
+        descZh:'经典的贪吃蛇游戏，拥有流畅的画面和多种难度等级。',
+        tags:['Canvas','Animation'],
+        badge:'UPDATE',
+        link:'./game/Ran-san-moi.html'
+    },
 
-{
-    category:'game',
-    icon:'⭕',image:'./img/Co-caro.png',
-    title:'Cờ caro',
-    titleEn:'Tic Tac Toe',
-    desc:'Game cờ caro với chế độ 2 người chơi và responsive design.',
-    descEn:'Tic Tac Toe game with 2-player mode and responsive design.',
-    tags:['JavaScript','Game','Mobile / PC'],
-    badge:'',
-    link:'./game/X-O.html'
-},
+    {
+        category:'css',
+        icon:'🎨',image:'./img/giao-dien-web_tim-trang.png',
+        title:'CSS Animation Gallery',
+        titleEn:'CSS Animation Gallery',
+        titleKo:'CSS 애니메이션 갤러리',
+        titleJa:'CSSアニメーションギャラリー',
+        titleZh:'CSS 动画画廊',
+        desc:'Bộ sưu tập các hiệu ứng animation CSS đẹp mắt và mượt mà.',
+        descEn:'Collection of beautiful and smooth CSS animation effects.',
+        descKo:'아름답고 부드러운 CSS 애니메이션 효과 모음.',
+        descJa:'美しくスムーズなCSSアニメーション効果のコレクション。',
+        descZh:'精美且流畅的 CSS 动画效果合集。',
+        tags:['CSS','Animation','Keyframes'],
+        badge:'NEW',
+        link:'./css/Website_trang-tim.html'
+    },
 
-{
-    category:'game',
-    icon:'🧩',
-    image:'./img/Xep-hinh.png',
-    title:'Xếp hình',
-    titleEn:'Puzzle',
-    desc:'Game xếp hình thử thách trí nhớ và khả năng giải quyết vấn đề.',
-    descEn:'Puzzle game that challenges memory and problem-solving skills.',
-    tags:['Puzzle','Logic','PC'],
-    badge:'',
-    link:'./game/xep-hinh.html'},
-{
-    category:'game',icon:'🏇',
-    image:'./img/Co-tuong.jpg',
-    title:'Cờ tướng',
-    titleEn:'Chinese Chess',
-    desc:'Game cờ tướng Việt Nam với luật chơi chính xác và AI thông minh.',
-    descEn:'Vietnamese Chinese Chess game with accurate rules and smart AI.',
-    tags:['JavaScript','Strategy','PC'],
-    badge:'UPDATE',
-    link:'./game/co-tuong.html'}
+    {
+        category:'css',
+        icon:'💫',image:'',
+        title:'CSS Effects Studio',
+        titleEn:'CSS Effects Studio',
+        titleKo:'CSS 효과 스튜디오',
+        titleJa:'CSSエフェクトスタジオ',
+        titleZh:'CSS 特效工作室',
+        desc:'Các hiệu ứng CSS nâng cao như gradients, shadows, và transforms.',
+        descEn:'Advanced CSS effects like gradients, shadows, and transforms.',
+        descKo:'그라디언트, 그림자, 변환과 같은 고급 CSS3 효과.',
+        descJa:'グラデーション、シャドウ、トランスフォームなどの高度なCSS3エフェクト。',
+        descZh:'如渐变、阴影和变换等高级 CSS3 特效。',
+        tags:['CSS','Effects','Modern'],
+        badge:'MAINTENANCE',
+        link:'#'
+    },
+
+    {
+        category:'game',
+        icon:'⭕',image:'./img/Co-caro.png',
+        title:'Cờ caro',
+        titleEn:'Tic Tac Toe',
+        titleKo:'틱택토',
+        titleJa:'三目並べ',
+        titleZh:'井字棋',
+        desc:'Game cờ caro với chế độ 2 người chơi và responsive design.',
+        descEn:'Tic Tac Toe game with 2-player mode and responsive design.',
+        descKo:'2인 플레이 모드와 반응형 디자인을 지원하는 틱택토 게임입니다.',
+        descJa:'2人対戦モードとレスポンシブデザインを備えた三目並べゲームです。',
+        descZh:'支持双人模式并具有响应式设计的井字棋游戏。',
+        tags:['JavaScript','Game'],
+        badge:'',
+        link:'./game/X-O.html'
+    },
+
+    {
+        category:'game',
+        icon:'🧩',image:'./img/Xep-hinh.png',
+        title:'Xếp hình',
+        titleEn:'Puzzle',
+        titleKo:'퍼즐',
+        titleJa:'パズル',
+        titleZh:'拼图',
+        desc:'Game xếp hình thử thách trí nhớ và khả năng giải quyết vấn đề.',
+        descEn:'Puzzle game that challenges memory and problem-solving skills.',
+        descKo:'기억력과 문제 해결 능력을 도전하는 퍼즐 게임입니다.',
+        descJa:'記憶力と問題解決能力を試すパズルゲームです。',
+        descZh:'挑战记忆力和问题解决能力的拼图游戏。',
+        tags:['Puzzle','Logic'],
+        badge:'',
+        link:'./game/xep-hinh.html'
+    },
+
+    {
+        category:'game',
+        icon:'🏇',image:'./img/Co-tuong.jpg',
+        title:'Cờ tướng',
+        titleEn:'Chinese Chess',
+        titleKo:'중국 장기',
+        titleJa:'中国将棋（シャンチー）',
+        titleZh:'中国象棋',
+        desc:'Game cờ tướng Việt Nam với luật chơi chính xác và AI thông minh.',
+        descEn:'Vietnamese Chinese Chess game with accurate rules and smart AI.',
+        descKo:'정확한 규칙과 지능형 AI를 갖춘 베트남식 중국 장기 게임입니다.',
+        descJa:'正確なルールと賢いAIを備えたベトナム式中国将棋ゲームです。',
+        descZh:'具有准确规则和智能 AI 的越南版中国象棋游戏。',
+        tags:['JavaScript','Strategy'],
+        badge:'UPDATE',
+        link:'./game/co-tuong.html'
+    }
 ];
+
+
 const t={
     vi:{
         'site-title':'Tuấn Quốc',
@@ -392,6 +691,8 @@ const t={
         'theme-green':'Xanh lá',
         'theme-orange':'Cam',
         'theme-pink':'Hồng',
+        'theme-yellow':'Vàng',
+        'theme-red':'Đỏ',
         'mode-section':'🌓 Chế độ hiển thị',
         'dark-mode':'Chế độ tối',
         'lang-section':'🌍 Ngôn ngữ',
@@ -409,31 +710,29 @@ const t={
         'about-p1':'Tôi là một web developer đam mê, hiện đang xây dựng các dự án để học hỏi và chia sẻ kiến thức về phát triển web.',
         'about-p2':'Tôi tin vào việc học tập liên tục và luôn tìm kiếm những thử thách mới để cải thiện kỹ năng của mình. Mỗi dự án là một cơ hội để khám phá công nghệ mới.',
         'about-p3':'Mục tiêu của tôi là tạo ra những website hiện đại, thân thiện với người dùng và mang lại giá trị thực tế.',
-        'skills-title':'Kỹ năng & Công nghệ',
-        'skills-subtitle':'Các công nghệ tôi sử dụng để xây dựng dự án',
+        'skills-title':'Kỹ năng & Công nghệ','skills-subtitle':'Các công nghệ tôi sử dụng để xây dựng dự án',
         'skill-html':'Xây dựng cấu trúc website với HTML semantic và tạo giao diện đẹp, responsive với CSS3, Flexbox, Grid và animations.',
         'skill-js':'Thao tác DOM, xử lý sự kiện, tạo tương tác động và xây dựng các tính năng phức tạp với vanilla JavaScript.',
-        'skill-design-title':'Responsive Design',
-        'skill-design':'Thiết kế website hoạt động tốt trên mọi thiết bị, từ mobile đến desktop với mobile-first approach.',
-        'skill-optimization-title':'Tối ưu hiệu suất',
-        'skill-optimization':'Tối ưu code, giảm thời gian tải trang và cải thiện trải nghiệm người dùng thông qua các kỹ thuật optimization.',
-        'projects-title':'Dự án của tôi',
-        'projects-subtitle':'Các dự án tôi đã xây dựng và đang phát triển',
+        'skill-design-title':'Responsive Design','skill-design':'Thiết kế website hoạt động tốt trên mọi thiết bị, từ mobile đến desktop với mobile-first approach.',
+        'skill-optimization-title':'Tối ưu hiệu suất','skill-optimization':'Tối ưu code, giảm thời gian tải trang và cải thiện trải nghiệm người dùng thông qua các kỹ thuật optimization.','projects-title':'Dự án của tôi','projects-subtitle':'Các dự án tôi đã xây dựng và đang phát triển',
         'filter-all':'Tất cả',
         'filter-website':'Website',
         'filter-game':'Game',
+        'filter-css':'CSS',
         'access-project':'Truy cập dự án',
         'contact-title':'Liên hệ với tôi',
         'contact-subtitle':'Hãy liên hệ nếu bạn muốn làm việc cùng hoặc có câu hỏi',
-        'phone-label':'Điện thoại',
-        'phone-text':'Liên hệ qua email',
+        'phone-label':'Điện thoại','phone-text':'Liên hệ qua email',
         'location-label':'Địa chỉ',
-        'location-text':'Thành phố Biên Hòa, Việt Nam',
-        'form-name':'Tên của bạn',
-        'form-message':'Tin nhắn',
-        'form-submit':'Gửi tin nhắn',
-        'footer-text':'© 2025 Tuấn Quốc. Made with ❤️ using HTML, CSS & JavaScript'
+        'location-text':'Tỉnh Đồng Nai, Việt Nam',
+        'form-name':'Tên của bạn','form-message':'Tin nhắn',
+        'form-submit':'Gửi tin nhắn','footer-text':'© 2025 Tuấn Quốc. Made with ❤️ using HTML, CSS & JavaScript',
+        'badge-new':'Mới',
+        'badge-update':'Cập nhật',
+        'filter-css':'CSS',
+        'badge-maintenance':'Bảo trì'
     },
+
     en:{
         'site-title':'Tuan Quoc',
         'nav-about':'About',
@@ -441,6 +740,7 @@ const t={
         'nav-projects':'Projects',
         'nav-contact':'Contact',
         'nav-settings':'⚙️ Settings',
+
         'settings-title':'⚙️ Settings',
         'theme-section':'🎨 Theme',
         'theme-blue':'Blue',
@@ -448,103 +748,290 @@ const t={
         'theme-green':'Green',
         'theme-orange':'Orange',
         'theme-pink':'Pink',
+        'theme-yellow':'Yellow',
+        'theme-red':'Red',
+
         'mode-section':'🌓 Display Mode',
         'dark-mode':'Dark Mode',
         'lang-section':'🌍 Language',
+
         'hero-badge':'💻 Web Developer',
         'hero-title':'Hi, I\'m Tuan Quoc',
         'hero-subtitle':'I\'m learning web design & development, building creative and professional projects',
         'hero-cta1':'View Projects',
         'hero-cta2':'Contact',
+
         'stat-projects':'Projects',
         'stat-years':'Years Experience',
         'stat-visits':'Visits',
+
         'about-title':'About Me',
-        'about-subtitle':'Learn more about me and my web development journey','about-heading':'Welcome to My Portfolio',
+        'about-subtitle':'Learn more about me and my web development journey',
+        'about-heading':'Welcome to My Portfolio',
         'about-p1':'I\'m a passionate web developer, currently building projects to learn and share knowledge about web development.',
         'about-p2':'I believe in continuous learning and always seek new challenges to improve my skills. Each project is an opportunity to explore new technologies.',
         'about-p3':'My goal is to create modern, user-friendly websites that deliver real value.',
+
         'skills-title':'Skills & Technologies',
         'skills-subtitle':'Technologies I use to build projects',
         'skill-html':'Building website structure with semantic HTML and creating beautiful, responsive interfaces with CSS3, Flexbox, Grid, and animations.',
         'skill-js':'DOM manipulation, event handling, creating dynamic interactions and building complex features with vanilla JavaScript.',
-        'skill-design-title':'Responsive Design','skill-design':'Designing websites that work well on all devices, from mobile to desktop with mobile-first approach.',
+        'skill-design-title':'Responsive Design',
+        'skill-design':'Designing websites that work well on all devices, from mobile to desktop with mobile-first approach.',
         'skill-optimization-title':'Performance Optimization',
         'skill-optimization':'Optimizing code, reducing page load time and improving user experience through optimization techniques.',
+
         'projects-title':'My Projects',
         'projects-subtitle':'Projects I\'ve built and am developing',
         'filter-all':'All',
         'filter-website':'Website',
         'filter-game':'Game',
+        'filter-css':'CSS',
+
         'access-project':'Access Project',
+
+        'badge-new':'New',
+        'badge-update':'Updated',
+        'badge-maintenance':'Maintenance',
+
         'contact-title':'Contact Me',
         'contact-subtitle':'Get in touch if you want to work together or have questions',
         'phone-label':'Phone',
         'phone-text':'Contact via email',
         'location-label':'Location',
-        'location-text':'Dong Nai province, Vietnam',
+        'location-text':'Dong Nai Province, Vietnam',
+
         'form-name':'Your Name',
         'form-message':'Message',
         'form-submit':'Send Message',
+
         'footer-text':'© 2025 Tuan Quoc. Made with ❤️ using HTML, CSS & JavaScript'
     },
-    jn:{
+    ko:{
+        'site-title':'투안 꾸옥',
+        'nav-about':'소개',
+        'nav-skills':'기술',
+        'nav-projects':'프로젝트',
+        'nav-contact':'연락처',
+        'nav-settings':'⚙️ 설정',
+
+        'settings-title':'⚙️ 설정',
+        'theme-section':'🎨 테마',
+        'theme-blue':'파란색',
+        'theme-purple':'보라색',
+        'theme-green':'초록색',
+        'theme-orange':'주황색',
+        'theme-pink':'분홍색',
+        'theme-yellow':'노란색',
+        'theme-red':'빨간색',
+
+        'mode-section':'🌓 디스플레이 모드',
+        'dark-mode':'다크 모드',
+        'lang-section':'🌍 언어',
+
+        'hero-badge':'💻 웹 개발자',
+        'hero-title':'안녕하세요, 저는 투안 꾸옥입니다',
+        'hero-subtitle':'웹 디자인 및 개발을 배우며 창의적이고 전문적인 프로젝트를 구축하고 있습니다',
+        'hero-cta1':'프로젝트 보기',
+        'hero-cta2':'연락하기',
+
+        'stat-projects':'프로젝트',
+        'stat-years':'경력 연수',
+        'stat-visits':'방문 수',
+
+        'about-title':'소개',
+        'about-subtitle':'저와 제 웹 개발 여정에 대해 더 알아보세요',
+        'about-heading':'포트폴리오에 오신 것을 환영합니다',
+        'about-p1':'저는 웹 개발에 열정을 가진 개발자로, 지식을 배우고 공유하기 위해 프로젝트를 만들고 있습니다.',
+        'about-p2':'지속적인 학습을 중요하게 생각하며, 항상 새로운 도전을 통해 기술을 향상시키고 있습니다.',
+        'about-p3':'사용자 친화적이고 실제 가치를 제공하는 현대적인 웹사이트를 만드는 것이 목표입니다.',
+
+        'skills-title':'기술 및 기술 스택',
+        'skills-subtitle':'프로젝트를 구축할 때 사용하는 기술',
+        'skill-html':'시맨틱 HTML로 구조를 구성하고 CSS3, Flexbox, Grid 및 애니메이션으로 반응형 UI를 제작합니다.',
+        'skill-js':'DOM 조작, 이벤트 처리, 동적 인터랙션 및 순수 JavaScript로 복잡한 기능을 구현합니다.',
+        'skill-design-title':'반응형 디자인',
+        'skill-design':'모바일 퍼스트 접근 방식으로 모든 기기에서 잘 동작하는 웹사이트를 설계합니다.',
+        'skill-optimization-title':'성능 최적화',
+        'skill-optimization':'코드 최적화를 통해 로딩 속도를 개선하고 사용자 경험을 향상시킵니다.',
+
+        'projects-title':'내 프로젝트',
+        'projects-subtitle':'제가 구축했거나 개발 중인 프로젝트',
+        'filter-all':'전체',
+        'filter-website':'웹사이트',
+        'filter-game':'게임',
+        'filter-css':'CSS',
+
+        'access-project':'프로젝트 접속',
+        'badge-new':'신규',
+        'badge-update':'업데이트',
+        'badge-maintenance':'점검 중',
+
+        'contact-title':'연락하기',
+        'contact-subtitle':'함께 일하고 싶거나 질문이 있으면 연락해 주세요',
+        'phone-label':'전화',
+        'phone-text':'이메일로 연락',
+        'location-label':'위치',
+        'location-text':'베트남 동나이성',
+
+        'form-name':'이름',
+        'form-message':'메시지',
+        'form-submit':'메시지 보내기',
+
+        'footer-text':'© 2025 투안 꾸옥. HTML, CSS & JavaScript로 ❤️를 담아 제작'
+    },
+
+    ja:{
         'site-title':'トゥアン・クオック',
-        'nav-about':'自己紹介',
+        'nav-about':'紹介',
         'nav-skills':'スキル',
         'nav-projects':'プロジェクト',
         'nav-contact':'お問い合わせ',
         'nav-settings':'⚙️ 設定',
+
         'settings-title':'⚙️ 設定',
         'theme-section':'🎨 テーマ',
-        'theme-blue':'ブルー',
-        'theme-purple':'パープル',
-        'theme-green':'グリーン',
+        'theme-blue':'青',
+        'theme-purple':'紫',
+        'theme-green':'緑',
         'theme-orange':'オレンジ',
         'theme-pink':'ピンク',
+        'theme-yellow':'黄色',
+        'theme-red':'赤',
+
         'mode-section':'🌓 表示モード',
         'dark-mode':'ダークモード',
         'lang-section':'🌍 言語',
-        'hero-badge':'💻 Webデベロッパー',
+
+        'hero-badge':'💻 ウェブ開発者',
         'hero-title':'こんにちは、トゥアン・クオックです',
-        'hero-subtitle':'Webデザインとプログラミングを学び、創造的でプロフェッショナルなプロジェクトを構築しています',
+        'hero-subtitle':'ウェブデザインと開発を学び、創造的でプロフェッショナルなプロジェクトを構築しています',
         'hero-cta1':'プロジェクトを見る',
         'hero-cta2':'お問い合わせ',
+
         'stat-projects':'プロジェクト',
         'stat-years':'経験年数',
         'stat-visits':'訪問数',
-        'about-title':'自己紹介',
-        'about-subtitle':'私とWeb開発の歩みについて詳しくご紹介します',
-        'about-heading':'私のポートフォリオへようこそ',
-        'about-p1':'私はWeb開発に情熱を持つ開発者で、現在は学習と知識共有のためにさまざまなプロジェクトを制作しています。',
-        'about-p2':'継続的な学習を大切にし、スキル向上のために常に新しい挑戦を探しています。すべてのプロジェクトは新しい技術を学ぶ機会です。',
-        'about-p3':'私の目標は、モダンでユーザーフレンドリーかつ実用的な価値を持つWebサイトを制作することです。',
-        'skills-title':'スキル & 技術',
-        'skills-subtitle':'プロジェクト構築に使用している技術',
-        'skill-html':'HTMLセマンティックを用いた構造設計と、CSS3・Flexbox・Grid・アニメーションによる美しくレスポンシブなUI構築。',
-        'skill-js':'DOM操作、イベント処理、動的なインタラクション、Vanilla JavaScriptによる高度な機能実装。',
+
+        'about-title':'紹介',
+        'about-subtitle':'私とウェブ開発の旅についてもっと知る',
+        'about-heading':'ポートフォリオへようこそ',
+        'about-p1':'私は情熱的なウェブ開発者で、ウェブ開発について学び、知識を共有するためにプロジェクトを構築しています。',
+        'about-p2':'継続的な学習を信じており、常に新しい挑戦を求めてスキルを向上させています。',
+        'about-p3':'私の目標は、ユーザーフレンドリーで実際の価値を提供する現代的なウェブサイトを作成することです。',
+
+        'skills-title':'スキルと技術',
+        'skills-subtitle':'プロジェクトを構築するために使用する技術',
+        'skill-html':'セマンティックHTMLで構造を構築し、CSS3、Flexbox、Grid、アニメーションでレスポンシブなUIを作成します。',
+        'skill-js':'DOM操作、イベント処理、動的インタラクションの作成、バニラJavaScriptでの複雑な機能の構築。',
         'skill-design-title':'レスポンシブデザイン',
-        'skill-design':'モバイルファーストのアプローチで、スマートフォンからデスクトップまで最適に動作するWebデザイン。',
+        'skill-design':'モバイルファーストアプローチで、あらゆるデバイスで正常に動作するウェブサイトを設計します。',
         'skill-optimization-title':'パフォーマンス最適化',
-        'skill-optimization':'コード最適化により読み込み時間を短縮し、ユーザー体験を向上させます。',
+        'skill-optimization':'最適化技術により、コードを改善し、読み込み時間を短縮し、ユーザー体験を向上させます。',
+
         'projects-title':'私のプロジェクト',
-        'projects-subtitle':'これまでに制作・開発してきたプロジェクト',
+        'projects-subtitle':'私が構築し、現在開発中のプロジェクト',
         'filter-all':'すべて',
-        'filter-website':'Webサイト',
+        'filter-website':'ウェブサイト',
         'filter-game':'ゲーム',
-        'access-project':'プロジェクトへアクセス',
+        'filter-css':'CSS',
+
+        'access-project':'プロジェクトにアクセス',
+
+        'badge-new':'新規',
+        'badge-update':'更新',
+        'badge-maintenance':'メンテナンス中',
+
         'contact-title':'お問い合わせ',
-        'contact-subtitle':'一緒に仕事をしたい方やご質問があればご連絡ください',
+        'contact-subtitle':'一緒に仕事をしたい場合や質問がある場合は、お気軽にお問い合わせください',
         'phone-label':'電話',
-        'phone-text':'メールでお問い合わせください',
-        'location-label':'所在地',
-        'location-text':'ベトナム・ビエンホア市',
+        'phone-text':'メールで連絡',
+        'location-label':'場所',
+        'location-text':'ベトナム・ドンナイ省',
+
         'form-name':'お名前',
         'form-message':'メッセージ',
-        'form-submit':'送信',
-        'footer-text':'© 2025 トゥアン・クオック。HTML・CSS・JavaScriptで制作 ❤️'
+        'form-submit':'メッセージを送信',
 
-    }
+        'footer-text':'© 2025 トゥアン・クオック. HTML、CSS、JavaScriptで❤️を込めて作成'
+    },
+    zh:{
+        'site-title':'Tuấn Quốc',
+        'nav-about':'关于我',
+        'nav-skills':'技能',
+        'nav-projects':'项目',
+        'nav-contact':'联系',
+        'nav-settings':'⚙️ 设置',
+
+        'settings-title':'⚙️ 设置',
+
+        'theme-section':'🎨 界面主题',
+        'theme-blue':'蓝色',
+        'theme-purple':'紫色',
+        'theme-green':'绿色',
+        'theme-orange':'橙色',
+        'theme-pink':'粉色',
+        'theme-yellow':'黄色',
+        'theme-red':'红色',
+
+        'mode-section':'🌓 显示模式',
+        'dark-mode':'深色模式',
+
+        'lang-section':'🌍 语言',
+
+        'hero-badge':'💻 Web 开发者',
+        'hero-title':'你好，我是 Tuấn Quốc',
+        'hero-subtitle':'我正在学习网页设计与开发，构建富有创意且专业的项目',
+        'hero-cta1':'查看项目',
+        'hero-cta2':'联系我',
+
+        'stat-projects':'项目',
+        'stat-years':'经验年数',
+        'stat-visits':'访问次数',
+
+        'about-title':'关于我',
+        'about-subtitle':'了解我以及我的 Web 开发之路',
+        'about-heading':'欢迎来到我的作品集',
+        'about-p1':'我是一名热爱 Web 开发的开发者，目前正在通过构建项目来学习并分享 Web 开发知识。',
+        'about-p2':'我相信持续学习，并不断寻找新的挑战来提升自己的技能。每一个项目都是探索新技术的机会。',
+        'about-p3':'我的目标是创建现代化、用户友好且具有实际价值的网站。',
+
+        'skills-title':'技能 & 技术',
+        'skills-subtitle':'我用于构建项目的技术',
+        'skill-html':'使用语义化 HTML 构建网站结构，并通过 CSS3、Flexbox、Grid 和动画实现美观且响应式的界面。',
+        'skill-js':'DOM 操作、事件处理、动态交互，以及使用原生 JavaScript 构建复杂功能。',
+        'skill-design-title':'响应式设计',
+        'skill-design':'采用移动优先的方法，确保网站在从手机到桌面设备上的良好表现。',
+        'skill-optimization-title':'性能优化',
+        'skill-optimization':'通过代码优化减少加载时间并提升用户体验。',
+
+        'projects-title':'我的项目',
+        'projects-subtitle':'我已经完成并正在开发的项目',
+        'filter-all':'全部',
+        'filter-website':'网站',
+        'filter-game':'游戏',
+        'filter-css':'CSS',
+        'access-project':'访问项目',
+
+        'contact-title':'联系我',
+        'contact-subtitle':'如果你想合作或有任何问题，欢迎联系我',
+        'phone-label':'电话',
+        'phone-text':'请通过电子邮件联系',
+        'location-label':'地址',
+        'location-text':'越南 同奈省',
+
+        'form-name':'你的名字',
+        'form-message':'留言',
+        'form-submit':'发送消息',
+
+        'footer-text':'© 2025 Tuấn Quốc。使用 HTML、CSS 和 JavaScript 制作 ❤️',
+
+        'badge-new':'新',
+        'badge-update':'更新',
+        'filter-css':'CSS',
+        'badge-maintenance':'维护中',
+    },
+
 };
 let lang=localStorage.getItem('language')||'vi',currentPage=1,currentFilter='all',filteredProjects=[];
 
@@ -553,7 +1040,60 @@ function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
 function applyLang(l){document.querySelectorAll('[data-lang]').forEach(e=>{const k=e.getAttribute('data-lang');if(t[l][k])e.textContent=t[l][k]});document.documentElement.lang=l;renderProjects()}
 function animateNum(e,target){let c=0;const inc=target/125;const timer=setInterval(()=>{c+=inc;if(c>=target){e.textContent=target;clearInterval(timer)}else{e.textContent=Math.floor(c)}},16)}
 function filterProjects(filter){currentFilter=filter;currentPage=1;filteredProjects=filter==='all'?projects:projects.filter(p=>p.category===filter);renderProjects();renderPagination()}
-function renderProjects(){const grid=document.getElementById('projects-grid');const start=(currentPage-1)*CONFIG.projectsPerPage;const end=start+CONFIG.projectsPerPage;const pageProjects=filteredProjects.slice(start,end);grid.innerHTML=pageProjects.map(p=>`<div class="project-card show" data-category="${p.category}"><div class="project-img">${p.image?`<img src="${p.image}" alt="${p.title}">`:`<span class="project-img-icon">${p.icon}</span>`}</div><div class="project-body"><h3 class="project-title">${lang==='vi'?p.title:p.titleEn}${p.badge?`<span class="badge-new">${p.badge}</span>`:''}</h3><p class="project-desc">${lang==='vi'?p.desc:p.descEn}</p><div class="project-tags">${p.tags.map(tag=>`<span class="tag">${tag}</span>`).join('')}</div><a href="${p.link}" class="btn btn-primary project-link" ${p.link!=='#'?'target="_blank"':''} data-lang="access-project">${lang==='vi'?'Truy cập dự án':'Access Project'}</a></div></div>`).join('')}
+function renderProjects(){
+    const grid=document.getElementById('projects-grid'),
+          start=(currentPage-1)*CONFIG.projectsPerPage,
+          end=start+CONFIG.projectsPerPage,
+          pageProjects=filteredProjects.slice(start,end),
+          keyMap={
+            vi:['title','desc'],
+            en:['titleEn','descEn'],
+            ko:['titleKo','descKo'],
+            ja:['titleJa','descJa'],
+            zh:['titleZh','descZh']
+          },
+          [tk,dk]=keyMap[lang]||keyMap.en;
+
+    grid.innerHTML=pageProjects.map(p=>{
+        const title=p[tk]||p.titleEn||p.title,
+            desc=p[dk]||p.descEn||p.desc,
+            isMaintenance=p.badge==='MAINTENANCE',
+            badge=p.badge
+                ? `<span class="badge badge-${p.badge.toLowerCase()}" data-lang="badge-${p.badge.toLowerCase()}">
+                     ${t[lang]['badge-'+p.badge.toLowerCase()]||p.badge}
+                   </span>`
+                : '',
+            actionBtn = isMaintenance
+                ? `<span class="btn btn-primary btn-maintenance"
+                        data-lang="badge-maintenance"
+                        aria-disabled="true">
+                        ${t[lang]['badge-maintenance']}
+                    </span>`
+                : `<a href="${p.link}"
+                    class="btn btn-primary project-link"
+                    ${p.link!=='#'?'target="_blank"':''}
+                    data-lang="access-project">
+                    ${t[lang]['access-project']}
+                    </a>`;
+
+        return `<div class="project-card show" data-category="${p.category}">
+            <div class="project-img">
+                ${p.image
+                  ? `<img src="${p.image}" alt="${title}">`
+                  : `<span class="project-img-icon">${p.icon}</span>`}
+            </div>
+            <div class="project-body">
+                <h3 class="project-title">${title}${badge}</h3>
+                <p class="project-desc">${desc}</p>
+                <div class="project-tags">
+                    ${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
+                </div>
+                ${actionBtn}
+            </div>
+        </div>`;
+    }).join('');
+}
+
 function renderPagination(){const totalPages=Math.ceil(filteredProjects.length/CONFIG.projectsPerPage);const pag=document.getElementById('pagination');if(totalPages<=1){pag.innerHTML='';return}let html='';html+=`<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>←</button>`;for(let i=1;i<=totalPages;i++){if(i===1||i===totalPages||Math.abs(i-currentPage)<=1){html+=`<button class="page-btn ${i===currentPage?'active':''}" onclick="changePage(${i})">${i}</button>`}else if(Math.abs(i-currentPage)===2){html+=`<span style="padding:0 .5rem">...</span>`}}html+=`<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>→</button>`;pag.innerHTML=html}
 function changePage(page){const totalPages=Math.ceil(filteredProjects.length/CONFIG.projectsPerPage);if(page<1||page>totalPages)return;currentPage=page;renderProjects();renderPagination();scrollToSection('projects')}
 function openSettings(){document.getElementById('settings-modal').classList.add('active');document.body.style.overflow='hidden'}
@@ -561,40 +1101,7 @@ function closeSettings(){document.getElementById('settings-modal').classList.rem
 function toggleDarkMode(){document.body.classList.toggle('dark');const toggle=document.getElementById('dark-mode-toggle');toggle.classList.toggle('active');localStorage.setItem('darkMode',document.body.classList.contains('dark')?'true':'false')}
 function setTheme(theme){document.body.setAttribute('data-theme',theme);document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-theme="${theme}"]`).classList.add('active');localStorage.setItem('theme',theme)}
 function setLanguage(l){lang=l;localStorage.setItem('language',l);document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-lang-code="${l}"]`).classList.add('active');applyLang(l)}
-document.addEventListener('DOMContentLoaded',()=>{
-    const aboutImg=document.getElementById('about-img');
-    if(CONFIG.aboutImageUrl){
-        aboutImg.innerHTML=`<img src="${CONFIG.aboutImageUrl}" alt="About">`
-    }
-    const particles=document.getElementById('particles');
-    for(let i=0;i<20;i++){const p=document.createElement('div');
-    p.className='particle';p.style.left=Math.random()*100+'%';
-    p.style.animationDelay=Math.random()*3+'s';
-    p.style.setProperty('--x-offset',`${(Math.random()-.5)*100}px`);
-    particles.appendChild(p)}let progress=0;
-    const progressBar=document.querySelector('.loading-progress-bar');
-    const percentage=document.querySelector('.loading-percentage');
-    const progressInterval=setInterval(()=>{progress+=Math.random()*15;
-        if(progress>=100){
-            progress=100;clearInterval(progressInterval)
-        }
-    progressBar.style.width=progress+'%';
-    percentage.textContent=Math.floor(progress)+'%'},100);
-    setTimeout(()=>{
-        document.getElementById('loading').classList.add('hide');
-        document.querySelectorAll('.stat-number[data-count]').forEach(s=>animateNum(s,parseInt(s.getAttribute('data-count')
-    ))
-    );
-    const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.querySelectorAll('.progress-fill').forEach(f=>f.style.width=f.getAttribute('data-width')+'%')}})},{threshold:.5});
-    document.querySelectorAll('.skill-card').forEach(c=>obs.observe(c));let v;
-    if(CONFIG.manualVisitCount==='none'){v=parseInt(localStorage.getItem('visitCount')||'0')+1;localStorage.setItem('visitCount',v)}else{v=parseInt(CONFIG.manualVisitCount)||0}animateNum(document.getElementById('visit-count'),v)},2000);
-    const savedTheme=localStorage.getItem('theme')||'blue';
-    setTheme(savedTheme);
-    if(localStorage.getItem('darkMode')==='true'){document.body.classList.add('dark');
-    document.getElementById('dark-mode-toggle').classList.add('active')}applyLang(lang);
-    document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('active'));
-    document.querySelector(`[data-lang-code="${lang}"]`).classList.add('active');
-    filteredProjects=[...projects];renderProjects();renderPagination()});
+document.addEventListener('DOMContentLoaded',()=>{const aboutImg=document.getElementById('about-img');if(CONFIG.aboutImageUrl){aboutImg.innerHTML=`<img src="${CONFIG.aboutImageUrl}" alt="About">`}const particles=document.getElementById('particles');for(let i=0;i<20;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*3+'s';p.style.setProperty('--x-offset',`${(Math.random()-.5)*100}px`);particles.appendChild(p)}let progress=0;const progressBar=document.querySelector('.loading-progress-bar');const percentage=document.querySelector('.loading-percentage');const progressInterval=setInterval(()=>{progress+=Math.random()*15;if(progress>=100){progress=100;clearInterval(progressInterval)}progressBar.style.width=progress+'%';percentage.textContent=Math.floor(progress)+'%'},100);setTimeout(()=>{document.getElementById('loading').classList.add('hide');document.querySelectorAll('.stat-number[data-count]').forEach(s=>animateNum(s,parseInt(s.getAttribute('data-count'))));const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.querySelectorAll('.progress-fill').forEach(f=>f.style.width=f.getAttribute('data-width')+'%')}})},{threshold:.5});document.querySelectorAll('.skill-card').forEach(c=>obs.observe(c));let v;if(CONFIG.manualVisitCount==='none'){v=parseInt(localStorage.getItem('visitCount')||'0')+1;localStorage.setItem('visitCount',v)}else{v=parseInt(CONFIG.manualVisitCount)||0}animateNum(document.getElementById('visit-count'),v)},2000);const savedTheme=localStorage.getItem('theme')||'blue';setTheme(savedTheme);if(localStorage.getItem('darkMode')==='true'){document.body.classList.add('dark');document.getElementById('dark-mode-toggle').classList.add('active')}applyLang(lang);document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-lang-code="${lang}"]`).classList.add('active');filteredProjects=[...projects];renderProjects();renderPagination()});
 document.querySelector('.menu-toggle').addEventListener('click',()=>{document.querySelector('nav').classList.toggle('active');document.querySelector('.nav-overlay').classList.toggle('active')});
 document.querySelector('.nav-overlay').addEventListener('click',()=>{document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')});
 document.querySelectorAll('nav a').forEach(l=>l.addEventListener('click',()=>{if(l.getAttribute('onclick')!=='openSettings()'){document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')}}));
