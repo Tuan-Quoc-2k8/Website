@@ -104,7 +104,18 @@ body[data-theme="pink"]{--primary:#be185d;--primary-light:#ec4899;--accent:#f9a8
 body[data-theme="yellow"]{--primary:#ca8a04;--primary-light:#eab308;--accent:#fbbf24}
 body[data-theme="red"]{--primary:#b91c1c;--primary-light:#ef4444;--accent:#f87171}
 *{margin:0;padding:0;box-sizing:border-box}
+/* Default body styling */
+body {
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    transition: background .3s, color .3s;
+    overflow-x: hidden;
+}
 
+h1, h2, h3 {
+    font-weight: 700;
+}
 .container{max-width:1200px;margin:0 auto;padding:0 20px}
 #loading{position:fixed;inset:0;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s;overflow:hidden}
 #loading.hide{opacity:0;pointer-events:none}
