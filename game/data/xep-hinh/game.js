@@ -842,8 +842,10 @@ function showReplaceModal() {
       const newPiece = assignColor(JSON.parse(JSON.stringify(pd)));
       if (selected && selected.from === 'queue') {
         queue[selected.idx] = newPiece;
+        selected.piece = newPiece; // Update the selected reference to the new piece
       } else if (selected && selected.from === 'storage') {
         storage = newPiece;
+        selected.piece = newPiece; // Update the selected reference to the new piece
       }
       powerups.hint--;
       updatePowerups();
