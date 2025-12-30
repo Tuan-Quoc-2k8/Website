@@ -121,8 +121,36 @@ section{padding:5rem 0}
 .about-content{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
 .about-text h3{font-size:1.8rem;margin-bottom:1rem}
 .about-text p{margin-bottom:1rem;color:var(--text-sec);line-height:1.8}
-.about-image{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:20px;box-shadow:0 20px 60px var(--shadow);overflow:hidden;position:relative}
-.about-image img{width:100%;height:100%;object-fit:cover}
+.about-image{
+  width:100%;
+  aspect-ratio:16/9;
+  background:linear-gradient(135deg,var(--primary),var(--primary-light));
+  border-radius:20px;
+  box-shadow:0 20px 60px var(--shadow);
+  overflow:hidden;
+  position:relative
+}
+
+/* Medium screens (Tablet - 2 column projects) - 1:1 aspect ratio */
+@media(min-width:769px) and (max-width:1149px){
+  .about-image{
+    aspect-ratio:1/1;
+  }
+}
+
+/* Large screens (Desktop - 3+ column projects) - 19:6 aspect ratio */
+@media(min-width:1200px){
+  .about-image{
+    aspect-ratio:16/9;
+  }
+}
+
+.about-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+}
 .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem}
 .skill-card{background:var(--card);padding:2rem;border-radius:16px;box-shadow:0 4px 12px var(--shadow);transition:all .3s;cursor:pointer}
 .skill-card:hover{transform:translateY(-8px);box-shadow:0 8px 24px var(--shadow)}
@@ -211,16 +239,16 @@ section{padding:5rem 0}
 .form-textarea{min-height:120px;resize:vertical}
 footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-sec);border-top:1px solid var(--border)}
 @media(max-width:768px){
-.menu-toggle{display:block;background:transparent;border:none;font-size:1.5rem;cursor:pointer;color:var(--text)}
-nav{position:fixed;top:0;left:-100%;width:80%;max-width:300px;height:100vh;background:var(--card);flex-direction:column;padding:5rem 2rem 2rem;transition:left .3s;box-shadow:4px 0 20px var(--shadow);align-items:flex-start;z-index:1001}
-nav.active{left:0}
-.nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;opacity:0;pointer-events:none;transition:opacity .3s}
-.nav-overlay.active{opacity:1;pointer-events:auto}
-.about-content{grid-template-columns:1fr}
-.hero h1{font-size:2.5rem}
-.projects-grid{grid-template-columns:1fr}
-.contact-wrapper{grid-template-columns:1fr;gap:2rem}
-.theme-grid{grid-template-columns:repeat(3,1fr)}
+    .menu-toggle{display:block;background:transparent;border:none;font-size:1.5rem;cursor:pointer;color:var(--text)}
+    nav{position:fixed;top:0;left:-100%;width:80%;max-width:300px;height:100vh;background:var(--card);flex-direction:column;padding:5rem 2rem 2rem;transition:left .3s;box-shadow:4px 0 20px var(--shadow);align-items:flex-start;z-index:1001}
+    nav.active{left:0}
+    .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;opacity:0;pointer-events:none;transition:opacity .3s}
+    .nav-overlay.active{opacity:1;pointer-events:auto}
+    .about-content{grid-template-columns:1fr}
+    .hero h1{font-size:2.5rem}
+    .projects-grid{grid-template-columns:1fr}
+    .contact-wrapper{grid-template-columns:1fr;gap:2rem}
+    .theme-grid{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
@@ -360,11 +388,11 @@ nav.active{left:0}
 </div>
 <div class="stats">
 <div class="stat-card">
-<div class="stat-number" data-count="6">0</div>
+<div class="stat-number" data-count="9">0</div>
 <div class="stat-label" data-lang="stat-projects">Dự án</div>
 </div>
 <div class="stat-card">
-<div class="stat-number" data-count="2">0</div>
+<div class="stat-number" data-count="1">0</div>
 <div class="stat-label" data-lang="stat-years">Năm kinh nghiệm</div>
 </div>
 <div class="stat-card">
@@ -518,6 +546,7 @@ nav.active{left:0}
 <div class="container">
 <p data-lang="footer-text">© 2025 Tuấn Quốc. Made with ❤️ using HTML, CSS & JavaScript</p>
 </div>
+<a href=""></a>
 </footer>
 <script>
 /* ============================================
@@ -541,11 +570,16 @@ nav.active{left:0}
      * manualVisitCount: 1500    → Always display 1500
      * manualVisitCount: 10000   → Always display 10000
 */
-const CONFIG={aboutImageUrl:'',projectsPerPage:window.innerWidth<=768?3:6,manualVisitCount:'none'};
+const CONFIG={
+    aboutImageUrl:'/img/minimal tech banner.png',//banner
+    projectsPerPage:window.innerWidth<=768?3:6,
+    manualVisitCount:'none'//visits
+};
+
 const projects=[
     {
         category:'website',
-        icon:'🌐',image:'',
+        icon:'🌐',image:'./img/minimal tech banner.png',
         title:'Website Cá nhân',
         titleEn:'Personal Website',
         titleKo:'개인 웹사이트',
@@ -560,7 +594,27 @@ const projects=[
         badge:'NEW',
         link:'#'
     },
+    {
+        category:'css',
+        icon:'🔐',
+        image:'./img/website_1.png',
 
+        title:'Giao diện đăng nhập',
+        titleEn:'Login & Register Interface',
+        titleKo:'로그인 및 회원가입 인터페이스',
+        titleJa:'ログイン・新規登録画面',
+        titleZh:'登录与注册界面',
+
+        desc:'Giao diện đăng nhập và đăng ký đơn giản, trung tính, dễ dàng tích hợp với mọi nền giao diện phía sau.',
+        descEn:'A simple and neutral login & register interface that can be easily integrated with any background.',
+        descKo:'어떤 배경과도 쉽게 통합할 수 있는 심플하고 중립적인 로그인 및 회원가입 인터페이스.',
+        descJa:'あらゆる背景に簡単に統合できる、シンプルで中立的なログイン・登録画面。',
+        descZh:'简洁、中性的登录与注册界面，可轻松集成到任何背景中。',
+
+        tags:['CSS','UI','Login','Register','Form'],
+        badge:'NEW',
+        link:'./css/wbsite_1.html'
+    },
     {
         category:'game',
         icon:'♟️',image:'./img/master-chess-img.png',
@@ -599,18 +653,22 @@ const projects=[
 
     {
         category:'css',
-        icon:'🎨',image:'./img/giao-dien-web_tim-trang.png',
-        title:'CSS Animation Gallery',
-        titleEn:'CSS Animation Gallery',
-        titleKo:'CSS 애니메이션 갤러리',
-        titleJa:'CSSアニメーションギャラリー',
-        titleZh:'CSS 动画画廊',
-        desc:'Bộ sưu tập các hiệu ứng animation CSS đẹp mắt và mượt mà.',
-        descEn:'Collection of beautiful and smooth CSS animation effects.',
-        descKo:'아름답고 부드러운 CSS 애니메이션 효과 모음.',
-        descJa:'美しくスムーズなCSSアニメーション効果のコレクション。',
-        descZh:'精美且流畅的 CSS 动画效果合集。',
-        tags:['CSS','Animation','Keyframes'],
+        icon:'🔐',
+        image:'./img/giao-dien-web_tim-trang.png',
+
+        title:'Giao diện đăng nhập',
+        titleEn:'Login Interface',
+        titleKo:'로그인 인터페이스',
+        titleJa:'ログイン画面',
+        titleZh:'登录界面',
+
+        desc:'Giao diện đăng nhập hiện đại, tối giản, tập trung vào trải nghiệm người dùng.',
+        descEn:'A modern and minimal login interface focused on user experience.',
+        descKo:'사용자 경험에 중점을 둔 현대적이고 미니멀한 로그인 인터페이스.',
+        descJa:'ユーザー体験を重視したモダンでシンプルなログイン画面。',
+        descZh:'注重用户体验的现代简约登录界面。',
+
+        tags:['CSS','UI','Login','Form'],
         badge:'NEW',
         link:'./css/Website_trang-tim.html'
     },
@@ -1114,7 +1172,86 @@ function closeSettings(){document.getElementById('settings-modal').classList.rem
 function toggleDarkMode(){document.body.classList.toggle('dark');const toggle=document.getElementById('dark-mode-toggle');toggle.classList.toggle('active');localStorage.setItem('darkMode',document.body.classList.contains('dark')?'true':'false')}
 function setTheme(theme){document.body.setAttribute('data-theme',theme);document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-theme="${theme}"]`).classList.add('active');localStorage.setItem('theme',theme)}
 function setLanguage(l){lang=l;localStorage.setItem('language',l);document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-lang-code="${l}"]`).classList.add('active');applyLang(l)}
-document.addEventListener('DOMContentLoaded',()=>{const aboutImg=document.getElementById('about-img');if(CONFIG.aboutImageUrl){aboutImg.innerHTML=`<img src="${CONFIG.aboutImageUrl}" alt="About">`}const particles=document.getElementById('particles');for(let i=0;i<20;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*3+'s';p.style.setProperty('--x-offset',`${(Math.random()-.5)*100}px`);particles.appendChild(p)}let progress=0;const progressBar=document.querySelector('.loading-progress-bar');const percentage=document.querySelector('.loading-percentage');const progressInterval=setInterval(()=>{progress+=Math.random()*15;if(progress>=100){progress=100;clearInterval(progressInterval)}progressBar.style.width=progress+'%';percentage.textContent=Math.floor(progress)+'%'},100);setTimeout(()=>{document.getElementById('loading').classList.add('hide');document.querySelectorAll('.stat-number[data-count]').forEach(s=>animateNum(s,parseInt(s.getAttribute('data-count'))));const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.querySelectorAll('.progress-fill').forEach(f=>f.style.width=f.getAttribute('data-width')+'%')}})},{threshold:.5});document.querySelectorAll('.skill-card').forEach(c=>obs.observe(c));let v;if(CONFIG.manualVisitCount==='none'){v=parseInt(localStorage.getItem('visitCount')||'0')+1;localStorage.setItem('visitCount',v)}else{v=parseInt(CONFIG.manualVisitCount)||0}animateNum(document.getElementById('visit-count'),v)},2000);const savedTheme=localStorage.getItem('theme')||'blue';setTheme(savedTheme);if(localStorage.getItem('darkMode')==='true'){document.body.classList.add('dark');document.getElementById('dark-mode-toggle').classList.add('active')}applyLang(lang);document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-lang-code="${lang}"]`).classList.add('active');filteredProjects=[...projects];renderProjects();renderPagination()});
+document.addEventListener('DOMContentLoaded', () => {
+    const aboutImg = document.getElementById('about-img');
+    if (CONFIG.aboutImageUrl) {
+        aboutImg.innerHTML = `<img src="${CONFIG.aboutImageUrl}" alt="About">`;
+    }
+
+    const particles = document.getElementById('particles');
+    for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 3 + 's';
+        p.style.setProperty('--x-offset', `${(Math.random() - 0.5) * 100}px`);
+        particles.appendChild(p);
+    }
+
+    let progress = 0;
+    const progressBar = document.querySelector('.loading-progress-bar');
+    const percentage = document.querySelector('.loading-percentage');
+
+    const progressInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress >= 100) {
+        progress = 100;
+        clearInterval(progressInterval);
+        }
+        progressBar.style.width = progress + '%';
+        percentage.textContent = Math.floor(progress) + '%';
+    }, 100);
+
+    setTimeout(() => {
+        document.getElementById('loading').classList.add('hide');
+
+        document
+        .querySelectorAll('.stat-number[data-count]')
+        .forEach(s => animateNum(s, parseInt(s.getAttribute('data-count'))));
+
+        const obs = new IntersectionObserver(
+        entries => {
+            entries.forEach(en => {
+            if (en.isIntersecting) {
+                en.target
+                .querySelectorAll('.progress-fill')
+                .forEach(f => (f.style.width = f.getAttribute('data-width') + '%'));
+            }
+            });
+        },
+        { threshold: 0.5 }
+        );
+
+        document.querySelectorAll('.skill-card').forEach(c => obs.observe(c));
+
+        let v;
+        if (CONFIG.manualVisitCount === 'none') {
+        v = parseInt(localStorage.getItem('visitCount') || '0') + 1;
+        localStorage.setItem('visitCount', v);
+        } else {
+        v = parseInt(CONFIG.manualVisitCount) || 0;
+        }
+
+        animateNum(document.getElementById('visit-count'), v);
+    }, 2000);
+
+    const savedTheme = localStorage.getItem('theme') || 'blue';
+    setTheme(savedTheme);
+
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark');
+        document.getElementById('dark-mode-toggle').classList.add('active');
+    }
+
+    applyLang(lang);
+    document.querySelectorAll('.lang-card').forEach(c => c.classList.remove('active'));
+    document.querySelector(`[data-lang-code="${lang}"]`).classList.add('active');
+
+    filteredProjects = [...projects];
+    renderProjects();
+    renderPagination();
+});
+
 document.querySelector('.menu-toggle').addEventListener('click',()=>{document.querySelector('nav').classList.toggle('active');document.querySelector('.nav-overlay').classList.toggle('active')});
 document.querySelector('.nav-overlay').addEventListener('click',()=>{document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')});
 document.querySelectorAll('nav a').forEach(l=>l.addEventListener('click',()=>{if(l.getAttribute('onclick')!=='openSettings()'){document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')}}));
