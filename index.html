@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TQ - Web Developer</title>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
     --primary:#1e3a8a;
@@ -18,7 +18,75 @@
     --shadow:rgba(15,23,42,0.08);
     --tap: #000;
 }
+/* Default fonts */
+body {
+    font-family: 'Inter', sans-serif;
+}
 
+h1, h2, h3 {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 700;
+}
+
+/* Vietnamese - Be Vietnam Pro */
+body[data-lang="vi"],
+html[lang="vi"] body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+html[lang="vi"] h1,
+html[lang="vi"] h2,
+html[lang="vi"] h3 {
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+/* English - Poppins */
+body[data-lang="en"],
+html[lang="en"] body {
+    font-family: 'Poppins', sans-serif;
+}
+
+html[lang="en"] h1,
+html[lang="en"] h2,
+html[lang="en"] h3 {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Korean - Noto Sans KR */
+body[data-lang="ko"],
+html[lang="ko"] body {
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+html[lang="ko"] h1,
+html[lang="ko"] h2,
+html[lang="ko"] h3 {
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* Japanese - Noto Sans JP */
+body[data-lang="ja"],
+html[lang="ja"] body {
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+html[lang="ja"] h1,
+html[lang="ja"] h2,
+html[lang="ja"] h3 {
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+/* Chinese - Noto Sans SC */
+body[data-lang="zh"],
+html[lang="zh"] body {
+    font-family: 'Noto Sans SC', sans-serif;
+}
+
+html[lang="zh"] h1,
+html[lang="zh"] h2,
+html[lang="zh"] h3 {
+    font-family: 'Noto Sans SC', sans-serif;
+}
 body.dark{
     --bg:#0f172a;
     --card:#1e293b;
@@ -36,8 +104,7 @@ body[data-theme="pink"]{--primary:#be185d;--primary-light:#ec4899;--accent:#f9a8
 body[data-theme="yellow"]{--primary:#ca8a04;--primary-light:#eab308;--accent:#fbbf24}
 body[data-theme="red"]{--primary:#b91c1c;--primary-light:#ef4444;--accent:#f87171}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}
-h1,h2,h3{font-family:'Be Vietnam Pro',sans-serif;font-weight:700}
+
 .container{max-width:1200px;margin:0 auto;padding:0 20px}
 #loading{position:fixed;inset:0;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s;overflow:hidden}
 #loading.hide{opacity:0;pointer-events:none}
@@ -1141,7 +1208,15 @@ let lang=localStorage.getItem('language')||'vi',currentPage=1,currentFilter='all
 
 function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
 function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
-function applyLang(l){document.querySelectorAll('[data-lang]').forEach(e=>{const k=e.getAttribute('data-lang');if(t[l][k])e.textContent=t[l][k]});document.documentElement.lang=l;renderProjects()}
+function applyLang(l){
+    document.querySelectorAll('[data-lang]').forEach(e=>{
+        const k=e.getAttribute('data-lang');
+        if(t[l][k])e.textContent=t[l][k]
+    });
+    document.documentElement.lang=l;
+    document.body.setAttribute('data-lang', l);
+    renderProjects()
+}
 function animateNum(e,target){let c=0;const inc=target/125;const timer=setInterval(()=>{c+=inc;if(c>=target){e.textContent=target;clearInterval(timer)}else{e.textContent=Math.floor(c)}},16)}
 function filterProjects(filter){currentFilter=filter;currentPage=1;filteredProjects=filter==='all'?projects:projects.filter(p=>p.category===filter);renderProjects();renderPagination()}
 function renderProjects(){
