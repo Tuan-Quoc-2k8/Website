@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Master</title>
+    <link rel="icon" href="./favicon.ico">
 <style>
     * {
         margin: 0;
@@ -67,8 +68,28 @@
     .welcome-container {
         text-align: center;
         position: relative;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    html, body {
+        overflow-x: hidden;
+        max-width: 100%;
     }
 
+    /* Update the welcome container pseudo-element */
+    .welcome-container::before {
+        content: '♔♕♖♗♘♙';
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 4em;
+        opacity: 0.1;
+        letter-spacing: 20px;
+        animation: float 6s ease-in-out infinite;
+        max-width: 90vw;
+        overflow: hidden;
+    }
     .welcome-container::before {
         content: '♔♕♖♗♘♙';
         position: absolute;
@@ -138,6 +159,7 @@
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
         margin-top: 30px;
+        width: 100%;
     }
 
     .menu-card {
@@ -562,14 +584,6 @@
         box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
     }
 
-    .player-card.opponent {
-        transform: rotate(180deg);
-    }
-
-    .player-card.opponent>* {
-        transform: rotate(180deg);
-    }
-
     .player-header {
         display: flex;
         align-items: center;
@@ -614,6 +628,9 @@
         flex-wrap: wrap;
         gap: 5px;
         align-items: center;
+        max-height: 80px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .captured-piece {
@@ -637,6 +654,9 @@
         text-align: center;
         margin-bottom: 15px;
         font-weight: bold;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
 
     .controls {
@@ -905,7 +925,7 @@
         position: fixed;
         top: 20px;
         left: 20px;
-        z-index: 1500;
+        z-index: 1600;
     }
 
     .hamburger-btn {
@@ -986,7 +1006,15 @@
         .welcome-container h1 {
             font-size: 2.5em;
         }
-
+        .welcome-container h1::before,
+        .welcome-container h1::after {
+            display: none; /* Hide on mobile to prevent overflow */
+        }
+        
+        .welcome-container::before {
+            font-size: 2.5em; /* Smaller on mobile */
+            letter-spacing: 10px; /* Reduce spacing */
+        }
         .mode-cards {
             grid-template-columns: 1fr;
         }
@@ -1165,6 +1193,7 @@
             top: 60px;
             left: 10px;
             max-width: calc(100vw - 20px);
+            right: 10px;
         }
 
         #game-container {
@@ -1242,6 +1271,16 @@
         .replay-counter {
             font-size: 0.75rem;
         }
+
+        .promotion-piece {
+            width: 60px;
+            height: 60px;
+            font-size: 2.5em;
+        }
+        
+        .promotion-pieces {
+            gap: 10px;
+        }
     }
     .promotion-dialog {
         display: none;
@@ -1253,7 +1292,7 @@
         padding: 30px;
         border-radius: 20px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-        z-index: 1000;
+        z-index: 1001;
     }
 
     .promotion-dialog.active {
@@ -1298,7 +1337,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
+        z-index: 1000;
     }
 
     .overlay.active {
@@ -1783,6 +1822,7 @@
                 replayPrev: '◀ Previous',
                 replayNext: 'Next ▶',
                 replayExit: '✖ Exit Replay',
+                thinking: 'Thinking...',
             },
             vi: {
                 welcomeSubtitle: 'Trải nghiệm trò chơi chiến lược vượt thời gian',
@@ -1879,6 +1919,7 @@
                 replayPrev: '◀ Trước',
                 replayNext: 'Tiếp ▶',
                 replayExit: '✖ Thoát',
+                thinking: 'Đang suy nghĩ...',
             }
         };
 
@@ -2276,6 +2317,10 @@
                         '0 2px 4px rgba(0,0,0,0.6), 0 0 8px rgba(0,0,0,0.3)';
                 }
 
+                square.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    handleSquareClick(row, col);
+                });
                 square.addEventListener('click', () => handleSquareClick(row, col));
                 board.appendChild(square);
             }
@@ -2294,7 +2339,7 @@
     }
 
     function handleSquareClick(row, col) {
-        if (gameState.gameOver) return;
+        if (gameState.gameOver || replayMode) return;
         
         if (gameState.aiThinking) return;
         
@@ -2956,6 +3001,8 @@
     
     function makeAIMove() {
         gameState.aiThinking = true;
+        const t = TRANSLATIONS[gameSettings.language];
+        document.getElementById('game-status').textContent = t.computer + ' ' + (t.thinking || 'thinking...');
         
         const difficulty = gameSettings.selectedDifficulty;
         let move;
