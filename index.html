@@ -366,9 +366,174 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
     .contact-wrapper{grid-template-columns:1fr;gap:2rem}
     .theme-grid{grid-template-columns:repeat(3,1fr)}
 }
+/* ============================================
+   IN-APP BROWSER WARNING NOTIFICATION
+   ============================================ */
+.browser-warning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    color: #fff;
+    z-index: 10000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.5s ease-out;
+    padding: 1rem;
+}
+
+.browser-warning.hidden {
+    display: none;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.browser-warning-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0 20px;
+}
+
+.browser-warning-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.browser-warning-text {
+    flex: 1;
+}
+
+.browser-warning-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: #fff;
+}
+
+.browser-warning-message {
+    font-size: 0.95rem;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.5;
+    opacity: 0.95;
+}
+
+.browser-warning-instructions {
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.browser-warning-instructions strong {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.browser-warning-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.browser-warning-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Adjust header positioning when warning is visible */
+body.browser-warning-active header {
+    top: auto;
+    margin-top: calc(var(--warning-height, 0px));
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .browser-warning {
+        padding: 0.75rem;
+    }
+    
+    .browser-warning-content {
+        flex-direction: column;
+        padding: 0;
+        gap: 0.75rem;
+    }
+    
+    .browser-warning-icon {
+        font-size: 1.5rem;
+        align-self: flex-start;
+    }
+    
+    .browser-warning-title {
+        font-size: 1rem;
+    }
+    
+    .browser-warning-message {
+        font-size: 0.9rem;
+    }
+    
+    .browser-warning-instructions {
+        font-size: 0.8rem;
+    }
+    
+    .browser-warning-close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+    }
+}
 </style>
 </head>
 <body data-theme="blue">
+    <!-- In-App Browser Warning Banner -->
+    <div id="browser-warning" class="browser-warning hidden">
+        <div class="browser-warning-content">
+            <div class="browser-warning-icon">⚠️</div>
+            <div class="browser-warning-text">
+                <h4 class="browser-warning-title" data-lang="warning-title">Cảnh báo trình duyệt</h4>
+                <p class="browser-warning-message" data-lang="warning-message">Bạn đang sử dụng trình duyệt trong ứng dụng. Để có trải nghiệm tốt nhất, vui lòng mở trang này trong trình duyệt chính (Chrome, Safari, Firefox).</p>
+                <div class="browser-warning-instructions" data-lang="warning-instructions">
+                    <strong>Cách mở:</strong> Nhấn vào menu (•••) và chọn "Mở trong trình duyệt"
+                </div>
+            </div>
+            <button class="browser-warning-close" onclick="dismissBrowserWarning()" aria-label="Close warning">×</button>
+        </div>
+    </div>
 <div id="loading">
 <div class="loading-particles" id="particles"></div>
 <div class="loading-content">
@@ -1237,6 +1402,127 @@ const t={
     },
 
 };
+
+//    IN-APP BROWSER DETECTION & WARNING
+
+// Add translations to the existing translation object
+t.vi['warning-title'] = 'Cảnh báo trình duyệt';
+t.vi['warning-message'] = 'Bạn đang sử dụng trình duyệt trong ứng dụng. Để có trải nghiệm tốt nhất, vui lòng mở trang này trong trình duyệt chính (Chrome, Safari, Firefox).';
+t.vi['warning-instructions'] = '<strong>Cách mở:</strong> Nhấn vào menu (•••) và chọn "Mở trong trình duyệt"';
+
+t.en['warning-title'] = 'Browser Warning';
+t.en['warning-message'] = 'You are using an in-app browser. For the best experience, please open this page in a regular browser (Chrome, Safari, Firefox).';
+t.en['warning-instructions'] = '<strong>How to open:</strong> Tap the menu (•••) and select "Open in Browser"';
+
+t.ko['warning-title'] = '브라우저 경고';
+t.ko['warning-message'] = '인앱 브라우저를 사용하고 계십니다. 최상의 경험을 위해 일반 브라우저(Chrome, Safari, Firefox)에서 이 페이지를 여십시오.';
+t.ko['warning-instructions'] = '<strong>여는 방법:</strong> 메뉴(•••)를 탭하고 "브라우저에서 열기"를 선택하세요';
+
+t.ja['warning-title'] = 'ブラウザ警告';
+t.ja['warning-message'] = 'アプリ内ブラウザを使用しています。最高の体験のために、通常のブラウザ（Chrome、Safari、Firefox）でこのページを開いてください。';
+t.ja['warning-instructions'] = '<strong>開き方:</strong> メニュー（•••）をタップして「ブラウザで開く」を選択してください';
+
+t.zh['warning-title'] = '浏览器警告';
+t.zh['warning-message'] = '您正在使用应用内浏览器。为获得最佳体验，请在常规浏览器（Chrome、Safari、Firefox）中打开此页面。';
+t.zh['warning-instructions'] = '<strong>打开方式：</strong>点击菜单（•••）并选择"在浏览器中打开"';
+
+/**
+ * Detects if the user is browsing from an in-app browser
+ * @returns {boolean} True if in-app browser detected
+ */
+function detectInAppBrowser() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    
+    // Common in-app browser patterns
+    const inAppBrowsers = [
+        'FBAN',      // Facebook App
+        'FBAV',      // Facebook App
+        'Instagram', // Instagram
+        'Line',      // Line App
+        'micromessenger', // WeChat
+        'TikTok',    // TikTok
+        'Snapchat',  // Snapchat
+        'Twitter',   // Twitter
+        'LinkedIn',  // LinkedIn
+        'Pinterest', // Pinterest
+        'Reddit',    // Reddit
+        'Telegram',  // Telegram
+    ];
+    
+    // Check if any in-app browser pattern matches
+    return inAppBrowsers.some(browser => 
+        ua.toLowerCase().includes(browser.toLowerCase())
+    );
+}
+
+/**
+ * Shows the browser warning notification
+ */
+function showBrowserWarning() {
+    const warning = document.getElementById('browser-warning');
+    if (!warning) return;
+    
+    warning.classList.remove('hidden');
+    document.body.classList.add('browser-warning-active');
+    
+    // Adjust header position
+    setTimeout(() => {
+        const warningHeight = warning.offsetHeight;
+        document.documentElement.style.setProperty('--warning-height', `${warningHeight}px`);
+    }, 100);
+}
+
+/**
+ * Dismisses the browser warning and saves preference
+ */
+function dismissBrowserWarning() {
+    const warning = document.getElementById('browser-warning');
+    if (!warning) return;
+    
+    warning.style.animation = 'slideUp 0.3s ease-out';
+    
+    setTimeout(() => {
+        warning.classList.add('hidden');
+        document.body.classList.remove('browser-warning-active');
+        document.documentElement.style.setProperty('--warning-height', '0px');
+    }, 300);
+    
+    // Remember user's dismissal for 7 days
+    const dismissedUntil = Date.now() + (7 * 24 * 60 * 60 * 1000);
+    localStorage.setItem('browserWarningDismissed', dismissedUntil);
+}
+
+/**
+ * Checks if warning should be shown
+ * @returns {boolean} True if warning should be displayed
+ */
+function shouldShowBrowserWarning() {
+    // Check if user previously dismissed the warning
+    const dismissedUntil = localStorage.getItem('browserWarningDismissed');
+    if (dismissedUntil && Date.now() < parseInt(dismissedUntil)) {
+        return false;
+    }
+    
+    // Check if in-app browser
+    return detectInAppBrowser();
+}
+
+// Add slide up animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideUp {
+        from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
 let lang=localStorage.getItem('language')||'vi',currentPage=1,currentFilter='all',filteredProjects=[];
 
 function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
@@ -1245,7 +1531,14 @@ function applyLang(l){
     // Update text content
     document.querySelectorAll('[data-lang]').forEach(e=>{
         const k=e.getAttribute('data-lang');
-        if(t[l][k])e.textContent=t[l][k]
+        if(t[l][k]) {
+            // Check if content contains HTML (for warning-instructions)
+            if(k.includes('warning-instructions')) {
+                e.innerHTML = t[l][k];
+            } else {
+                e.textContent = t[l][k];
+            }
+        }
     });
     
     // Update placeholders
@@ -1456,6 +1749,11 @@ document.addEventListener('DOMContentLoaded', () => {
     filteredProjects = [...projects];
     renderProjects();
     renderPagination();
+
+    // Check and show browser warning if needed
+    if (shouldShowBrowserWarning()) {
+        showBrowserWarning();
+    }
 });
 
 document.querySelector('.menu-toggle').addEventListener('click',()=>{document.querySelector('nav').classList.toggle('active');document.querySelector('.nav-overlay').classList.toggle('active')});
