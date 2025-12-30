@@ -15,16 +15,18 @@
     --text:#0f172a;
     --text-sec:#475569;
     --border:#e2e8f0;
-    --shadow:rgba(15,23,42,0.08)
+    --shadow:rgba(15,23,42,0.08);
+    --tap: #000;
 }
 
 body.dark{
     --bg:#0f172a;
     --card:#1e293b;
     --text:#f1f5f9;
-    --text-sec:#cbd5e1
-    ;--border:#334155;
-    --shadow:rgba(0,0,0,0.3)
+    --text-sec:#cbd5e1;
+    --border:#334155;
+    --shadow:rgba(0,0,0,0.3);
+    --tap: #fff;
 }
 body[data-theme="blue"]{--primary:#1e3a8a;--primary-light:#3b82f6;--accent:#06b6d4}
 body[data-theme="purple"]{--primary:#7c3aed;--primary-light:#a78bfa;--accent:#c084fc}
@@ -183,7 +185,7 @@ section{padding:5rem 0}
     border-radius:50px;
     cursor:pointer;
     transition:all .3s;
-    color: #fff;
+    color: var(--tap);
     font-weight:600;
 }
 .filter-btn:hover,.filter-btn.active{
@@ -537,7 +539,7 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
 <div class="contact-icon">📧</div>
 <div class="contact-details">
 <h4>Email</h4>
-<p><a href="mailto:xxxxxxxx@gmail.com">xxxxxxxx@gmail.com</a></p>
+<p><a href="mailto:tuanquoc.2008.developer@gmail.com">tuanquoc.2008.developer@gmail.com</a></p>
 </div>
 </div>
 <div class="contact-item">
