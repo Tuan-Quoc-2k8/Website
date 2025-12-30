@@ -1,410 +1,189 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cờ Caro</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom right, #f0f8ff, #dcdcdc);
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      margin-top: 20px;
-      color: #2c3e50;
-    }
-
-    .menu {
-      margin: 20px auto;
-      width: 320px;
-      padding: 20px;
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    label, select {
-      display: block;
-      margin-bottom: 10px;
-      font-size: 16px;
-      text-align: left;
-    }
-
-    #game {
-      display: grid;
-      gap: 4px;
-      margin: 20px auto;
-      width: max-content;
-    }
-
-    .cell {
-      background-color: white;
-      border: 2px solid #2980b9;
-      font-size: 28px;
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .cell:hover {
-      background-color: #ecf0f1;
-    }
-
-    .cell.X {
-      color: #e74c3c;
-    }
-
-    .cell.O {
-      color: #2ecc71;
-    }
-
-    .winner {
-      background-color: gold !important;
-    }
-
-    #status {
-      font-size: 20px;
-      margin: 15px;
-      color: #34495e;
-    }
-
-    button {
-      padding: 10px 15px;
-      font-size: 16px;
-      margin-top: 10px;
-      cursor: pointer;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-
-    button:hover {
-      background-color: #2980b9;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe Game</title>
+  <link rel="stylesheet" href="./data/x-o/styles.css">
 </head>
 <body>
+  <!-- Intro Screen -->
+  <div id="intro-screen" class="screen active">
+    <h1 data-lang="title">Tic-Tac-Toe</h1>
+    <div class="menu-buttons">
+      <button class="menu-btn" onclick="showScreen('play-screen')">
+        <span data-lang="play">Play</span>
+      </button>
+      <button class="menu-btn" onclick="showScreen('settings-screen')">
+        <span data-lang="settings">Settings</span>
+      </button>
+      <button class="menu-btn" onclick="showScreen('tutorial-screen')">
+        <span data-lang="tutorial">Tutorial</span>
+      </button>
+    </div>
+  </div>
 
-<h1>Cờ Caro</h1>
+  <!-- Play Screen -->
+  <div id="play-screen" class="screen">
+    <h2 data-lang="selectMode">Select Game Mode</h2>
+    <div class="menu-buttons">
+      <button class="menu-btn" onclick="selectMode('player')">
+        <span data-lang="playWithPlayer">Play with Another Player</span>
+      </button>
+      <button class="menu-btn" onclick="showScreen('difficulty-screen')">
+        <span data-lang="playWithComputer">Play with Computer</span>
+      </button>
+      <button class="back-btn" onclick="showScreen('intro-screen')">
+        <span data-lang="back">Back</span>
+      </button>
+    </div>
+  </div>
 
-<div class="menu">
-  <label>Chế độ chơi:</label>
-  <select id="gameMode">
-    <option value="player">Chơi với người</option>
-    <option value="easy">Máy (Dễ)</option>
-    <option value="medium">Máy (Trung bình)</option>
-    <option value="hard">Máy (Khó)</option>
-    <option value="super">Máy (Siêu khó)</option>
+  <!-- Difficulty Screen -->
+  <div id="difficulty-screen" class="screen">
+    <h2 data-lang="selectDifficulty">Select Difficulty</h2>
+    <div class="menu-buttons">
+      <button class="menu-btn" onclick="selectMode('noob')">
+        <span data-lang="noob">Noob</span>
+      </button>
+      <button class="menu-btn" onclick="selectMode('pro')">
+        <span data-lang="pro">Pro</span>
+      </button>
+      <button class="menu-btn" onclick="selectMode('expert')">
+        <span data-lang="expert">Expert</span>
+      </button>
+      <button class="back-btn" onclick="showScreen('play-screen')">
+        <span data-lang="back">Back</span>
+      </button>
+    </div>
+  </div>
 
-  </select>
+  <!-- Map Selection Screen -->
+  <div id="map-screen" class="screen">
+    <h2 data-lang="selectMap">Select Map</h2>
+    <div class="menu-buttons">
+      <button class="menu-btn" onclick="selectMap(3, 3)">3×3 (3 <span data-lang="inRow">in a row</span>)</button>
+      <button class="menu-btn" onclick="selectMap(7, 4)">7×7 (4 <span data-lang="inRow">in a row</span>)</button>
+      <button class="menu-btn" onclick="selectMap(12, 5)">12×12 (5 <span data-lang="inRow">in a row</span>)</button>
+      <button class="menu-btn" onclick="showCustomMap()">
+        <span data-lang="customMap">Custom Map</span>
+      </button>
+      <button class="back-btn" onclick="goBackFromMap()">
+        <span data-lang="back">Back</span>
+      </button>
+    </div>
+  </div>
 
-<select id="mapSize" onchange="updateGameModes()">
-  <option value="3">3x3 (3 ô thắng)</option>
-  <option value="7">7x7 (4 ô thắng)</option>
-  <option value="10">10x10 (5 ô thắng)</option>
-</select>
+  <!-- Custom Map Screen -->
+  <div id="custom-map-screen" class="screen">
+    <h2 data-lang="customMap">Custom Map</h2>
+    <div class="info-box">
+      <p data-lang="customMapInfo">
+        ⚠️ <strong>Note:</strong> Boards larger than 15×15 may take longer to render. For best performance with AI, keep boards under 20×20.
+      </p>
+    </div>
+    <div class="input-group">
+      <label data-lang="boardSize">Board Size:</label>
+      <input type="number" id="custom-size" min="3" max="50" value="10">
+      <small class="hint" data-lang="boardSizeHint">(Min: 3, Max: 50)</small>
+    </div>
+    <div class="input-group">
+      <label data-lang="winCondition">Win Condition:</label>
+      <input type="number" id="custom-win" min="3" max="20" value="5">
+      <small class="hint" data-lang="winConditionHint">(Min: 3, Max: 20 or board size)</small>
+    </div>
+    <div id="custom-error" class="error-message"></div>
+    <button class="menu-btn" onclick="applyCustomMap()">
+      <span data-lang="start">Start</span>
+    </button>
+    <button class="back-btn" onclick="showScreen('map-screen')">
+      <span data-lang="back">Back</span>
+    </button>
+  </div>
 
+  <!-- Settings Screen -->
+  <div id="settings-screen" class="screen">
+    <h2 data-lang="settings">Settings</h2>
+    
+    <div class="setting-section">
+      <h3 data-lang="skins">Skins</h3>
+      <div class="skin-options">
+        <button class="skin-btn" onclick="changeSkin('classic')">
+          <span data-lang="classic">Classic</span>
+        </button>
+        <button class="skin-btn" onclick="changeSkin('neon')">
+          <span data-lang="neon">Neon</span>
+        </button>
+        <button class="skin-btn" onclick="changeSkin('pastel')">
+          <span data-lang="pastel">Pastel</span>
+        </button>
+        <button class="skin-btn" onclick="changeSkin('dark')">
+          <span data-lang="dark">Dark</span>
+        </button>
+      </div>
+    </div>
 
-  <label>Lượt đi đầu:</label>
-  <select id="firstTurn">
-    <option value="X">X đi trước</option>
-    <option value="O">O đi trước</option>
-  </select>
+    <div class="setting-section">
+      <h3 data-lang="language">Language</h3>
+      <div class="lang-options">
+        <button class="lang-btn" onclick="changeLanguage('en')">English</button>
+        <button class="lang-btn" onclick="changeLanguage('vi')">Tiếng Việt</button>
+      </div>
+    </div>
 
-  <label>Player 1 là:</label>
-  <select id="player1Symbol">
-    <option value="X">X</option>
-    <option value="O">O</option>
-  </select>
+    <button class="back-btn" onclick="showScreen('intro-screen')">
+      <span data-lang="back">Back</span>
+    </button>
+  </div>
 
-  <label>Player 2 / Máy là:</label>
-  <select id="player2Symbol">
-    <option value="O">O</option>
-    <option value="X">X</option>
-  </select>
+  <!-- Tutorial Screen -->
+  <div id="tutorial-screen" class="screen">
+    <h2 data-lang="tutorial">Tutorial</h2>
+    <div class="tutorial-content">
+      <div data-lang="tutorialText">
+        <h3>How to Play</h3>
+        <p><strong>Objective:</strong> Get the required number of your symbols in a row (horizontally, vertically, or diagonally) to win.</p>
+        <p><strong>Game Modes:</strong></p>
+        <ul>
+          <li><strong>Player vs Player:</strong> Take turns placing X and O on the board.</li>
+          <li><strong>Player vs Computer:</strong> Challenge the AI at different difficulty levels.</li>
+        </ul>
+        <p><strong>Difficulty Levels:</strong></p>
+        <ul>
+          <li><strong>Noob:</strong> AI makes random moves.</li>
+          <li><strong>Pro:</strong> AI blocks your winning moves and tries to win.</li>
+          <li><strong>Expert:</strong> AI uses advanced strategy (minimax algorithm).</li>
+        </ul>
+        <p><strong>Map Sizes:</strong></p>
+        <ul>
+          <li><strong>3×3:</strong> First to get 3 in a row wins.</li>
+          <li><strong>7×7:</strong> First to get 4 in a row wins.</li>
+          <li><strong>12×12:</strong> First to get 5 in a row wins.</li>
+          <li><strong>Custom:</strong> Create your own board size and win condition.</li>
+        </ul>
+      </div>
+    </div>
+    <button class="back-btn" onclick="showScreen('intro-screen')">
+      <span data-lang="back">Back</span>
+    </button>
+  </div>
 
-  <button onclick="startGame()">Bắt đầu chơi</button>
-</div>
+  <!-- Game Screen -->
+  <div id="game-screen" class="screen">
+    <div class="game-header">
+      <h2 id="status" data-lang="turn">Your Turn</h2>
+      <div class="game-buttons">
+        <button class="small-btn" onclick="resetGame()">
+          <span data-lang="restart">Restart</span>
+        </button>
+        <button class="small-btn" onclick="exitGame()">
+          <span data-lang="exit">Exit</span>
+        </button>
+      </div>
+    </div>
+    <div id="game-board"></div>
+  </div>
 
-<div id="status">Chọn cài đặt và nhấn bắt đầu</div>
-<div id="game"></div>
-<button onclick="resetGame()">Chơi lại</button>
-
-<script>
-  let board = [];
-  let gridSize = 3;
-  let winLength = 3;
-  let currentPlayer = "X";
-  let isGameActive = false;
-  let mode = "player";
-  let player1 = "X";
-  let player2 = "O";
-  const gameContainer = document.getElementById("game");
-  const statusText = document.getElementById("status");
-
-  function startGame() {
-  const modeSelect = document.getElementById("gameMode").value;
-  const mapSize = parseInt(document.getElementById("mapSize").value);
-  const first = document.getElementById("firstTurn").value;
-  const p1 = document.getElementById("player1Symbol").value;
-  const p2 = document.getElementById("player2Symbol").value;
-
-  mode = modeSelect;
-  gridSize = mapSize;
-  winLength = mapSize === 10 ? 5 : mapSize === 7 ? 4 : 3;  // ✅ Điều kiện thắng chính xác
-  currentPlayer = first;
-  player1 = p1;
-  player2 = p2;
-
-  board = Array(gridSize * gridSize).fill("");
-  isGameActive = true;
-
-  renderBoard();
-  statusText.textContent = `Lượt của: ${currentPlayer}`;
-
-  if (mode !== "player" && currentPlayer !== player1) {
-    setTimeout(makeAIMove, 500);
-  }
-}
-
-  function renderBoard() {
-    gameContainer.innerHTML = "";
-    gameContainer.style.gridTemplateColumns = `repeat(${gridSize}, 60px)`;
-    board.forEach((cell, index) => {
-      const cellEl = document.createElement("div");
-      cellEl.className = "cell";
-      cellEl.textContent = cell;
-      if (cell) cellEl.classList.add(cell);
-      cellEl.onclick = () => handleClick(index);
-      gameContainer.appendChild(cellEl);
-    });
-  }
-
-  function handleClick(index) {
-    if (!isGameActive || board[index] !== "") return;
-    if (mode !== "player" && currentPlayer !== player1) return;
-
-    board[index] = currentPlayer;
-    renderBoard();
-
-    if (checkWinner()) return;
-    switchPlayer();
-
-    if (mode !== "player" && currentPlayer === player2) {
-      setTimeout(makeAIMove, 500);
-    }
-  }
-
-  function switchPlayer() {
-    currentPlayer = currentPlayer === "X" ? "O" : "X";
-    statusText.textContent = `Lượt của: ${currentPlayer}`;
-  }
-
-  function makeAIMove() {
-  let emptyIndices = board
-    .map((val, idx) => (val === "" ? idx : null))
-    .filter((i) => i !== null);
-
-  if (emptyIndices.length === 0 || !isGameActive) return;
-
-  let choice;
-
-  if (mode === "easy") {
-    choice = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
-  } else if (mode === "medium") {
-    choice = mediumAI(emptyIndices);
-  } else if (mode === "hard") {
-    choice = hardAI(emptyIndices);
-  } else if (mode === "super") {
-    choice = bestMoveMinimax(currentPlayer); // 🧠 Minimax ở đây
-  }
-
-  board[choice] = currentPlayer;
-  renderBoard();
-
-  if (checkWinner()) return;
-  switchPlayer();
-}
-
-  function mediumAI(empty) {
-    for (let i of empty) {
-      board[i] = currentPlayer;
-      if (checkWin(currentPlayer)) {
-        board[i] = "";
-        return i;
-      }
-      board[i] = "";
-    }
-
-    let opponent = currentPlayer === "X" ? "O" : "X";
-    for (let i of empty) {
-      board[i] = opponent;
-      if (checkWin(opponent)) {
-        board[i] = "";
-        return i;
-      }
-      board[i] = "";
-    }
-
-    return empty[Math.floor(Math.random() * empty.length)];
-  }
-
-  function hardAI(empty) {
-    const center = Math.floor(board.length / 2);
-    if (board[center] === "") return center;
-    return mediumAI(empty);
-  }
-
-  function checkWinner() {
-    const winPositions = getWinningPositions(currentPlayer);
-    if (winPositions.length > 0) {
-      statusText.textContent = `Người chơi ${currentPlayer} thắng!`;
-      isGameActive = false;
-      winPositions.forEach(i => {
-        document.getElementsByClassName("cell")[i].classList.add("winner");
-      });
-      return true;
-    }
-
-    if (!board.includes("")) {
-      statusText.textContent = "Hòa!";
-      isGameActive = false;
-      return true;
-    }
-
-    return false;
-  }
-
-  function getWinningPositions(symbol) {
-    const positions = [];
-
-    for (let row = 0; row < gridSize; row++) {
-      for (let col = 0; col < gridSize; col++) {
-        const index = row * gridSize + col;
-
-        // Ngang
-        if (col + winLength <= gridSize) {
-          let line = [];
-          for (let i = 0; i < winLength; i++) {
-            if (board[index + i] === symbol) line.push(index + i);
-          }
-          if (line.length === winLength) return line;
-        }
-
-        // Dọc
-        if (row + winLength <= gridSize) {
-          let line = [];
-          for (let i = 0; i < winLength; i++) {
-            if (board[index + i * gridSize] === symbol) line.push(index + i * gridSize);
-          }
-          if (line.length === winLength) return line;
-        }
-
-        // Chéo \
-        if (row + winLength <= gridSize && col + winLength <= gridSize) {
-          let line = [];
-          for (let i = 0; i < winLength; i++) {
-            if (board[index + i * (gridSize + 1)] === symbol) line.push(index + i * (gridSize + 1));
-          }
-          if (line.length === winLength) return line;
-        }
-
-        // Chéo /
-        if (row + winLength <= gridSize && col - winLength + 1 >= 0) {
-          let line = [];
-          for (let i = 0; i < winLength; i++) {
-            if (board[index + i * (gridSize - 1)] === symbol) line.push(index + i * (gridSize - 1));
-          }
-          if (line.length === winLength) return line;
-        }
-      }
-    }
-
-    return [];
-  }
-
-  function checkWin(symbol) {
-    return getWinningPositions(symbol).length > 0;
-  }
-
-  function resetGame() {
-    startGame();
-  }
-  // tối ưu máy không bị đứng hình trước map lớn
-function bestMoveMinimax(player) {
-  let bestScore = -Infinity;
-  let move = -1;
-
-  for (let i = 0; i < board.length; i++) {
-    if (board[i] === "") {
-      board[i] = player;
-      let score = minimax(0, false, player, 4); // ❗ Đặt độ sâu tối đa ở đây
-      board[i] = "";
-
-      if (score > bestScore) {
-        bestScore = score;
-        move = i;
-      }
-    }
-  }
-
-  return move;
-}
-
-
-function minimax(depth, isMaximizing, aiPlayer) {
-  const opponent = aiPlayer === "X" ? "O" : "X";
-
-  if (checkWin(aiPlayer)) return 10 - depth;
-  if (checkWin(opponent)) return depth - 10;
-  if (!board.includes("")) return 0;
-
-  let bestScore = isMaximizing ? -Infinity : Infinity;
-
-  board.forEach((cell, index) => {
-    if (cell === "") {
-      board[index] = isMaximizing ? aiPlayer : opponent;
-      let score = minimax(depth + 1, !isMaximizing, aiPlayer);
-      board[index] = "";
-      bestScore = isMaximizing
-        ? Math.max(score, bestScore)
-        : Math.min(score, bestScore);
-    }
-  });
-
-  return bestScore;
-}
-function updateGameModes() {
-  const mapSize = parseInt(document.getElementById("mapSize").value);
-  const modeSelect = document.getElementById("gameMode");
-  
-  // Lấy tất cả các option trong gameMode
-  const options = modeSelect.options;
-
-  for (let i = 0; i < options.length; i++) {
-    if (options[i].value === "super") {
-      options[i].disabled = (mapSize !== 3); // ❗ Chỉ bật nếu mapSize === 3
-    }
-  }
-
-  // Nếu đang chọn "super" mà mapSize khác 3 => chuyển sang "player"
-  if (modeSelect.value === "super" && mapSize !== 3) {
-    modeSelect.value = "player";
-  }
-}
-window.onload = function () {
-  updateGameModes();
-};
-
-</script>
-
+  <script src="./data/x-o/game.js"></script>
 </body>
 </html>
