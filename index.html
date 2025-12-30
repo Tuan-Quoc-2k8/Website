@@ -639,19 +639,19 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
 </div>
 </div>
 <form class="contact-form" id="contact-form">
-<div class="form-group">
-<label class="form-label" data-lang="form-name">Tên của bạn</label>
-<input type="text" class="form-input" required placeholder="Nguyễn Văn A">
-</div>
-<div class="form-group">
-<label class="form-label">Email</label>
-<input type="email" class="form-input" required placeholder="example@email.com">
-</div>
-<div class="form-group">
-<label class="form-label" data-lang="form-message">Tin nhắn</label>
-<textarea class="form-textarea" required></textarea>
-</div>
-<button type="submit" class="btn btn-primary" style="width:100%" data-lang="form-submit">Gửi tin nhắn</button>
+    <div class="form-group">
+        <label class="form-label" data-lang="form-name">Tên của bạn</label>
+        <input type="text" class="form-input" required data-placeholder="placeholder-name" placeholder="Nguyễn Văn A">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" required data-placeholder="placeholder-email" placeholder="example@email.com">
+    </div>
+    <div class="form-group">
+        <label class="form-label" data-lang="form-message">Tin nhắn</label>
+        <textarea class="form-textarea" required data-placeholder="placeholder-message" placeholder="Nhập tin nhắn của bạn..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary" style="width:100%" data-lang="form-submit">Gửi tin nhắn</button>
 </form>
 </div>
 </div>
@@ -911,6 +911,11 @@ const t={
         'location-text':'Tỉnh Đồng Nai, Việt Nam',
         'form-name':'Tên của bạn','form-message':'Tin nhắn',
         'form-submit':'Gửi tin nhắn','footer-text':'© 2025 Tuấn Quốc. Made with ❤️ using HTML, CSS & JavaScript',
+        
+        'placeholder-name':'Nguyễn Văn A',
+        'placeholder-email':'example@email.com',
+        'placeholder-message':'Nhập tin nhắn của bạn...',
+        
         'badge-new':'Mới',
         'badge-update':'Cập nhật',
         'filter-css':'CSS',
@@ -989,6 +994,10 @@ const t={
         'form-message':'Message',
         'form-submit':'Send Message',
 
+        'placeholder-name':'John Doe',
+        'placeholder-email':'example@email.com',
+        'placeholder-message':'Enter your message...',
+
         'footer-text':'© 2025 Tuan Quoc. Made with ❤️ using HTML, CSS & JavaScript'
     },
     ko:{
@@ -1061,6 +1070,10 @@ const t={
         'form-name':'이름',
         'form-message':'메시지',
         'form-submit':'메시지 보내기',
+
+        'placeholder-name':'홍길동',
+        'placeholder-email':'example@email.com',
+        'placeholder-message':'메시지를 입력하세요...',
 
         'footer-text':'© 2025 투안 꾸옥. HTML, CSS & JavaScript로 ❤️를 담아 제작'
     },
@@ -1137,6 +1150,10 @@ const t={
         'form-message':'メッセージ',
         'form-submit':'メッセージを送信',
 
+        'placeholder-name':'山田太郎',
+        'placeholder-email':'example@email.com',
+        'placeholder-message':'メッセージを入力してください...',
+
         'footer-text':'© 2025 トゥアン・クオック. HTML、CSS、JavaScriptで❤️を込めて作成'
     },
     zh:{
@@ -1210,6 +1227,10 @@ const t={
 
         'footer-text':'© 2025 Tuấn Quốc。使用 HTML、CSS 和 JavaScript 制作 ❤️',
 
+        'placeholder-name':'张三',
+        'placeholder-email':'example@email.com',
+        'placeholder-message':'请输入您的留言...',
+
         'badge-new':'新',
         'badge-update':'更新',
         'filter-css':'CSS',
@@ -1222,10 +1243,18 @@ let lang=localStorage.getItem('language')||'vi',currentPage=1,currentFilter='all
 function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
 function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
 function applyLang(l){
+    // Update text content
     document.querySelectorAll('[data-lang]').forEach(e=>{
         const k=e.getAttribute('data-lang');
         if(t[l][k])e.textContent=t[l][k]
     });
+    
+    // Update placeholders
+    document.querySelectorAll('[data-placeholder]').forEach(e=>{
+        const k=e.getAttribute('data-placeholder');
+        if(t[l][k])e.placeholder=t[l][k]
+    });
+    
     document.documentElement.lang=l;
     document.body.setAttribute('data-lang', l);
     renderProjects()
