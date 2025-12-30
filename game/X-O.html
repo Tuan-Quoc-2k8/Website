@@ -65,9 +65,14 @@
       <button class="menu-btn" onclick="selectMap(3, 3)">3×3 (3 <span data-lang="inRow">in a row</span>)</button>
       <button class="menu-btn" onclick="selectMap(7, 4)">7×7 (4 <span data-lang="inRow">in a row</span>)</button>
       <button class="menu-btn" onclick="selectMap(12, 5)">12×12 (5 <span data-lang="inRow">in a row</span>)</button>
-      <button class="menu-btn" onclick="showCustomMap()">
+      <button class="menu-btn" id="custom-map-btn" onclick="showCustomMap()">
         <span data-lang="customMap">Custom Map</span>
       </button>
+      <div id="ai-warning" class="info-box" style="display: none; margin-top: 20px;">
+        <p data-lang="aiMapWarning">
+          ℹ️ Custom maps are disabled in AI mode to ensure smooth gameplay. Please select a predefined map size.
+        </p>
+      </div>
       <button class="back-btn" onclick="goBackFromMap()">
         <span data-lang="back">Back</span>
       </button>
