@@ -51,7 +51,8 @@ const translations = {
     errorWinCondition: 'Win condition must be between 3 and 20!',
     errorWinTooLarge: 'Win condition cannot be larger than board size!',
     errorWinTooSmall: 'Win condition must be at least 3!',
-    tutorialText: '<h3>How to Play</h3><p><strong>Objective:</strong> Get the required number of your symbols in a row (horizontally, vertically, or diagonally) to win.</p><p><strong>Game Modes:</strong></p><ul><li><strong>Player vs Player:</strong> Take turns placing X and O on the board.</li><li><strong>Player vs Computer:</strong> Challenge the AI at different difficulty levels.</li></ul><p><strong>Difficulty Levels:</strong></p><ul><li><strong>Noob:</strong> AI makes random moves.</li><li><strong>Pro:</strong> AI blocks your winning moves and tries to win.</li><li><strong>Expert:</strong> AI uses advanced strategy with smart tactics.</li></ul><p><strong>Map Sizes:</strong></p><ul><li><strong>3×3:</strong> First to get 3 in a row wins.</li><li><strong>7×7:</strong> First to get 4 in a row wins.</li><li><strong>12×12:</strong> First to get 5 in a row wins.</li><li><strong>Custom:</strong> Create your own board size and win condition.</li></ul>'
+    aiMapWarning: 'ℹ️ Custom maps are disabled in AI mode to ensure smooth gameplay. Please select a predefined map size.',
+    tutorialText: '<h3>How to Play</h3><p><strong>Objective:</strong> Get the required number of your symbols in a row (horizontally, vertically, or diagonally) to win.</p><p><strong>Game Modes:</strong></p><ul><li><strong>Player vs Player:</strong> Take turns placing X and O on the board.</li><li><strong>Player vs Computer:</strong> Challenge the AI at different difficulty levels.</li></ul><p><strong>Difficulty Levels:</strong></p><ul><li><strong>Noob:</strong> AI makes random moves.</li><li><strong>Pro:</strong> AI blocks your winning moves and tries to win.</li><li><strong>Expert:</strong> AI uses advanced strategy with smart tactics.</li></ul><p><strong>Map Sizes:</strong></p><ul><li><strong>3×3:</strong> First to get 3 in a row wins.</li><li><strong>7×7:</strong> First to get 4 in a row wins.</li><li><strong>12×12:</strong> First to get 5 in a row wins.</li><li><strong>Custom:</strong> Create your own board size and win condition (Player vs Player only).</li></ul>'
   },
   vi: {
     title: 'Cờ Caro',
@@ -90,7 +91,8 @@ const translations = {
     errorWinCondition: 'Điều kiện thắng phải từ 3 đến 20!',
     errorWinTooLarge: 'Điều kiện thắng không thể lớn hơn kích thước bàn cờ!',
     errorWinTooSmall: 'Điều kiện thắng phải ít nhất là 3!',
-    tutorialText: '<h3>Cách Chơi</h3><p><strong>Mục tiêu:</strong> Đặt đủ số ô liên tiếp (ngang, dọc hoặc chéo) để thắng.</p><p><strong>Chế độ chơi:</strong></p><ul><li><strong>Người vs Người:</strong> Lần lượt đặt X và O lên bàn cờ.</li><li><strong>Người vs Máy:</strong> Thách đấu với AI ở các mức độ khác nhau.</li></ul><p><strong>Độ khó:</strong></p><ul><li><strong>Dễ:</strong> AI đi ngẫu nhiên.</li><li><strong>Trung Bình:</strong> AI chặn nước thắng và cố gắng thắng.</li><li><strong>Khó:</strong> AI sử dụng chiến thuật thông minh.</li></ul><p><strong>Kích thước bàn cờ:</strong></p><ul><li><strong>3×3:</strong> 3 ô liên tiếp thắng.</li><li><strong>7×7:</strong> 4 ô liên tiếp thắng.</li><li><strong>12×12:</strong> 5 ô liên tiếp thắng.</li><li><strong>Tùy chỉnh:</strong> Tạo bàn cờ và điều kiện thắng riêng.</li></ul>'
+    aiMapWarning: 'ℹ️ Chế độ tùy chỉnh bị tắt khi chơi với AI để đảm bảo hiệu suất mượt mà. Vui lòng chọn kích thước bàn cờ có sẵn.',
+    tutorialText: '<h3>Cách Chơi</h3><p><strong>Mục tiêu:</strong> Đặt đủ số ô liên tiếp (ngang, dọc hoặc chéo) để thắng.</p><p><strong>Chế độ chơi:</strong></p><ul><li><strong>Người vs Người:</strong> Lần lượt đặt X và O lên bàn cờ.</li><li><strong>Người vs Máy:</strong> Thách đấu với AI ở các mức độ khác nhau.</li></ul><p><strong>Độ khó:</strong></p><ul><li><strong>Dễ:</strong> AI đi ngẫu nhiên.</li><li><strong>Trung Bình:</strong> AI chặn nước thắng và cố gắng thắng.</li><li><strong>Khó:</strong> AI sử dụng chiến thuật thông minh.</li></ul><p><strong>Kích thước bàn cờ:</strong></p><ul><li><strong>3×3:</strong> 3 ô liên tiếp thắng.</li><li><strong>7×7:</strong> 4 ô liên tiếp thắng.</li><li><strong>12×12:</strong> 5 ô liên tiếp thắng.</li><li><strong>Tùy chỉnh:</strong> Tạo bàn cờ và điều kiện thắng riêng (chỉ dành cho chế độ Người vs Người).</li></ul>'
   }
 };
 
@@ -124,6 +126,20 @@ function changeSkin(skin) {
 // Mode Selection
 function selectMode(mode) {
   gameState.mode = mode;
+  
+  // Get custom map button and warning
+  const customMapBtn = document.getElementById('custom-map-btn');
+  const aiWarning = document.getElementById('ai-warning');
+  
+  // Hide custom map option for AI modes
+  if (mode === 'player') {
+    customMapBtn.style.display = 'block';
+    aiWarning.style.display = 'none';
+  } else {
+    customMapBtn.style.display = 'none';
+    aiWarning.style.display = 'block';
+  }
+  
   showScreen('map-screen');
 }
 
@@ -139,10 +155,20 @@ function selectMap(size, win) {
 }
 
 function showCustomMap() {
+  // Only allow custom maps in player vs player mode
+  if (gameState.mode !== 'player') {
+    return;
+  }
   showScreen('custom-map-screen');
 }
 
 function applyCustomMap() {
+  // Prevent custom maps in AI mode
+  if (gameState.mode !== 'player') {
+    showScreen('map-screen');
+    return;
+  }
+  
   const sizeInput = document.getElementById('custom-size');
   const winInput = document.getElementById('custom-win');
   const errorDiv = document.getElementById('custom-error');
