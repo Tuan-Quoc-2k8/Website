@@ -3,57 +3,146 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Xếp hình gạch — 8x8</title>
-<link rel="stylesheet" href="./data/xep-hinh/do-hoa.css">
+  <title>Block Puzzle Game</title>
+  <link rel="stylesheet" href="./data/xep-hinh/styles.css">
 </head>
 <body>
-  <div class="wrap">
-    <div class="panel">
-      <h3>🧩 Game xếp gạch</h3>
-      <div class="board-container">
-        <div class="board" id="board" aria-label="Bảng chơi"></div>
-        <div id="centerMessage"></div>
+  
+  <!-- INTRO SCREEN -->
+  <div id="introScreen" class="screen active">
+    <div class="intro-container">
+      <h1 class="game-title" data-translate="gameTitle">🧩 Xếp hình gạch</h1>
+      <p class="game-subtitle" data-translate="gameSubtitle">Thử thách trí tuệ của bạn!</p>
+      
+      <div class="intro-buttons">
+        <button class="intro-btn play-btn" id="playBtn">
+          <span data-translate="play">▶️ Chơi ngay</span>
+        </button>
+        <button class="intro-btn settings-btn" id="settingsBtn">
+          <span data-translate="settings">⚙️ Cài đặt</span>
+        </button>
       </div>
-
-      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:space-between">
-        <div class="info">
-          <div class="score" id="score">Điểm: 0 • Combo: 0</div>
-          <div class="hint">
-            Đặt gạch để có điểm (ít hơn phá). Khi 1 hàng (dọc/ngang) đầy sẽ phá. 
-            Phá liên tiếp nhiều hàng sẽ được nhân combo!
-          </div>
-        </div>
-      </div>
-
-      <div class="powerups" style="margin-top:12px">
-        <button id="bombBtn">💣 Bom (x3)</button>
-        <button id="swapBtn">🔃 Xáo trộn (x3)</button>
-        <button id="hintBtn">🎲 Thay khối (x3)</button>
+      
+      <div class="intro-footer">
+        <p data-translate="instructions">Kéo và thả các khối để điền vào bảng</p>
       </div>
     </div>
+  </div>
 
-    <div class="panel">
-      <h3>🎯 Khối & Lưu trữ</h3>
-      <div class="controls">
-        <div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
-          <div style="flex:1">
-            <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Hàng chờ (3 khối)</div>
-            <div class="queue" id="queue" aria-label="Hàng chờ khối"></div>
+  <!-- SETTINGS MODAL -->
+  <div id="settingsModal" class="modal-backdrop">
+    <div class="settings-panel">
+      <div class="settings-header">
+        <h2 data-translate="settings">⚙️ Cài đặt</h2>
+        <button class="close-btn" id="closeSettings">✖</button>
+      </div>
+      
+      <div class="settings-content">
+        <!-- Theme Section -->
+        <div class="setting-section">
+          <h3 data-translate="themeTitle">🎨 Chủ đề giao diện</h3>
+          <div class="theme-grid">
+            <button class="theme-card" data-theme="default">
+              <div class="theme-preview default-preview"></div>
+              <span data-translate="themeDefault">Mặc định</span>
+            </button>
+            <button class="theme-card" data-theme="ocean">
+              <div class="theme-preview ocean-preview"></div>
+              <span data-translate="themeOcean">Đại dương</span>
+            </button>
+            <button class="theme-card" data-theme="sunset">
+              <div class="theme-preview sunset-preview"></div>
+              <span data-translate="themeSunset">Hoàng hôn</span>
+            </button>
+            <button class="theme-card" data-theme="forest">
+              <div class="theme-preview forest-preview"></div>
+              <span data-translate="themeForest">Rừng xanh</span>
+            </button>
+            <button class="theme-card" data-theme="neon">
+              <div class="theme-preview neon-preview"></div>
+              <span data-translate="themeNeon">Neon</span>
+            </button>
+            <button class="theme-card" data-theme="purple">
+              <div class="theme-preview purple-preview"></div>
+              <span data-translate="themePurple">Tím mộng mơ</span>
+            </button>
           </div>
+        </div>
+        
+        <!-- Language Section -->
+        <div class="setting-section">
+          <h3 data-translate="languageTitle">🌐 Ngôn ngữ</h3>
+          <div class="language-buttons">
+            <button class="lang-btn active" data-lang="vi">
+              <span class="flag">VN</span> Tiếng Việt
+            </button>
+            <button class="lang-btn" data-lang="en">
+              <span class="flag">EN</span> English
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-          <div style="width:110px;">
-            <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Kho lưu</div>
-            <div class="storage" id="storage" title="Click để lưu/đổi khối" aria-label="Kho lưu"></div>
+  <!-- GAME SCREEN -->
+  <div id="gameScreen" class="screen">
+    <div class="game-header">
+      <button class="header-btn" id="backBtn" data-translate="back">← Trở về</button>
+      <button class="header-btn" id="settingsGameBtn">⚙️</button>
+    </div>
+    
+    <div class="wrap">
+      <div class="panel">
+        <h3>🧩 <span data-translate="gameBoard">Game xếp gạch</span></h3>
+        <div class="board-container">
+          <div class="board" id="board" aria-label="Bảng chơi"></div>
+          <div id="centerMessage"></div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:space-between">
+          <div class="info">
+            <div class="score" id="score">Điểm: 0 • Combo: 0</div>
+            <div class="combo-multiplier" id="comboMultiplier" style="font-size:14px;color:var(--accent);font-weight:600;margin-top:4px;opacity:0;transition:opacity 0.3s;">
+              🔥 Nhân x1.0
+            </div>
+            <div class="hint" data-translate="gameHint">
+              Đặt gạch để có điểm (ít hơn phá). Khi 1 hàng (dọc/ngang) đầy sẽ phá. 
+              Phá liên tiếp nhiều hàng sẽ được nhân combo!
+            </div>
           </div>
         </div>
 
-        <div class="toolbar" style="margin-top:8px">
-          <button id="rotateBtn">Xoay</button>
-          <button id="storeBtn">Lưu/Đổi</button>
-          <button id="newGame" class="primary">Bắt đầu lại</button>
+        <div class="powerups" style="margin-top:12px">
+          <button id="bombBtn">💣 <span data-translate="bomb">Bom</span> (x3)</button>
+          <button id="swapBtn">🔃 <span data-translate="swap">Xáo trộn</span> (x3)</button>
+          <button id="hintBtn">🎲 <span data-translate="replace">Thay khối</span> (x3)</button>
         </div>
+      </div>
 
-        <div style="margin-top:10px" class="muted">Ghi chú: Kéo & thả khối để đặt. Nhấn  hoặc dùng phím Q/E để xoay.</div>
+      <div class="panel">
+        <h3>🎯 <span data-translate="blocksStorage">Khối & Lưu trữ</span></h3>
+        <div class="controls">
+          <div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+            <div style="flex:1">
+              <div style="font-size:13px;color:var(--muted);margin-bottom:6px" data-translate="queue">Hàng chờ (3 khối)</div>
+              <div class="queue" id="queue" aria-label="Hàng chờ khối"></div>
+            </div>
+
+            <div style="width:110px;">
+              <div style="font-size:13px;color:var(--muted);margin-bottom:6px" data-translate="storage">Kho lưu</div>
+              <div class="storage" id="storage" title="Click để lưu/đổi khối" aria-label="Kho lưu"></div>
+            </div>
+          </div>
+
+          <div class="toolbar" style="margin-top:8px">
+            <button id="rotateBtn" data-translate="rotate">Xoay</button>
+            <button id="storeBtn" data-translate="storeSwap">Lưu/Đổi</button>
+            <button id="newGame" class="primary" data-translate="newGame">Bắt đầu lại</button>
+          </div>
+
+          <div style="margin-top:10px" class="muted" data-translate="controls">Ghi chú: Kéo & thả khối để đặt. Nhấn hoặc dùng phím Q/E để xoay.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -62,13 +151,29 @@
   <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-hidden="true">
     <div class="replace-menu" role="document" aria-modal="true" aria-labelledby="replaceTitle">
       <div class="replace-header">
-        <div id="replaceTitle" class="replace-title">Chọn khối thay thế</div>
+        <div id="replaceTitle" class="replace-title" data-translate="selectBlock">Chọn khối thay thế</div>
         <button id="replaceClose" class="replace-close" aria-label="Đóng">✖</button>
       </div>
       <div id="replaceGrid" class="replace-grid"></div>
     </div>
   </div>
-  
-<script src="./data/xep-hinh/game.js"></script>
+
+  <!-- Game Over Modal -->
+  <div id="gameOverModal" class="modal-backdrop">
+    <div class="game-over-panel">
+      <h2 class="game-over-title" data-translate="gameOver">🎮 Game Over!</h2>
+      <p class="game-over-message" data-translate="gameOverMessage">Không còn nước đi hợp lệ!</p>
+      <div class="game-over-score">
+        <span data-translate="finalScore">Điểm cuối cùng:</span>
+        <span id="finalScore" class="final-score-value">0</span>
+      </div>
+      <div class="game-over-buttons">
+        <button class="game-over-btn primary" id="restartBtn" data-translate="playAgain">🔄 Chơi lại</button>
+        <button class="game-over-btn" id="menuBtn" data-translate="mainMenu">🏠 Menu chính</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./data/xep-hinh/game.js"></script>
 </body>
 </html>
