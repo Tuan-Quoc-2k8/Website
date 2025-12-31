@@ -1788,7 +1788,22 @@ document.querySelectorAll('.theme-card').forEach(c=>c.addEventListener('click',(
 document.querySelectorAll('.lang-card').forEach(c=>c.addEventListener('click',()=>setLanguage(c.getAttribute('data-lang-code'))));
 document.getElementById('settings-modal').addEventListener('click',e=>{if(e.target.id==='settings-modal')closeSettings()});
 document.getElementById('contact-form').addEventListener('submit',e=>{e.preventDefault();const btn=e.target.querySelector('button');const txt=btn.textContent;btn.textContent=lang==='vi'?'Đang gửi...':'Sending...';btn.disabled=true;setTimeout(()=>{btn.textContent=lang==='vi'?'✓ Đã gửi!':'✓ Sent!';setTimeout(()=>{btn.textContent=txt;btn.disabled=false;e.target.reset()},2000)},1500)});
-window.addEventListener('resize',()=>{CONFIG.projectsPerPage=window.innerWidth<=768?3:6;if(window.innerWidth>768){document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')}filterProjects(currentFilter)});
+
+let resizeTimer;
+window.addEventListener('resize',()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{
+        const newPerPage=window.innerWidth<=768?3:6;
+        if(newPerPage!==CONFIG.projectsPerPage){
+            CONFIG.projectsPerPage=newPerPage;
+            filterProjects(currentFilter)
+        }
+        if(window.innerWidth>768){
+            document.querySelector('nav').classList.remove('active');
+            document.querySelector('.nav-overlay').classList.remove('active')
+        }
+    },250)
+});
 </script>
 </body>
 </html>
