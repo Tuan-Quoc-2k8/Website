@@ -366,174 +366,593 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
     .contact-wrapper{grid-template-columns:1fr;gap:2rem}
     .theme-grid{grid-template-columns:repeat(3,1fr)}
 }
-/* ============================================
-   IN-APP BROWSER WARNING NOTIFICATION
-   ============================================ */
-.browser-warning {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
-    color: #fff;
-    z-index: 10000;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    animation: slideDown 0.5s ease-out;
-    padding: 1rem;
-}
 
-.browser-warning.hidden {
-    display: none;
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
+/*In-App Browser Detection Banner*/
+#inapp-browser-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        z-index: 10000;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        animation: slideDown 0.5s ease;
     }
-    to {
-        transform: translateY(0);
+    
+    @keyframes slideDown {
+        from { transform: translateY(-100%); }
+        to { transform: translateY(0); }
+    }
+    
+    .banner-content {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .banner-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .banner-text {
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.5;
+    }
+    
+    .banner-instructions {
+        background: rgba(255,255,255,0.2);
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .banner-close {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(255,255,255,0.3);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s;
+    }
+    
+    .banner-close:hover {
+        background: rgba(255,255,255,0.5);
+    }
+    
+    .banner-icon {
+        font-size: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        #inapp-browser-banner {
+            padding: 0.75rem;
+        }
+        
+        .banner-title {
+            font-size: 1rem;
+        }
+        
+        .banner-text {
+            font-size: 0.85rem;
+        }
+        
+        .banner-instructions {
+            font-size: 0.8rem;
+            padding: 0.5rem;
+        }
+    }
+
+    /* ============================================
+    PREMIUM GRADIENT THEME
+    ============================================ */
+    body[data-theme="gradient-exclusive"] {
+        --primary: #F1C9FD;
+        --primary-light: #FC0061;
+        --accent: #FF1493;
+    }
+    body[data-theme="gradient-exclusive"] .logo-img,
+    body[data-theme="gradient-exclusive"] .skill-icon,
+    body[data-theme="gradient-exclusive"] .contact-icon,
+    body[data-theme="gradient-exclusive"] .loading-logo,
+    body[data-theme="gradient-exclusive"] .project-img {
+        background: linear-gradient(135deg, #F1C9FD, #FC0061);
+    }
+
+    body[data-theme="gradient-exclusive"] .btn-primary {
+        background: linear-gradient(135deg, #F1C9FD, #FC0061);
+        box-shadow: 0 4px 12px rgba(252, 0, 97, 0.3);
+    }
+
+    body[data-theme="gradient-exclusive"] .progress-fill {
+        background: linear-gradient(135deg, #F1C9FD, #FC0061);
+    }
+
+    .theme-card[data-theme="gradient-exclusive"] {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .theme-card[data-theme="gradient-exclusive"]::before {
+        content: '🔒';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 0.9rem;
+        opacity: 0.7;
+        z-index: 2;
+    }
+
+    .theme-card[data-theme="gradient-exclusive"].unlocked::before {
+        content: '✓';
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
+
+    body[data-theme="gradient-premium"] {
+        --primary: #0891b2;
+        --primary-light: #06b6d4;
+        --accent: #14b8a6;
+    }
+
+    body[data-theme="gradient-premium"] .logo-img,
+    body[data-theme="gradient-premium"] .skill-icon,
+    body[data-theme="gradient-premium"] .contact-icon,
+    body[data-theme="gradient-premium"] .loading-logo,
+    body[data-theme="gradient-premium"] .project-img {
+        background: linear-gradient(135deg, #0891b2, #06b6d4, #14b8a6);
+    }
+
+    body[data-theme="gradient-premium"] .btn-primary {
+        background: linear-gradient(135deg, #0891b2, #14b8a6);
+        box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
+    }
+
+    body[data-theme="gradient-premium"] .btn-primary:hover {
+        box-shadow: 0 6px 20px rgba(8, 145, 178, 0.4);
+    }
+
+
+    /* ============================================
+    PREMIUM THEME CARD WITH LOCK ICON
+    ============================================ */
+    .theme-card[data-theme="gradient-premium"] {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .theme-card[data-theme="gradient-premium"]::before {
+        content: '🔒';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 0.9rem;
+        opacity: 0.7;
+        z-index: 2;
+    }
+
+    .theme-card[data-theme="gradient-premium"].unlocked::before {
+        content: '✓';
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
+
+    .theme-card[data-theme="gradient-premium"] .theme-color {
+        background: linear-gradient(135deg, #0891b2, #06b6d4, #14b8a6);
+    }
+
+    /* ============================================
+    PREMIUM MODAL
+    ============================================ */
+    .premium-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .premium-modal-content {
+        background: var(--card);
+        border-radius: 20px;
+        max-width: 450px;
+        width: 90%;
+        box-shadow: 0 20px 60px var(--shadow);
+        animation: slideUp 0.3s ease;
+    }
+
+    .premium-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid var(--border);
+    }
+
+    .premium-modal-header h3 {
+        font-size: 1.5rem;
+        margin: 0;
+        color: var(--text);
+    }
+
+    .premium-modal-close {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: var(--bg);
+        border: none;
+        color: var(--text);
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .premium-modal-close:hover {
+        background: var(--border);
+        transform: rotate(90deg);
+    }
+
+    .premium-modal-body {
+        padding: 2rem;
+    }
+
+    .premium-modal-body p {
+        color: var(--text-sec);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .premium-input {
+        width: 100%;
+        padding: 0.875rem;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .premium-input:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+    .premium-error {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        min-height: 20px;
+    }
+
+    .premium-modal-footer {
+        display: flex;
+        gap: 1rem;
+        padding: 1.5rem 2rem;
+        border-top: 2px solid var(--border);
+    }
+
+    .premium-modal-footer .btn {
+        flex: 1;
+    }
+
+    /* ============================================
+    ENHANCED PROJECT TABS SYSTEM
+    ============================================ */
+    .project-filters {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-start;
+        margin-bottom: 2rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        position: relative;
+        padding: 0.5rem 0;
+        
+        /* Enable momentum scrolling on iOS */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .project-filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Gradient fade effect */
+    .project-filters::before,
+    .project-filters::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+    }
+
+    .project-filters::before {
+        left: 0;
+        background: linear-gradient(to right, var(--bg), transparent);
+    }
+
+    .project-filters::after {
+        right: 0;
+        background: linear-gradient(to left, var(--bg), transparent);
+    }
+
+    .project-filters.has-scroll-left::before {
         opacity: 1;
     }
-}
 
-.browser-warning-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 0 20px;
-}
-
-.browser-warning-icon {
-    font-size: 2rem;
-    flex-shrink: 0;
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
+    .project-filters.has-scroll-right::after {
+        opacity: 1;
     }
-    50% {
-        transform: scale(1.1);
+
+    .filter-btn {
+        padding: 0.75rem 1.5rem;
+        background: var(--card);
+        border: 2px solid var(--border);
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: var(--tap);
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
-}
 
-.browser-warning-text {
-    flex: 1;
-}
-
-.browser-warning-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    color: #fff;
-}
-
-.browser-warning-message {
-    font-size: 0.95rem;
-    margin: 0 0 0.75rem 0;
-    line-height: 1.5;
-    opacity: 0.95;
-}
-
-.browser-warning-instructions {
-    font-size: 0.85rem;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.browser-warning-instructions strong {
-    display: block;
-    margin-bottom: 0.25rem;
-}
-
-.browser-warning-close {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.3s ease;
-    font-weight: 300;
-    line-height: 1;
-}
-
-.browser-warning-close:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: rotate(90deg);
-}
-
-/* Adjust header positioning when warning is visible */
-body.browser-warning-active header {
-    top: auto;
-    margin-top: calc(var(--warning-height, 0px));
-}
-
-/* Mobile responsive */
-@media (max-width: 768px) {
-    .browser-warning {
-        padding: 0.75rem;
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
-    
-    .browser-warning-content {
-        flex-direction: column;
-        padding: 0;
-        gap: 0.75rem;
+
+    .project-filters.is-scrolling .filter-btn {
+        transition: all 0.15s;
     }
-    
-    .browser-warning-icon {
-        font-size: 1.5rem;
-        align-self: flex-start;
+
+    /* Mobile optimization */
+    @media (max-width: 768px) {
+        .project-filters {
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        
+        .filter-btn {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .project-filters::before,
+        .project-filters::after {
+            width: 30px;
+        }
     }
-    
-    .browser-warning-title {
-        font-size: 1rem;
+
+    /* Desktop: Show scroll indicators */
+    @media (min-width: 769px) {
+        .project-filters {
+            padding-left: 50px;
+            padding-right: 50px;
+        }
+        
+        .project-filters::before {
+            left: 0;
+            width: 50px;
+        }
+        
+        .project-filters::after {
+            right: 0;
+            width: 50px;
+        }
     }
-    
-    .browser-warning-message {
-        font-size: 0.9rem;
+
+    /* ============================================
+    SMOOTH SCROLL INDICATORS
+    ============================================ */
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 0.6;
+        }
+        50% {
+            opacity: 1;
+        }
     }
-    
-    .browser-warning-instructions {
-        font-size: 0.8rem;
+
+    .project-filters.has-scroll-right::after {
+        animation: pulse 2s ease-in-out infinite;
     }
-    
-    .browser-warning-close {
-        position: absolute;
-        top: 0.75rem;
-        right: 0.75rem;
+
+    /* ============================================
+    RESPONSIVE ADJUSTMENTS
+    ============================================ */
+    @media (max-width: 768px) {
+        .premium-modal-content {
+            max-width: 90%;
+        }
+        
+        .premium-modal-header,
+        .premium-modal-body,
+        .premium-modal-footer {
+            padding: 1.25rem 1.5rem;
+        }
+        
+        .premium-modal-footer {
+            flex-direction: column;
+        }
     }
-}
 </style>
 </head>
 <body data-theme="blue">
-    <!-- In-App Browser Warning Banner -->
-    <div id="browser-warning" class="browser-warning hidden">
-        <div class="browser-warning-content">
-            <div class="browser-warning-icon">⚠️</div>
-            <div class="browser-warning-text">
-                <h4 class="browser-warning-title" data-lang="warning-title">Cảnh báo trình duyệt</h4>
-                <p class="browser-warning-message" data-lang="warning-message">Bạn đang sử dụng trình duyệt trong ứng dụng. Để có trải nghiệm tốt nhất, vui lòng mở trang này trong trình duyệt chính (Chrome, Safari, Firefox).</p>
-                <div class="browser-warning-instructions" data-lang="warning-instructions">
-                    <strong>Cách mở:</strong> Nhấn vào menu (•••) và chọn "Mở trong trình duyệt"
-                </div>
+    <!-- In-App Browser Detection Banner -->
+    <!-- START: Paste from here -->
+    <div id="inapp-browser-banner" style="display:none;">
+        <style>
+            
+        </style>
+        
+        <div class="banner-content">
+            <button class="banner-close" onclick="closeInAppBanner()">×</button>
+            
+            <div class="banner-title">
+                <span class="banner-icon">⚠️</span>
+                <span id="banner-title-text">Đang xem trong ứng dụng</span>
             </div>
-            <button class="browser-warning-close" onclick="dismissBrowserWarning()" aria-label="Close warning">×</button>
+            
+            <div class="banner-text" id="banner-description">
+                Để có trải nghiệm tốt nhất, vui lòng mở trang web này trong trình duyệt Chrome hoặc Safari
+            </div>
+            
+            <div class="banner-instructions" id="banner-steps">
+                <strong>📱 Cách mở:</strong><br>
+                1. Nhấn vào <strong>3 chấm</strong> (⋮) ở góc trên<br>
+                2. Chọn <strong>"Mở bằng Chrome"</strong> hoặc <strong>"Mở bằng Safari"</strong>
+            </div>
+            
+            <div style="font-size:0.75rem; opacity:0.9;" id="banner-app-name">
+                <!-- App name will be inserted here -->
+            </div>
         </div>
     </div>
+
+    <script>
+    (function() {
+        'use strict';
+        
+        var translations = {
+            vi: {
+                title: 'Đang xem trong ứng dụng',
+                description: 'Để có trải nghiệm tốt nhất, vui lòng mở trang web này trong trình duyệt Chrome hoặc Safari',
+                steps: '<strong>📱 Cách mở:</strong><br>1. Nhấn vào <strong>3 chấm</strong> (⋮) ở góc trên<br>2. Chọn <strong>"Mở bằng Chrome"</strong> hoặc <strong>"Mở bằng Safari"</strong>',
+                zalo: 'Đang xem trong Zalo',
+                facebook: 'Đang xem trong Facebook',
+                instagram: 'Đang xem trong Instagram'
+            },
+            en: {
+                title: 'Viewing in App Browser',
+                description: 'For the best experience, please open this website in Chrome or Safari browser',
+                steps: '<strong>📱 How to open:</strong><br>1. Tap the <strong>3-dot menu</strong> (⋮) at the top<br>2. Select <strong>"Open in Chrome"</strong> or <strong>"Open in Safari"</strong>',
+                zalo: 'Viewing in Zalo',
+                facebook: 'Viewing in Facebook',
+                instagram: 'Viewing in Instagram'
+            }
+        };
+        
+        var currentLang = document.documentElement.lang || 'vi';
+        if (!translations[currentLang]) {
+            currentLang = 'vi';
+        }
+        
+        function detectInAppBrowser() {
+            var ua = navigator.userAgent || navigator.vendor || window.opera;
+            
+            if (ua.indexOf('Zalo') > -1) {
+                return { name: 'zalo', displayName: translations[currentLang].zalo };
+            }
+            if (ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1) {
+                return { name: 'facebook', displayName: translations[currentLang].facebook };
+            }
+            if (ua.indexOf('Instagram') > -1) {
+                return { name: 'instagram', displayName: translations[currentLang].instagram };
+            }
+            if (ua.indexOf('Line') > -1) {
+                return { name: 'line', displayName: 'Line' };
+            }
+            if (ua.indexOf('MicroMessenger') > -1) {
+                return { name: 'wechat', displayName: 'WeChat' };
+            }
+            
+            return false;
+        }
+        
+        var inAppInfo = detectInAppBrowser();
+        
+        if (inAppInfo) {
+            var banner = document.getElementById('inapp-browser-banner');
+            var titleEl = document.getElementById('banner-title-text');
+            var descEl = document.getElementById('banner-description');
+            var stepsEl = document.getElementById('banner-steps');
+            var appNameEl = document.getElementById('banner-app-name');
+            
+            titleEl.textContent = translations[currentLang].title;
+            descEl.textContent = translations[currentLang].description;
+            stepsEl.innerHTML = translations[currentLang].steps;
+            appNameEl.textContent = 'Detected: ' + inAppInfo.displayName;
+            
+            banner.style.display = 'block';
+            document.body.style.paddingTop = banner.offsetHeight + 'px';
+            
+            setTimeout(function() {
+                closeInAppBanner();
+            }, 10000);
+            
+            console.log('In-app browser detected:', inAppInfo.name);
+        }
+        
+        window.closeInAppBanner = function() {
+            var banner = document.getElementById('inapp-browser-banner');
+            if (banner) {
+                banner.style.animation = 'slideDown 0.3s ease reverse';
+                setTimeout(function() {
+                    banner.style.display = 'none';
+                    document.body.style.paddingTop = '0';
+                }, 300);
+            }
+        };
+        
+    })();
+    </script>
+
 <div id="loading">
 <div class="loading-particles" id="particles"></div>
 <div class="loading-content">
@@ -592,6 +1011,19 @@ body.browser-warning-active header {
 <div class="theme-color" style="background:linear-gradient(135deg,#b91c1c,#ef4444)"></div>
 <div class="theme-name" data-lang="theme-red">Đỏ</div>
 </div>
+
+<!-- Premium Theme Card -->
+<div class="theme-card" data-theme="gradient-premium" id="premium-theme-card">
+    <div class="theme-color" style="background:linear-gradient(135deg,#0891b2,#06b6d4,#14b8a6)"></div>
+    <div class="theme-name" data-lang="theme-gradient-premium">Gradient Premium</div>
+</div>
+
+<!-- Exclusive Theme Card -->
+<div class="theme-card" data-theme="gradient-exclusive" id="exclusive-theme-card">
+    <div class="theme-color" style="background:linear-gradient(135deg,#F1C9FD,#FC0061)"></div>
+    <div class="theme-name" data-lang="theme-gradient-exclusive">Pink Exclusive</div>
+</div>
+
 </div>
 </div>
 <div class="settings-section">
@@ -847,12 +1279,238 @@ body.browser-warning-active header {
      * manualVisitCount: 1500    → Always display 1500
      * manualVisitCount: 10000   → Always display 10000
 */
-const CONFIG={
-    aboutImageUrl:'./img/minimal-tech-banner.png',//banner
-    projectsPerPage:window.innerWidth<=768?3:6,
-    manualVisitCount:'none'//visits
+
+/* ============================================
+   ENHANCED CONFIGURATION OPTIONS
+   ============================================ */
+const CONFIG = {
+    aboutImageUrl: './img/minimal-tech-banner.png',
+    projectsPerPage: window.innerWidth <= 768 ? 3 : 6,
+    manualVisitCount: 'none',
+    
+    // NEW: Auto-sort projects alphabetically
+    autoSortProjects: true,
+    
+    // NEW: Dynamic project count ('none' = auto, or specify number)
+    projectCount: 'none',
+    // Theme unlock keys
+    unlockKeys: {
+        premium: 'Admin2008',
+        exclusive: 'Year2026',
+        sunset: 'Sunset2025',
+        ocean: 'Ocean2025'
+    },
+    
+    // Theme names mapping
+    themeNames: {
+        premium: 'gradient-premium',
+        exclusive: 'gradient-exclusive',
+        sunset: 'gradient-sunset',
+        ocean: 'gradient-ocean'
+    }
 };
 
+/* ============================================
+   PREMIUM THEME MANAGEMENT
+   ============================================ */
+function isPremiumUnlocked() {
+    return localStorage.getItem('premiumUnlocked') === 'true';
+}
+
+function unlockPremiumTheme() {
+    localStorage.setItem('premiumUnlocked', 'true');
+}
+function isExclusiveUnlocked() {
+    return localStorage.getItem('exclusiveUnlocked') === 'true';
+}
+
+function unlockExclusiveTheme() {
+    localStorage.setItem('exclusiveUnlocked', 'true');
+}
+
+function showPremiumModal(themeType = 'premium') {
+    // Define theme configurations
+    const themeConfigs = {
+        'premium': {
+            title: '🔒 Premium Theme',
+            description: 'Enter the unlock key to access the Premium Gradient theme:',
+            gradient: 'linear-gradient(135deg, #0891b2, #06b6d4, #14b8a6)',
+            themeName: 'gradient-premium'
+        },
+        'exclusive': {
+            title: '🔒 Exclusive Theme',
+            description: 'Enter the unlock key to access the Exclusive Pink Gradient theme:',
+            gradient: 'linear-gradient(135deg, #F1C9FD, #FC0061)',
+            themeName: 'gradient-exclusive'
+        },
+        'sunset': {
+            title: '🔒 Sunset Theme',
+            description: 'Enter the unlock key to access the Sunset Gradient theme:',
+            gradient: 'linear-gradient(135deg, #FF6B6B, #FFD93D, #6BCB77)',
+            themeName: 'gradient-sunset'
+        },
+        'ocean': {
+            title: '🔒 Ocean Theme',
+            description: 'Enter the unlock key to access the Ocean Gradient theme:',
+            gradient: 'linear-gradient(135deg, #667eea, #764ba2, #f093fb)',
+            themeName: 'gradient-ocean'
+        }
+    };
+    
+    const config = themeConfigs[themeType] || themeConfigs['premium'];
+    
+    const modal = document.createElement('div');
+    modal.className = 'premium-modal';
+    modal.innerHTML = `
+        <div class="premium-modal-content">
+            <div class="premium-modal-header">
+                <h3>${config.title}</h3>
+                <button class="premium-modal-close" onclick="this.closest('.premium-modal').remove()">×</button>
+            </div>
+            <div class="premium-modal-body">
+                <div style="width: 100%; height: 60px; background: ${config.gradient}; border-radius: 12px; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+                <p>${config.description}</p>
+                <input type="text" id="premium-key-input" class="premium-input" placeholder="Enter key..." autocomplete="off">
+                <div id="premium-error" class="premium-error"></div>
+            </div>
+            <div class="premium-modal-footer">
+                <button class="btn btn-secondary" onclick="this.closest('.premium-modal').remove()">Cancel</button>
+                <button class="btn btn-primary" onclick="verifyPremiumKey('${themeType}')">Unlock</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Focus input after a small delay to ensure DOM is ready
+    setTimeout(() => {
+        const input = document.getElementById('premium-key-input');
+        if (input) input.focus();
+    }, 100);
+    
+    // Handle Enter key
+    document.getElementById('premium-key-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            verifyPremiumKey(themeType);
+        }
+    });
+}
+
+function verifyPremiumKey(themeType = 'premium') {
+    const input = document.getElementById('premium-key-input');
+    const error = document.getElementById('premium-error');
+    const key = input.value.trim();
+    
+    // Get unlock key and theme name from CONFIG
+    const correctKey = CONFIG.unlockKeys[themeType];
+    const themeToApply = CONFIG.themeNames[themeType];
+    
+    if (key === correctKey) {
+        // Unlock the theme
+        localStorage.setItem(`${themeType}Unlocked`, 'true');
+        
+        // the theme card IMMEDIATELY
+        const themeCard = document.getElementById(`${themeType}-theme-card`);
+        if (themeCard) {
+            themeCard.classList.add('unlocked');
+        }
+        
+        error.style.color = '#10b981';
+        error.textContent = '✓ Theme unlocked successfully!';
+        
+        setTimeout(() => {
+            document.querySelector('.premium-modal').remove();
+            setTheme(themeToApply);
+        }, 800);
+    } else {
+        error.style.color = '#ef4444';
+        error.textContent = '✗ Invalid key. Please try again.';
+        input.value = '';
+        input.focus();
+    }
+}
+
+// Helper function to check if a theme is unlocked
+function isThemeUnlocked(themeType) {
+    return localStorage.getItem(`${themeType}Unlocked`) === 'true';
+}
+
+/* ============================================
+   AUTO-SORT PROJECTS
+   ============================================ */
+function sortProjectsByLanguage(projectsArray, currentLang) {
+    if (!CONFIG.autoSortProjects) return projectsArray;
+    
+    const titleKeys = {
+        vi: 'title',
+        en: 'titleEn',
+        ko: 'titleKo',
+        ja: 'titleJa',
+        zh: 'titleZh'
+    };
+    
+    const key = titleKeys[currentLang] || 'titleEn';
+    
+    return [...projectsArray].sort((a, b) => {
+        const titleA = (a[key] || a.titleEn || a.title || '').toLowerCase();
+        const titleB = (b[key] || b.titleEn || b.title || '').toLowerCase();
+        return titleA.localeCompare(titleB);
+    });
+}
+
+/* ============================================
+   DYNAMIC PROJECT COUNT
+   ============================================ */
+function getProjectCount() {
+    if (CONFIG.projectCount === 'none') {
+        return projects.length;
+    }
+    return parseInt(CONFIG.projectCount) || 0;
+}
+
+/* ============================================
+   ENHANCED TABS SYSTEM
+   ============================================ */
+function initTabsScroll() {
+    const filtersContainer = document.querySelector('.project-filters');
+    if (!filtersContainer) return;
+    
+    let isScrolling;
+    
+    filtersContainer.addEventListener('scroll', () => {
+        filtersContainer.classList.add('is-scrolling');
+        
+        clearTimeout(isScrolling);
+        isScrolling = setTimeout(() => {
+            filtersContainer.classList.remove('is-scrolling');
+        }, 150);
+        
+        updateScrollGradients();
+    });
+    
+    updateScrollGradients();
+}
+
+function updateScrollGradients() {
+    const container = document.querySelector('.project-filters');
+    if (!container) return;
+    
+    const scrollLeft = container.scrollLeft;
+    const scrollWidth = container.scrollWidth;
+    const clientWidth = container.clientWidth;
+    
+    if (scrollLeft > 10) {
+        container.classList.add('has-scroll-left');
+    } else {
+        container.classList.remove('has-scroll-left');
+    }
+    
+    if (scrollLeft < scrollWidth - clientWidth - 10) {
+        container.classList.add('has-scroll-right');
+    } else {
+        container.classList.remove('has-scroll-right');
+    }
+}
 const projects=[
     {
         category:'website',
@@ -1128,7 +1786,11 @@ const t={
         'badge-new':'Mới',
         'badge-update':'Cập nhật',
         'filter-css':'CSS',
-        'badge-maintenance':'Bảo trì'
+        'badge-maintenance':'Bảo trì',
+        'theme-gradient-exclusive': 'Gradient Độc Quyền',
+        'theme-gradient-premium':'Gradient Cao Cấp',
+        'theme-gradient-ocean':'Gradient Đại Dương',
+        'theme-gradient-sunset': 'Gradient Hoàng Hôn',
     },
 
     en:{
@@ -1207,7 +1869,12 @@ const t={
         'placeholder-email':'example@email.com',
         'placeholder-message':'Enter your message...',
 
-        'footer-text':'© 2025 Tuan Quoc. Made with ❤️ using HTML, CSS & JavaScript'
+        'footer-text':'© 2025 Tuan Quoc. Made with ❤️ using HTML, CSS & JavaScript',
+        'theme-gradient-exclusive': 'Exclusive Gradient',
+        'theme-gradient-premium': 'Premium Gradient',
+        'theme-gradient-ocean': 'Ocean Gradient',
+        'theme-gradient-sunset': 'Sunset Gradient',
+
     },
     ko:{
         'site-title':'투안 꾸옥',
@@ -1284,7 +1951,12 @@ const t={
         'placeholder-email':'example@email.com',
         'placeholder-message':'메시지를 입력하세요...',
 
-        'footer-text':'© 2025 투안 꾸옥. HTML, CSS & JavaScript로 ❤️를 담아 제작'
+        'footer-text':'© 2025 투안 꾸옥. HTML, CSS & JavaScript로 ❤️를 담아 제작',
+        'theme-gradient-exclusive': '독점 그라디언트',
+        'theme-gradient-premium': '프리미엄 그라디언트',
+        'theme-gradient-ocean': '오션 그라디언트',
+        'theme-gradient-sunset': '선셋 그라디언트',
+
     },
 
     ja:{
@@ -1363,7 +2035,12 @@ const t={
         'placeholder-email':'example@email.com',
         'placeholder-message':'メッセージを入力してください...',
 
-        'footer-text':'© 2025 トゥアン・クオック. HTML、CSS、JavaScriptで❤️を込めて作成'
+        'footer-text':'© 2025 トゥアン・クオック. HTML、CSS、JavaScriptで❤️を込めて作成',
+        'theme-gradient-exclusive': '限定グラデーション',
+        'theme-gradient-premium': 'プレミアムグラデーション',
+        'theme-gradient-ocean': 'オーシャングラデーション',
+        'theme-gradient-sunset': 'サンセットグラデーション',
+
     },
     zh:{
         'site-title':'Tuấn Quốc',
@@ -1444,6 +2121,11 @@ const t={
         'badge-update':'更新',
         'filter-css':'CSS',
         'badge-maintenance':'维护中',
+        'theme-gradient-exclusive': '专属渐变',
+        'theme-gradient-premium': '高级渐变',
+        'theme-gradient-ocean': '海洋渐变',
+        'theme-gradient-sunset': '日落渐变',
+
     },
 
 };
@@ -1597,7 +2279,21 @@ function applyLang(l){
     renderProjects()
 }
 function animateNum(e,target){let c=0;const inc=target/125;const timer=setInterval(()=>{c+=inc;if(c>=target){e.textContent=target;clearInterval(timer)}else{e.textContent=Math.floor(c)}},16)}
-function filterProjects(filter){currentFilter=filter;currentPage=1;filteredProjects=filter==='all'?projects:projects.filter(p=>p.category===filter);renderProjects();renderPagination()}
+// CORRECTED: filterProjects with auto-sort
+function filterProjects(filter) {
+    currentFilter = filter;
+    currentPage = 1;
+    
+    const baseProjects = filter === 'all' 
+        ? projects 
+        : projects.filter(p => p.category === filter);
+    
+    filteredProjects = sortProjectsByLanguage(baseProjects, lang);
+    
+    renderProjects();
+    renderPagination();
+}
+
 function renderProjects(){
     const grid=document.getElementById('projects-grid'),
           start=(currentPage-1)*CONFIG.projectsPerPage,
@@ -1714,9 +2410,52 @@ function changePage(page){const totalPages=Math.ceil(filteredProjects.length/CON
 function openSettings(){document.getElementById('settings-modal').classList.add('active');document.body.style.overflow='hidden'}
 function closeSettings(){document.getElementById('settings-modal').classList.remove('active');document.body.style.overflow=''}
 function toggleDarkMode(){document.body.classList.toggle('dark');const toggle=document.getElementById('dark-mode-toggle');toggle.classList.toggle('active');localStorage.setItem('darkMode',document.body.classList.contains('dark')?'true':'false')}
-function setTheme(theme){document.body.setAttribute('data-theme',theme);document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-theme="${theme}"]`).classList.add('active');localStorage.setItem('theme',theme)}
-function setLanguage(l){lang=l;localStorage.setItem('language',l);document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('active'));document.querySelector(`[data-lang-code="${l}"]`).classList.add('active');applyLang(l)}
+// Update setTheme function to check multiple themes
+function setTheme(theme) {
+    // Extract theme type from theme name (e.g., 'gradient-exclusive' -> 'exclusive')
+    const themeType = theme.replace('gradient-', '');
+    
+    // Check if it's a locked gradient theme
+    const lockedThemes = ['premium', 'exclusive', 'rainbow', 'sunset', 'ocean'];
+    
+    if (lockedThemes.includes(themeType) && !isThemeUnlocked(themeType)) {
+        showPremiumModal(themeType);
+        return;
+    }
+    
+    document.body.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+    const themeCard = document.querySelector(`[data-theme="${theme}"]`);
+    if (themeCard) themeCard.classList.add('active');
+    localStorage.setItem('theme', theme);
+}
+
+// CORRECTED: setLanguage with re-sort
+function setLanguage(l) {
+    lang = l;
+    localStorage.setItem('language', l);
+    document.querySelectorAll('.lang-card').forEach(c => c.classList.remove('active'));
+    document.querySelector(`[data-lang-code="${l}"]`).classList.add('active');
+    applyLang(l);
+    
+    // Re-sort projects when language changes
+    filterProjects(currentFilter);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+
+    //Check all locked themes and update their cards
+    const lockedThemes = ['premium', 'exclusive', 'rainbow', 'sunset', 'ocean'];
+    
+    lockedThemes.forEach(themeType => {
+        if (isThemeUnlocked(themeType)) {
+            const themeCard = document.getElementById(`${themeType}-theme-card`);
+            if (themeCard) {
+                themeCard.classList.add('unlocked');
+            }
+        }
+    });
+
     const aboutImg = document.getElementById('about-img');
     if (CONFIG.aboutImageUrl) {
         aboutImg.innerHTML = `<img src="${CONFIG.aboutImageUrl}" alt="About">`;
@@ -1739,8 +2478,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressInterval = setInterval(() => {
         progress += Math.random() * 15;
         if (progress >= 100) {
-        progress = 100;
-        clearInterval(progressInterval);
+            progress = 100;
+            clearInterval(progressInterval);
         }
         progressBar.style.width = progress + '%';
         percentage.textContent = Math.floor(progress) + '%';
@@ -1749,31 +2488,37 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         document.getElementById('loading').classList.add('hide');
 
-        document
-        .querySelectorAll('.stat-number[data-count]')
-        .forEach(s => animateNum(s, parseInt(s.getAttribute('data-count'))));
+        // NEW: Initialize dynamic project count
+        const projectStatElement = document.querySelectorAll('.stat-number[data-count]')[0];
+        if (projectStatElement) {
+            const dynamicCount = getProjectCount();
+            projectStatElement.setAttribute('data-count', dynamicCount);
+        }
+
+        document.querySelectorAll('.stat-number[data-count]')
+            .forEach(s => animateNum(s, parseInt(s.getAttribute('data-count'))));
 
         const obs = new IntersectionObserver(
-        entries => {
-            entries.forEach(en => {
-            if (en.isIntersecting) {
-                en.target
-                .querySelectorAll('.progress-fill')
-                .forEach(f => (f.style.width = f.getAttribute('data-width') + '%'));
-            }
-            });
-        },
-        { threshold: 0.5 }
+            entries => {
+                entries.forEach(en => {
+                    if (en.isIntersecting) {
+                        en.target
+                            .querySelectorAll('.progress-fill')
+                            .forEach(f => (f.style.width = f.getAttribute('data-width') + '%'));
+                    }
+                });
+            },
+            { threshold: 0.5 }
         );
 
         document.querySelectorAll('.skill-card').forEach(c => obs.observe(c));
 
         let v;
         if (CONFIG.manualVisitCount === 'none') {
-        v = parseInt(localStorage.getItem('visitCount') || '0') + 1;
-        localStorage.setItem('visitCount', v);
+            v = parseInt(localStorage.getItem('visitCount') || '0') + 1;
+            localStorage.setItem('visitCount', v);
         } else {
-        v = parseInt(CONFIG.manualVisitCount) || 0;
+            v = parseInt(CONFIG.manualVisitCount) || 0;
         }
 
         animateNum(document.getElementById('visit-count'), v);
@@ -1791,16 +2536,30 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.lang-card').forEach(c => c.classList.remove('active'));
     document.querySelector(`[data-lang-code="${lang}"]`).classList.add('active');
 
-    filteredProjects = [...projects];
+    // NEW: Initialize sorted projects
+    filteredProjects = sortProjectsByLanguage([...projects], lang);
     renderProjects();
     renderPagination();
+
+    // NEW: Initialize tabs scroll system
+    setTimeout(() => {
+        initTabsScroll();
+        window.addEventListener('resize', updateScrollGradients);
+    }, 100);
+
+    // NEW: Check if premium is unlocked
+    if (isPremiumUnlocked()) {
+        const premiumCard = document.getElementById('premium-theme-card');
+        if (premiumCard) {
+            premiumCard.classList.add('unlocked');
+        }
+    }
 
     // Check and show browser warning if needed
     if (shouldShowBrowserWarning()) {
         showBrowserWarning();
     }
 });
-
 document.querySelector('.menu-toggle').addEventListener('click',()=>{document.querySelector('nav').classList.toggle('active');document.querySelector('.nav-overlay').classList.toggle('active')});
 document.querySelector('.nav-overlay').addEventListener('click',()=>{document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')});
 document.querySelectorAll('nav a').forEach(l=>l.addEventListener('click',()=>{if(l.getAttribute('onclick')!=='openSettings()'){document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')}}));
