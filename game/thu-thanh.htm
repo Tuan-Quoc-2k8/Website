@@ -28,6 +28,8 @@
             max-width: 100%;
             max-height: 100%;
             touch-action: none;
+            position: relative;
+            z-index: 9;
         }
         .screen {
             position: absolute;
@@ -85,29 +87,34 @@
             z-index: 5;
             pointer-events: none;
         }
-        #hud.active { display: block; }
+        #hud.active { display: flex; justify-content: space-between; gap: 10px; }
         .hud-panel {
-            background: rgba(0, 0, 0, 0.8);
-            padding: clamp(8px, 2vw, 15px);
-            border-radius: 10px;
-            margin-bottom: 8px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: clamp(6px, 1.5vw, 10px);
+            border-radius: 8px;
             border: 2px solid #e94560;
             pointer-events: all;
+            flex: 1;
+            min-width: 0;
+        }
+        .hud-panel.compact {
+            padding: clamp(4px, 1vw, 8px);
         }
         .stat-row {
             display: flex;
             justify-content: space-between;
-            margin: 5px 0;
-            font-size: clamp(0.8em, 2vw, 1.1em);
+            margin: 3px 0;
+            font-size: clamp(0.7em, 1.8vw, 0.95em);
+            white-space: nowrap;
         }
         .progress-bar {
             width: 100%;
-            height: clamp(20px, 4vw, 25px);
+            height: clamp(16px, 3vw, 20px);
             background: #1a1a2e;
-            border-radius: 15px;
+            border-radius: 10px;
             overflow: hidden;
-            border: 2px solid #e94560;
-            margin-top: 5px;
+            border: 1px solid #e94560;
+            margin-top: 3px;
         }
         .progress-fill {
             height: 100%;
@@ -115,29 +122,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(0.7em, 2vw, 0.9em);
+            font-size: clamp(0.65em, 1.5vw, 0.8em);
             font-weight: bold;
         }
         .hp-bar { background: linear-gradient(90deg, #e94560 0%, #ff6b6b 100%); }
         .xp-bar { background: linear-gradient(90deg, #4ecdc4 0%, #44a08d 100%); }
         .cd-bar { background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%); }
-        .hero-ability {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 5px 0;
-        }
         .ability-icon {
-            width: clamp(40px, 8vw, 50px);
-            height: clamp(40px, 8vw, 50px);
+            width: clamp(35px, 7vw, 45px);
+            height: clamp(35px, 7vw, 45px);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(1.2em, 3vw, 1.5em);
-            border: 3px solid #e94560;
+            font-size: clamp(1em, 2.5vw, 1.3em);
+            border: 2px solid #e94560;
             background: rgba(233, 69, 96, 0.3);
             cursor: pointer;
+            flex-shrink: 0;
         }
         .ability-icon.ready {
             border-color: #4ecdc4;
@@ -147,6 +149,33 @@
         @keyframes glow {
             0%, 100% { box-shadow: 0 0 10px rgba(78, 205, 196, 0.5); }
             50% { box-shadow: 0 0 20px rgba(78, 205, 196, 0.8); }
+        }
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .category-tab {
+            padding: clamp(10px, 2vw, 15px) clamp(20px, 4vw, 30px);
+            background: rgba(15, 52, 96, 0.5);
+            border: 2px solid #e94560;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: clamp(1em, 2.5vw, 1.2em);
+            transition: all 0.3s;
+        }
+        .category-tab.active {
+            background: rgba(233, 69, 96, 0.8);
+            border-color: #4ecdc4;
+            transform: scale(1.05);
+        }
+        .category-content {
+            display: none;
+        }
+        .category-content.active {
+            display: block;
         }
         .upgrade-grid, .hero-grid, .unlock-grid {
             display: grid;
@@ -192,11 +221,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
             display: none;
             z-index: 8;
+            pointer-events: none;
         }
-        .placement-overlay.active { display: block; }
+        .placement-overlay.active { 
+            display: block; 
+        }
+        .placement-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+        }
+        .placement-overlay > div {
+            position: relative;
+            z-index: 10;
+            pointer-events: all;
+        }
         .controls-hint {
             position: absolute;
             bottom: 10px;
@@ -284,7 +330,23 @@
         <div id="unlockScreen" class="screen">
             <h2 style="font-size: clamp(1.5em, 5vw, 2.5em); margin-bottom: 20px;">🛠 UPGRADES & UNLOCKS</h2>
             <div style="font-size: clamp(1em, 3vw, 1.3em); margin-bottom: 20px;">💰 Total Gold: <span id="unlockGold">0</span></div>
-            <div class="unlock-grid" id="unlockOptions"></div>
+            
+            <div class="category-tabs">
+                <div class="category-tab active" onclick="game.showUnlockCategory('heroes')">🦸 HEROES</div>
+                <div class="category-tab" onclick="game.showUnlockCategory('fortresses')">🏰 FORTRESSES</div>
+                <div class="category-tab" onclick="game.showUnlockCategory('permanent')">⭐ PERMANENT</div>
+            </div>
+
+            <div id="heroesCategory" class="category-content active">
+                <div class="unlock-grid" id="heroesUnlocks"></div>
+            </div>
+            <div id="fortressesCategory" class="category-content">
+                <div class="unlock-grid" id="fortressesUnlocks"></div>
+            </div>
+            <div id="permanentCategory" class="category-content">
+                <div class="unlock-grid" id="permanentUnlocks"></div>
+            </div>
+
             <button class="btn" onclick="game.hideUnlocks()" style="margin-top: 30px;">← BACK TO MENU</button>
         </div>
 
@@ -299,44 +361,39 @@
         </div>
 
         <div class="placement-overlay" id="placementOverlay">
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-size: clamp(1.2em, 4vw, 2em);">
-                <p>📍 TAP TO PLACE FORTRESS</p>
-                <button class="btn" onclick="game.cancelPlacement()" style="margin-top: 20px;">✖ SKIP</button>
+            <div style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); text-align: center;">
+                <button class="btn" onclick="game.cancelPlacement()" style="font-size: 1.2em;">✖ SKIP TOWER</button>
             </div>
         </div>
 
         <canvas id="gameCanvas" width="1200" height="800"></canvas>
 
         <div id="hud">
-            <div class="hud-panel">
+            <div class="hud-panel compact">
                 <div class="stat-row">
-                    <span>🏰 Fortress HP:</span>
-                    <span id="fortressHP">1000/1000</span>
+                    <span>🏰</span>
+                    <span id="fortressHP">1500/1500</span>
                 </div>
                 <div class="progress-bar">
-                    <div class="progress-fill hp-bar" id="hpBar" style="width: 100%;">100%</div>
+                    <div class="progress-fill hp-bar" id="hpBar" style="width: 100%;"></div>
                 </div>
             </div>
-            <div class="hud-panel">
+            <div class="hud-panel compact">
                 <div class="stat-row">
-                    <span>⭐ Lvl: <span id="playerLevel">1</span></span>
-                    <span>💰 Gold: <span id="playerGold">0</span></span>
-                    <span>🌊 Wave: <span id="waveNumber">1</span></span>
+                    <span>⭐<span id="playerLevel">1</span></span>
+                    <span>💰<span id="playerGold">0</span></span>
+                    <span>🌊<span id="waveNumber">1</span></span>
                 </div>
                 <div class="progress-bar">
-                    <div class="progress-fill xp-bar" id="xpBar" style="width: 0%;">0%</div>
+                    <div class="progress-fill xp-bar" id="xpBar" style="width: 0%;"></div>
                 </div>
             </div>
-            <div class="hud-panel" id="heroAbility" style="display: none;">
-                <div class="stat-row">
-                    <span id="heroName">Hero</span>
-                    <span id="heroHP">100/100</span>
-                </div>
-                <div class="hero-ability">
+            <div class="hud-panel compact" id="heroAbility" style="display: none;">
+                <div class="stat-row" style="align-items: center; gap: 8px;">
                     <div class="ability-icon" id="abilityIcon" onclick="game.useHeroAbility()">⚡</div>
-                    <div style="flex: 1;">
-                        <div style="font-size: 0.9em; margin-bottom: 3px;" id="abilityName">Ability</div>
-                        <div class="progress-bar" style="height: 15px; margin: 0;">
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 0.85em;" id="abilityName">Ability</div>
+                        <div class="progress-bar" style="height: 12px; margin: 2px 0 0 0;">
                             <div class="progress-fill cd-bar" id="abilityCDBar" style="width: 100%;"></div>
                         </div>
                     </div>
@@ -486,7 +543,7 @@
                 this.state = 'intro';
                 this.entities = { enemies: [], subFortresses: [], projectiles: [], effects: [] };
                 this.keys = {};
-                this.mouse = { x: 0, y: 0, clicked: false, down: false };
+                this.mouse = { x: CONFIG.canvas.width / 2, y: CONFIG.canvas.height / 2, clicked: false, down: false };
                 this.touch = { active: false, x: 0, y: 0 };
                 this.time = 0;
                 this.lastSpawn = 0;
@@ -494,6 +551,7 @@
                 this.selectedHero = null;
                 this.placementMode = false;
                 this.placementTower = null;
+                this.renderingPlacement = false;
                 this.gridCells = [];
                 this.wave = 1;
                 this.setupControls();
@@ -524,10 +582,11 @@
                     this.mouse.down = false;
                 });
                 this.canvas.addEventListener('click', e => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
+                    const y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+                    
                     if (this.placementMode) {
-                        const rect = this.canvas.getBoundingClientRect();
-                        const x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
-                        const y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
                         this.handlePlacement(x, y);
                     }
                 });
@@ -582,6 +641,17 @@
                         this.handlePlacement(x, y);
                     } else if (this.state === 'playing') {
                         this.mouse.clicked = true;
+                    }
+                });
+
+                // Update mouse position on touch for preview
+                this.canvas.addEventListener('touchmove', e => {
+                    if (this.placementMode) {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const rect = this.canvas.getBoundingClientRect();
+                        this.mouse.x = (touch.clientX - rect.left) * (this.canvas.width / rect.width);
+                        this.mouse.y = (touch.clientY - rect.top) * (this.canvas.height / rect.height);
                     }
                 });
             }
@@ -726,17 +796,21 @@
                 document.getElementById('hud').classList.add('active');
                 document.getElementById('mobileControls').classList.add('active');
                 document.getElementById('heroAbility').style.display = 'block';
-                document.getElementById('heroName').textContent = HEROES[this.selectedHero].icon + ' ' + HEROES[this.selectedHero].name.split(' ')[1];
                 document.getElementById('abilityIcon').textContent = HEROES[this.selectedHero].ability.icon;
                 document.getElementById('abilityName').textContent = HEROES[this.selectedHero].ability.name;
                 this.loop();
             }
 
             loop(timestamp = 0) {
-                if (this.state !== 'playing') return;
+                if (this.state !== 'playing' && this.state !== 'placing') return;
                 const dt = Math.min(timestamp - this.time, 100);
                 this.time = timestamp;
-                this.update(dt);
+                
+                // Only update game logic when playing, not during placement
+                if (this.state === 'playing') {
+                    this.update(dt);
+                }
+                
                 this.render();
                 requestAnimationFrame(t => this.loop(t));
             }
@@ -1108,15 +1182,26 @@
                 
                 const unlocked = UNLOCKABLES.subFortresses.filter(s => s.unlocked);
                 this.placementTower = unlocked[Math.floor(Math.random() * unlocked.length)];
+                
+                // Show notification about what tower is being placed
+                this.showNotification(`Place ${this.placementTower.name}`);
+                
+                // Continue render loop during placement
+                if (!this.renderingPlacement) {
+                    this.renderingPlacement = true;
+                    this.loop();
+                }
             }
 
             handlePlacement(x, y) {
+                if (!this.placementMode || !this.placementTower) return;
+                
                 const cell = this.gridCells.find(c => 
                     c.available && !c.occupied && 
                     Math.hypot(c.x - x, c.y - y) < CONFIG.grid.cellSize / 2
                 );
 
-                if (cell && this.placementTower) {
+                if (cell) {
                     cell.occupied = true;
                     const template = this.placementTower;
                     
@@ -1136,20 +1221,24 @@
                     
                     this.entities.subFortresses.push(sf);
                     this.endPlacement();
-                    this.showNotification('Tower Placed!');
+                    this.showNotification('Tower Placed! ✓');
+                } else {
+                    // Click was not on a valid cell
+                    this.showNotification('Invalid placement!');
                 }
             }
 
             cancelPlacement() {
                 this.endPlacement();
+                this.showNotification('Placement skipped');
             }
 
             endPlacement() {
                 this.placementMode = false;
                 this.placementTower = null;
+                this.renderingPlacement = false;
                 document.getElementById('placementOverlay').classList.remove('active');
                 this.state = 'playing';
-                this.loop();
             }
 
             showUnlocks() {
@@ -1165,12 +1254,22 @@
                 document.getElementById('introScreen').classList.add('active');
             }
 
+            showUnlockCategory(category) {
+                // Update tabs
+                document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+                event.target.classList.add('active');
+
+                // Update content
+                document.querySelectorAll('.category-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(category + 'Category').classList.add('active');
+            }
+
             renderUnlocks() {
                 document.getElementById('unlockGold').textContent = this.totalGold;
-                const container = document.getElementById('unlockOptions');
-                container.innerHTML = '';
                 
-                // Heroes
+                // Render Heroes
+                const heroesContainer = document.getElementById('heroesUnlocks');
+                heroesContainer.innerHTML = '';
                 Object.values(HEROES).forEach(h => {
                     if (h.id === 'warrior') return; // Skip default hero
                     const card = document.createElement('div');
@@ -1180,15 +1279,18 @@
                         <div style="font-size: 2.5em; margin: 10px 0;">${h.icon}</div>
                         <p>${h.desc}</p>
                         <p style="margin-top: 8px;"><strong>Ability:</strong> ${h.ability.name}</p>
+                        <p style="font-size: 0.9em; opacity: 0.8;"><strong>Passive:</strong> ${h.passive}</p>
                         ${h.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Unlocked</p>' : 
                           `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
                            ${this.totalGold < h.cost ? 'disabled' : ''} 
                            onclick="game.unlockItem('hero', '${h.id}')">Unlock (${h.cost}💰)</button>`}
                     `;
-                    container.appendChild(card);
+                    heroesContainer.appendChild(card);
                 });
 
-                // Sub-Fortresses
+                // Render Fortresses
+                const fortressesContainer = document.getElementById('fortressesUnlocks');
+                fortressesContainer.innerHTML = '';
                 UNLOCKABLES.subFortresses.forEach(u => {
                     if (u.id === 'archer') return; // Skip default tower
                     const card = document.createElement('div');
@@ -1196,16 +1298,18 @@
                     card.innerHTML = `
                         <h3>${u.name}</h3>
                         <p>${u.desc}</p>
-                        <p style="margin-top: 8px;"><strong>Type:</strong> ${u.type}</p>
+                        <p style="margin-top: 8px;"><strong>Type:</strong> ${u.type.split('-').join(' ')}</p>
                         ${u.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Unlocked</p>' : 
                           `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
                            ${this.totalGold < u.cost ? 'disabled' : ''} 
                            onclick="game.unlockItem('tower', '${u.id}')">Unlock (${u.cost}💰)</button>`}
                     `;
-                    container.appendChild(card);
+                    fortressesContainer.appendChild(card);
                 });
 
-                // Permanent Upgrades
+                // Render Permanent Upgrades
+                const permanentContainer = document.getElementById('permanentUnlocks');
+                permanentContainer.innerHTML = '';
                 UNLOCKABLES.permanent.forEach(u => {
                     const card = document.createElement('div');
                     card.className = 'card' + (u.unlocked ? ' unlocked' : '');
@@ -1217,7 +1321,7 @@
                            ${this.totalGold < u.cost ? 'disabled' : ''} 
                            onclick="game.unlockItem('permanent', '${u.id}')">Buy (${u.cost}💰)</button>`}
                     `;
-                    container.appendChild(card);
+                    permanentContainer.appendChild(card);
                 });
             }
 
@@ -1390,19 +1494,16 @@
 
             updateUI() {
                 document.getElementById('fortressHP').textContent = `${Math.floor(this.fortress.hp)}/${this.fortress.maxHP}`;
-                document.getElementById('hpBar').style.width = (this.fortress.hp / this.fortress.maxHP * 100) + '%';
-                document.getElementById('hpBar').textContent = Math.floor(this.fortress.hp / this.fortress.maxHP * 100) + '%';
+                const hpPercent = this.fortress.hp / this.fortress.maxHP * 100;
+                document.getElementById('hpBar').style.width = hpPercent + '%';
                 
                 document.getElementById('playerLevel').textContent = this.level;
                 document.getElementById('playerGold').textContent = this.gold;
                 document.getElementById('waveNumber').textContent = this.wave;
                 
-                document.getElementById('heroHP').textContent = `${Math.floor(this.player.hp)}/${this.player.maxHP}`;
-                
                 const xpNeeded = this.getXPForLevel(this.level);
                 const xpPercent = (this.xp / xpNeeded * 100);
                 document.getElementById('xpBar').style.width = xpPercent + '%';
-                document.getElementById('xpBar').textContent = `${Math.floor(this.xp)}/${xpNeeded}`;
 
                 const cdRemaining = Math.max(0, this.heroAbility.cooldown - (this.time - this.heroAbility.lastUse));
                 const cdPercent = 100 - (cdRemaining / this.heroAbility.cooldown * 100);
@@ -1411,6 +1512,7 @@
                 const icon = document.getElementById('abilityIcon');
                 if (cdPercent >= 100) {
                     icon.classList.add('ready');
+                    document.getElementById('abilityCDBar').textContent = '';
                 } else {
                     icon.classList.remove('ready');
                     document.getElementById('abilityCDBar').textContent = Math.ceil(cdRemaining / 1000) + 's';
@@ -1455,19 +1557,79 @@
                     ctx.stroke();
                 }
 
-                // Placement grid
+                // Placement grid with enhanced visibility
                 if (this.placementMode) {
+                    // Darken the background more
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                    ctx.fillRect(0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
+                    
+                    // Draw grid cells
                     this.gridCells.forEach(cell => {
                         if (!cell.available) return;
                         
-                        ctx.fillStyle = cell.occupied ? 'rgba(233, 69, 96, 0.3)' : 'rgba(78, 205, 196, 0.3)';
-                        ctx.strokeStyle = cell.occupied ? '#e94560' : '#4ecdc4';
-                        ctx.lineWidth = 2;
+                        const size = CONFIG.grid.cellSize * 0.85;
+                        const isHovered = Math.hypot(cell.x - this.mouse.x, cell.y - this.mouse.y) < CONFIG.grid.cellSize / 2;
                         
-                        const size = CONFIG.grid.cellSize * 0.8;
+                        if (cell.occupied) {
+                            // Occupied cells - red
+                            ctx.fillStyle = 'rgba(233, 69, 96, 0.4)';
+                            ctx.strokeStyle = '#e94560';
+                        } else if (isHovered) {
+                            // Hovered cell - bright green
+                            ctx.fillStyle = 'rgba(78, 205, 196, 0.6)';
+                            ctx.strokeStyle = '#4ecdc4';
+                            ctx.lineWidth = 4;
+                            
+                            // Show tower preview
+                            if (this.placementTower) {
+                                ctx.fillStyle = this.placementTower.color;
+                                ctx.globalAlpha = 0.7;
+                                ctx.beginPath();
+                                ctx.arc(cell.x, cell.y, 25, 0, Math.PI * 2);
+                                ctx.fill();
+                                ctx.globalAlpha = 1;
+                                
+                                // Show tower icon
+                                const icons = {
+                                    archer: '🏹', mage: '🔮', cannon: '💣',
+                                    healer: '💚', gold: '💰', buff: '📈', ice: '❄️'
+                                };
+                                ctx.fillStyle = '#fff';
+                                ctx.font = 'bold 24px Arial';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillText(icons[this.placementTower.id] || '🗼', cell.x, cell.y);
+                            }
+                        } else {
+                            // Available cells - green
+                            ctx.fillStyle = 'rgba(78, 205, 196, 0.3)';
+                            ctx.strokeStyle = '#4ecdc4';
+                            ctx.lineWidth = 2;
+                        }
+                        
                         ctx.fillRect(cell.x - size/2, cell.y - size/2, size, size);
                         ctx.strokeRect(cell.x - size/2, cell.y - size/2, size, size);
+                        
+                        // Reset line width
+                        ctx.lineWidth = 2;
                     });
+                    
+                    // Draw placement instructions
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillRect(CONFIG.canvas.width / 2 - 200, 30, 400, 60);
+                    ctx.strokeStyle = '#4ecdc4';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(CONFIG.canvas.width / 2 - 200, 30, 400, 60);
+                    
+                    ctx.fillStyle = '#4ecdc4';
+                    ctx.font = 'bold 20px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('📍 CLICK GREEN TILE TO PLACE', CONFIG.canvas.width / 2, 50);
+                    if (this.placementTower) {
+                        ctx.font = '16px Arial';
+                        ctx.fillStyle = '#fff';
+                        ctx.fillText(`Placing: ${this.placementTower.name}`, CONFIG.canvas.width / 2, 75);
+                    }
                 }
 
                 // Main Fortress
