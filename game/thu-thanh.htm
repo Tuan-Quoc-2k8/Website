@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fortress Defense - Extended Edition</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            color: #fff;
+            touch-action: none;
+        }
+        #gameContainer {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        #gameCanvas {
+            background: #0f3460;
+            border: 3px solid #e94560;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+            max-width: 100%;
+            max-height: 100%;
+            touch-action: none;
+        }
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .screen.active { display: flex; }
+        .screen h1 {
+            font-size: clamp(2em, 8vw, 4em);
+            margin: 20px 0;
+            text-shadow: 0 0 20px #e94560;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .btn {
+            padding: clamp(15px, 3vw, 20px) clamp(30px, 6vw, 50px);
+            margin: 10px;
+            font-size: clamp(1em, 3vw, 1.5em);
+            background: linear-gradient(135deg, #e94560 0%, #c92a47 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+            font-weight: bold;
+            min-width: 200px;
+        }
+        .btn:hover, .btn:active {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(233, 69, 96, 0.6);
+        }
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: none;
+            z-index: 5;
+            pointer-events: none;
+        }
+        #hud.active { display: block; }
+        .hud-panel {
+            background: rgba(0, 0, 0, 0.8);
+            padding: clamp(8px, 2vw, 15px);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 2px solid #e94560;
+            pointer-events: all;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: clamp(0.8em, 2vw, 1.1em);
+        }
+        .progress-bar {
+            width: 100%;
+            height: clamp(20px, 4vw, 25px);
+            background: #1a1a2e;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #e94560;
+            margin-top: 5px;
+        }
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.7em, 2vw, 0.9em);
+            font-weight: bold;
+        }
+        .hp-bar { background: linear-gradient(90deg, #e94560 0%, #ff6b6b 100%); }
+        .xp-bar { background: linear-gradient(90deg, #4ecdc4 0%, #44a08d 100%); }
+        .cd-bar { background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%); }
+        .hero-ability {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+        .ability-icon {
+            width: clamp(40px, 8vw, 50px);
+            height: clamp(40px, 8vw, 50px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.2em, 3vw, 1.5em);
+            border: 3px solid #e94560;
+            background: rgba(233, 69, 96, 0.3);
+            cursor: pointer;
+        }
+        .ability-icon.ready {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.3);
+            animation: glow 1s infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(78, 205, 196, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(78, 205, 196, 0.8); }
+        }
+        .upgrade-grid, .hero-grid, .unlock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(250px, 40vw, 300px), 1fr));
+            gap: clamp(15px, 3vw, 20px);
+            margin-top: 20px;
+            max-width: 1400px;
+            width: 100%;
+        }
+        .card {
+            background: rgba(15, 52, 96, 0.9);
+            padding: clamp(15px, 3vw, 25px);
+            border-radius: 15px;
+            border: 3px solid #e94560;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .card:hover, .card:active {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.6);
+            border-color: #ff6b6b;
+        }
+        .card.selected {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.2);
+        }
+        .card.unlocked {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.2);
+        }
+        .card h3 {
+            font-size: clamp(1.2em, 3vw, 1.8em);
+            margin-bottom: 10px;
+            color: #4ecdc4;
+        }
+        .card p {
+            font-size: clamp(0.9em, 2vw, 1.1em);
+            line-height: 1.6;
+        }
+        .placement-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 8;
+        }
+        .placement-overlay.active { display: block; }
+        .controls-hint {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: clamp(8px, 2vw, 10px);
+            border-radius: 5px;
+            font-size: clamp(0.7em, 2vw, 0.9em);
+            border: 1px solid #e94560;
+            pointer-events: none;
+        }
+        .mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            gap: 10px;
+            z-index: 6;
+        }
+        .mobile-controls.active { display: flex; }
+        .joystick {
+            width: clamp(100px, 20vw, 120px);
+            height: clamp(100px, 20vw, 120px);
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid #e94560;
+            position: relative;
+        }
+        .joystick-inner {
+            width: 50%;
+            height: 50%;
+            border-radius: 50%;
+            background: #e94560;
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            transition: all 0.1s;
+        }
+        @media (max-width: 768px) {
+            .mobile-controls { display: flex; }
+            .controls-hint { display: none; }
+        }
+        .notification {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px 50px;
+            border-radius: 20px;
+            border: 3px solid #4ecdc4;
+            font-size: 2em;
+            z-index: 20;
+            animation: fadeInOut 2s;
+            pointer-events: none;
+        }
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            10%, 90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="introScreen" class="screen active">
+            <h1>🏰 FORTRESS DEFENSE</h1>
+            <div style="font-size: 1.2em; margin-bottom: 20px;">Extended Edition</div>
+            <button class="btn" onclick="game.showHeroSelect()">🦸 SELECT HERO & PLAY</button>
+            <button class="btn" onclick="game.showUnlocks()">🛠 UPGRADES & UNLOCKS</button>
+            <button class="btn" onclick="game.loadGame()">📂 LOAD SAVED GAME</button>
+        </div>
+
+        <div id="heroSelectScreen" class="screen">
+            <h2 style="font-size: clamp(1.5em, 5vw, 2.5em); margin-bottom: 20px;">🦸 SELECT YOUR HERO</h2>
+            <div class="hero-grid" id="heroOptions"></div>
+            <button class="btn" onclick="game.hideHeroSelect()" style="margin-top: 30px;">← BACK</button>
+        </div>
+
+        <div id="upgradeScreen" class="screen">
+            <h2 style="font-size: clamp(1.5em, 5vw, 2.5em); margin-bottom: 20px;">⬆ CHOOSE YOUR UPGRADE</h2>
+            <div class="upgrade-grid" id="upgradeOptions"></div>
+        </div>
+
+        <div id="unlockScreen" class="screen">
+            <h2 style="font-size: clamp(1.5em, 5vw, 2.5em); margin-bottom: 20px;">🛠 UPGRADES & UNLOCKS</h2>
+            <div style="font-size: clamp(1em, 3vw, 1.3em); margin-bottom: 20px;">💰 Total Gold: <span id="unlockGold">0</span></div>
+            <div class="unlock-grid" id="unlockOptions"></div>
+            <button class="btn" onclick="game.hideUnlocks()" style="margin-top: 30px;">← BACK TO MENU</button>
+        </div>
+
+        <div id="gameOverScreen" class="screen">
+            <h1>💀 FORTRESS DESTROYED</h1>
+            <div style="font-size: clamp(1em, 3vw, 1.5em); margin: 20px 0;">
+                <p>Final Level: <span id="finalLevel">0</span></p>
+                <p>Gold Earned: <span id="finalGold">0</span></p>
+                <p>Wave Survived: <span id="finalWave">0</span></p>
+            </div>
+            <button class="btn" onclick="game.returnToMenu()">MAIN MENU</button>
+        </div>
+
+        <div class="placement-overlay" id="placementOverlay">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-size: clamp(1.2em, 4vw, 2em);">
+                <p>📍 TAP TO PLACE FORTRESS</p>
+                <button class="btn" onclick="game.cancelPlacement()" style="margin-top: 20px;">✖ SKIP</button>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="1200" height="800"></canvas>
+
+        <div id="hud">
+            <div class="hud-panel">
+                <div class="stat-row">
+                    <span>🏰 Fortress HP:</span>
+                    <span id="fortressHP">1000/1000</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill hp-bar" id="hpBar" style="width: 100%;">100%</div>
+                </div>
+            </div>
+            <div class="hud-panel">
+                <div class="stat-row">
+                    <span>⭐ Lvl: <span id="playerLevel">1</span></span>
+                    <span>💰 Gold: <span id="playerGold">0</span></span>
+                    <span>🌊 Wave: <span id="waveNumber">1</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill xp-bar" id="xpBar" style="width: 0%;">0%</div>
+                </div>
+            </div>
+            <div class="hud-panel" id="heroAbility" style="display: none;">
+                <div class="stat-row">
+                    <span id="heroName">Hero</span>
+                    <span id="heroHP">100/100</span>
+                </div>
+                <div class="hero-ability">
+                    <div class="ability-icon" id="abilityIcon" onclick="game.useHeroAbility()">⚡</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 0.9em; margin-bottom: 3px;" id="abilityName">Ability</div>
+                        <div class="progress-bar" style="height: 15px; margin: 0;">
+                            <div class="progress-fill cd-bar" id="abilityCDBar" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-controls" id="mobileControls">
+            <div class="joystick" id="joystick">
+                <div class="joystick-inner" id="joystickInner"></div>
+            </div>
+        </div>
+
+        <div class="controls-hint">
+            WASD: Move | Click: Attack | Space: Ability | ESC: Pause
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            canvas: { width: 1200, height: 800 },
+            fortress: {
+                baseHP: 1500,
+                baseDefense: 10,
+                baseAttack: 25,
+                baseRange: 150,
+                baseSpeed: 1000,
+                radius: 45
+            },
+            player: {
+                speed: 4,
+                baseAttack: 20,
+                baseRange: 100,
+                attackSpeed: 500,
+                radius: 15,
+                baseHP: 150
+            },
+            enemy: {
+                baseHP: 60,
+                baseSpeed: 1.5,
+                baseDamage: 12,
+                goldReward: 15,
+                xpReward: 25,
+                spawnInterval: 2000,
+                scaleRate: 0.12
+            },
+            upgrade: {
+                xpPerLevel: 100,
+                xpScaling: 1.2
+            },
+            grid: {
+                cellSize: 80,
+                maxRadius: 3
+            }
+        };
+
+        const HEROES = {
+            warrior: {
+                id: 'warrior',
+                name: '⚔️ Warrior',
+                desc: 'Melee tank with lifesteal',
+                cost: 0,
+                unlocked: true,
+                icon: '⚔️',
+                color: '#e74c3c',
+                stats: { attack: 1.2, speed: 1, range: 0.8, hp: 1.5 },
+                ability: {
+                    name: 'Whirlwind',
+                    icon: '🌪️',
+                    cooldown: 8000,
+                    effect: 'AOE damage around hero'
+                },
+                passive: 'Lifesteal 15%'
+            },
+            mage: {
+                id: 'mage',
+                name: '🔮 Mage',
+                desc: 'Ranged magic with AOE',
+                cost: 200,
+                unlocked: false,
+                icon: '🔮',
+                color: '#9b59b6',
+                stats: { attack: 1.5, speed: 1, range: 2, hp: 0.8 },
+                ability: {
+                    name: 'Meteor',
+                    icon: '☄️',
+                    cooldown: 10000,
+                    effect: 'Massive AOE damage'
+                },
+                passive: 'Attacks burn enemies'
+            },
+            ranger: {
+                id: 'ranger',
+                name: '🏹 Ranger',
+                desc: 'Long range with crit',
+                cost: 150,
+                unlocked: false,
+                icon: '🏹',
+                color: '#2ecc71',
+                stats: { attack: 1.3, speed: 1.3, range: 2.5, hp: 1 },
+                ability: {
+                    name: 'Multi-Shot',
+                    icon: '🎯',
+                    cooldown: 6000,
+                    effect: 'Hit 5 targets'
+                },
+                passive: '25% crit chance'
+            },
+            engineer: {
+                id: 'engineer',
+                name: '🔧 Engineer',
+                desc: 'Buffs towers & repairs',
+                cost: 250,
+                unlocked: false,
+                icon: '🔧',
+                color: '#f39c12',
+                stats: { attack: 0.7, speed: 1, range: 1.2, hp: 1.2 },
+                ability: {
+                    name: 'Repair',
+                    icon: '🔨',
+                    cooldown: 12000,
+                    effect: 'Heal fortress 20%'
+                },
+                passive: 'Towers +30% damage'
+            }
+        };
+
+        const UNLOCKABLES = {
+            subFortresses: [
+                { id: 'archer', name: '🏹 Archer Tower', cost: 0, type: 'ranged-physical', desc: 'Fast ranged attacks', unlocked: true, color: '#e74c3c', stats: { attack: 20, range: 200, speed: 1200 } },
+                { id: 'mage', name: '🔮 Mage Tower', cost: 200, type: 'ranged-magical', desc: 'Magic damage', unlocked: false, color: '#9b59b6', stats: { attack: 35, range: 180, speed: 1800 } },
+                { id: 'cannon', name: '💣 Cannon', cost: 350, type: 'ranged-physical', desc: 'Splash damage', unlocked: false, color: '#e67e22', stats: { attack: 60, range: 220, speed: 2500 } },
+                { id: 'healer', name: '💚 Healing Shrine', cost: 300, type: 'support-heal', desc: 'Heals fortress', unlocked: false, color: '#2ecc71', stats: { value: 8, speed: 2000 } },
+                { id: 'gold', name: '💰 Gold Mine', cost: 400, type: 'economy', desc: 'Generates gold', unlocked: false, color: '#f1c40f', stats: { value: 3, speed: 3000 } },
+                { id: 'buff', name: '📈 Buff Tower', cost: 350, type: 'support-buff', desc: '+20% damage', unlocked: false, color: '#3498db', stats: { value: 1.2, range: 150 } },
+                { id: 'ice', name: '❄️ Ice Tower', cost: 450, type: 'ranged-magical', desc: 'Slows enemies', unlocked: false, color: '#5dade2', stats: { attack: 25, range: 190, speed: 1500 } }
+            ],
+            permanent: [
+                { id: 'slots', name: '🗺️ Land Expansion', cost: 500, desc: '+1 Placement Slot', unlocked: false, value: 1 }
+            ]
+        };
+
+        class Game {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.state = 'intro';
+                this.entities = { enemies: [], subFortresses: [], projectiles: [], effects: [] };
+                this.keys = {};
+                this.mouse = { x: 0, y: 0, clicked: false, down: false };
+                this.touch = { active: false, x: 0, y: 0 };
+                this.time = 0;
+                this.lastSpawn = 0;
+                this.totalGold = this.loadTotalGold();
+                this.selectedHero = null;
+                this.placementMode = false;
+                this.placementTower = null;
+                this.gridCells = [];
+                this.wave = 1;
+                this.setupControls();
+                this.setupTouch();
+                this.resizeCanvas();
+                this.loadUnlocks();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.initGrid();
+            }
+
+            setupControls() {
+                document.addEventListener('keydown', e => {
+                    this.keys[e.key.toLowerCase()] = true;
+                    if (e.key === ' ' && this.state === 'playing') {
+                        e.preventDefault();
+                        this.useHeroAbility();
+                    }
+                });
+                document.addEventListener('keyup', e => this.keys[e.key.toLowerCase()] = false);
+                this.canvas.addEventListener('mousemove', e => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.mouse.x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
+                    this.mouse.y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+                });
+                this.canvas.addEventListener('mousedown', () => this.mouse.down = true);
+                this.canvas.addEventListener('mouseup', () => {
+                    this.mouse.clicked = true;
+                    this.mouse.down = false;
+                });
+                this.canvas.addEventListener('click', e => {
+                    if (this.placementMode) {
+                        const rect = this.canvas.getBoundingClientRect();
+                        const x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
+                        const y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+                        this.handlePlacement(x, y);
+                    }
+                });
+            }
+
+            setupTouch() {
+                const joystick = document.getElementById('joystick');
+                const inner = document.getElementById('joystickInner');
+                let touchId = null;
+
+                const handleTouch = (e, isStart) => {
+                    e.preventDefault();
+                    const touch = isStart ? e.changedTouches[0] : Array.from(e.touches).find(t => t.identifier === touchId);
+                    if (!touch) return;
+
+                    const rect = joystick.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    const dx = touch.clientX - centerX;
+                    const dy = touch.clientY - centerY;
+                    const dist = Math.min(Math.hypot(dx, dy), rect.width / 4);
+                    const angle = Math.atan2(dy, dx);
+
+                    if (isStart) touchId = touch.identifier;
+
+                    this.touch.active = true;
+                    this.touch.x = Math.cos(angle) * (dist / (rect.width / 4));
+                    this.touch.y = Math.sin(angle) * (dist / (rect.width / 4));
+
+                    inner.style.left = `${25 + this.touch.x * 25}%`;
+                    inner.style.top = `${25 + this.touch.y * 25}%`;
+                };
+
+                joystick.addEventListener('touchstart', e => handleTouch(e, true));
+                joystick.addEventListener('touchmove', e => handleTouch(e, false));
+                joystick.addEventListener('touchend', e => {
+                    this.touch.active = false;
+                    this.touch.x = 0;
+                    this.touch.y = 0;
+                    inner.style.left = '25%';
+                    inner.style.top = '25%';
+                    touchId = null;
+                });
+
+                this.canvas.addEventListener('touchstart', e => {
+                    if (this.placementMode) {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const rect = this.canvas.getBoundingClientRect();
+                        const x = (touch.clientX - rect.left) * (this.canvas.width / rect.width);
+                        const y = (touch.clientY - rect.top) * (this.canvas.height / rect.height);
+                        this.handlePlacement(x, y);
+                    } else if (this.state === 'playing') {
+                        this.mouse.clicked = true;
+                    }
+                });
+            }
+
+            resizeCanvas() {
+                const container = document.getElementById('gameContainer');
+                const ratio = CONFIG.canvas.width / CONFIG.canvas.height;
+                let width = container.clientWidth * 0.95;
+                let height = width / ratio;
+                if (height > container.clientHeight * 0.85) {
+                    height = container.clientHeight * 0.85;
+                    width = height * ratio;
+                }
+                this.canvas.style.width = width + 'px';
+                this.canvas.style.height = height + 'px';
+            }
+
+            initGrid() {
+                const centerX = CONFIG.canvas.width / 2;
+                const centerY = CONFIG.canvas.height / 2;
+                const size = CONFIG.grid.cellSize;
+                const maxRadius = CONFIG.grid.maxRadius;
+
+                for (let dy = -maxRadius; dy <= maxRadius; dy++) {
+                    for (let dx = -maxRadius; dx <= maxRadius; dx++) {
+                        const dist = Math.abs(dx) + Math.abs(dy);
+                        if (dist <= maxRadius && !(dx === 0 && dy === 0)) {
+                            this.gridCells.push({
+                                x: centerX + dx * size,
+                                y: centerY + dy * size,
+                                occupied: false,
+                                available: dist <= 2
+                            });
+                        }
+                    }
+                }
+            }
+
+            showHeroSelect() {
+                this.state = 'heroSelect';
+                document.getElementById('introScreen').classList.remove('active');
+                this.renderHeroes();
+                document.getElementById('heroSelectScreen').classList.add('active');
+            }
+
+            hideHeroSelect() {
+                this.state = 'intro';
+                document.getElementById('heroSelectScreen').classList.remove('active');
+                document.getElementById('introScreen').classList.add('active');
+            }
+
+            renderHeroes() {
+                const container = document.getElementById('heroOptions');
+                container.innerHTML = '';
+
+                Object.values(HEROES).forEach(h => {
+                    const card = document.createElement('div');
+                    card.className = 'card' + (h.unlocked ? '' : '') + (this.selectedHero === h.id ? ' selected' : '');
+                    card.innerHTML = `
+                        <h3>${h.name}</h3>
+                        <div style="font-size: 3em; margin: 15px 0;">${h.icon}</div>
+                        <p>${h.desc}</p>
+                        <p style="margin-top: 10px;"><strong>Ability:</strong> ${h.ability.name} - ${h.ability.effect}</p>
+                        <p><strong>Passive:</strong> ${h.passive}</p>
+                        ${h.unlocked ? '' : `<p style="color: #f39c12; margin-top: 10px;">💰 Cost: ${h.cost} Gold</p>`}
+                    `;
+                    
+                    card.onclick = () => {
+                        if (h.unlocked) {
+                            this.selectedHero = h.id;
+                            this.startGame();
+                        } else if (this.totalGold >= h.cost) {
+                            if (confirm(`Unlock ${h.name} for ${h.cost} gold?`)) {
+                                this.totalGold -= h.cost;
+                                h.unlocked = true;
+                                this.selectedHero = h.id;
+                                this.saveUnlocks();
+                                this.saveTotalGold();
+                                this.startGame();
+                            }
+                        } else {
+                            this.showNotification('Not enough gold!');
+                        }
+                    };
+                    container.appendChild(card);
+                });
+            }
+
+            init() {
+                const hero = HEROES[this.selectedHero || 'warrior'];
+                this.player = this.createPlayer(hero);
+                this.fortress = this.createFortress();
+                this.level = 1;
+                this.xp = 0;
+                this.gold = 0;
+                this.wave = 1;
+                this.maxSubFortresses = 5;
+                this.entities = { enemies: [], subFortresses: [], projectiles: [], effects: [] };
+                this.time = 0;
+                this.lastSpawn = 0;
+                this.gridCells.forEach(c => c.occupied = false);
+                this.heroAbility = { cooldown: hero.ability.cooldown, lastUse: 0 };
+            }
+
+            createPlayer(hero) {
+                return {
+                    x: CONFIG.canvas.width / 2,
+                    y: CONFIG.canvas.height / 2 + 100,
+                    vx: 0, vy: 0,
+                    attack: CONFIG.player.baseAttack * hero.stats.attack,
+                    range: CONFIG.player.baseRange * hero.stats.range,
+                    attackSpeed: CONFIG.player.attackSpeed / hero.stats.speed,
+                    lastAttack: 0,
+                    hp: CONFIG.player.baseHP * hero.stats.hp,
+                    maxHP: CONFIG.player.baseHP * hero.stats.hp,
+                    hero: hero.id,
+                    color: hero.color,
+                    icon: hero.icon
+                };
+            }
+
+            createFortress() {
+                return {
+                    x: CONFIG.canvas.width / 2,
+                    y: CONFIG.canvas.height / 2,
+                    hp: CONFIG.fortress.baseHP,
+                    maxHP: CONFIG.fortress.baseHP,
+                    defense: CONFIG.fortress.baseDefense,
+                    attack: CONFIG.fortress.baseAttack,
+                    range: CONFIG.fortress.baseRange,
+                    attackSpeed: CONFIG.fortress.baseSpeed,
+                    lastAttack: 0,
+                    skin: 'main'
+                };
+            }
+
+            startGame() {
+                this.init();
+                this.state = 'playing';
+                document.getElementById('heroSelectScreen').classList.remove('active');
+                document.getElementById('introScreen').classList.remove('active');
+                document.getElementById('hud').classList.add('active');
+                document.getElementById('mobileControls').classList.add('active');
+                document.getElementById('heroAbility').style.display = 'block';
+                document.getElementById('heroName').textContent = HEROES[this.selectedHero].icon + ' ' + HEROES[this.selectedHero].name.split(' ')[1];
+                document.getElementById('abilityIcon').textContent = HEROES[this.selectedHero].ability.icon;
+                document.getElementById('abilityName').textContent = HEROES[this.selectedHero].ability.name;
+                this.loop();
+            }
+
+            loop(timestamp = 0) {
+                if (this.state !== 'playing') return;
+                const dt = Math.min(timestamp - this.time, 100);
+                this.time = timestamp;
+                this.update(dt);
+                this.render();
+                requestAnimationFrame(t => this.loop(t));
+            }
+
+            update(dt) {
+                this.updatePlayer(dt);
+                this.updateFortress(dt);
+                this.updateSubFortresses(dt);
+                this.updateEnemies(dt);
+                this.updateProjectiles(dt);
+                this.updateEffects(dt);
+                this.spawnEnemies();
+                this.updateUI();
+            }
+
+            updatePlayer(dt) {
+                const p = this.player;
+                p.vx = p.vy = 0;
+
+                if (this.touch.active) {
+                    p.vx = this.touch.x * CONFIG.player.speed;
+                    p.vy = this.touch.y * CONFIG.player.speed;
+                } else {
+                    if (this.keys['w']) p.vy = -CONFIG.player.speed;
+                    if (this.keys['s']) p.vy = CONFIG.player.speed;
+                    if (this.keys['a']) p.vx = -CONFIG.player.speed;
+                    if (this.keys['d']) p.vx = CONFIG.player.speed;
+                }
+                
+                if (p.vx && p.vy) { p.vx *= 0.707; p.vy *= 0.707; }
+                p.x = Math.max(20, Math.min(CONFIG.canvas.width - 20, p.x + p.vx));
+                p.y = Math.max(20, Math.min(CONFIG.canvas.height - 20, p.y + p.vy));
+
+                if ((this.mouse.clicked || this.mouse.down) && this.time - p.lastAttack > p.attackSpeed) {
+                    this.playerAttack();
+                    p.lastAttack = this.time;
+                }
+                this.mouse.clicked = false;
+            }
+
+            playerAttack() {
+                const p = this.player;
+                const hero = HEROES[p.hero];
+                const enemies = this.entities.enemies;
+                
+                if (hero.stats.range < 1.5) {
+                    for (let e of enemies) {
+                        const dist = Math.hypot(e.x - p.x, e.y - p.y);
+                        if (dist < p.range) {
+                            const damage = p.attack * (hero.id === 'ranger' && Math.random() < 0.25 ? 2 : 1);
+                            this.damageEnemy(e, damage);
+                            if (hero.id === 'warrior') {
+                                p.hp = Math.min(p.maxHP, p.hp + damage * 0.15);
+                            }
+                        }
+                    }
+                } else {
+                    const nearest = this.findNearest(p, enemies);
+                    if (nearest && Math.hypot(nearest.x - p.x, nearest.y - p.y) < p.range * 1.5) {
+                        this.createProjectile(p.x, p.y, nearest, p.attack, p.color, hero.id === 'mage' ? 'magic' : 'physical');
+                    }
+                }
+            }
+
+            useHeroAbility() {
+                if (this.time - this.heroAbility.lastUse < this.heroAbility.cooldown) return;
+                
+                const hero = HEROES[this.player.hero];
+                const p = this.player;
+
+                switch(hero.id) {
+                    case 'warrior':
+                        for (let e of this.entities.enemies) {
+                            const dist = Math.hypot(e.x - p.x, e.y - p.y);
+                            if (dist < 200) this.damageEnemy(e, p.attack * 3);
+                        }
+                        this.createEffect(p.x, p.y, '🌪️', 60, 2);
+                        break;
+                    case 'mage':
+                        const nearest = this.findNearest(p, this.entities.enemies);
+                        if (nearest) {
+                            for (let e of this.entities.enemies) {
+                                const dist = Math.hypot(e.x - nearest.x, e.y - nearest.y);
+                                if (dist < 150) this.damageEnemy(e, p.attack * 4);
+                            }
+                            this.createEffect(nearest.x, nearest.y, '☄️', 60, 3);
+                        }
+                        break;
+                    case 'ranger':
+                        const targets = this.entities.enemies.slice(0, 5);
+                        targets.forEach(t => this.createProjectile(p.x, p.y, t, p.attack * 2, p.color, 'physical'));
+                        break;
+                    case 'engineer':
+                        this.fortress.hp = Math.min(this.fortress.maxHP, this.fortress.hp + this.fortress.maxHP * 0.2);
+                        this.createEffect(this.fortress.x, this.fortress.y, '🔨', 60, 2);
+                        break;
+                }
+
+                this.heroAbility.lastUse = this.time;
+                this.showNotification(hero.ability.name + '!');
+            }
+
+            updateFortress(dt) {
+                const f = this.fortress;
+                if (this.time - f.lastAttack > f.attackSpeed) {
+                    const target = this.findNearest(f, this.entities.enemies);
+                    if (target && Math.hypot(target.x - f.x, target.y - f.y) < f.range) {
+                        this.createProjectile(f.x, f.y, target, f.attack, '#e94560', 'physical');
+                        f.lastAttack = this.time;
+                    }
+                }
+            }
+
+            updateSubFortresses(dt) {
+                const engineerBonus = this.player.hero === 'engineer' ? 1.3 : 1;
+                
+                for (let sf of this.entities.subFortresses) {
+                    if (this.time - sf.lastAttack > sf.speed) {
+                        if (sf.type.includes('support')) {
+                            if (sf.subType === 'healer') {
+                                this.fortress.hp = Math.min(this.fortress.maxHP, this.fortress.hp + sf.value);
+                                this.createEffect(sf.x, sf.y, '+' + sf.value, 20);
+                            } else if (sf.subType === 'gold') {
+                                this.addGold(sf.value);
+                                this.createEffect(sf.x, sf.y, '+💰', 20);
+                            }
+                        } else {
+                            const target = this.findNearest(sf, this.entities.enemies);
+                            if (target && Math.hypot(target.x - sf.x, target.y - sf.y) < sf.range) {
+                                this.createProjectile(sf.x, sf.y, target, sf.attack * engineerBonus, sf.color, sf.type.includes('magical') ? 'magic' : 'physical');
+                            }
+                        }
+                        sf.lastAttack = this.time;
+                    }
+                }
+            }
+
+            updateEnemies(dt) {
+                const f = this.fortress;
+                for (let i = this.entities.enemies.length - 1; i >= 0; i--) {
+                    const e = this.entities.enemies[i];
+                    const dx = f.x - e.x, dy = f.y - e.y;
+                    const dist = Math.hypot(dx, dy);
+                    
+                    if (dist > CONFIG.fortress.radius + 25) {
+                        const speed = e.speed * (e.slowed ? 0.5 : 1);
+                        e.x += (dx / dist) * speed;
+                        e.y += (dy / dist) * speed;
+                    } else if (this.time - e.lastAttack > 1000) {
+                        this.fortress.hp -= Math.max(1, e.damage - this.fortress.defense);
+                        e.lastAttack = this.time;
+                        if (this.fortress.hp <= 0) this.gameOver();
+                    }
+
+                    if (e.burning && this.time - e.lastBurn > 500) {
+                        e.hp -= 5;
+                        e.lastBurn = this.time;
+                        this.createEffect(e.x, e.y, '🔥', 10);
+                    }
+
+                    if (e.hp <= 0) {
+                        this.addGold(e.goldReward);
+                        this.addXP(e.xpReward);
+                        this.createEffect(e.x, e.y, '💀');
+                        this.entities.enemies.splice(i, 1);
+                    }
+                }
+            }
+
+            updateProjectiles(dt) {
+                for (let i = this.entities.projectiles.length - 1; i >= 0; i--) {
+                    const p = this.entities.projectiles[i];
+                    
+                    if (p.target && p.target.hp > 0) {
+                        const dx = p.target.x - p.x;
+                        const dy = p.target.y - p.y;
+                        const dist = Math.hypot(dx, dy);
+                        
+                        if (dist < 10) {
+                            this.damageEnemy(p.target, p.damage);
+                            if (p.type === 'magic') {
+                                p.target.burning = true;
+                                p.target.lastBurn = this.time;
+                            }
+                            this.entities.projectiles.splice(i, 1);
+                            continue;
+                        }
+                        
+                        p.x += (dx / dist) * 8;
+                        p.y += (dy / dist) * 8;
+                    }
+                    
+                    p.life--;
+                    if (p.life <= 0) this.entities.projectiles.splice(i, 1);
+                }
+            }
+
+            updateEffects(dt) {
+                this.entities.effects = this.entities.effects.filter(e => {
+                    e.life--;
+                    e.y -= e.speed || 1;
+                    e.scale = e.scale || 1;
+                    return e.life > 0;
+                });
+            }
+
+            spawnEnemies() {
+                if (this.time - this.lastSpawn > CONFIG.enemy.spawnInterval) {
+                    const count = 2 + Math.floor(this.level / 8);
+                    for (let i = 0; i < count; i++) {
+                        this.createEnemy();
+                    }
+                    this.lastSpawn = this.time;
+                    this.wave++;
+                }
+            }
+
+            createEnemy() {
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 600;
+                const scale = 1 + this.level * CONFIG.enemy.scaleRate;
+                const types = ['normal', 'fast', 'tank', 'boss'];
+                const weights = [0.6, 0.25, 0.12, 0.03];
+                let rand = Math.random();
+                let type = 'normal';
+                for (let i = 0; i < weights.length; i++) {
+                    if (rand < weights[i]) { type = types[i]; break; }
+                    rand -= weights[i];
+                }
+
+                const stats = {
+                    normal: { hp: 1, speed: 1, damage: 1, color: '#e74c3c' },
+                    fast: { hp: 0.6, speed: 1.8, damage: 0.7, color: '#f39c12' },
+                    tank: { hp: 2.5, speed: 0.6, damage: 1.5, color: '#9b59b6' },
+                    boss: { hp: 5, speed: 0.8, damage: 3, color: '#c0392b' }
+                }[type];
+
+                this.entities.enemies.push({
+                    x: CONFIG.canvas.width / 2 + Math.cos(angle) * dist,
+                    y: CONFIG.canvas.height / 2 + Math.sin(angle) * dist,
+                    hp: CONFIG.enemy.baseHP * scale * stats.hp,
+                    maxHP: CONFIG.enemy.baseHP * scale * stats.hp,
+                    speed: CONFIG.enemy.baseSpeed * stats.speed,
+                    damage: CONFIG.enemy.baseDamage * scale * stats.damage,
+                    goldReward: Math.floor(CONFIG.enemy.goldReward * scale * stats.hp),
+                    xpReward: Math.floor(CONFIG.enemy.xpReward * scale * stats.hp),
+                    lastAttack: 0,
+                    type,
+                    color: stats.color,
+                    burning: false,
+                    slowed: false
+                });
+            }
+
+            createProjectile(x, y, target, damage, color, type) {
+                this.entities.projectiles.push({
+                    x, y,
+                    target,
+                    damage,
+                    color,
+                    type,
+                    life: 120
+                });
+            }
+
+            createEffect(x, y, text, life = 30, scale = 1) {
+                this.entities.effects.push({ x, y, text, life, scale, speed: 1 });
+            }
+
+            damageEnemy(enemy, damage) {
+                enemy.hp -= damage;
+                this.createEffect(enemy.x, enemy.y - 20, `-${Math.floor(damage)}`);
+            }
+
+            findNearest(from, targets) {
+                let nearest = null, minDist = Infinity;
+                for (let t of targets) {
+                    if (t.hp <= 0) continue;
+                    const dist = Math.hypot(t.x - from.x, t.y - from.y);
+                    if (dist < minDist) { minDist = dist; nearest = t; }
+                }
+                return nearest;
+            }
+
+            addGold(amount) {
+                this.gold += amount;
+                this.totalGold += amount;
+                this.saveTotalGold();
+            }
+
+            addXP(amount) {
+                this.xp += amount;
+                const needed = this.getXPForLevel(this.level);
+                if (this.xp >= needed) {
+                    this.xp -= needed;
+                    this.level++;
+                    this.showUpgradeScreen();
+                }
+            }
+
+            getXPForLevel(level) {
+                return Math.floor(CONFIG.upgrade.xpPerLevel * Math.pow(CONFIG.upgrade.xpScaling, level - 1));
+            }
+
+            showUpgradeScreen() {
+                this.state = 'upgrading';
+                const upgrades = this.generateUpgrades();
+                const container = document.getElementById('upgradeOptions');
+                container.innerHTML = '';
+                
+                upgrades.forEach(u => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `<h3>${u.name}</h3><p>${u.desc}</p>`;
+                    card.onclick = () => this.applyUpgrade(u);
+                    container.appendChild(card);
+                });
+
+                document.getElementById('upgradeScreen').classList.add('active');
+            }
+
+            generateUpgrades() {
+                const upgrades = [];
+                const pool = [
+                    { type: 'fortress-attack', name: '⚔️ Fortress Power', desc: '+25% Attack', apply: () => this.fortress.attack *= 1.25 },
+                    { type: 'fortress-defense', name: '🛡️ Fortress Defense', desc: '+20% Defense & HP', apply: () => { this.fortress.defense *= 1.2; this.fortress.maxHP *= 1.2; this.fortress.hp = this.fortress.maxHP; } },
+                    { type: 'fortress-speed', name: '⚡ Fortress Speed', desc: '+25% Attack Speed', apply: () => this.fortress.attackSpeed *= 0.75 },
+                    { type: 'player-attack', name: '🗡️ Hero Damage', desc: '+30% Attack', apply: () => this.player.attack *= 1.3 },
+                    { type: 'player-speed', name: '🏃 Hero Agility', desc: '+20% Speed', apply: () => { CONFIG.player.speed *= 1.2; this.player.attackSpeed *= 0.8; } },
+                    { type: 'player-hp', name: '💚 Hero Vitality', desc: '+25% Max HP', apply: () => { this.player.maxHP *= 1.25; this.player.hp = this.player.maxHP; } },
+                ];
+
+                // Always offer placement option if slots available
+                const availableSlots = this.gridCells.filter(c => c.available && !c.occupied).length;
+                if (availableSlots > 0 && this.entities.subFortresses.length < this.maxSubFortresses) {
+                    upgrades.push({
+                        type: 'place-tower',
+                        name: '🏰 Place Sub-Fortress',
+                        desc: 'Add a defensive structure',
+                        apply: () => this.startPlacement()
+                    });
+                }
+
+                // Add random upgrades
+                while (upgrades.length < 3) {
+                    const u = pool[Math.floor(Math.random() * pool.length)];
+                    if (!upgrades.find(up => up.type === u.type)) {
+                        upgrades.push({ ...u });
+                    }
+                }
+
+                return upgrades;
+            }
+
+            applyUpgrade(upgrade) {
+                upgrade.apply();
+                if (upgrade.type !== 'place-tower') {
+                    document.getElementById('upgradeScreen').classList.remove('active');
+                    this.state = 'playing';
+                    this.loop();
+                }
+            }
+
+            startPlacement() {
+                this.placementMode = true;
+                this.state = 'placing';
+                document.getElementById('upgradeScreen').classList.remove('active');
+                document.getElementById('placementOverlay').classList.add('active');
+                
+                const unlocked = UNLOCKABLES.subFortresses.filter(s => s.unlocked);
+                this.placementTower = unlocked[Math.floor(Math.random() * unlocked.length)];
+            }
+
+            handlePlacement(x, y) {
+                const cell = this.gridCells.find(c => 
+                    c.available && !c.occupied && 
+                    Math.hypot(c.x - x, c.y - y) < CONFIG.grid.cellSize / 2
+                );
+
+                if (cell && this.placementTower) {
+                    cell.occupied = true;
+                    const template = this.placementTower;
+                    
+                    const sf = {
+                        x: cell.x,
+                        y: cell.y,
+                        type: template.type,
+                        subType: template.id,
+                        attack: template.stats.attack || 0,
+                        range: template.stats.range || 0,
+                        speed: template.stats.speed || 2000,
+                        value: template.stats.value || 0,
+                        lastAttack: 0,
+                        color: template.color,
+                        skin: template.id
+                    };
+                    
+                    this.entities.subFortresses.push(sf);
+                    this.endPlacement();
+                    this.showNotification('Tower Placed!');
+                }
+            }
+
+            cancelPlacement() {
+                this.endPlacement();
+            }
+
+            endPlacement() {
+                this.placementMode = false;
+                this.placementTower = null;
+                document.getElementById('placementOverlay').classList.remove('active');
+                this.state = 'playing';
+                this.loop();
+            }
+
+            showUnlocks() {
+                this.state = 'unlocking';
+                document.getElementById('introScreen').classList.remove('active');
+                this.renderUnlocks();
+                document.getElementById('unlockScreen').classList.add('active');
+            }
+
+            hideUnlocks() {
+                this.state = 'intro';
+                document.getElementById('unlockScreen').classList.remove('active');
+                document.getElementById('introScreen').classList.add('active');
+            }
+
+            renderUnlocks() {
+                document.getElementById('unlockGold').textContent = this.totalGold;
+                const container = document.getElementById('unlockOptions');
+                container.innerHTML = '';
+                
+                // Heroes
+                Object.values(HEROES).forEach(h => {
+                    if (h.id === 'warrior') return; // Skip default hero
+                    const card = document.createElement('div');
+                    card.className = 'card' + (h.unlocked ? ' unlocked' : '');
+                    card.innerHTML = `
+                        <h3>${h.name}</h3>
+                        <div style="font-size: 2.5em; margin: 10px 0;">${h.icon}</div>
+                        <p>${h.desc}</p>
+                        <p style="margin-top: 8px;"><strong>Ability:</strong> ${h.ability.name}</p>
+                        ${h.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Unlocked</p>' : 
+                          `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
+                           ${this.totalGold < h.cost ? 'disabled' : ''} 
+                           onclick="game.unlockItem('hero', '${h.id}')">Unlock (${h.cost}💰)</button>`}
+                    `;
+                    container.appendChild(card);
+                });
+
+                // Sub-Fortresses
+                UNLOCKABLES.subFortresses.forEach(u => {
+                    if (u.id === 'archer') return; // Skip default tower
+                    const card = document.createElement('div');
+                    card.className = 'card' + (u.unlocked ? ' unlocked' : '');
+                    card.innerHTML = `
+                        <h3>${u.name}</h3>
+                        <p>${u.desc}</p>
+                        <p style="margin-top: 8px;"><strong>Type:</strong> ${u.type}</p>
+                        ${u.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Unlocked</p>' : 
+                          `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
+                           ${this.totalGold < u.cost ? 'disabled' : ''} 
+                           onclick="game.unlockItem('tower', '${u.id}')">Unlock (${u.cost}💰)</button>`}
+                    `;
+                    container.appendChild(card);
+                });
+
+                // Permanent Upgrades
+                UNLOCKABLES.permanent.forEach(u => {
+                    const card = document.createElement('div');
+                    card.className = 'card' + (u.unlocked ? ' unlocked' : '');
+                    card.innerHTML = `
+                        <h3>${u.name}</h3>
+                        <p>${u.desc}</p>
+                        ${u.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Purchased</p>' : 
+                          `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
+                           ${this.totalGold < u.cost ? 'disabled' : ''} 
+                           onclick="game.unlockItem('permanent', '${u.id}')">Buy (${u.cost}💰)</button>`}
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            unlockItem(category, id) {
+                let item, cost;
+                
+                if (category === 'hero') {
+                    item = HEROES[id];
+                } else if (category === 'tower') {
+                    item = UNLOCKABLES.subFortresses.find(u => u.id === id);
+                } else if (category === 'permanent') {
+                    item = UNLOCKABLES.permanent.find(u => u.id === id);
+                }
+
+                if (item && !item.unlocked && this.totalGold >= item.cost) {
+                    this.totalGold -= item.cost;
+                    item.unlocked = true;
+                    
+                    if (category === 'permanent' && id === 'slots') {
+                        this.gridCells.forEach(c => {
+                            const dist = Math.abs(Math.round((c.x - CONFIG.canvas.width / 2) / CONFIG.grid.cellSize)) + 
+                                        Math.abs(Math.round((c.y - CONFIG.canvas.height / 2) / CONFIG.grid.cellSize));
+                            if (dist === 3) c.available = true;
+                        });
+                    }
+                    
+                    this.saveUnlocks();
+                    this.saveTotalGold();
+                    this.renderUnlocks();
+                    this.showNotification('Unlocked!');
+                }
+            }
+
+            saveUnlocks() {
+                const data = {
+                    heroes: {},
+                    towers: {},
+                    permanent: {}
+                };
+                
+                Object.keys(HEROES).forEach(k => data.heroes[k] = HEROES[k].unlocked);
+                UNLOCKABLES.subFortresses.forEach(t => data.towers[t.id] = t.unlocked);
+                UNLOCKABLES.permanent.forEach(p => data.permanent[p.id] = p.unlocked);
+                
+                try {
+                    localStorage.setItem('fortressDefense_unlocks', JSON.stringify(data));
+                } catch(e) {}
+            }
+
+            loadUnlocks() {
+                try {
+                    const saved = localStorage.getItem('fortressDefense_unlocks');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        Object.keys(data.heroes || {}).forEach(k => {
+                            if (HEROES[k]) HEROES[k].unlocked = data.heroes[k];
+                        });
+                        Object.keys(data.towers || {}).forEach(k => {
+                            const tower = UNLOCKABLES.subFortresses.find(t => t.id === k);
+                            if (tower) tower.unlocked = data.towers[k];
+                        });
+                        Object.keys(data.permanent || {}).forEach(k => {
+                            const perm = UNLOCKABLES.permanent.find(p => p.id === k);
+                            if (perm) perm.unlocked = data.permanent[k];
+                        });
+                    }
+                } catch(e) {}
+            }
+
+            saveTotalGold() {
+                try {
+                    localStorage.setItem('fortressDefense_gold', this.totalGold.toString());
+                } catch(e) {}
+            }
+
+            loadTotalGold() {
+                try {
+                    const saved = localStorage.getItem('fortressDefense_gold');
+                    return saved ? parseInt(saved) : 0;
+                } catch(e) {
+                    return 0;
+                }
+            }
+
+            saveGame() {
+                const data = {
+                    level: this.level,
+                    gold: this.gold,
+                    wave: this.wave,
+                    hero: this.selectedHero,
+                    fortress: {
+                        hp: this.fortress.hp,
+                        maxHP: this.fortress.maxHP,
+                        attack: this.fortress.attack,
+                        defense: this.fortress.defense
+                    },
+                    player: {
+                        hp: this.player.hp,
+                        maxHP: this.player.maxHP,
+                        attack: this.player.attack
+                    },
+                    towers: this.entities.subFortresses.map(t => ({
+                        x: t.x, y: t.y, type: t.type, subType: t.subType
+                    }))
+                };
+                
+                try {
+                    localStorage.setItem('fortressDefense_save', JSON.stringify(data));
+                    this.showNotification('Game Saved!');
+                } catch(e) {
+                    this.showNotification('Save Failed!');
+                }
+            }
+
+            loadGame() {
+                try {
+                    const saved = localStorage.getItem('fortressDefense_save');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        this.selectedHero = data.hero;
+                        this.init();
+                        
+                        this.level = data.level;
+                        this.gold = data.gold;
+                        this.wave = data.wave;
+                        
+                        Object.assign(this.fortress, data.fortress);
+                        this.player.hp = data.player.hp;
+                        this.player.maxHP = data.player.maxHP;
+                        this.player.attack = data.player.attack;
+                        
+                        data.towers.forEach(t => {
+                            const template = UNLOCKABLES.subFortresses.find(u => u.id === t.subType);
+                            if (template) {
+                                const cell = this.gridCells.find(c => Math.hypot(c.x - t.x, c.y - t.y) < 10);
+                                if (cell) cell.occupied = true;
+                                
+                                this.entities.subFortresses.push({
+                                    x: t.x, y: t.y,
+                                    type: t.type,
+                                    subType: t.subType,
+                                    attack: template.stats.attack || 0,
+                                    range: template.stats.range || 0,
+                                    speed: template.stats.speed || 2000,
+                                    value: template.stats.value || 0,
+                                    lastAttack: 0,
+                                    color: template.color,
+                                    skin: template.id
+                                });
+                            }
+                        });
+                        
+                        this.startGame();
+                        this.showNotification('Game Loaded!');
+                    } else {
+                        this.showNotification('No Save Found!');
+                    }
+                } catch(e) {
+                    this.showNotification('Load Failed!');
+                }
+            }
+
+            showNotification(text) {
+                const notif = document.createElement('div');
+                notif.className = 'notification';
+                notif.textContent = text;
+                document.getElementById('gameContainer').appendChild(notif);
+                setTimeout(() => notif.remove(), 2000);
+            }
+
+            updateUI() {
+                document.getElementById('fortressHP').textContent = `${Math.floor(this.fortress.hp)}/${this.fortress.maxHP}`;
+                document.getElementById('hpBar').style.width = (this.fortress.hp / this.fortress.maxHP * 100) + '%';
+                document.getElementById('hpBar').textContent = Math.floor(this.fortress.hp / this.fortress.maxHP * 100) + '%';
+                
+                document.getElementById('playerLevel').textContent = this.level;
+                document.getElementById('playerGold').textContent = this.gold;
+                document.getElementById('waveNumber').textContent = this.wave;
+                
+                document.getElementById('heroHP').textContent = `${Math.floor(this.player.hp)}/${this.player.maxHP}`;
+                
+                const xpNeeded = this.getXPForLevel(this.level);
+                const xpPercent = (this.xp / xpNeeded * 100);
+                document.getElementById('xpBar').style.width = xpPercent + '%';
+                document.getElementById('xpBar').textContent = `${Math.floor(this.xp)}/${xpNeeded}`;
+
+                const cdRemaining = Math.max(0, this.heroAbility.cooldown - (this.time - this.heroAbility.lastUse));
+                const cdPercent = 100 - (cdRemaining / this.heroAbility.cooldown * 100);
+                document.getElementById('abilityCDBar').style.width = cdPercent + '%';
+                
+                const icon = document.getElementById('abilityIcon');
+                if (cdPercent >= 100) {
+                    icon.classList.add('ready');
+                } else {
+                    icon.classList.remove('ready');
+                    document.getElementById('abilityCDBar').textContent = Math.ceil(cdRemaining / 1000) + 's';
+                }
+            }
+
+            gameOver() {
+                this.state = 'gameover';
+                this.saveGame(); // Auto-save on game over
+                document.getElementById('hud').classList.remove('active');
+                document.getElementById('mobileControls').classList.remove('active');
+                document.getElementById('finalLevel').textContent = this.level;
+                document.getElementById('finalGold').textContent = this.gold;
+                document.getElementById('finalWave').textContent = this.wave;
+                document.getElementById('gameOverScreen').classList.add('active');
+            }
+
+            returnToMenu() {
+                this.state = 'intro';
+                document.getElementById('gameOverScreen').classList.remove('active');
+                document.getElementById('introScreen').classList.add('active');
+            }
+
+            render() {
+                const ctx = this.ctx;
+                ctx.fillStyle = '#0a1929';
+                ctx.fillRect(0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
+
+                // Grid background
+                ctx.strokeStyle = 'rgba(233, 69, 96, 0.08)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < CONFIG.canvas.width; x += 50) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, CONFIG.canvas.height);
+                    ctx.stroke();
+                }
+                for (let y = 0; y < CONFIG.canvas.height; y += 50) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(CONFIG.canvas.width, y);
+                    ctx.stroke();
+                }
+
+                // Placement grid
+                if (this.placementMode) {
+                    this.gridCells.forEach(cell => {
+                        if (!cell.available) return;
+                        
+                        ctx.fillStyle = cell.occupied ? 'rgba(233, 69, 96, 0.3)' : 'rgba(78, 205, 196, 0.3)';
+                        ctx.strokeStyle = cell.occupied ? '#e94560' : '#4ecdc4';
+                        ctx.lineWidth = 2;
+                        
+                        const size = CONFIG.grid.cellSize * 0.8;
+                        ctx.fillRect(cell.x - size/2, cell.y - size/2, size, size);
+                        ctx.strokeRect(cell.x - size/2, cell.y - size/2, size, size);
+                    });
+                }
+
+                // Main Fortress
+                const grad = ctx.createRadialGradient(this.fortress.x, this.fortress.y, 0, this.fortress.x, this.fortress.y, CONFIG.fortress.radius);
+                grad.addColorStop(0, '#e94560');
+                grad.addColorStop(1, '#c92a47');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(this.fortress.x, this.fortress.y, CONFIG.fortress.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                
+                // Fortress icon
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 30px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🏰', this.fortress.x, this.fortress.y);
+
+                // Sub-fortresses with skins
+                this.entities.subFortresses.forEach(sf => {
+                    const grad = ctx.createRadialGradient(sf.x, sf.y, 0, sf.x, sf.y, 25);
+                    grad.addColorStop(0, sf.color);
+                    grad.addColorStop(1, this.darkenColor(sf.color));
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(sf.x, sf.y, 25, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    // Tower icon
+                    const icons = {
+                        archer: '🏹', mage: '🔮', cannon: '💣',
+                        healer: '💚', gold: '💰', buff: '📈', ice: '❄️'
+                    };
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '20px Arial';
+                    ctx.fillText(icons[sf.subType] || '🗼', sf.x, sf.y + 2);
+                });
+
+                // Player (Hero)
+                const playerGrad = ctx.createRadialGradient(this.player.x, this.player.y, 0, this.player.x, this.player.y, CONFIG.player.radius);
+                playerGrad.addColorStop(0, this.player.color);
+                playerGrad.addColorStop(1, this.darkenColor(this.player.color));
+                ctx.fillStyle = playerGrad;
+                ctx.beginPath();
+                ctx.arc(this.player.x, this.player.y, CONFIG.player.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Player icon
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 18px Arial';
+                ctx.fillText(this.player.icon, this.player.x, this.player.y + 2);
+
+                // Player HP bar
+                const hpPercent = this.player.hp / this.player.maxHP;
+                ctx.fillStyle = '#1a1a2e';
+                ctx.fillRect(this.player.x - 20, this.player.y - 30, 40, 6);
+                ctx.fillStyle = '#4ecdc4';
+                ctx.fillRect(this.player.x - 20, this.player.y - 30, 40 * hpPercent, 6);
+
+                // Enemies
+                this.entities.enemies.forEach(e => {
+                    const size = e.type === 'boss' ? 22 : (e.type === 'tank' ? 18 : 15);
+                    
+                    ctx.fillStyle = e.color;
+                    ctx.beginPath();
+                    ctx.arc(e.x, e.y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    if (e.type === 'boss') {
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+
+                    if (e.burning) {
+                        ctx.fillStyle = '#ff6b6b';
+                        ctx.font = '12px Arial';
+                        ctx.fillText('🔥', e.x + size, e.y - size);
+                    }
+                    
+                    // Enemy HP bar
+                    const hpPercent = e.hp / e.maxHP;
+                    ctx.fillStyle = '#1a1a2e';
+                    ctx.fillRect(e.x - 20, e.y - size - 10, 40, 5);
+                    ctx.fillStyle = e.type === 'boss' ? '#f39c12' : '#4ecdc4';
+                    ctx.fillRect(e.x - 20, e.y - size - 10, 40 * hpPercent, 5);
+                });
+
+                // Projectiles
+                this.entities.projectiles.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.type === 'magic' ? 6 : 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                // Effects
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                this.entities.effects.forEach(e => {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${e.life / 30})`;
+                    ctx.font = `bold ${20 * e.scale}px Arial`;
+                    ctx.fillText(e.text, e.x, e.y);
+                });
+            }
+
+            darkenColor(color) {
+                const hex = color.replace('#', '');
+                const r = Math.max(0, parseInt(hex.substr(0, 2), 16) - 40);
+                const g = Math.max(0, parseInt(hex.substr(2, 2), 16) - 40);
+                const b = Math.max(0, parseInt(hex.substr(4, 2), 16) - 40);
+                return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+            }
+        }
+
+        const game = new Game();
+
+        // Auto-save every 30 seconds when playing
+        setInterval(() => {
+            if (game.state === 'playing') {
+                game.saveGame();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
