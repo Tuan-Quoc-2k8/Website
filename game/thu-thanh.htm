@@ -3,317 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fortress Defense - Extended Edition</title>
+    <title>Fortress Defense - Complete Evolution Edition</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            overflow: hidden;
-            color: #fff;
-            touch-action: none;
-        }
-        #gameContainer {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        #gameCanvas {
-            background: #0f3460;
-            border: 3px solid #e94560;
-            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
-            max-width: 100%;
-            max-height: 100%;
-            touch-action: none;
-            position: relative;
-            z-index: 9;
-        }
-        .screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: none;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 10;
-            overflow-y: auto;
-            padding: 20px;
-        }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); overflow: hidden; color: #fff; touch-action: none; }
+        #gameContainer { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; position: relative; }
+        #gameCanvas { background: #0f3460; border: 3px solid #e94560; box-shadow: 0 0 30px rgba(233, 69, 96, 0.5); max-width: 100%; max-height: 100%; touch-action: none; position: relative; z-index: 9; }
+        .screen { position: absolute; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; background: rgba(0, 0, 0, 0.95); z-index: 10; overflow-y: auto; padding: 20px; }
         .screen.active { display: flex; }
-        .screen h1 {
-            font-size: clamp(2em, 8vw, 4em);
-            margin: 20px 0;
-            text-shadow: 0 0 20px #e94560;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        .btn {
-            padding: clamp(15px, 3vw, 20px) clamp(30px, 6vw, 50px);
-            margin: 10px;
-            font-size: clamp(1em, 3vw, 1.5em);
-            background: linear-gradient(135deg, #e94560 0%, #c92a47 100%);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
-            font-weight: bold;
-            min-width: 200px;
-        }
-        .btn:hover, .btn:active {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(233, 69, 96, 0.6);
-        }
-        .btn:disabled {
-            background: #666;
-            cursor: not-allowed;
-            transform: none;
-        }
-        #hud {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            display: none;
-            z-index: 5;
-            pointer-events: none;
-        }
-        #hud.active { display: flex; justify-content: space-between; gap: 10px; }
-        .hud-panel {
-            background: rgba(0, 0, 0, 0.85);
-            padding: clamp(6px, 1.5vw, 10px);
-            border-radius: 8px;
-            border: 2px solid #e94560;
-            pointer-events: all;
-            flex: 1;
-            min-width: 0;
-        }
-        .hud-panel.compact {
-            padding: clamp(4px, 1vw, 8px);
-        }
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 3px 0;
-            font-size: clamp(0.7em, 1.8vw, 0.95em);
-            white-space: nowrap;
-        }
-        .progress-bar {
-            width: 100%;
-            height: clamp(16px, 3vw, 20px);
-            background: #1a1a2e;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #e94560;
-            margin-top: 3px;
-        }
-        .progress-fill {
-            height: 100%;
-            transition: width 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(0.65em, 1.5vw, 0.8em);
-            font-weight: bold;
-        }
+        .screen h1 { font-size: clamp(2em, 8vw, 4em); margin: 20px 0; text-shadow: 0 0 20px #e94560; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .btn { padding: clamp(15px, 3vw, 20px) clamp(30px, 6vw, 50px); margin: 10px; font-size: clamp(1em, 3vw, 1.5em); background: linear-gradient(135deg, #e94560 0%, #c92a47 100%); border: none; border-radius: 10px; color: white; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4); font-weight: bold; min-width: 200px; }
+        .btn:hover, .btn:active { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(233, 69, 96, 0.6); }
+        .btn:disabled { background: #666; cursor: not-allowed; transform: none; }
+        #hud { position: absolute; top: 10px; left: 10px; right: 10px; display: none; z-index: 5; pointer-events: none; }
+        #hud.active { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .hud-panel { background: rgba(0, 0, 0, 0.85); padding: clamp(6px, 1.5vw, 10px); border-radius: 8px; border: 2px solid #e94560; pointer-events: all; flex: 1; min-width: 0; }
+        .stat-row { display: flex; justify-content: space-between; margin: 3px 0; font-size: clamp(0.7em, 1.8vw, 0.95em); white-space: nowrap; }
+        .progress-bar { width: 100%; height: clamp(16px, 3vw, 20px); background: #1a1a2e; border-radius: 10px; overflow: hidden; border: 1px solid #e94560; margin-top: 3px; }
+        .progress-fill { height: 100%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; font-size: clamp(0.65em, 1.5vw, 0.8em); font-weight: bold; }
         .hp-bar { background: linear-gradient(90deg, #e94560 0%, #ff6b6b 100%); }
         .xp-bar { background: linear-gradient(90deg, #4ecdc4 0%, #44a08d 100%); }
-        .cd-bar { background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%); }
-        .ability-icon {
-            width: clamp(35px, 7vw, 45px);
-            height: clamp(35px, 7vw, 45px);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(1em, 2.5vw, 1.3em);
-            border: 2px solid #e94560;
-            background: rgba(233, 69, 96, 0.3);
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        .ability-icon.ready {
-            border-color: #4ecdc4;
-            background: rgba(78, 205, 196, 0.3);
-            animation: glow 1s infinite;
-        }
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(78, 205, 196, 0.5); }
-            50% { box-shadow: 0 0 20px rgba(78, 205, 196, 0.8); }
-        }
-        .category-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .category-tab {
-            padding: clamp(10px, 2vw, 15px) clamp(20px, 4vw, 30px);
-            background: rgba(15, 52, 96, 0.5);
-            border: 2px solid #e94560;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: clamp(1em, 2.5vw, 1.2em);
-            transition: all 0.3s;
-        }
-        .category-tab.active {
-            background: rgba(233, 69, 96, 0.8);
-            border-color: #4ecdc4;
-            transform: scale(1.05);
-        }
-        .category-content {
-            display: none;
-        }
-        .category-content.active {
-            display: block;
-        }
-        .upgrade-grid, .hero-grid, .unlock-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(clamp(250px, 40vw, 300px), 1fr));
-            gap: clamp(15px, 3vw, 20px);
-            margin-top: 20px;
-            max-width: 1400px;
-            width: 100%;
-        }
-        .card {
-            background: rgba(15, 52, 96, 0.9);
-            padding: clamp(15px, 3vw, 25px);
-            border-radius: 15px;
-            border: 3px solid #e94560;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .card:hover, .card:active {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.6);
-            border-color: #ff6b6b;
-        }
-        .card.selected {
-            border-color: #4ecdc4;
-            background: rgba(78, 205, 196, 0.2);
-        }
-        .card.unlocked {
-            border-color: #4ecdc4;
-            background: rgba(78, 205, 196, 0.2);
-        }
-        .card h3 {
-            font-size: clamp(1.2em, 3vw, 1.8em);
-            margin-bottom: 10px;
-            color: #4ecdc4;
-        }
-        .card p {
-            font-size: clamp(0.9em, 2vw, 1.1em);
-            line-height: 1.6;
-        }
-        .placement-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-            z-index: 8;
-            pointer-events: none;
-        }
-        .placement-overlay.active { 
-            display: block; 
-        }
-        .placement-overlay::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            pointer-events: none;
-        }
-        .placement-overlay > div {
-            position: relative;
-            z-index: 10;
-            pointer-events: all;
-        }
-        .controls-hint {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: clamp(8px, 2vw, 10px);
-            border-radius: 5px;
-            font-size: clamp(0.7em, 2vw, 0.9em);
-            border: 1px solid #e94560;
-            pointer-events: none;
-        }
-        .mobile-controls {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: none;
-            gap: 10px;
-            z-index: 6;
-        }
+        .skill-icon { width: clamp(35px, 7vw, 45px); height: clamp(35px, 7vw, 45px); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(0.9em, 2.2vw, 1.2em); border: 2px solid #666; background: rgba(100, 100, 100, 0.3); cursor: pointer; flex-shrink: 0; position: relative; }
+        .skill-icon.ready { border-color: #4ecdc4; background: rgba(78, 205, 196, 0.3); animation: glow 1s infinite; }
+        .skill-icon.locked { opacity: 0.4; cursor: not-allowed; }
+        .skill-level { position: absolute; bottom: -5px; right: -5px; background: #e94560; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid #1a1a2e; }
+        .skill-hotkey { position: absolute; top: -5px; left: -5px; background: #1a1a2e; border-radius: 3px; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid #4ecdc4; font-weight: bold; }
+        .auto-attack-btn { width: clamp(50px, 10vw, 60px); height: clamp(50px, 10vw, 60px); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: clamp(1.2em, 3vw, 1.5em); border: 3px solid #666; background: rgba(100, 100, 100, 0.5); cursor: pointer; transition: all 0.3s; }
+        .auto-attack-btn.active { border-color: #4ecdc4; background: rgba(78, 205, 196, 0.5); box-shadow: 0 0 15px rgba(78, 205, 196, 0.5); }
+        .auto-attack-btn:hover { transform: scale(1.05); }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 10px rgba(78, 205, 196, 0.5); } 50% { box-shadow: 0 0 20px rgba(78, 205, 196, 0.8); } }
+        .upgrade-grid, .hero-grid, .unlock-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(clamp(250px, 40vw, 300px), 1fr)); gap: clamp(15px, 3vw, 20px); margin-top: 20px; max-width: 1400px; width: 100%; }
+        .card { background: rgba(15, 52, 96, 0.9); padding: clamp(15px, 3vw, 25px); border-radius: 15px; border: 3px solid #e94560; cursor: pointer; transition: all 0.3s; }
+        .card:hover, .card:active { transform: scale(1.05); box-shadow: 0 10px 30px rgba(233, 69, 96, 0.6); border-color: #ff6b6b; }
+        .card.evolution { border-color: #f39c12; background: rgba(243, 156, 18, 0.2); }
+        .card.unlocked { border-color: #4ecdc4; background: rgba(78, 205, 196, 0.2); }
+        .card h3 { font-size: clamp(1.2em, 3vw, 1.8em); margin-bottom: 10px; color: #4ecdc4; }
+        .card p { font-size: clamp(0.9em, 2vw, 1.1em); line-height: 1.6; }
+        .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+        .category-tab { padding: clamp(10px, 2vw, 15px) clamp(20px, 4vw, 30px); background: rgba(15, 52, 96, 0.5); border: 2px solid #e94560; border-radius: 10px; cursor: pointer; font-size: clamp(1em, 2.5vw, 1.2em); transition: all 0.3s; }
+        .category-tab.active { background: rgba(233, 69, 96, 0.8); border-color: #4ecdc4; transform: scale(1.05); }
+        .category-content { display: none; }
+        .category-content.active { display: block; }
+        .placement-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 8; pointer-events: none; }
+        .placement-overlay.active { display: block; }
+        .placement-overlay::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); pointer-events: none; }
+        .mobile-controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: none; gap: 10px; z-index: 6; }
         .mobile-controls.active { display: flex; }
-        .joystick {
-            width: clamp(100px, 20vw, 120px);
-            height: clamp(100px, 20vw, 120px);
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.5);
-            border: 3px solid #e94560;
-            position: relative;
-        }
-        .joystick-inner {
-            width: 50%;
-            height: 50%;
-            border-radius: 50%;
-            background: #e94560;
-            position: absolute;
-            top: 25%;
-            left: 25%;
-            transition: all 0.1s;
-        }
-        @media (max-width: 768px) {
-            .mobile-controls { display: flex; }
-            .controls-hint { display: none; }
-        }
-        .notification {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 30px 50px;
-            border-radius: 20px;
-            border: 3px solid #4ecdc4;
-            font-size: 2em;
-            z-index: 20;
-            animation: fadeInOut 2s;
-            pointer-events: none;
-        }
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-            10%, 90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
+        .joystick { width: clamp(100px, 20vw, 120px); height: clamp(100px, 20vw, 120px); border-radius: 50%; background: rgba(0, 0, 0, 0.5); border: 3px solid #e94560; position: relative; }
+        .joystick-inner { width: 50%; height: 50%; border-radius: 50%; background: #e94560; position: absolute; top: 25%; left: 25%; transition: all 0.1s; }
+        @media (max-width: 768px) { .mobile-controls { display: flex; } }
+        .notification { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.9); padding: 30px 50px; border-radius: 20px; border: 3px solid #4ecdc4; font-size: 2em; z-index: 20; animation: fadeInOut 2s; pointer-events: none; }
+        @keyframes fadeInOut { 0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } 10%, 90% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
     </style>
 </head>
 <body>
     <div id="gameContainer">
         <div id="introScreen" class="screen active">
             <h1>🏰 FORTRESS DEFENSE</h1>
-            <div style="font-size: 1.2em; margin-bottom: 20px;">Extended Edition</div>
+            <div style="font-size: 1.2em; margin-bottom: 20px;">Complete Evolution Edition</div>
             <button class="btn" onclick="game.showHeroSelect()">🦸 SELECT HERO & PLAY</button>
             <button class="btn" onclick="game.showUnlocks()">🛠 UPGRADES & UNLOCKS</button>
-            <button class="btn" onclick="game.loadGame()">📂 LOAD SAVED GAME</button>
+            <button class="btn" onclick="game.showShop()">🛒 INFINITE UPGRADES</button>
         </div>
 
         <div id="heroSelectScreen" class="screen">
@@ -322,32 +73,37 @@
             <button class="btn" onclick="game.hideHeroSelect()" style="margin-top: 30px;">← BACK</button>
         </div>
 
-        <div id="upgradeScreen" class="screen">
-            <h2 style="font-size: clamp(1.5em, 5vw, 2.5em); margin-bottom: 20px;">⬆ CHOOSE YOUR UPGRADE</h2>
-            <div class="upgrade-grid" id="upgradeOptions"></div>
-        </div>
-
         <div id="unlockScreen" class="screen">
             <h2 style="font-size: clamp(1.5em, 5vw, 2.5em); margin-bottom: 20px;">🛠 UPGRADES & UNLOCKS</h2>
             <div style="font-size: clamp(1em, 3vw, 1.3em); margin-bottom: 20px;">💰 Total Gold: <span id="unlockGold">0</span></div>
-            
             <div class="category-tabs">
                 <div class="category-tab active" onclick="game.showUnlockCategory('heroes')">🦸 HEROES</div>
-                <div class="category-tab" onclick="game.showUnlockCategory('fortresses')">🏰 FORTRESSES</div>
-                <div class="category-tab" onclick="game.showUnlockCategory('permanent')">⭐ PERMANENT</div>
+                <div class="category-tab" onclick="game.showUnlockCategory('towers')">🏰 TOWERS</div>
             </div>
-
             <div id="heroesCategory" class="category-content active">
                 <div class="unlock-grid" id="heroesUnlocks"></div>
             </div>
-            <div id="fortressesCategory" class="category-content">
-                <div class="unlock-grid" id="fortressesUnlocks"></div>
+            <div id="towersCategory" class="category-content">
+                <div class="unlock-grid" id="towersUnlocks"></div>
             </div>
-            <div id="permanentCategory" class="category-content">
-                <div class="unlock-grid" id="permanentUnlocks"></div>
-            </div>
+            <button class="btn" onclick="game.hideUnlocks()" style="margin-top: 30px;">← BACK</button>
+        </div>
 
-            <button class="btn" onclick="game.hideUnlocks()" style="margin-top: 30px;">← BACK TO MENU</button>
+        <div id="shopScreen" class="screen">
+            <h1>🛒 INFINITE UPGRADES</h1>
+            <div style="font-size: 1.3em; margin: 20px 0;">💰 Gold: <span id="shopGold">0</span></div>
+            <div style="max-width: 1200px; width: 100%;">
+                <h2 style="font-size: clamp(1.5em, 4vw, 2em); margin: 20px 0; color: #4ecdc4;">⚔️ Hero Upgrades</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;" id="heroUpgrades"></div>
+                <h2 style="font-size: clamp(1.5em, 4vw, 2em); margin: 20px 0; color: #4ecdc4;">🏰 Fortress Upgrades</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;" id="fortressUpgrades"></div>
+            </div>
+            <button class="btn" onclick="game.hideShop()" style="margin-top: 30px;">← BACK</button>
+        </div>
+
+        <div id="upgradeScreen" class="screen">
+            <h2 style="font-size: clamp(1.5em, 5vw, 2.5em); margin-bottom: 20px;">⬆️ CHOOSE YOUR UPGRADE</h2>
+            <div class="upgrade-grid" id="upgradeOptions"></div>
         </div>
 
         <div id="gameOverScreen" class="screen">
@@ -355,13 +111,12 @@
             <div style="font-size: clamp(1em, 3vw, 1.5em); margin: 20px 0;">
                 <p>Final Level: <span id="finalLevel">0</span></p>
                 <p>Gold Earned: <span id="finalGold">0</span></p>
-                <p>Wave Survived: <span id="finalWave">0</span></p>
             </div>
             <button class="btn" onclick="game.returnToMenu()">MAIN MENU</button>
         </div>
 
         <div class="placement-overlay" id="placementOverlay">
-            <div style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); text-align: center;">
+            <div style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 10; pointer-events: all;">
                 <button class="btn" onclick="game.cancelPlacement()" style="font-size: 1.2em;">✖ SKIP TOWER</button>
             </div>
         </div>
@@ -369,33 +124,30 @@
         <canvas id="gameCanvas" width="1200" height="800"></canvas>
 
         <div id="hud">
-            <div class="hud-panel compact">
-                <div class="stat-row">
-                    <span>🏰</span>
-                    <span id="fortressHP">1500/1500</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill hp-bar" id="hpBar" style="width: 100%;"></div>
-                </div>
+            <div class="hud-panel">
+                <div class="stat-row"><span>🏰 Lvl<span id="fortressLevel">1</span></span><span id="fortressHP">1500/1500</span></div>
+                <div class="progress-bar"><div class="progress-fill hp-bar" id="hpBar" style="width: 100%;"></div></div>
             </div>
-            <div class="hud-panel compact">
-                <div class="stat-row">
-                    <span>⭐<span id="playerLevel">1</span></span>
-                    <span>💰<span id="playerGold">0</span></span>
-                    <span>🌊<span id="waveNumber">1</span></span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill xp-bar" id="xpBar" style="width: 0%;"></div>
-                </div>
+            <div class="hud-panel">
+                <div class="stat-row"><span>⭐<span id="playerLevel">1</span></span><span>💰<span id="playerGold">0</span></span></div>
+                <div class="progress-bar"><div class="progress-fill xp-bar" id="xpBar" style="width: 0%;"></div></div>
             </div>
-            <div class="hud-panel compact" id="heroAbility" style="display: none;">
-                <div class="stat-row" style="align-items: center; gap: 8px;">
-                    <div class="ability-icon" id="abilityIcon" onclick="game.useHeroAbility()">⚡</div>
-                    <div style="flex: 1; min-width: 0;">
-                        <div style="font-size: 0.85em;" id="abilityName">Ability</div>
-                        <div class="progress-bar" style="height: 12px; margin: 2px 0 0 0;">
-                            <div class="progress-fill cd-bar" id="abilityCDBar" style="width: 100%;"></div>
-                        </div>
+            <div class="hud-panel" id="heroSkills">
+                <div class="stat-row" style="gap: 8px; justify-content: center;">
+                    <div class="skill-icon locked" id="skill1" onclick="game.useSkill(1)">
+                        <div class="skill-hotkey">1</div>
+                        <span>⚡</span><div class="skill-level">0</div>
+                    </div>
+                    <div class="skill-icon locked" id="skill2" onclick="game.useSkill(2)">
+                        <div class="skill-hotkey">2</div>
+                        <span>🔥</span><div class="skill-level">0</div>
+                    </div>
+                    <div class="skill-icon locked" id="skill3" onclick="game.useSkill(3)">
+                        <div class="skill-hotkey">3</div>
+                        <span>💫</span><div class="skill-level">0</div>
+                    </div>
+                    <div class="auto-attack-btn" id="autoAttackBtn" onclick="game.toggleAutoAttack()" title="Toggle Auto-Attack (A)">
+                        <span>🎯</span>
                     </div>
                 </div>
             </div>
@@ -406,134 +158,44 @@
                 <div class="joystick-inner" id="joystickInner"></div>
             </div>
         </div>
-
-        <div class="controls-hint">
-            WASD: Move | Click: Attack | Space: Ability | ESC: Pause
-        </div>
     </div>
 
     <script>
         const CONFIG = {
             canvas: { width: 1200, height: 800 },
-            fortress: {
-                baseHP: 1500,
-                baseDefense: 10,
-                baseAttack: 25,
-                baseRange: 150,
-                baseSpeed: 1000,
-                radius: 45
-            },
-            player: {
-                speed: 4,
-                baseAttack: 20,
-                baseRange: 100,
-                attackSpeed: 500,
-                radius: 15,
-                baseHP: 150
-            },
-            enemy: {
-                baseHP: 60,
-                baseSpeed: 1.5,
-                baseDamage: 12,
-                goldReward: 15,
-                xpReward: 25,
-                spawnInterval: 2000,
-                scaleRate: 0.12
-            },
-            upgrade: {
-                xpPerLevel: 100,
-                xpScaling: 1.2
-            },
-            grid: {
-                cellSize: 80,
-                maxRadius: 3
-            }
+            fortress: { baseHP: 1500, baseDefense: 10, baseAttack: 25, baseRange: 150, baseSpeed: 1000, radius: 45, maxLevel: 50 },
+            player: { speed: 4, baseAttack: 20, baseRange: 100, attackSpeed: 500, radius: 15, baseHP: 150, maxLevel: 100 },
+            enemy: { baseHP: 60, baseSpeed: 1.5, baseDamage: 12, goldReward: 15, xpReward: 25, spawnInterval: 2000, scaleRate: 0.12 },
+            upgrade: { xpPerLevel: 100, xpScaling: 1.2 },
+            grid: { cellSize: 80, maxRadius: 3 }
         };
 
         const HEROES = {
-            warrior: {
-                id: 'warrior',
-                name: '⚔️ Warrior',
-                desc: 'Melee tank with lifesteal',
-                cost: 0,
-                unlocked: true,
-                icon: '⚔️',
-                color: '#e74c3c',
-                stats: { attack: 1.2, speed: 1, range: 0.8, hp: 1.5 },
-                ability: {
-                    name: 'Whirlwind',
-                    icon: '🌪️',
-                    cooldown: 8000,
-                    effect: 'AOE damage around hero'
-                },
-                passive: 'Lifesteal 15%'
-            },
-            mage: {
-                id: 'mage',
-                name: '🔮 Mage',
-                desc: 'Ranged magic with AOE',
-                cost: 200,
-                unlocked: false,
-                icon: '🔮',
-                color: '#9b59b6',
-                stats: { attack: 1.5, speed: 1, range: 2, hp: 0.8 },
-                ability: {
-                    name: 'Meteor',
-                    icon: '☄️',
-                    cooldown: 10000,
-                    effect: 'Massive AOE damage'
-                },
-                passive: 'Attacks burn enemies'
-            },
-            ranger: {
-                id: 'ranger',
-                name: '🏹 Ranger',
-                desc: 'Long range with crit',
-                cost: 150,
-                unlocked: false,
-                icon: '🏹',
-                color: '#2ecc71',
-                stats: { attack: 1.3, speed: 1.3, range: 2.5, hp: 1 },
-                ability: {
-                    name: 'Multi-Shot',
-                    icon: '🎯',
-                    cooldown: 6000,
-                    effect: 'Hit 5 targets'
-                },
-                passive: '25% crit chance'
-            },
-            engineer: {
-                id: 'engineer',
-                name: '🔧 Engineer',
-                desc: 'Buffs towers & repairs',
-                cost: 250,
-                unlocked: false,
-                icon: '🔧',
-                color: '#f39c12',
-                stats: { attack: 0.7, speed: 1, range: 1.2, hp: 1.2 },
-                ability: {
-                    name: 'Repair',
-                    icon: '🔨',
-                    cooldown: 12000,
-                    effect: 'Heal fortress 20%'
-                },
-                passive: 'Towers +30% damage'
-            }
+            warrior: { id: 'warrior', name: '⚔️ Warrior', desc: 'Melee tank with lifesteal', cost: 0, unlocked: true, icon: '⚔️', color: '#e74c3c', stats: { attack: 1.2, speed: 1, range: 0.8, hp: 1.5 }, passive: 'Lifesteal 15%' },
+            mage: { id: 'mage', name: '🔮 Mage', desc: 'Ranged magic with AOE', cost: 200, unlocked: false, icon: '🔮', color: '#9b59b6', stats: { attack: 1.5, speed: 1, range: 2, hp: 0.8 }, passive: 'Burn enemies' },
+            ranger: { id: 'ranger', name: '🏹 Ranger', desc: 'Long range with crit', cost: 150, unlocked: false, icon: '🏹', color: '#2ecc71', stats: { attack: 1.3, speed: 1.3, range: 2.5, hp: 1 }, passive: '25% crit' },
+            engineer: { id: 'engineer', name: '🔧 Engineer', desc: 'Buffs towers', cost: 250, unlocked: false, icon: '🔧', color: '#f39c12', stats: { attack: 0.7, speed: 1, range: 1.2, hp: 1.2 }, passive: 'Towers +30%' }
         };
 
-        const UNLOCKABLES = {
-            subFortresses: [
-                { id: 'archer', name: '🏹 Archer Tower', cost: 0, type: 'ranged-physical', desc: 'Fast ranged attacks', unlocked: true, color: '#e74c3c', stats: { attack: 20, range: 200, speed: 1200 } },
-                { id: 'mage', name: '🔮 Mage Tower', cost: 200, type: 'ranged-magical', desc: 'Magic damage', unlocked: false, color: '#9b59b6', stats: { attack: 35, range: 180, speed: 1800 } },
-                { id: 'cannon', name: '💣 Cannon', cost: 350, type: 'ranged-physical', desc: 'Splash damage', unlocked: false, color: '#e67e22', stats: { attack: 60, range: 220, speed: 2500 } },
-                { id: 'healer', name: '💚 Healing Shrine', cost: 300, type: 'support-heal', desc: 'Heals fortress', unlocked: false, color: '#2ecc71', stats: { value: 8, speed: 2000 } },
-                { id: 'gold', name: '💰 Gold Mine', cost: 400, type: 'economy', desc: 'Generates gold', unlocked: false, color: '#f1c40f', stats: { value: 3, speed: 3000 } },
-                { id: 'buff', name: '📈 Buff Tower', cost: 350, type: 'support-buff', desc: '+20% damage', unlocked: false, color: '#3498db', stats: { value: 1.2, range: 150 } },
-                { id: 'ice', name: '❄️ Ice Tower', cost: 450, type: 'ranged-magical', desc: 'Slows enemies', unlocked: false, color: '#5dade2', stats: { attack: 25, range: 190, speed: 1500 } }
-            ],
-            permanent: [
-                { id: 'slots', name: '🗺️ Land Expansion', cost: 500, desc: '+1 Placement Slot', unlocked: false, value: 1 }
-            ]
+        const SKILLS = {
+            skill1: { name: 'Power Strike', icon: '⚡', unlockLevel: 1, cooldown: 8000, desc: 'AOE damage' },
+            skill2: { name: 'Fire Storm', icon: '🔥', unlockLevel: 10, cooldown: 12000, desc: 'Burn all' },
+            skill3: { name: 'Ultimate', icon: '💫', unlockLevel: 25, cooldown: 20000, desc: 'Devastation' }
+        };
+
+        const TOWER_TYPES = {
+            archer: { id: 'archer', name: '🏹 Archer', cost: 0, unlocked: true, color: '#e74c3c', attack: 20, range: 200, speed: 1200 },
+            mage: { id: 'mage', name: '🔮 Mage', cost: 200, unlocked: false, color: '#9b59b6', attack: 35, range: 180, speed: 1800 },
+            cannon: { id: 'cannon', name: '💣 Cannon', cost: 350, unlocked: false, color: '#e67e22', attack: 60, range: 220, speed: 2500 },
+            healer: { id: 'healer', name: '💚 Healer', cost: 300, unlocked: false, color: '#2ecc71', type: 'heal', value: 8, speed: 2000 },
+            gold: { id: 'gold', name: '💰 Gold Mine', cost: 400, unlocked: false, color: '#f1c40f', type: 'gold', value: 3, speed: 3000 }
+        };
+
+        const TOWER_SKILLS = {
+            rapid: { name: 'Rapid Fire', desc: '+50% Speed', apply: t => t.speed *= 0.67 },
+            pierce: { name: 'Piercing', desc: '+100% Damage', apply: t => t.attack *= 2 },
+            range: { name: 'Long Range', desc: '+50% Range', apply: t => t.range *= 1.5 },
+            splash: { name: 'Splash', desc: 'AOE damage', apply: t => t.splash = true }
         };
 
         class Game {
@@ -541,52 +203,61 @@
                 this.canvas = document.getElementById('gameCanvas');
                 this.ctx = this.canvas.getContext('2d');
                 this.state = 'intro';
-                this.entities = { enemies: [], subFortresses: [], projectiles: [], effects: [] };
+                this.entities = { enemies: [], towers: [], projectiles: [], effects: [] };
                 this.keys = {};
-                this.mouse = { x: CONFIG.canvas.width / 2, y: CONFIG.canvas.height / 2, clicked: false, down: false };
+                this.mouse = { x: 600, y: 400, clicked: false };
                 this.touch = { active: false, x: 0, y: 0 };
                 this.time = 0;
-                this.lastSpawn = 0;
-                this.totalGold = this.loadTotalGold();
+                this.totalGold = 0;
+                this.infiniteUpgrades = {};
                 this.selectedHero = null;
                 this.placementMode = false;
                 this.placementTower = null;
-                this.renderingPlacement = false;
                 this.gridCells = [];
-                this.wave = 1;
+                this.placedTowerTypes = new Set();
+                this.autoAttack = false;
                 this.setupControls();
                 this.setupTouch();
                 this.resizeCanvas();
-                this.loadUnlocks();
-                window.addEventListener('resize', () => this.resizeCanvas());
+                this.loadData();
                 this.initGrid();
+                window.addEventListener('resize', () => this.resizeCanvas());
             }
 
             setupControls() {
                 document.addEventListener('keydown', e => {
-                    this.keys[e.key.toLowerCase()] = true;
-                    if (e.key === ' ' && this.state === 'playing') {
+                    const key = e.key.toLowerCase();
+                    this.keys[key] = true;
+
+                    // Dùng skill 1–3
+                    if (key >= '1' && key <= '3' && this.state === 'playing') {
+                        this.useSkill(parseInt(key));
+                    }
+
+                    // 🔥 Auto Attack → phím E
+                    if (key === 'e' && this.state === 'playing' && !e.repeat) {
                         e.preventDefault();
-                        this.useHeroAbility();
+                        this.toggleAutoAttack();
                     }
                 });
-                document.addEventListener('keyup', e => this.keys[e.key.toLowerCase()] = false);
+
+                document.addEventListener('keyup', e => {
+                    this.keys[e.key.toLowerCase()] = false;
+                });
+
                 this.canvas.addEventListener('mousemove', e => {
                     const rect = this.canvas.getBoundingClientRect();
                     this.mouse.x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
                     this.mouse.y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
                 });
-                this.canvas.addEventListener('mousedown', () => this.mouse.down = true);
-                this.canvas.addEventListener('mouseup', () => {
-                    this.mouse.clicked = true;
-                    this.mouse.down = false;
-                });
+
+                this.canvas.addEventListener('mouseup', () => this.mouse.clicked = true);
+
                 this.canvas.addEventListener('click', e => {
-                    const rect = this.canvas.getBoundingClientRect();
-                    const x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
-                    const y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
-                    
                     if (this.placementMode) {
+                        const rect = this.canvas.getBoundingClientRect();
+                        const x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
+                        const y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
                         this.handlePlacement(x, y);
                     }
                 });
@@ -601,7 +272,6 @@
                     e.preventDefault();
                     const touch = isStart ? e.changedTouches[0] : Array.from(e.touches).find(t => t.identifier === touchId);
                     if (!touch) return;
-
                     const rect = joystick.getBoundingClientRect();
                     const centerX = rect.left + rect.width / 2;
                     const centerY = rect.top + rect.height / 2;
@@ -609,20 +279,17 @@
                     const dy = touch.clientY - centerY;
                     const dist = Math.min(Math.hypot(dx, dy), rect.width / 4);
                     const angle = Math.atan2(dy, dx);
-
                     if (isStart) touchId = touch.identifier;
-
                     this.touch.active = true;
                     this.touch.x = Math.cos(angle) * (dist / (rect.width / 4));
                     this.touch.y = Math.sin(angle) * (dist / (rect.width / 4));
-
                     inner.style.left = `${25 + this.touch.x * 25}%`;
                     inner.style.top = `${25 + this.touch.y * 25}%`;
                 };
 
                 joystick.addEventListener('touchstart', e => handleTouch(e, true));
                 joystick.addEventListener('touchmove', e => handleTouch(e, false));
-                joystick.addEventListener('touchend', e => {
+                joystick.addEventListener('touchend', () => {
                     this.touch.active = false;
                     this.touch.x = 0;
                     this.touch.y = 0;
@@ -644,7 +311,6 @@
                     }
                 });
 
-                // Update mouse position on touch for preview
                 this.canvas.addEventListener('touchmove', e => {
                     if (this.placementMode) {
                         e.preventDefault();
@@ -670,11 +336,7 @@
             }
 
             initGrid() {
-                const centerX = CONFIG.canvas.width / 2;
-                const centerY = CONFIG.canvas.height / 2;
-                const size = CONFIG.grid.cellSize;
-                const maxRadius = CONFIG.grid.maxRadius;
-
+                const centerX = 600, centerY = 400, size = 80, maxRadius = 3;
                 for (let dy = -maxRadius; dy <= maxRadius; dy++) {
                     for (let dx = -maxRadius; dx <= maxRadius; dx++) {
                         const dist = Math.abs(dx) + Math.abs(dy);
@@ -688,6 +350,32 @@
                         }
                     }
                 }
+            }
+
+            loadData() {
+                try {
+                    const unlocks = localStorage.getItem('fortressDefense_unlocks');
+                    if (unlocks) {
+                        const data = JSON.parse(unlocks);
+                        Object.keys(data.heroes || {}).forEach(k => { if (HEROES[k]) HEROES[k].unlocked = data.heroes[k]; });
+                        Object.keys(data.towers || {}).forEach(k => { if (TOWER_TYPES[k]) TOWER_TYPES[k].unlocked = data.towers[k]; });
+                    }
+                    const gold = localStorage.getItem('fortressDefense_gold');
+                    if (gold) this.totalGold = parseInt(gold);
+                    const infinite = localStorage.getItem('fortressDefense_infinite');
+                    if (infinite) this.infiniteUpgrades = JSON.parse(infinite);
+                } catch(e) {}
+            }
+
+            saveData() {
+                try {
+                    const unlocks = { heroes: {}, towers: {} };
+                    Object.keys(HEROES).forEach(k => unlocks.heroes[k] = HEROES[k].unlocked);
+                    Object.keys(TOWER_TYPES).forEach(k => unlocks.towers[k] = TOWER_TYPES[k].unlocked);
+                    localStorage.setItem('fortressDefense_unlocks', JSON.stringify(unlocks));
+                    localStorage.setItem('fortressDefense_gold', this.totalGold.toString());
+                    localStorage.setItem('fortressDefense_infinite', JSON.stringify(this.infiniteUpgrades));
+                } catch(e) {}
             }
 
             showHeroSelect() {
@@ -706,19 +394,16 @@
             renderHeroes() {
                 const container = document.getElementById('heroOptions');
                 container.innerHTML = '';
-
                 Object.values(HEROES).forEach(h => {
                     const card = document.createElement('div');
-                    card.className = 'card' + (h.unlocked ? '' : '') + (this.selectedHero === h.id ? ' selected' : '');
+                    card.className = 'card' + (h.unlocked ? ' unlocked' : '');
                     card.innerHTML = `
                         <h3>${h.name}</h3>
                         <div style="font-size: 3em; margin: 15px 0;">${h.icon}</div>
                         <p>${h.desc}</p>
-                        <p style="margin-top: 10px;"><strong>Ability:</strong> ${h.ability.name} - ${h.ability.effect}</p>
-                        <p><strong>Passive:</strong> ${h.passive}</p>
+                        <p style="margin-top: 10px;"><strong>Passive:</strong> ${h.passive}</p>
                         ${h.unlocked ? '' : `<p style="color: #f39c12; margin-top: 10px;">💰 Cost: ${h.cost} Gold</p>`}
                     `;
-                    
                     card.onclick = () => {
                         if (h.unlocked) {
                             this.selectedHero = h.id;
@@ -727,9 +412,8 @@
                             if (confirm(`Unlock ${h.name} for ${h.cost} gold?`)) {
                                 this.totalGold -= h.cost;
                                 h.unlocked = true;
+                                this.saveData();
                                 this.selectedHero = h.id;
-                                this.saveUnlocks();
-                                this.saveTotalGold();
                                 this.startGame();
                             }
                         } else {
@@ -740,52 +424,176 @@
                 });
             }
 
+            showUnlocks() {
+                this.state = 'unlocking';
+                document.getElementById('introScreen').classList.remove('active');
+                this.renderUnlocks();
+                document.getElementById('unlockScreen').classList.add('active');
+            }
+
+            hideUnlocks() {
+                this.state = 'intro';
+                document.getElementById('unlockScreen').classList.remove('active');
+                document.getElementById('introScreen').classList.add('active');
+            }
+
+            showUnlockCategory(category) {
+                document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+                event.target.classList.add('active');
+                document.querySelectorAll('.category-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(category + 'Category').classList.add('active');
+            }
+
+            renderUnlocks() {
+                document.getElementById('unlockGold').textContent = this.totalGold;
+                
+                const heroesContainer = document.getElementById('heroesUnlocks');
+                heroesContainer.innerHTML = '';
+                Object.values(HEROES).forEach(h => {
+                    if (h.id === 'warrior') return;
+                    const card = document.createElement('div');
+                    card.className = 'card' + (h.unlocked ? ' unlocked' : '');
+                    card.innerHTML = `
+                        <h3>${h.name}</h3>
+                        <div style="font-size: 2.5em; margin: 10px 0;">${h.icon}</div>
+                        <p>${h.desc}</p>
+                        ${h.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Unlocked</p>' : 
+                          `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
+                           ${this.totalGold < h.cost ? 'disabled' : ''} 
+                           onclick="game.unlockItem('hero', '${h.id}', ${h.cost})">Unlock (${h.cost}💰)</button>`}
+                    `;
+                    heroesContainer.appendChild(card);
+                });
+
+                const towersContainer = document.getElementById('towersUnlocks');
+                towersContainer.innerHTML = '';
+                Object.values(TOWER_TYPES).forEach(t => {
+                    if (t.id === 'archer') return;
+                    const card = document.createElement('div');
+                    card.className = 'card' + (t.unlocked ? ' unlocked' : '');
+                    card.innerHTML = `
+                        <h3>${t.name}</h3>
+                        <p>${t.type === 'heal' ? 'Heals fortress' : t.type === 'gold' ? 'Generates gold' : 'Attack tower'}</p>
+                        ${t.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Unlocked</p>' : 
+                          `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
+                           ${this.totalGold < t.cost ? 'disabled' : ''} 
+                           onclick="game.unlockItem('tower', '${t.id}', ${t.cost})">Unlock (${t.cost}💰)</button>`}
+                    `;
+                    towersContainer.appendChild(card);
+                });
+            }
+
+            unlockItem(category, id, cost) {
+                const item = category === 'hero' ? HEROES[id] : TOWER_TYPES[id];
+                if (item && !item.unlocked && this.totalGold >= cost) {
+                    this.totalGold -= cost;
+                    item.unlocked = true;
+                    this.saveData();
+                    this.renderUnlocks();
+                    this.showNotification('Unlocked!');
+                }
+            }
+
+            showShop() {
+                this.state = 'shop';
+                document.getElementById('introScreen').classList.remove('active');
+                this.renderShop();
+                document.getElementById('shopScreen').classList.add('active');
+            }
+
+            hideShop() {
+                this.state = 'intro';
+                document.getElementById('shopScreen').classList.remove('active');
+                document.getElementById('introScreen').classList.add('active');
+            }
+
+            renderShop() {
+                document.getElementById('shopGold').textContent = this.totalGold;
+                
+                const heroContainer = document.getElementById('heroUpgrades');
+                heroContainer.innerHTML = '';
+                [
+                    { id: 'heroAttack', name: '⚔️ Hero Attack', basePrice: 100 },
+                    { id: 'heroHP', name: '💚 Hero HP', basePrice: 100 },
+                    { id: 'heroSpeed', name: '⚡ Hero Speed', basePrice: 150 }
+                ].forEach(u => {
+                    const level = this.infiniteUpgrades[u.id] || 0;
+                    const cost = Math.floor(u.basePrice * Math.pow(1.15, level));
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `<h3>${u.name}</h3><p>Level: ${level}</p><p>Cost: ${cost}💰</p><p style="font-size: 0.9em; opacity: 0.8;">+10% per level</p>`;
+                    div.onclick = () => this.buyInfinite(u.id, cost);
+                    heroContainer.appendChild(div);
+                });
+
+                const fortressContainer = document.getElementById('fortressUpgrades');
+                fortressContainer.innerHTML = '';
+                [
+                    { id: 'fortressAttack', name: '🏰 Fortress Attack', basePrice: 150 },
+                    { id: 'fortressHP', name: '🛡️ Fortress HP', basePrice: 150 },
+                    { id: 'fortressDefense', name: '🔰 Fortress Defense', basePrice: 200 }
+                ].forEach(u => {
+                    const level = this.infiniteUpgrades[u.id] || 0;
+                    const cost = Math.floor(u.basePrice * Math.pow(1.15, level));
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `<h3>${u.name}</h3><p>Level: ${level}</p><p>Cost: ${cost}💰</p><p style="font-size: 0.9em; opacity: 0.8;">+10% per level</p>`;
+                    div.onclick = () => this.buyInfinite(u.id, cost);
+                    fortressContainer.appendChild(div);
+                });
+            }
+
+            buyInfinite(id, cost) {
+                if (this.totalGold >= cost) {
+                    this.totalGold -= cost;
+                    this.infiniteUpgrades[id] = (this.infiniteUpgrades[id] || 0) + 1;
+                    this.saveData();
+                    this.renderShop();
+                    this.showNotification('Upgrade Purchased!');
+                }
+            }
+
             init() {
                 const hero = HEROES[this.selectedHero || 'warrior'];
-                this.player = this.createPlayer(hero);
-                this.fortress = this.createFortress();
-                this.level = 1;
-                this.xp = 0;
-                this.gold = 0;
-                this.wave = 1;
-                this.maxSubFortresses = 5;
-                this.entities = { enemies: [], subFortresses: [], projectiles: [], effects: [] };
-                this.time = 0;
-                this.lastSpawn = 0;
-                this.gridCells.forEach(c => c.occupied = false);
-                this.heroAbility = { cooldown: hero.ability.cooldown, lastUse: 0 };
-            }
-
-            createPlayer(hero) {
-                return {
-                    x: CONFIG.canvas.width / 2,
-                    y: CONFIG.canvas.height / 2 + 100,
+                const inf = this.infiniteUpgrades;
+                this.player = {
+                    x: 600, y: 500,
                     vx: 0, vy: 0,
-                    attack: CONFIG.player.baseAttack * hero.stats.attack,
+                    attack: CONFIG.player.baseAttack * hero.stats.attack * Math.pow(1.1, inf.heroAttack || 0),
                     range: CONFIG.player.baseRange * hero.stats.range,
-                    attackSpeed: CONFIG.player.attackSpeed / hero.stats.speed,
+                    attackSpeed: CONFIG.player.attackSpeed / hero.stats.speed / Math.pow(1.1, inf.heroSpeed || 0),
                     lastAttack: 0,
-                    hp: CONFIG.player.baseHP * hero.stats.hp,
-                    maxHP: CONFIG.player.baseHP * hero.stats.hp,
+                    hp: CONFIG.player.baseHP * hero.stats.hp * Math.pow(1.1, inf.heroHP || 0),
+                    maxHP: CONFIG.player.baseHP * hero.stats.hp * Math.pow(1.1, inf.heroHP || 0),
                     hero: hero.id,
                     color: hero.color,
-                    icon: hero.icon
+                    icon: hero.icon,
+                    skills: { 
+                        skill1: { level: 0, lastUse: 0 }, 
+                        skill2: { level: 0, lastUse: 0 }, 
+                        skill3: { level: 0, lastUse: 0 } 
+                    }
                 };
-            }
-
-            createFortress() {
-                return {
-                    x: CONFIG.canvas.width / 2,
-                    y: CONFIG.canvas.height / 2,
-                    hp: CONFIG.fortress.baseHP,
-                    maxHP: CONFIG.fortress.baseHP,
-                    defense: CONFIG.fortress.baseDefense,
-                    attack: CONFIG.fortress.baseAttack,
+                this.fortress = {
+                    x: 600, y: 400,
+                    hp: CONFIG.fortress.baseHP * Math.pow(1.1, inf.fortressHP || 0),
+                    maxHP: CONFIG.fortress.baseHP * Math.pow(1.1, inf.fortressHP || 0),
+                    defense: CONFIG.fortress.baseDefense * Math.pow(1.1, inf.fortressDefense || 0),
+                    attack: CONFIG.fortress.baseAttack * Math.pow(1.1, inf.fortressAttack || 0),
                     range: CONFIG.fortress.baseRange,
                     attackSpeed: CONFIG.fortress.baseSpeed,
                     lastAttack: 0,
-                    skin: 'main'
+                    level: 1,
+                    xp: 0
                 };
+                this.level = 1;
+                this.xp = 0;
+                this.gold = 0;
+                this.entities = { enemies: [], towers: [], projectiles: [], effects: [] };
+                this.time = 0;
+                this.lastSpawn = 0;
+                this.placedTowerTypes = new Set();
+                this.gridCells.forEach(c => c.occupied = false);
             }
 
             startGame() {
@@ -795,9 +603,6 @@
                 document.getElementById('introScreen').classList.remove('active');
                 document.getElementById('hud').classList.add('active');
                 document.getElementById('mobileControls').classList.add('active');
-                document.getElementById('heroAbility').style.display = 'block';
-                document.getElementById('abilityIcon').textContent = HEROES[this.selectedHero].ability.icon;
-                document.getElementById('abilityName').textContent = HEROES[this.selectedHero].ability.name;
                 this.loop();
             }
 
@@ -805,31 +610,25 @@
                 if (this.state !== 'playing' && this.state !== 'placing') return;
                 const dt = Math.min(timestamp - this.time, 100);
                 this.time = timestamp;
-                
-                // Only update game logic when playing, not during placement
-                if (this.state === 'playing') {
-                    this.update(dt);
-                }
-                
+                if (this.state === 'playing') this.update(dt);
                 this.render();
                 requestAnimationFrame(t => this.loop(t));
             }
 
             update(dt) {
-                this.updatePlayer(dt);
-                this.updateFortress(dt);
-                this.updateSubFortresses(dt);
-                this.updateEnemies(dt);
-                this.updateProjectiles(dt);
-                this.updateEffects(dt);
+                this.updatePlayer();
+                this.updateFortress();
+                this.updateTowers();
+                this.updateEnemies();
+                this.updateProjectiles();
+                this.updateEffects();
                 this.spawnEnemies();
                 this.updateUI();
             }
 
-            updatePlayer(dt) {
+            updatePlayer() {
                 const p = this.player;
                 p.vx = p.vy = 0;
-
                 if (this.touch.active) {
                     p.vx = this.touch.x * CONFIG.player.speed;
                     p.vy = this.touch.y * CONFIG.player.speed;
@@ -839,16 +638,25 @@
                     if (this.keys['a']) p.vx = -CONFIG.player.speed;
                     if (this.keys['d']) p.vx = CONFIG.player.speed;
                 }
-                
                 if (p.vx && p.vy) { p.vx *= 0.707; p.vy *= 0.707; }
-                p.x = Math.max(20, Math.min(CONFIG.canvas.width - 20, p.x + p.vx));
-                p.y = Math.max(20, Math.min(CONFIG.canvas.height - 20, p.y + p.vy));
+                p.x = Math.max(20, Math.min(1180, p.x + p.vx));
+                p.y = Math.max(20, Math.min(780, p.y + p.vy));
 
-                if ((this.mouse.clicked || this.mouse.down) && this.time - p.lastAttack > p.attackSpeed) {
-                    this.playerAttack();
-                    p.lastAttack = this.time;
+                // Auto-attack or manual attack
+                if (this.time - p.lastAttack > p.attackSpeed) {
+                    if (this.autoAttack || this.mouse.clicked) {
+                        this.playerAttack();
+                        p.lastAttack = this.time;
+                    }
                 }
                 this.mouse.clicked = false;
+            }
+
+            toggleAutoAttack() {
+                this.autoAttack = !this.autoAttack;
+                const btn = document.getElementById('autoAttackBtn');
+                btn.classList.toggle('active', this.autoAttack);
+                this.showNotification(this.autoAttack ? 'Auto-Attack ON' : 'Auto-Attack OFF');
             }
 
             playerAttack() {
@@ -875,45 +683,41 @@
                 }
             }
 
-            useHeroAbility() {
-                if (this.time - this.heroAbility.lastUse < this.heroAbility.cooldown) return;
+            useSkill(num) {
+                const skillKey = 'skill' + num;
+                const skill = SKILLS[skillKey];
+                const pSkill = this.player.skills[skillKey];
                 
-                const hero = HEROES[this.player.hero];
+                if (this.level < skill.unlockLevel || this.time - pSkill.lastUse < skill.cooldown) return;
+                
+                pSkill.lastUse = this.time;
                 const p = this.player;
-
-                switch(hero.id) {
-                    case 'warrior':
-                        for (let e of this.entities.enemies) {
-                            const dist = Math.hypot(e.x - p.x, e.y - p.y);
-                            if (dist < 200) this.damageEnemy(e, p.attack * 3);
+                
+                if (num === 1) {
+                    const dmg = p.attack * (3 + pSkill.level * 0.5);
+                    this.entities.enemies.forEach(e => {
+                        if (Math.hypot(e.x - p.x, e.y - p.y) < 150) this.damageEnemy(e, dmg);
+                    });
+                    this.createEffect(p.x, p.y, '⚡', 60, 3);
+                } else if (num === 2) {
+                    const dmg = p.attack * (2 + pSkill.level * 0.3);
+                    this.entities.enemies.forEach(e => {
+                        if (Math.hypot(e.x - p.x, e.y - p.y) < 200) {
+                            this.damageEnemy(e, dmg);
+                            e.burning = true;
                         }
-                        this.createEffect(p.x, p.y, '🌪️', 60, 2);
-                        break;
-                    case 'mage':
-                        const nearest = this.findNearest(p, this.entities.enemies);
-                        if (nearest) {
-                            for (let e of this.entities.enemies) {
-                                const dist = Math.hypot(e.x - nearest.x, e.y - nearest.y);
-                                if (dist < 150) this.damageEnemy(e, p.attack * 4);
-                            }
-                            this.createEffect(nearest.x, nearest.y, '☄️', 60, 3);
-                        }
-                        break;
-                    case 'ranger':
-                        const targets = this.entities.enemies.slice(0, 5);
-                        targets.forEach(t => this.createProjectile(p.x, p.y, t, p.attack * 2, p.color, 'physical'));
-                        break;
-                    case 'engineer':
-                        this.fortress.hp = Math.min(this.fortress.maxHP, this.fortress.hp + this.fortress.maxHP * 0.2);
-                        this.createEffect(this.fortress.x, this.fortress.y, '🔨', 60, 2);
-                        break;
+                    });
+                    this.createEffect(p.x, p.y, '🔥', 60, 3);
+                } else if (num === 3) {
+                    const dmg = p.attack * (5 + pSkill.level);
+                    this.entities.enemies.forEach(e => this.damageEnemy(e, dmg));
+                    this.createEffect(p.x, p.y, '💫', 80, 4);
                 }
-
-                this.heroAbility.lastUse = this.time;
-                this.showNotification(hero.ability.name + '!');
+                
+                this.showNotification(skill.name + '!');
             }
 
-            updateFortress(dt) {
+            updateFortress() {
                 const f = this.fortress;
                 if (this.time - f.lastAttack > f.attackSpeed) {
                     const target = this.findNearest(f, this.entities.enemies);
@@ -924,41 +728,36 @@
                 }
             }
 
-            updateSubFortresses(dt) {
+            updateTowers() {
                 const engineerBonus = this.player.hero === 'engineer' ? 1.3 : 1;
-                
-                for (let sf of this.entities.subFortresses) {
-                    if (this.time - sf.lastAttack > sf.speed) {
-                        if (sf.type.includes('support')) {
-                            if (sf.subType === 'healer') {
-                                this.fortress.hp = Math.min(this.fortress.maxHP, this.fortress.hp + sf.value);
-                                this.createEffect(sf.x, sf.y, '+' + sf.value, 20);
-                            } else if (sf.subType === 'gold') {
-                                this.addGold(sf.value);
-                                this.createEffect(sf.x, sf.y, '+💰', 20);
-                            }
+                for (let t of this.entities.towers) {
+                    if (this.time - t.lastAttack > t.speed) {
+                        if (t.type === 'heal') {
+                            this.fortress.hp = Math.min(this.fortress.maxHP, this.fortress.hp + t.value);
+                            this.createEffect(t.x, t.y, '+' + t.value, 20);
+                        } else if (t.type === 'gold') {
+                            this.addGold(t.value);
+                            this.createEffect(t.x, t.y, '+💰', 20);
                         } else {
-                            const target = this.findNearest(sf, this.entities.enemies);
-                            if (target && Math.hypot(target.x - sf.x, target.y - sf.y) < sf.range) {
-                                this.createProjectile(sf.x, sf.y, target, sf.attack * engineerBonus, sf.color, sf.type.includes('magical') ? 'magic' : 'physical');
+                            const target = this.findNearest(t, this.entities.enemies);
+                            if (target && Math.hypot(target.x - t.x, target.y - t.y) < t.range) {
+                                this.createProjectile(t.x, t.y, target, t.attack * engineerBonus, t.color, 'physical');
                             }
                         }
-                        sf.lastAttack = this.time;
+                        t.lastAttack = this.time;
                     }
                 }
             }
 
-            updateEnemies(dt) {
+            updateEnemies() {
                 const f = this.fortress;
                 for (let i = this.entities.enemies.length - 1; i >= 0; i--) {
                     const e = this.entities.enemies[i];
-                    const dx = f.x - e.x, dy = f.y - e.y;
-                    const dist = Math.hypot(dx, dy);
+                    const dx = f.x - e.x, dy = f.y - e.y, dist = Math.hypot(dx, dy);
                     
-                    if (dist > CONFIG.fortress.radius + 25) {
-                        const speed = e.speed * (e.slowed ? 0.5 : 1);
-                        e.x += (dx / dist) * speed;
-                        e.y += (dy / dist) * speed;
+                    if (dist > 70) {
+                        e.x += (dx / dist) * e.speed;
+                        e.y += (dy / dist) * e.speed;
                     } else if (this.time - e.lastAttack > 1000) {
                         this.fortress.hp -= Math.max(1, e.damage - this.fortress.defense);
                         e.lastAttack = this.time;
@@ -968,27 +767,23 @@
                     if (e.burning && this.time - e.lastBurn > 500) {
                         e.hp -= 5;
                         e.lastBurn = this.time;
-                        this.createEffect(e.x, e.y, '🔥', 10);
                     }
 
                     if (e.hp <= 0) {
                         this.addGold(e.goldReward);
                         this.addXP(e.xpReward);
+                        this.addFortressXP(Math.floor(e.xpReward * 0.5));
                         this.createEffect(e.x, e.y, '💀');
                         this.entities.enemies.splice(i, 1);
                     }
                 }
             }
 
-            updateProjectiles(dt) {
+            updateProjectiles() {
                 for (let i = this.entities.projectiles.length - 1; i >= 0; i--) {
                     const p = this.entities.projectiles[i];
-                    
                     if (p.target && p.target.hp > 0) {
-                        const dx = p.target.x - p.x;
-                        const dy = p.target.y - p.y;
-                        const dist = Math.hypot(dx, dy);
-                        
+                        const dx = p.target.x - p.x, dy = p.target.y - p.y, dist = Math.hypot(dx, dy);
                         if (dist < 10) {
                             this.damageEnemy(p.target, p.damage);
                             if (p.type === 'magic') {
@@ -998,21 +793,18 @@
                             this.entities.projectiles.splice(i, 1);
                             continue;
                         }
-                        
                         p.x += (dx / dist) * 8;
                         p.y += (dy / dist) * 8;
                     }
-                    
                     p.life--;
                     if (p.life <= 0) this.entities.projectiles.splice(i, 1);
                 }
             }
 
-            updateEffects(dt) {
+            updateEffects() {
                 this.entities.effects = this.entities.effects.filter(e => {
                     e.life--;
-                    e.y -= e.speed || 1;
-                    e.scale = e.scale || 1;
+                    e.y -= 1;
                     return e.life > 0;
                 });
             }
@@ -1020,64 +812,36 @@
             spawnEnemies() {
                 if (this.time - this.lastSpawn > CONFIG.enemy.spawnInterval) {
                     const count = 2 + Math.floor(this.level / 8);
-                    for (let i = 0; i < count; i++) {
-                        this.createEnemy();
-                    }
+                    for (let i = 0; i < count; i++) this.createEnemy();
                     this.lastSpawn = this.time;
-                    this.wave++;
                 }
             }
 
             createEnemy() {
                 const angle = Math.random() * Math.PI * 2;
-                const dist = 600;
                 const scale = 1 + this.level * CONFIG.enemy.scaleRate;
-                const types = ['normal', 'fast', 'tank', 'boss'];
-                const weights = [0.6, 0.25, 0.12, 0.03];
-                let rand = Math.random();
-                let type = 'normal';
-                for (let i = 0; i < weights.length; i++) {
-                    if (rand < weights[i]) { type = types[i]; break; }
-                    rand -= weights[i];
-                }
-
-                const stats = {
-                    normal: { hp: 1, speed: 1, damage: 1, color: '#e74c3c' },
-                    fast: { hp: 0.6, speed: 1.8, damage: 0.7, color: '#f39c12' },
-                    tank: { hp: 2.5, speed: 0.6, damage: 1.5, color: '#9b59b6' },
-                    boss: { hp: 5, speed: 0.8, damage: 3, color: '#c0392b' }
-                }[type];
-
                 this.entities.enemies.push({
-                    x: CONFIG.canvas.width / 2 + Math.cos(angle) * dist,
-                    y: CONFIG.canvas.height / 2 + Math.sin(angle) * dist,
-                    hp: CONFIG.enemy.baseHP * scale * stats.hp,
-                    maxHP: CONFIG.enemy.baseHP * scale * stats.hp,
-                    speed: CONFIG.enemy.baseSpeed * stats.speed,
-                    damage: CONFIG.enemy.baseDamage * scale * stats.damage,
-                    goldReward: Math.floor(CONFIG.enemy.goldReward * scale * stats.hp),
-                    xpReward: Math.floor(CONFIG.enemy.xpReward * scale * stats.hp),
+                    x: 600 + Math.cos(angle) * 600,
+                    y: 400 + Math.sin(angle) * 600,
+                    hp: CONFIG.enemy.baseHP * scale,
+                    maxHP: CONFIG.enemy.baseHP * scale,
+                    speed: CONFIG.enemy.baseSpeed,
+                    damage: CONFIG.enemy.baseDamage * scale,
+                    goldReward: Math.floor(CONFIG.enemy.goldReward * scale),
+                    xpReward: Math.floor(CONFIG.enemy.xpReward * scale),
                     lastAttack: 0,
-                    type,
-                    color: stats.color,
+                    lastBurn: 0,
                     burning: false,
-                    slowed: false
+                    color: '#e74c3c'
                 });
             }
 
             createProjectile(x, y, target, damage, color, type) {
-                this.entities.projectiles.push({
-                    x, y,
-                    target,
-                    damage,
-                    color,
-                    type,
-                    life: 120
-                });
+                this.entities.projectiles.push({ x, y, target, damage, color, type, life: 120 });
             }
 
             createEffect(x, y, text, life = 30, scale = 1) {
-                this.entities.effects.push({ x, y, text, life, scale, speed: 1 });
+                this.entities.effects.push({ x, y, text, life, scale });
             }
 
             damageEnemy(enemy, damage) {
@@ -1098,12 +862,13 @@
             addGold(amount) {
                 this.gold += amount;
                 this.totalGold += amount;
-                this.saveTotalGold();
+                this.saveData();
             }
 
             addXP(amount) {
+                if (this.level >= CONFIG.player.maxLevel) return;
                 this.xp += amount;
-                const needed = this.getXPForLevel(this.level);
+                const needed = Math.floor(CONFIG.upgrade.xpPerLevel * Math.pow(CONFIG.upgrade.xpScaling, this.level - 1));
                 if (this.xp >= needed) {
                     this.xp -= needed;
                     this.level++;
@@ -1111,8 +876,15 @@
                 }
             }
 
-            getXPForLevel(level) {
-                return Math.floor(CONFIG.upgrade.xpPerLevel * Math.pow(CONFIG.upgrade.xpScaling, level - 1));
+            addFortressXP(amount) {
+                if (this.fortress.level >= CONFIG.fortress.maxLevel) return;
+                this.fortress.xp += amount;
+                const needed = Math.floor(200 * Math.pow(1.15, this.fortress.level - 1));
+                if (this.fortress.xp >= needed) {
+                    this.fortress.xp -= needed;
+                    this.fortress.level++;
+                    this.showNotification('Fortress Level Up!');
+                }
             }
 
             showUpgradeScreen() {
@@ -1123,7 +895,7 @@
                 
                 upgrades.forEach(u => {
                     const card = document.createElement('div');
-                    card.className = 'card';
+                    card.className = 'card' + (u.evolution ? ' evolution' : '');
                     card.innerHTML = `<h3>${u.name}</h3><p>${u.desc}</p>`;
                     card.onclick = () => this.applyUpgrade(u);
                     container.appendChild(card);
@@ -1135,39 +907,88 @@
             generateUpgrades() {
                 const upgrades = [];
                 const pool = [
-                    { type: 'fortress-attack', name: '⚔️ Fortress Power', desc: '+25% Attack', apply: () => this.fortress.attack *= 1.25 },
-                    { type: 'fortress-defense', name: '🛡️ Fortress Defense', desc: '+20% Defense & HP', apply: () => { this.fortress.defense *= 1.2; this.fortress.maxHP *= 1.2; this.fortress.hp = this.fortress.maxHP; } },
-                    { type: 'fortress-speed', name: '⚡ Fortress Speed', desc: '+25% Attack Speed', apply: () => this.fortress.attackSpeed *= 0.75 },
-                    { type: 'player-attack', name: '🗡️ Hero Damage', desc: '+30% Attack', apply: () => this.player.attack *= 1.3 },
-                    { type: 'player-speed', name: '🏃 Hero Agility', desc: '+20% Speed', apply: () => { CONFIG.player.speed *= 1.2; this.player.attackSpeed *= 0.8; } },
-                    { type: 'player-hp', name: '💚 Hero Vitality', desc: '+25% Max HP', apply: () => { this.player.maxHP *= 1.25; this.player.hp = this.player.maxHP; } },
+                    { name: '⚔️ Hero Power', desc: '+30% Attack', apply: () => this.player.attack *= 1.3 },
+                    { name: '💚 Hero Vitality', desc: '+25% HP', apply: () => { this.player.maxHP *= 1.25; this.player.hp = this.player.maxHP; } },
+                    { name: '🏰 Fortress Power', desc: '+25% Attack', apply: () => this.fortress.attack *= 1.25 },
+                    { name: '🛡️ Fortress Defense', desc: '+20% HP', apply: () => { this.fortress.maxHP *= 1.2; this.fortress.hp = this.fortress.maxHP; } },
+                    { name: '⚡ Fortress Speed', desc: '+25% Attack Speed', apply: () => this.fortress.attackSpeed *= 0.75 },
+                    { name: '🏃 Hero Speed', desc: '+20% Speed', apply: () => { CONFIG.player.speed *= 1.2; this.player.attackSpeed *= 0.8; } }
                 ];
 
-                // Always offer placement option if slots available
+                // Skill upgrades
+                Object.keys(SKILLS).forEach(k => {
+                    const skill = SKILLS[k];
+                    const pSkill = this.player.skills[k];
+                    if (this.level >= skill.unlockLevel && pSkill.level < 5) {
+                        upgrades.push({
+                            name: `${skill.icon} ${skill.name} Lvl ${pSkill.level + 1}`,
+                            desc: `Enhance ${skill.desc}`,
+                            apply: () => pSkill.level++
+                        });
+                    }
+                });
+
+                // Tower placement
                 const availableSlots = this.gridCells.filter(c => c.available && !c.occupied).length;
-                if (availableSlots > 0 && this.entities.subFortresses.length < this.maxSubFortresses) {
-                    upgrades.push({
-                        type: 'place-tower',
-                        name: '🏰 Place Sub-Fortress',
-                        desc: 'Add a defensive structure',
-                        apply: () => this.startPlacement()
-                    });
+                if (availableSlots > 0 && this.entities.towers.length < 10) {
+                    const unlockedTowers = Object.values(TOWER_TYPES).filter(t => t.unlocked && !this.placedTowerTypes.has(t.id));
+                    if (unlockedTowers.length > 0) {
+                        upgrades.push({
+                            name: '🏰 Place Sub-Fortress',
+                            desc: 'Add defensive structure',
+                            apply: () => this.startPlacement()
+                        });
+                    }
                 }
 
-                // Add random upgrades
+                // Tower skills & evolution
+                this.entities.towers.forEach(tower => {
+                    const skills = tower.skills || [];
+                    if (skills.length === 2 && !tower.evolved) {
+                        upgrades.push({
+                            name: `⭐ Evolve Tower`,
+                            desc: 'Unlock 3rd skill slot',
+                            evolution: true,
+                            apply: () => {
+                                tower.evolved = true;
+                                this.showNotification('Tower Evolved!');
+                            }
+                        });
+                    }
+                    
+                    const maxSkills = tower.evolved ? 3 : 2;
+                    if (skills.length < maxSkills) {
+                        const available = Object.keys(TOWER_SKILLS).filter(k => !skills.includes(k));
+                        if (available.length > 0) {
+                            const skillKey = available[Math.floor(Math.random() * available.length)];
+                            const skillData = TOWER_SKILLS[skillKey];
+                            upgrades.push({
+                                name: `Tower: ${skillData.name}`,
+                                desc: skillData.desc,
+                                apply: () => {
+                                    skills.push(skillKey);
+                                    skillData.apply(tower);
+                                    this.showNotification('Tower Skill Added!');
+                                }
+                            });
+                        }
+                    }
+                });
+
+                // Fill with random upgrades
                 while (upgrades.length < 3) {
                     const u = pool[Math.floor(Math.random() * pool.length)];
-                    if (!upgrades.find(up => up.type === u.type)) {
+                    if (!upgrades.find(up => up.name === u.name)) {
                         upgrades.push({ ...u });
                     }
                 }
 
-                return upgrades;
+                return upgrades.slice(0, 3);
             }
 
             applyUpgrade(upgrade) {
                 upgrade.apply();
-                if (upgrade.type !== 'place-tower') {
+                if (upgrade.name !== '🏰 Place Sub-Fortress') {
                     document.getElementById('upgradeScreen').classList.remove('active');
                     this.state = 'playing';
                     this.loop();
@@ -1180,17 +1001,10 @@
                 document.getElementById('upgradeScreen').classList.remove('active');
                 document.getElementById('placementOverlay').classList.add('active');
                 
-                const unlocked = UNLOCKABLES.subFortresses.filter(s => s.unlocked);
-                this.placementTower = unlocked[Math.floor(Math.random() * unlocked.length)];
-                
-                // Show notification about what tower is being placed
+                const unlockedTowers = Object.values(TOWER_TYPES).filter(t => t.unlocked && !this.placedTowerTypes.has(t.id));
+                this.placementTower = unlockedTowers[Math.floor(Math.random() * unlockedTowers.length)];
                 this.showNotification(`Place ${this.placementTower.name}`);
-                
-                // Continue render loop during placement
-                if (!this.renderingPlacement) {
-                    this.renderingPlacement = true;
-                    this.loop();
-                }
+                this.loop();
             }
 
             handlePlacement(x, y) {
@@ -1205,26 +1019,25 @@
                     cell.occupied = true;
                     const template = this.placementTower;
                     
-                    const sf = {
+                    const tower = {
                         x: cell.x,
                         y: cell.y,
-                        type: template.type,
-                        subType: template.id,
-                        attack: template.stats.attack || 0,
-                        range: template.stats.range || 0,
-                        speed: template.stats.speed || 2000,
-                        value: template.stats.value || 0,
+                        type: template.type || 'attack',
+                        towerType: template.id,
+                        attack: template.attack || 0,
+                        range: template.range || 0,
+                        speed: template.speed || 2000,
+                        value: template.value || 0,
                         lastAttack: 0,
                         color: template.color,
-                        skin: template.id
+                        skills: [],
+                        evolved: false
                     };
                     
-                    this.entities.subFortresses.push(sf);
+                    this.entities.towers.push(tower);
+                    this.placedTowerTypes.add(template.id);
                     this.endPlacement();
                     this.showNotification('Tower Placed! ✓');
-                } else {
-                    // Click was not on a valid cell
-                    this.showNotification('Invalid placement!');
                 }
             }
 
@@ -1236,252 +1049,8 @@
             endPlacement() {
                 this.placementMode = false;
                 this.placementTower = null;
-                this.renderingPlacement = false;
                 document.getElementById('placementOverlay').classList.remove('active');
                 this.state = 'playing';
-            }
-
-            showUnlocks() {
-                this.state = 'unlocking';
-                document.getElementById('introScreen').classList.remove('active');
-                this.renderUnlocks();
-                document.getElementById('unlockScreen').classList.add('active');
-            }
-
-            hideUnlocks() {
-                this.state = 'intro';
-                document.getElementById('unlockScreen').classList.remove('active');
-                document.getElementById('introScreen').classList.add('active');
-            }
-
-            showUnlockCategory(category) {
-                // Update tabs
-                document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
-                event.target.classList.add('active');
-
-                // Update content
-                document.querySelectorAll('.category-content').forEach(content => content.classList.remove('active'));
-                document.getElementById(category + 'Category').classList.add('active');
-            }
-
-            renderUnlocks() {
-                document.getElementById('unlockGold').textContent = this.totalGold;
-                
-                // Render Heroes
-                const heroesContainer = document.getElementById('heroesUnlocks');
-                heroesContainer.innerHTML = '';
-                Object.values(HEROES).forEach(h => {
-                    if (h.id === 'warrior') return; // Skip default hero
-                    const card = document.createElement('div');
-                    card.className = 'card' + (h.unlocked ? ' unlocked' : '');
-                    card.innerHTML = `
-                        <h3>${h.name}</h3>
-                        <div style="font-size: 2.5em; margin: 10px 0;">${h.icon}</div>
-                        <p>${h.desc}</p>
-                        <p style="margin-top: 8px;"><strong>Ability:</strong> ${h.ability.name}</p>
-                        <p style="font-size: 0.9em; opacity: 0.8;"><strong>Passive:</strong> ${h.passive}</p>
-                        ${h.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Unlocked</p>' : 
-                          `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
-                           ${this.totalGold < h.cost ? 'disabled' : ''} 
-                           onclick="game.unlockItem('hero', '${h.id}')">Unlock (${h.cost}💰)</button>`}
-                    `;
-                    heroesContainer.appendChild(card);
-                });
-
-                // Render Fortresses
-                const fortressesContainer = document.getElementById('fortressesUnlocks');
-                fortressesContainer.innerHTML = '';
-                UNLOCKABLES.subFortresses.forEach(u => {
-                    if (u.id === 'archer') return; // Skip default tower
-                    const card = document.createElement('div');
-                    card.className = 'card' + (u.unlocked ? ' unlocked' : '');
-                    card.innerHTML = `
-                        <h3>${u.name}</h3>
-                        <p>${u.desc}</p>
-                        <p style="margin-top: 8px;"><strong>Type:</strong> ${u.type.split('-').join(' ')}</p>
-                        ${u.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Unlocked</p>' : 
-                          `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
-                           ${this.totalGold < u.cost ? 'disabled' : ''} 
-                           onclick="game.unlockItem('tower', '${u.id}')">Unlock (${u.cost}💰)</button>`}
-                    `;
-                    fortressesContainer.appendChild(card);
-                });
-
-                // Render Permanent Upgrades
-                const permanentContainer = document.getElementById('permanentUnlocks');
-                permanentContainer.innerHTML = '';
-                UNLOCKABLES.permanent.forEach(u => {
-                    const card = document.createElement('div');
-                    card.className = 'card' + (u.unlocked ? ' unlocked' : '');
-                    card.innerHTML = `
-                        <h3>${u.name}</h3>
-                        <p>${u.desc}</p>
-                        ${u.unlocked ? '<p style="color: #4ecdc4; margin-top: 10px;">✓ Purchased</p>' : 
-                          `<button class="btn" style="margin-top: 10px; min-width: auto; padding: 10px 20px;" 
-                           ${this.totalGold < u.cost ? 'disabled' : ''} 
-                           onclick="game.unlockItem('permanent', '${u.id}')">Buy (${u.cost}💰)</button>`}
-                    `;
-                    permanentContainer.appendChild(card);
-                });
-            }
-
-            unlockItem(category, id) {
-                let item, cost;
-                
-                if (category === 'hero') {
-                    item = HEROES[id];
-                } else if (category === 'tower') {
-                    item = UNLOCKABLES.subFortresses.find(u => u.id === id);
-                } else if (category === 'permanent') {
-                    item = UNLOCKABLES.permanent.find(u => u.id === id);
-                }
-
-                if (item && !item.unlocked && this.totalGold >= item.cost) {
-                    this.totalGold -= item.cost;
-                    item.unlocked = true;
-                    
-                    if (category === 'permanent' && id === 'slots') {
-                        this.gridCells.forEach(c => {
-                            const dist = Math.abs(Math.round((c.x - CONFIG.canvas.width / 2) / CONFIG.grid.cellSize)) + 
-                                        Math.abs(Math.round((c.y - CONFIG.canvas.height / 2) / CONFIG.grid.cellSize));
-                            if (dist === 3) c.available = true;
-                        });
-                    }
-                    
-                    this.saveUnlocks();
-                    this.saveTotalGold();
-                    this.renderUnlocks();
-                    this.showNotification('Unlocked!');
-                }
-            }
-
-            saveUnlocks() {
-                const data = {
-                    heroes: {},
-                    towers: {},
-                    permanent: {}
-                };
-                
-                Object.keys(HEROES).forEach(k => data.heroes[k] = HEROES[k].unlocked);
-                UNLOCKABLES.subFortresses.forEach(t => data.towers[t.id] = t.unlocked);
-                UNLOCKABLES.permanent.forEach(p => data.permanent[p.id] = p.unlocked);
-                
-                try {
-                    localStorage.setItem('fortressDefense_unlocks', JSON.stringify(data));
-                } catch(e) {}
-            }
-
-            loadUnlocks() {
-                try {
-                    const saved = localStorage.getItem('fortressDefense_unlocks');
-                    if (saved) {
-                        const data = JSON.parse(saved);
-                        Object.keys(data.heroes || {}).forEach(k => {
-                            if (HEROES[k]) HEROES[k].unlocked = data.heroes[k];
-                        });
-                        Object.keys(data.towers || {}).forEach(k => {
-                            const tower = UNLOCKABLES.subFortresses.find(t => t.id === k);
-                            if (tower) tower.unlocked = data.towers[k];
-                        });
-                        Object.keys(data.permanent || {}).forEach(k => {
-                            const perm = UNLOCKABLES.permanent.find(p => p.id === k);
-                            if (perm) perm.unlocked = data.permanent[k];
-                        });
-                    }
-                } catch(e) {}
-            }
-
-            saveTotalGold() {
-                try {
-                    localStorage.setItem('fortressDefense_gold', this.totalGold.toString());
-                } catch(e) {}
-            }
-
-            loadTotalGold() {
-                try {
-                    const saved = localStorage.getItem('fortressDefense_gold');
-                    return saved ? parseInt(saved) : 0;
-                } catch(e) {
-                    return 0;
-                }
-            }
-
-            saveGame() {
-                const data = {
-                    level: this.level,
-                    gold: this.gold,
-                    wave: this.wave,
-                    hero: this.selectedHero,
-                    fortress: {
-                        hp: this.fortress.hp,
-                        maxHP: this.fortress.maxHP,
-                        attack: this.fortress.attack,
-                        defense: this.fortress.defense
-                    },
-                    player: {
-                        hp: this.player.hp,
-                        maxHP: this.player.maxHP,
-                        attack: this.player.attack
-                    },
-                    towers: this.entities.subFortresses.map(t => ({
-                        x: t.x, y: t.y, type: t.type, subType: t.subType
-                    }))
-                };
-                
-                try {
-                    localStorage.setItem('fortressDefense_save', JSON.stringify(data));
-                    this.showNotification('Game Saved!');
-                } catch(e) {
-                    this.showNotification('Save Failed!');
-                }
-            }
-
-            loadGame() {
-                try {
-                    const saved = localStorage.getItem('fortressDefense_save');
-                    if (saved) {
-                        const data = JSON.parse(saved);
-                        this.selectedHero = data.hero;
-                        this.init();
-                        
-                        this.level = data.level;
-                        this.gold = data.gold;
-                        this.wave = data.wave;
-                        
-                        Object.assign(this.fortress, data.fortress);
-                        this.player.hp = data.player.hp;
-                        this.player.maxHP = data.player.maxHP;
-                        this.player.attack = data.player.attack;
-                        
-                        data.towers.forEach(t => {
-                            const template = UNLOCKABLES.subFortresses.find(u => u.id === t.subType);
-                            if (template) {
-                                const cell = this.gridCells.find(c => Math.hypot(c.x - t.x, c.y - t.y) < 10);
-                                if (cell) cell.occupied = true;
-                                
-                                this.entities.subFortresses.push({
-                                    x: t.x, y: t.y,
-                                    type: t.type,
-                                    subType: t.subType,
-                                    attack: template.stats.attack || 0,
-                                    range: template.stats.range || 0,
-                                    speed: template.stats.speed || 2000,
-                                    value: template.stats.value || 0,
-                                    lastAttack: 0,
-                                    color: template.color,
-                                    skin: template.id
-                                });
-                            }
-                        });
-                        
-                        this.startGame();
-                        this.showNotification('Game Loaded!');
-                    } else {
-                        this.showNotification('No Save Found!');
-                    }
-                } catch(e) {
-                    this.showNotification('Load Failed!');
-                }
             }
 
             showNotification(text) {
@@ -1493,40 +1062,34 @@
             }
 
             updateUI() {
+                document.getElementById('fortressLevel').textContent = this.fortress.level;
                 document.getElementById('fortressHP').textContent = `${Math.floor(this.fortress.hp)}/${this.fortress.maxHP}`;
-                const hpPercent = this.fortress.hp / this.fortress.maxHP * 100;
-                document.getElementById('hpBar').style.width = hpPercent + '%';
-                
+                document.getElementById('hpBar').style.width = (this.fortress.hp / this.fortress.maxHP * 100) + '%';
                 document.getElementById('playerLevel').textContent = this.level;
                 document.getElementById('playerGold').textContent = this.gold;
-                document.getElementById('waveNumber').textContent = this.wave;
-                
-                const xpNeeded = this.getXPForLevel(this.level);
-                const xpPercent = (this.xp / xpNeeded * 100);
+                const xpPercent = this.xp / Math.floor(CONFIG.upgrade.xpPerLevel * Math.pow(CONFIG.upgrade.xpScaling, this.level - 1)) * 100;
                 document.getElementById('xpBar').style.width = xpPercent + '%';
 
-                const cdRemaining = Math.max(0, this.heroAbility.cooldown - (this.time - this.heroAbility.lastUse));
-                const cdPercent = 100 - (cdRemaining / this.heroAbility.cooldown * 100);
-                document.getElementById('abilityCDBar').style.width = cdPercent + '%';
-                
-                const icon = document.getElementById('abilityIcon');
-                if (cdPercent >= 100) {
-                    icon.classList.add('ready');
-                    document.getElementById('abilityCDBar').textContent = '';
-                } else {
-                    icon.classList.remove('ready');
-                    document.getElementById('abilityCDBar').textContent = Math.ceil(cdRemaining / 1000) + 's';
-                }
+                // Update skill icons
+                Object.keys(SKILLS).forEach((k, i) => {
+                    const skill = SKILLS[k];
+                    const pSkill = this.player.skills[k];
+                    const icon = document.getElementById('skill' + (i + 1));
+                    const cdRemaining = Math.max(0, skill.cooldown - (this.time - pSkill.lastUse));
+                    const ready = cdRemaining === 0 && this.level >= skill.unlockLevel;
+                    
+                    icon.classList.toggle('locked', this.level < skill.unlockLevel);
+                    icon.classList.toggle('ready', ready);
+                    icon.querySelector('.skill-level').textContent = pSkill.level;
+                });
             }
 
             gameOver() {
                 this.state = 'gameover';
-                this.saveGame(); // Auto-save on game over
                 document.getElementById('hud').classList.remove('active');
                 document.getElementById('mobileControls').classList.remove('active');
                 document.getElementById('finalLevel').textContent = this.level;
                 document.getElementById('finalGold').textContent = this.gold;
-                document.getElementById('finalWave').textContent = this.wave;
                 document.getElementById('gameOverScreen').classList.add('active');
             }
 
@@ -1539,48 +1102,42 @@
             render() {
                 const ctx = this.ctx;
                 ctx.fillStyle = '#0a1929';
-                ctx.fillRect(0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
+                ctx.fillRect(0, 0, 1200, 800);
 
                 // Grid background
                 ctx.strokeStyle = 'rgba(233, 69, 96, 0.08)';
                 ctx.lineWidth = 1;
-                for (let x = 0; x < CONFIG.canvas.width; x += 50) {
+                for (let x = 0; x < 1200; x += 50) {
                     ctx.beginPath();
                     ctx.moveTo(x, 0);
-                    ctx.lineTo(x, CONFIG.canvas.height);
+                    ctx.lineTo(x, 800);
                     ctx.stroke();
                 }
-                for (let y = 0; y < CONFIG.canvas.height; y += 50) {
+                for (let y = 0; y < 800; y += 50) {
                     ctx.beginPath();
                     ctx.moveTo(0, y);
-                    ctx.lineTo(CONFIG.canvas.width, y);
+                    ctx.lineTo(1200, y);
                     ctx.stroke();
                 }
 
-                // Placement grid with enhanced visibility
+                // Placement grid
                 if (this.placementMode) {
-                    // Darken the background more
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-                    ctx.fillRect(0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
+                    ctx.fillRect(0, 0, 1200, 800);
                     
-                    // Draw grid cells
                     this.gridCells.forEach(cell => {
                         if (!cell.available) return;
-                        
-                        const size = CONFIG.grid.cellSize * 0.85;
-                        const isHovered = Math.hypot(cell.x - this.mouse.x, cell.y - this.mouse.y) < CONFIG.grid.cellSize / 2;
+                        const size = 68;
+                        const isHovered = Math.hypot(cell.x - this.mouse.x, cell.y - this.mouse.y) < 40;
                         
                         if (cell.occupied) {
-                            // Occupied cells - red
                             ctx.fillStyle = 'rgba(233, 69, 96, 0.4)';
                             ctx.strokeStyle = '#e94560';
                         } else if (isHovered) {
-                            // Hovered cell - bright green
                             ctx.fillStyle = 'rgba(78, 205, 196, 0.6)';
                             ctx.strokeStyle = '#4ecdc4';
                             ctx.lineWidth = 4;
                             
-                            // Show tower preview
                             if (this.placementTower) {
                                 ctx.fillStyle = this.placementTower.color;
                                 ctx.globalAlpha = 0.7;
@@ -1589,11 +1146,7 @@
                                 ctx.fill();
                                 ctx.globalAlpha = 1;
                                 
-                                // Show tower icon
-                                const icons = {
-                                    archer: '🏹', mage: '🔮', cannon: '💣',
-                                    healer: '💚', gold: '💰', buff: '📈', ice: '❄️'
-                                };
+                                const icons = { archer: '🏹', mage: '🔮', cannon: '💣', healer: '💚', gold: '💰' };
                                 ctx.fillStyle = '#fff';
                                 ctx.font = 'bold 24px Arial';
                                 ctx.textAlign = 'center';
@@ -1601,7 +1154,6 @@
                                 ctx.fillText(icons[this.placementTower.id] || '🗼', cell.x, cell.y);
                             }
                         } else {
-                            // Available cells - green
                             ctx.fillStyle = 'rgba(78, 205, 196, 0.3)';
                             ctx.strokeStyle = '#4ecdc4';
                             ctx.lineWidth = 2;
@@ -1609,84 +1161,70 @@
                         
                         ctx.fillRect(cell.x - size/2, cell.y - size/2, size, size);
                         ctx.strokeRect(cell.x - size/2, cell.y - size/2, size, size);
-                        
-                        // Reset line width
-                        ctx.lineWidth = 2;
                     });
                     
-                    // Draw placement instructions
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-                    ctx.fillRect(CONFIG.canvas.width / 2 - 200, 30, 400, 60);
+                    ctx.fillRect(400, 30, 400, 60);
                     ctx.strokeStyle = '#4ecdc4';
                     ctx.lineWidth = 3;
-                    ctx.strokeRect(CONFIG.canvas.width / 2 - 200, 30, 400, 60);
-                    
+                    ctx.strokeRect(400, 30, 400, 60);
                     ctx.fillStyle = '#4ecdc4';
                     ctx.font = 'bold 20px Arial';
                     ctx.textAlign = 'center';
-                    ctx.fillText('📍 CLICK GREEN TILE TO PLACE', CONFIG.canvas.width / 2, 50);
+                    ctx.fillText('📍 CLICK GREEN TILE TO PLACE', 600, 50);
                     if (this.placementTower) {
                         ctx.font = '16px Arial';
                         ctx.fillStyle = '#fff';
-                        ctx.fillText(`Placing: ${this.placementTower.name}`, CONFIG.canvas.width / 2, 75);
+                        ctx.fillText(`Placing: ${this.placementTower.name}`, 600, 75);
                     }
                 }
 
                 // Main Fortress
-                const grad = ctx.createRadialGradient(this.fortress.x, this.fortress.y, 0, this.fortress.x, this.fortress.y, CONFIG.fortress.radius);
+                const grad = ctx.createRadialGradient(600, 400, 0, 600, 400, 45);
                 grad.addColorStop(0, '#e94560');
                 grad.addColorStop(1, '#c92a47');
                 ctx.fillStyle = grad;
                 ctx.beginPath();
-                ctx.arc(this.fortress.x, this.fortress.y, CONFIG.fortress.radius, 0, Math.PI * 2);
+                ctx.arc(600, 400, 45, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 4;
                 ctx.stroke();
-                
-                // Fortress icon
                 ctx.fillStyle = '#fff';
                 ctx.font = 'bold 30px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('🏰', this.fortress.x, this.fortress.y);
+                ctx.fillText('🏰', 600, 400);
 
-                // Sub-fortresses with skins
-                this.entities.subFortresses.forEach(sf => {
-                    const grad = ctx.createRadialGradient(sf.x, sf.y, 0, sf.x, sf.y, 25);
-                    grad.addColorStop(0, sf.color);
-                    grad.addColorStop(1, this.darkenColor(sf.color));
-                    ctx.fillStyle = grad;
+                // Towers
+                this.entities.towers.forEach(t => {
+                    const tGrad = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 25);
+                    tGrad.addColorStop(0, t.color);
+                    tGrad.addColorStop(1, this.darkenColor(t.color));
+                    ctx.fillStyle = tGrad;
                     ctx.beginPath();
-                    ctx.arc(sf.x, sf.y, 25, 0, Math.PI * 2);
+                    ctx.arc(t.x, t.y, 25, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.strokeStyle = '#fff';
+                    ctx.strokeStyle = t.evolved ? '#f39c12' : '#fff';
                     ctx.lineWidth = 3;
                     ctx.stroke();
-
-                    // Tower icon
-                    const icons = {
-                        archer: '🏹', mage: '🔮', cannon: '💣',
-                        healer: '💚', gold: '💰', buff: '📈', ice: '❄️'
-                    };
+                    const icons = { archer: '🏹', mage: '🔮', cannon: '💣', healer: '💚', gold: '💰' };
                     ctx.fillStyle = '#fff';
                     ctx.font = '20px Arial';
-                    ctx.fillText(icons[sf.subType] || '🗼', sf.x, sf.y + 2);
+                    ctx.fillText(icons[t.towerType] || '🗼', t.x, t.y + 2);
                 });
 
-                // Player (Hero)
-                const playerGrad = ctx.createRadialGradient(this.player.x, this.player.y, 0, this.player.x, this.player.y, CONFIG.player.radius);
-                playerGrad.addColorStop(0, this.player.color);
-                playerGrad.addColorStop(1, this.darkenColor(this.player.color));
-                ctx.fillStyle = playerGrad;
+                // Player
+                const pGrad = ctx.createRadialGradient(this.player.x, this.player.y, 0, this.player.x, this.player.y, 15);
+                pGrad.addColorStop(0, this.player.color);
+                pGrad.addColorStop(1, this.darkenColor(this.player.color));
+                ctx.fillStyle = pGrad;
                 ctx.beginPath();
-                ctx.arc(this.player.x, this.player.y, CONFIG.player.radius, 0, Math.PI * 2);
+                ctx.arc(this.player.x, this.player.y, 15, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 3;
                 ctx.stroke();
-
-                // Player icon
                 ctx.fillStyle = '#fff';
                 ctx.font = 'bold 18px Arial';
                 ctx.fillText(this.player.icon, this.player.x, this.player.y + 2);
@@ -1700,31 +1238,20 @@
 
                 // Enemies
                 this.entities.enemies.forEach(e => {
-                    const size = e.type === 'boss' ? 22 : (e.type === 'tank' ? 18 : 15);
-                    
                     ctx.fillStyle = e.color;
                     ctx.beginPath();
-                    ctx.arc(e.x, e.y, size, 0, Math.PI * 2);
+                    ctx.arc(e.x, e.y, 15, 0, Math.PI * 2);
                     ctx.fill();
-                    
-                    if (e.type === 'boss') {
-                        ctx.strokeStyle = '#fff';
-                        ctx.lineWidth = 2;
-                        ctx.stroke();
-                    }
-
                     if (e.burning) {
                         ctx.fillStyle = '#ff6b6b';
                         ctx.font = '12px Arial';
-                        ctx.fillText('🔥', e.x + size, e.y - size);
+                        ctx.fillText('🔥', e.x + 15, e.y - 15);
                     }
-                    
-                    // Enemy HP bar
-                    const hpPercent = e.hp / e.maxHP;
+                    const eHpPercent = e.hp / e.maxHP;
                     ctx.fillStyle = '#1a1a2e';
-                    ctx.fillRect(e.x - 20, e.y - size - 10, 40, 5);
-                    ctx.fillStyle = e.type === 'boss' ? '#f39c12' : '#4ecdc4';
-                    ctx.fillRect(e.x - 20, e.y - size - 10, 40 * hpPercent, 5);
+                    ctx.fillRect(e.x - 20, e.y - 25, 40, 5);
+                    ctx.fillStyle = '#4ecdc4';
+                    ctx.fillRect(e.x - 20, e.y - 25, 40 * eHpPercent, 5);
                 });
 
                 // Projectiles
@@ -1758,13 +1285,6 @@
         }
 
         const game = new Game();
-
-        // Auto-save every 30 seconds when playing
-        setInterval(() => {
-            if (game.state === 'playing') {
-                game.saveGame();
-            }
-        }, 30000);
     </script>
 </body>
 </html>
