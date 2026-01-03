@@ -831,6 +831,373 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
             flex-direction: column;
         }
     }
+
+    .sub-filters {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        min-height: 38px;
+        align-items: center;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .sub-filters-header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .sub-filter-label {
+        color: var(--text-sec);
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .sub-filter-toggle {
+        padding: 0.4rem 1rem;
+        background: transparent;
+        border: 1.5px solid var(--border);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        color: var(--text-sec);
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .sub-filter-toggle:hover {
+        background: var(--card);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .sub-filter-toggle .toggle-icon {
+        transition: transform 0.3s ease;
+        font-size: 0.7rem;
+    }
+
+    .sub-filter-toggle.expanded .toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    .sub-filters-content {
+        width: 100%;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.3s ease;
+        opacity: 0;
+    }
+
+    .sub-filters-content.expanded {
+        max-height: 500px;
+        opacity: 1;
+    }
+
+    .sub-filter-btn {
+        padding: 0.4rem 1rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        color: var(--text);
+        font-size: 0.85rem;
+        font-weight: 500;
+        white-space: nowrap;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .sub-filter-btn:hover {
+        background: var(--card);
+        border-color: var(--primary);
+        transform: translateY(-1px);
+    }
+
+    .sub-filter-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ============================================
+    SOLUTION 2: SHOW MORE/LESS BUTTON
+    Simple and clean - progressive disclosure
+    ============================================ */
+
+    .sub-filters.with-show-more {
+        position: relative;
+    }
+
+    .sub-filters-content.limited {
+        max-height: 80px; /* Show ~2 rows */
+        overflow: hidden;
+        position: relative;
+    }
+
+    .sub-filters-content.limited::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 40px;
+        background: linear-gradient(to bottom, transparent, var(--bg));
+        pointer-events: none;
+    }
+
+    .sub-filters-content.expanded.limited::after {
+        display: none;
+    }
+
+    .show-more-btn {
+        padding: 0.4rem 1rem;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .show-more-btn:hover {
+        background: var(--primary-light);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .show-more-btn .btn-icon {
+        transition: transform 0.3s ease;
+        font-size: 0.7rem;
+    }
+
+    .show-more-btn.expanded .btn-icon {
+        transform: rotate(180deg);
+    }
+
+    /* ============================================
+    SOLUTION 3: COMPACT MODE WITH COUNTER
+    Minimalist - shows count when collapsed
+    ============================================ */
+
+    .sub-filters.compact {
+        background: var(--card);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .sub-filters.compact:hover {
+        border-color: var(--primary);
+    }
+
+    .compact-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .compact-summary {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .tag-counter {
+        background: var(--primary);
+        color: #fff;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .active-tags-preview {
+        display: flex;
+        gap: 0.3rem;
+        flex-wrap: wrap;
+        max-width: 60%;
+        overflow: hidden;
+    }
+
+    .active-tags-preview .mini-tag {
+        background: var(--accent);
+        color: #fff;
+        padding: 0.15rem 0.5rem;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .compact-icon {
+        color: var(--text-sec);
+        transition: transform 0.3s ease;
+    }
+
+    .compact-header.expanded .compact-icon {
+        transform: rotate(180deg);
+    }
+
+    .compact-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, margin-top 0.3s ease;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .compact-content.expanded {
+        max-height: 400px;
+        margin-top: 0.75rem;
+    }
+
+    /* ============================================
+    ENHANCED CLEAR BUTTON
+    ============================================ */
+
+    .sub-filter-clear {
+        padding: 0.4rem 1rem;
+        background: var(--text-sec);
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: none;
+    }
+
+    .sub-filter-clear.show {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .sub-filter-clear:hover {
+        background: var(--primary);
+        transform: translateY(-1px);
+    }
+
+    /* ============================================
+    RESPONSIVE DESIGN
+    ============================================ */
+
+    @media (max-width: 768px) {
+        .sub-filters-content.limited {
+            max-height: 120px; /* More space on mobile */
+        }
+        
+        .compact-summary {
+            font-size: 0.85rem;
+        }
+        
+        .active-tags-preview {
+            max-width: 50%;
+        }
+        
+        .sub-filter-toggle,
+        .show-more-btn {
+            font-size: 0.75rem;
+            padding: 0.35rem 0.85rem;
+        }
+    }
+
+    /* ============================================
+    ANIMATIONS
+    ============================================ */
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ============================================
+    DARK MODE ADJUSTMENTS
+    ============================================ */
+
+    body.dark .sub-filters-content.limited::after {
+        background: linear-gradient(to bottom, transparent, var(--bg));
+    }
+
+    body.dark .sub-filters.compact {
+        background: var(--card);
+        border-color: var(--border);
+    }
+
+    body.dark .tag-counter {
+        background: var(--primary);
+    }
+
+    /* ============================================
+    LOADING STATE (OPTIONAL)
+    ============================================ */
+
+    .sub-filters.loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .sub-filters.loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--primary);
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
 </style>
 </head>
 <body data-theme="blue">
@@ -1189,20 +1556,79 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
 </div>
 </section>
 <section id="projects">
-<div class="container">
-<div class="section-header">
-<h2 class="section-title" data-lang="projects-title">Dự án của tôi</h2>
-<p class="section-subtitle" data-lang="projects-subtitle">Các dự án tôi đã xây dựng và đang phát triển</p>
-</div>
-<div class="project-filters">
-<button class="filter-btn active" data-filter="all" data-lang="filter-all">Tất cả</button>
-<button class="filter-btn" data-filter="website" data-lang="filter-website">Website</button>
-<button class="filter-btn" data-filter="game" data-lang="filter-game">Game</button>
-<button class="filter-btn" data-filter="css" data-lang="filter-css">CSS</button>
-</div>
-<div class="projects-grid" id="projects-grid"></div>
-<div class="pagination" id="pagination"></div>
-</div>
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title" data-lang="projects-title">Dự án của tôi</h2>
+            <p class="section-subtitle" data-lang="projects-subtitle">Các dự án tôi đã xây dựng và đang phát triển</p>
+        </div>
+
+        <!-- FILTERS CONTAINER -->
+        <div class="filters-container">
+            
+            <!-- MAIN CATEGORY FILTERS (Predefined by you) -->
+            <div class="project-filters" id="main-filters">
+                <button class="filter-btn active" data-filter="all">
+                    <span class="filter-icon">🎯</span>
+                    <span data-lang="filter-all">Tất cả</span>
+                </button>
+                
+                <button class="filter-btn" data-filter="website">
+                    <span class="filter-icon">🌐</span>
+                    <span data-lang="filter-website">Website</span>
+                </button>
+                
+                <button class="filter-btn" data-filter="game">
+                    <span class="filter-icon">🎮</span>
+                    <span data-lang="filter-game">Game</span>
+                </button>
+                
+                <button class="filter-btn" data-filter="css">
+                    <span class="filter-icon">🎨</span>
+                    <span data-lang="filter-css">CSS</span>
+                </button>
+                
+                <!-- ADD MORE MAIN TABS HERE AS NEEDED -->
+                <!-- Example:
+                <button class="filter-btn" data-filter="tutorial">
+                    <span class="filter-icon">📚</span>
+                    <span data-lang="filter-tutorial">Tutorial</span>
+                </button>
+                -->
+            </div>
+            
+            <!-- SUB FILTERS (Dynamic tags from projects) -->
+            <div class="sub-filters" id="sub-filters">
+                <div class="sub-filters-header">
+                    <span class="sub-filter-label">
+                        <span>🏷️</span>
+                        <span>Tags</span>
+                        <span style="color: var(--text-sec);">(12)</span>
+                    </span>
+                    <button class="sub-filter-toggle">
+                        <span>Show</span>
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                </div>
+                
+                <div class="sub-filters-content">
+                    <button class="sub-filter-btn">JavaScript</button>
+                    <button class="sub-filter-btn active">CSS</button>
+                    <button class="sub-filter-btn">HTML</button>
+                    ...
+                    <button class="sub-filter-clear show">
+                        <span>✕</span>
+                        <span>Clear</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROJECTS GRID -->
+        <div class="projects-grid" id="projects-grid"></div>
+
+        <!-- PAGINATION -->
+        <div class="pagination" id="pagination"></div>
+    </div>
 </section>
 <section id="contact">
 <div class="container">
@@ -1309,6 +1735,87 @@ const CONFIG = {
         ocean: 'gradient-ocean'
     }
 };
+// Configuration
+const FILTER_CONFIG = {
+    maxVisibleTags: 8,        // Max tags to show before "Show More"
+    useCollapsible: true,     // Solution 1: Collapsible
+    useShowMore: false,       // Solution 2: Show More/Less
+    useCompact: false,        // Solution 3: Compact Mode
+    initiallyExpanded: false  // Start expanded or collapsed
+};
+
+// ============================================
+// SUB-FILTER SYSTEM - COMPLETE IMPLEMENTATION
+// ============================================
+
+let currentMainFilter = 'all';
+let currentSubFilters = [];
+
+/**
+ * Get all available tags from filtered projects
+ */
+function getAvailableTags(mainFilter) {
+    const projectsToCheck = mainFilter === 'all' 
+        ? projects 
+        : projects.filter(p => p.category === mainFilter);
+    
+    const tagsSet = new Set();
+    projectsToCheck.forEach(project => {
+        project.tags.forEach(tag => tagsSet.add(tag));
+    });
+    
+    return Array.from(tagsSet).sort();
+}
+
+/**
+ * Toggle a sub-filter tag
+ */
+function toggleSubFilter(tag) {
+    const index = currentSubFilters.indexOf(tag);
+    
+    if (index > -1) {
+        currentSubFilters.splice(index, 1);
+    } else {
+        currentSubFilters.push(tag);
+    }
+    
+    applyFilters();
+    renderSubFilters();
+}
+
+/**
+ * Clear all sub-filters
+ */
+function clearAllSubFilters() {
+    currentSubFilters = [];
+    applyFilters();
+    renderSubFilters();
+}
+
+/**
+ * Apply both main and sub filters
+ */
+function applyFilters() {
+    currentPage = 1;
+    
+    // Start with main category filter
+    let filtered = currentMainFilter === 'all' 
+        ? projects 
+        : projects.filter(p => p.category === currentMainFilter);
+    
+    // Apply sub-filters (tags)
+    if (currentSubFilters.length > 0) {
+        filtered = filtered.filter(project => {
+            // Project must have ALL selected tags
+            return currentSubFilters.every(tag => project.tags.includes(tag));
+        });
+    }
+    
+    filteredProjects = sortProjectsByLanguage(filtered, lang);
+    
+    renderProjects();
+    renderPagination();
+}
 
 /* ============================================
    PREMIUM THEME MANAGEMENT
@@ -1332,26 +1839,26 @@ function showPremiumModal(themeType = 'premium') {
     // Define theme configurations
     const themeConfigs = {
         'premium': {
-            title: '🔒 Premium Theme',
-            description: 'Enter the unlock key to access the Premium Gradient theme:',
+            titleKey: 'unlock-premium-title',
+            descKey: 'unlock-premium-desc',
             gradient: 'linear-gradient(135deg, #0891b2, #06b6d4, #14b8a6)',
             themeName: 'gradient-premium'
         },
         'exclusive': {
-            title: '🔒 Exclusive Theme',
-            description: 'Enter the unlock key to access the Exclusive Pink Gradient theme:',
+            titleKey: 'unlock-exclusive-title',
+            descKey: 'unlock-exclusive-desc',
             gradient: 'linear-gradient(135deg, #F1C9FD, #FC0061)',
             themeName: 'gradient-exclusive'
         },
         'sunset': {
-            title: '🔒 Sunset Theme',
-            description: 'Enter the unlock key to access the Sunset Gradient theme:',
+            titleKey: 'unlock-sunset-title',
+            descKey: 'unlock-sunset-desc',
             gradient: 'linear-gradient(135deg, #FF6B6B, #FFD93D, #6BCB77)',
             themeName: 'gradient-sunset'
         },
         'ocean': {
-            title: '🔒 Ocean Theme',
-            description: 'Enter the unlock key to access the Ocean Gradient theme:',
+            titleKey: 'unlock-ocean-title',
+            descKey: 'unlock-ocean-desc',
             gradient: 'linear-gradient(135deg, #667eea, #764ba2, #f093fb)',
             themeName: 'gradient-ocean'
         }
@@ -1364,18 +1871,18 @@ function showPremiumModal(themeType = 'premium') {
     modal.innerHTML = `
         <div class="premium-modal-content">
             <div class="premium-modal-header">
-                <h3>${config.title}</h3>
+                <h3>${t[lang][config.titleKey]}</h3>
                 <button class="premium-modal-close" onclick="this.closest('.premium-modal').remove()">×</button>
             </div>
             <div class="premium-modal-body">
                 <div style="width: 100%; height: 60px; background: ${config.gradient}; border-radius: 12px; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
-                <p>${config.description}</p>
-                <input type="text" id="premium-key-input" class="premium-input" placeholder="Enter key..." autocomplete="off">
+                <p>${t[lang][config.descKey]}</p>
+                <input type="text" id="premium-key-input" class="premium-input" placeholder="${t[lang]['unlock-key-placeholder']}" autocomplete="off">
                 <div id="premium-error" class="premium-error"></div>
             </div>
             <div class="premium-modal-footer">
-                <button class="btn btn-secondary" onclick="this.closest('.premium-modal').remove()">Cancel</button>
-                <button class="btn btn-primary" onclick="verifyPremiumKey('${themeType}')">Unlock</button>
+                <button class="btn btn-secondary" onclick="this.closest('.premium-modal').remove()">${t[lang]['unlock-cancel']}</button>
+                <button class="btn btn-primary" onclick="verifyPremiumKey('${themeType}')">${t[lang]['unlock-button']}</button>
             </div>
         </div>
     `;
@@ -1409,14 +1916,14 @@ function verifyPremiumKey(themeType = 'premium') {
         // Unlock the theme
         localStorage.setItem(`${themeType}Unlocked`, 'true');
         
-        // the theme card IMMEDIATELY
+        // Update the theme card IMMEDIATELY
         const themeCard = document.getElementById(`${themeType}-theme-card`);
         if (themeCard) {
             themeCard.classList.add('unlocked');
         }
         
         error.style.color = '#10b981';
-        error.textContent = '✓ Theme unlocked successfully!';
+        error.textContent = t[lang]['unlock-success'];
         
         setTimeout(() => {
             document.querySelector('.premium-modal').remove();
@@ -1424,7 +1931,7 @@ function verifyPremiumKey(themeType = 'premium') {
         }, 800);
     } else {
         error.style.color = '#ef4444';
-        error.textContent = '✗ Invalid key. Please try again.';
+        error.textContent = t[lang]['unlock-error'];
         input.value = '';
         input.focus();
     }
@@ -1810,6 +2317,23 @@ const t={
         'theme-gradient-premium':'Gradient Cao Cấp',
         'theme-gradient-ocean':'Gradient Đại Dương',
         'theme-gradient-sunset': 'Gradient Hoàng Hôn',
+
+        'filter-tags': 'Thẻ',
+        'filter-clear': 'Xóa bộ lọc',
+
+        'unlock-premium-title': '🔒 Chủ đề Premium',
+        'unlock-exclusive-title': '🔒 Chủ đề Độc Quyền',
+        'unlock-sunset-title': '🔒 Chủ đề Hoàng Hôn',
+        'unlock-ocean-title': '🔒 Chủ đề Đại Dương',
+        'unlock-premium-desc': 'Nhập mã để mở khóa chủ đề Gradient Premium:',
+        'unlock-exclusive-desc': 'Nhập mã để mở khóa chủ đề Gradient Độc Quyền:',
+        'unlock-sunset-desc': 'Nhập mã để mở khóa chủ đề Gradient Hoàng Hôn:',
+        'unlock-ocean-desc': 'Nhập mã để mở khóa chủ đề Gradient Đại Dương:',
+        'unlock-key-placeholder': 'Nhập mã...',
+        'unlock-cancel': 'Hủy',
+        'unlock-button': 'Mở khóa',
+        'unlock-success': '✓ Đã mở khóa chủ đề thành công!',
+        'unlock-error': '✗ Mã không hợp lệ. Vui lòng thử lại.',
     },
 
     en:{
@@ -1894,6 +2418,23 @@ const t={
         'theme-gradient-ocean': 'Ocean Gradient',
         'theme-gradient-sunset': 'Sunset Gradient',
 
+        'filter-tags': 'Tags',
+        'filter-clear': 'Clear',
+
+        'unlock-premium-title': '🔒 Premium Theme',
+        'unlock-exclusive-title': '🔒 Exclusive Theme',
+        'unlock-sunset-title': '🔒 Sunset Theme',
+        'unlock-ocean-title': '🔒 Ocean Theme',
+        'unlock-premium-desc': 'Enter the unlock key to access the Premium Gradient theme:',
+        'unlock-exclusive-desc': 'Enter the unlock key to access the Exclusive Pink Gradient theme:',
+        'unlock-sunset-desc': 'Enter the unlock key to access the Sunset Gradient theme:',
+        'unlock-ocean-desc': 'Enter the unlock key to access the Ocean Gradient theme:',
+        'unlock-key-placeholder': 'Enter key...',
+        'unlock-cancel': 'Cancel',
+        'unlock-button': 'Unlock',
+        'unlock-success': '✓ Theme unlocked successfully!',
+        'unlock-error': '✗ Invalid key. Please try again.',
+
     },
     ko:{
         'site-title':'투안 꾸옥',
@@ -1975,6 +2516,22 @@ const t={
         'theme-gradient-premium': '프리미엄 그라디언트',
         'theme-gradient-ocean': '오션 그라디언트',
         'theme-gradient-sunset': '선셋 그라디언트',
+        'filter-tags': '태그',
+        'filter-clear': '필터 초기화',
+
+        'unlock-premium-title': '🔒 프리미엄 테마',
+        'unlock-exclusive-title': '🔒 독점 테마',
+        'unlock-sunset-title': '🔒 선셋 테마',
+        'unlock-ocean-title': '🔒 오션 테마',
+        'unlock-premium-desc': '프리미엄 그라디언트 테마를 잠금 해제하려면 키를 입력하세요:',
+        'unlock-exclusive-desc': '독점 핑크 그라디언트 테마를 잠금 해제하려면 키를 입력하세요:',
+        'unlock-sunset-desc': '선셋 그라디언트 테마를 잠금 해제하려면 키를 입력하세요:',
+        'unlock-ocean-desc': '오션 그라디언트 테마를 잠금 해제하려면 키를 입력하세요:',
+        'unlock-key-placeholder': '키 입력...',
+        'unlock-cancel': '취소',
+        'unlock-button': '잠금 해제',
+        'unlock-success': '✓ 테마가 성공적으로 잠금 해제되었습니다!',
+        'unlock-error': '✗ 잘못된 키입니다. 다시 시도하세요.',
 
     },
 
@@ -2060,6 +2617,23 @@ const t={
         'theme-gradient-ocean': 'オーシャングラデーション',
         'theme-gradient-sunset': 'サンセットグラデーション',
 
+        'filter-tags': 'タグ',
+        'filter-clear': 'フィルターをクリア',
+
+        'unlock-premium-title': '🔒 プレミアムテーマ',
+        'unlock-exclusive-title': '🔒 限定テーマ',
+        'unlock-sunset-title': '🔒 サンセットテーマ',
+        'unlock-ocean-title': '🔒 オーシャンテーマ',
+        'unlock-premium-desc': 'プレミアムグラデーションテーマのロックを解除するにはキーを入力してください:',
+        'unlock-exclusive-desc': '限定ピンクグラデーションテーマのロックを解除するにはキーを入力してください:',
+        'unlock-sunset-desc': 'サンセットグラデーションテーマのロックを解除するにはキーを入力してください:',
+        'unlock-ocean-desc': 'オーシャングラデーションテーマのロックを解除するにはキーを入力してください:',
+        'unlock-key-placeholder': 'キーを入力...',
+        'unlock-cancel': 'キャンセル',
+        'unlock-button': 'ロック解除',
+        'unlock-success': '✓ テーマが正常にロック解除されました！',
+        'unlock-error': '✗ 無効なキーです。もう一度お試しください。',
+
     },
     zh:{
         'site-title':'Tuấn Quốc',
@@ -2144,6 +2718,22 @@ const t={
         'theme-gradient-premium': '高级渐变',
         'theme-gradient-ocean': '海洋渐变',
         'theme-gradient-sunset': '日落渐变',
+        'filter-tags': '标签',
+        'filter-clear': '清除筛选',
+
+        'unlock-premium-title': '🔒 高级主题',
+        'unlock-exclusive-title': '🔒 专属主题',
+        'unlock-sunset-title': '🔒 日落主题',
+        'unlock-ocean-title': '🔒 海洋主题',
+        'unlock-premium-desc': '输入解锁密钥以访问高级渐变主题：',
+        'unlock-exclusive-desc': '输入解锁密钥以访问专属粉色渐变主题：',
+        'unlock-sunset-desc': '输入解锁密钥以访问日落渐变主题：',
+        'unlock-ocean-desc': '输入解锁密钥以访问海洋渐变主题：',
+        'unlock-key-placeholder': '输入密钥...',
+        'unlock-cancel': '取消',
+        'unlock-button': '解锁',
+        'unlock-success': '✓ 主题解锁成功！',
+        'unlock-error': '✗ 无效密钥。请重试。',
 
     },
 
@@ -2300,17 +2890,10 @@ function applyLang(l){
 function animateNum(e,target){let c=0;const inc=target/125;const timer=setInterval(()=>{c+=inc;if(c>=target){e.textContent=target;clearInterval(timer)}else{e.textContent=Math.floor(c)}},16)}
 // CORRECTED: filterProjects with auto-sort
 function filterProjects(filter) {
-    currentFilter = filter;
-    currentPage = 1;
-    
-    const baseProjects = filter === 'all' 
-        ? projects 
-        : projects.filter(p => p.category === filter);
-    
-    filteredProjects = sortProjectsByLanguage(baseProjects, lang);
-    
-    renderProjects();
-    renderPagination();
+    currentMainFilter = filter;  // Update main filter
+    currentSubFilters = [];      // Reset sub-filters when changing main category
+    applyFilters();
+    renderSubFilters();          // Re-render sub-filters for new category
 }
 
 function renderProjects(){
@@ -2559,6 +3142,13 @@ document.addEventListener('DOMContentLoaded', () => {
     filteredProjects = sortProjectsByLanguage([...projects], lang);
     renderProjects();
     renderPagination();
+    
+    // After this line:
+    renderProjects();
+    renderPagination();
+
+    // Add this:
+    renderSubFilters();  // Initialize sub-filters
 
     // NEW: Initialize tabs scroll system
     setTimeout(() => {
@@ -2604,6 +3194,326 @@ window.addEventListener('resize',()=>{
         }
     },250)
 });
+
+/* ============================================
+   SOLUTION 1: COLLAPSIBLE SUB-FILTERS
+   ============================================ */
+function renderSubFiltersCollapsible() {
+    const subFiltersContainer = document.getElementById('sub-filters');
+    if (!subFiltersContainer) return;
+    
+    const availableTags = getAvailableTags(currentMainFilter);
+    
+    if (availableTags.length === 0) {
+        subFiltersContainer.style.display = 'none';
+        return;
+    }
+    
+    subFiltersContainer.style.display = 'block';
+    subFiltersContainer.className = 'sub-filters';
+    
+    // Create header with toggle button
+    const header = document.createElement('div');
+    header.className = 'sub-filters-header';
+    header.innerHTML = `
+        <span class="sub-filter-label">
+            <span>🏷️</span>
+            <span data-lang="filter-tags">${t[lang]['filter-tags'] || 'Tags'}</span>
+            <span style="color: var(--text-sec); font-weight: normal; margin-left: 0.25rem;">
+                (${availableTags.length})
+            </span>
+        </span>
+        <button class="sub-filter-toggle ${FILTER_CONFIG.initiallyExpanded ? 'expanded' : ''}">
+            <span>${FILTER_CONFIG.initiallyExpanded ? 'Hide' : 'Show'}</span>
+            <span class="toggle-icon">▼</span>
+        </button>
+    `;
+    
+    // Create content container
+    const content = document.createElement('div');
+    content.className = `sub-filters-content ${FILTER_CONFIG.initiallyExpanded ? 'expanded' : ''}`;
+    
+    // Add tag buttons
+    availableTags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'sub-filter-btn';
+        btn.textContent = tag;
+        btn.dataset.tag = tag;
+        
+        if (currentSubFilters.includes(tag)) {
+            btn.classList.add('active');
+        }
+        
+        btn.addEventListener('click', () => toggleSubFilter(tag));
+        content.appendChild(btn);
+    });
+    
+    // Add clear button if needed
+    if (currentSubFilters.length > 0) {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'sub-filter-clear show';
+        clearBtn.innerHTML = `<span>✕</span> <span>${t[lang]['filter-clear'] || 'Clear'}</span>`;
+        clearBtn.addEventListener('click', clearAllSubFilters);
+        content.appendChild(clearBtn);
+    }
+    
+    // Assemble
+    subFiltersContainer.innerHTML = '';
+    subFiltersContainer.appendChild(header);
+    subFiltersContainer.appendChild(content);
+    
+    // Add toggle functionality
+    const toggleBtn = header.querySelector('.sub-filter-toggle');
+    toggleBtn.addEventListener('click', () => {
+        const isExpanded = content.classList.toggle('expanded');
+        toggleBtn.classList.toggle('expanded');
+        toggleBtn.querySelector('span').textContent = isExpanded ? 'Hide' : 'Show';
+    });
+}
+
+/* ============================================
+   SOLUTION 2: SHOW MORE/LESS BUTTON
+   ============================================ */
+function renderSubFiltersShowMore() {
+    const subFiltersContainer = document.getElementById('sub-filters');
+    if (!subFiltersContainer) return;
+    
+    const availableTags = getAvailableTags(currentMainFilter);
+    
+    if (availableTags.length === 0) {
+        subFiltersContainer.style.display = 'none';
+        return;
+    }
+    
+    subFiltersContainer.style.display = 'block';
+    subFiltersContainer.className = 'sub-filters with-show-more';
+    
+    // Create label
+    const label = document.createElement('span');
+    label.className = 'sub-filter-label';
+    label.innerHTML = `
+        <span>🏷️</span>
+        <span data-lang="filter-tags">${t[lang]['filter-tags'] || 'Tags'}</span>
+    `;
+    
+    // Create content container
+    const content = document.createElement('div');
+    const needsShowMore = availableTags.length > FILTER_CONFIG.maxVisibleTags;
+    content.className = `sub-filters-content ${needsShowMore ? 'limited' : ''}`;
+    
+    // Add tag buttons
+    availableTags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'sub-filter-btn';
+        btn.textContent = tag;
+        btn.dataset.tag = tag;
+        
+        if (currentSubFilters.includes(tag)) {
+            btn.classList.add('active');
+        }
+        
+        btn.addEventListener('click', () => toggleSubFilter(tag));
+        content.appendChild(btn);
+    });
+    
+    // Add clear button if needed
+    if (currentSubFilters.length > 0) {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'sub-filter-clear show';
+        clearBtn.innerHTML = `<span>✕</span> <span>${t[lang]['filter-clear'] || 'Clear'}</span>`;
+        clearBtn.addEventListener('click', clearAllSubFilters);
+        content.appendChild(clearBtn);
+    }
+    
+    // Assemble
+    subFiltersContainer.innerHTML = '';
+    subFiltersContainer.appendChild(label);
+    subFiltersContainer.appendChild(content);
+    
+    // Add "Show More" button if needed
+    if (needsShowMore) {
+        const showMoreBtn = document.createElement('button');
+        showMoreBtn.className = 'show-more-btn';
+        showMoreBtn.innerHTML = `
+            <span>Show ${availableTags.length - FILTER_CONFIG.maxVisibleTags} more</span>
+            <span class="btn-icon">▼</span>
+        `;
+        
+        showMoreBtn.addEventListener('click', () => {
+            const isExpanded = content.classList.toggle('expanded');
+            showMoreBtn.classList.toggle('expanded');
+            
+            if (isExpanded) {
+                showMoreBtn.innerHTML = `
+                    <span>Show less</span>
+                    <span class="btn-icon">▼</span>
+                `;
+            } else {
+                showMoreBtn.innerHTML = `
+                    <span>Show ${availableTags.length - FILTER_CONFIG.maxVisibleTags} more</span>
+                    <span class="btn-icon">▼</span>
+                `;
+            }
+        });
+        
+        subFiltersContainer.appendChild(showMoreBtn);
+    }
+}
+
+/* ============================================
+   SOLUTION 3: COMPACT MODE
+   ============================================ */
+function renderSubFiltersCompact() {
+    const subFiltersContainer = document.getElementById('sub-filters');
+    if (!subFiltersContainer) return;
+    
+    const availableTags = getAvailableTags(currentMainFilter);
+    
+    if (availableTags.length === 0) {
+        subFiltersContainer.style.display = 'none';
+        return;
+    }
+    
+    subFiltersContainer.style.display = 'block';
+    subFiltersContainer.className = 'sub-filters compact';
+    
+    // Create header
+    const header = document.createElement('div');
+    header.className = `compact-header ${FILTER_CONFIG.initiallyExpanded ? 'expanded' : ''}`;
+    
+    const activeCount = currentSubFilters.length;
+    const activePreview = currentSubFilters.length > 0
+        ? `<div class="active-tags-preview">
+            ${currentSubFilters.slice(0, 3).map(tag => 
+                `<span class="mini-tag">${tag}</span>`
+            ).join('')}
+            ${currentSubFilters.length > 3 ? `<span class="mini-tag">+${currentSubFilters.length - 3}</span>` : ''}
+           </div>`
+        : '';
+    
+    header.innerHTML = `
+        <div class="compact-summary">
+            <span>🏷️ ${t[lang]['filter-tags'] || 'Tags'}</span>
+            ${activeCount > 0 
+                ? `<span class="tag-counter">${activeCount} active</span>` 
+                : `<span class="tag-counter">${availableTags.length}</span>`
+            }
+            ${activePreview}
+        </div>
+        <span class="compact-icon">▼</span>
+    `;
+    
+    // Create content
+    const content = document.createElement('div');
+    content.className = `compact-content ${FILTER_CONFIG.initiallyExpanded ? 'expanded' : ''}`;
+    
+    // Add tag buttons
+    availableTags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'sub-filter-btn';
+        btn.textContent = tag;
+        btn.dataset.tag = tag;
+        
+        if (currentSubFilters.includes(tag)) {
+            btn.classList.add('active');
+        }
+        
+        btn.addEventListener('click', () => toggleSubFilter(tag));
+        content.appendChild(btn);
+    });
+    
+    // Add clear button
+    if (currentSubFilters.length > 0) {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'sub-filter-clear show';
+        clearBtn.innerHTML = `<span>✕</span> <span>${t[lang]['filter-clear'] || 'Clear'}</span>`;
+        clearBtn.addEventListener('click', clearAllSubFilters);
+        content.appendChild(clearBtn);
+    }
+    
+    // Assemble
+    subFiltersContainer.innerHTML = '';
+    subFiltersContainer.appendChild(header);
+    subFiltersContainer.appendChild(content);
+    
+    // Add toggle functionality
+    header.addEventListener('click', () => {
+        const isExpanded = content.classList.toggle('expanded');
+        header.classList.toggle('expanded');
+    });
+}
+
+/* ============================================
+   SMART RENDER - AUTOMATICALLY CHOOSE SOLUTION
+   ============================================ */
+function renderSubFilters() {
+    if (FILTER_CONFIG.useCollapsible) {
+        renderSubFiltersCollapsible();
+    } else if (FILTER_CONFIG.useShowMore) {
+        renderSubFiltersShowMore();
+    } else if (FILTER_CONFIG.useCompact) {
+        renderSubFiltersCompact();
+    } else {
+        // Default: Auto-choose based on tag count
+        const availableTags = getAvailableTags(currentMainFilter);
+        
+        if (availableTags.length === 0) {
+            document.getElementById('sub-filters').style.display = 'none';
+        } else if (availableTags.length <= 6) {
+            // Few tags: show all directly (original method)
+            renderSubFiltersSimple();
+        } else if (availableTags.length <= 15) {
+            // Medium: use show more/less
+            FILTER_CONFIG.useShowMore = true;
+            renderSubFiltersShowMore();
+            FILTER_CONFIG.useShowMore = false;
+        } else {
+            // Many: use compact mode
+            FILTER_CONFIG.useCompact = true;
+            renderSubFiltersCompact();
+            FILTER_CONFIG.useCompact = false;
+        }
+    }
+}
+
+/* ============================================
+   SIMPLE RENDER (ORIGINAL - FOR FEW TAGS)
+   ============================================ */
+function renderSubFiltersSimple() {
+    const subFiltersContainer = document.getElementById('sub-filters');
+    if (!subFiltersContainer) return;
+    
+    const availableTags = getAvailableTags(currentMainFilter);
+    
+    const label = subFiltersContainer.querySelector('.sub-filter-label');
+    subFiltersContainer.innerHTML = '';
+    if (label) subFiltersContainer.appendChild(label);
+    
+    subFiltersContainer.style.display = 'flex';
+    subFiltersContainer.className = 'sub-filters';
+    
+    availableTags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'sub-filter-btn';
+        btn.textContent = tag;
+        btn.dataset.tag = tag;
+        
+        if (currentSubFilters.includes(tag)) {
+            btn.classList.add('active');
+        }
+        
+        btn.addEventListener('click', () => toggleSubFilter(tag));
+        subFiltersContainer.appendChild(btn);
+    });
+    
+    if (currentSubFilters.length > 0) {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'sub-filter-clear show';
+        clearBtn.innerHTML = `<span>✕</span> <span>${t[lang]['filter-clear'] || 'Clear'}</span>`;
+        clearBtn.addEventListener('click', clearAllSubFilters);
+        subFiltersContainer.appendChild(clearBtn);
+    }
+}
 </script>
 </body>
 </html>
