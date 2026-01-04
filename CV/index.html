@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tuan Quoc - Full Stack Web Developer specializing in modern JavaScript frameworks and scalable web applications">
+    <meta name="keywords" content="web developer, full stack, frontend, JavaScript, React, Node.js">
+    <title>TQ - Full Stack Web Developer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-content">
+            <a href="#" class="logo">AT</a>
+            <ul class="nav-links">
+                <li><a href="#about" data-i18n="nav.about">About</a></li>
+                <li><a href="#education" data-i18n="nav.education">Education</a></li>
+                <li><a href="#skills" data-i18n="nav.skills">Skills</a></li>
+                <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
+                <li><a href="#languages" data-i18n="nav.languages">Languages</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="language-selector">
+                    <button class="language-toggle" id="language-toggle" aria-label="Select language">
+                        <span class="current-lang">EN</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="language-dropdown" id="language-dropdown">
+                        <button class="language-option" data-lang="en">
+                            <span class="lang-flag">🇬🇧</span>
+                            <span class="lang-name">English</span>
+                        </button>
+                        <button class="language-option" data-lang="vi">
+                            <span class="lang-flag">🇻🇳</span>
+                            <span class="lang-name">Tiếng Việt</span>
+                        </button>
+                        <button class="language-option" data-lang="ja">
+                            <span class="lang-flag">🇯🇵</span>
+                            <span class="lang-name">日本語</span>
+                        </button>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                    <span class="sun-icon">☀</span>
+                    <span class="moon-icon">☾</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Tuan Quoc</h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">IT Student & Web Developer Intern</p>
+                <p class="hero-tagline" data-i18n="hero.tagline">Computer Science student passionate about building modern web applications and learning new technologies</p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary" data-i18n="hero.viewProjects">View Projects</a>
+                    <button class="btn btn-secondary" id="download-cv-btn" data-i18n="hero.downloadCV">Download CV</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <h2 class="section-title" data-i18n="about.title">About Me</h2>
+            <div class="about-content">
+                <p data-i18n="about.paragraph1">I am a Computer Science student with a strong passion for web development and creating user-friendly applications. Through coursework and self-directed learning, I have built a solid foundation in HTML, CSS, JavaScript, and modern frameworks like React.</p>
+                <p data-i18n="about.paragraph2">I enjoy solving problems through code and continuously learning new technologies. I have completed several personal and academic projects that demonstrate my ability to build functional web applications from concept to deployment. I am actively seeking internship opportunities where I can contribute to real-world projects while further developing my skills in a professional environment.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section class="section section-alt" id="education">
+        <div class="container">
+            <h2 class="section-title" data-i18n="education.title">Education</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title" data-i18n="education.degree">Bachelor of Science in Computer Science</h3>
+                        <p class="timeline-org" data-i18n="education.university">State University</p>
+                        <p class="timeline-period" data-i18n="education.period">2021 - Present (Expected 2025)</p>
+                        <ul class="timeline-highlights">
+                            <li data-i18n="education.gpa">Current GPA: 3.6/4.0</li>
+                            <li data-i18n="education.coursework">Relevant Coursework: Data Structures, Web Development, Database Systems, Software Engineering</li>
+                            <li data-i18n="education.club">Active member of Computer Science Club</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="section" id="skills">
+        <div class="container">
+            <h2 class="section-title" data-i18n="skills.title">Skills & Technologies</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h3 class="skill-category" data-i18n="skills.frontend">Frontend</h3>
+                    <ul class="skill-list">
+                        <li><span class="skill-name">HTML5 & CSS3</span><span class="skill-level" data-i18n="skills.level.intermediate">Intermediate</span></li>
+                        <li><span class="skill-name">JavaScript (ES6+)</span><span class="skill-level" data-i18n="skills.level.intermediate">Intermediate</span></li>
+                        <li><span class="skill-name">React.js</span><span class="skill-level" data-i18n="skills.level.basic">Basic</span></li>
+                        <li><span class="skill-name" data-i18n="skills.responsive">Responsive Design</span><span class="skill-level" data-i18n="skills.level.intermediate">Intermediate</span></li>
+                        <li><span class="skill-name">Bootstrap / Tailwind</span><span class="skill-level" data-i18n="skills.level.basic">Basic</span></li>
+                    </ul>
+                </div>
+                <div class="skill-card">
+                    <h3 class="skill-category" data-i18n="skills.backend">Backend & Database</h3>
+                    <ul class="skill-list">
+                        <li><span class="skill-name">Node.js</span><span class="skill-level" data-i18n="skills.level.basic">Basic</span></li>
+                        <li><span class="skill-name">Express.js</span><span class="skill-level" data-i18n="skills.level.basic">Basic</span></li>
+                        <li><span class="skill-name">MongoDB</span><span class="skill-level" data-i18n="skills.level.familiar">Familiar</span></li>
+                        <li><span class="skill-name">MySQL</span><span class="skill-level" data-i18n="skills.level.familiar">Familiar</span></li>
+                        <li><span class="skill-name">RESTful APIs</span><span class="skill-level" data-i18n="skills.level.basic">Basic</span></li>
+                    </ul>
+                </div>
+                <div class="skill-card">
+                    <h3 class="skill-category" data-i18n="skills.tools">Tools & Others</h3>
+                    <ul class="skill-list">
+                        <li><span class="skill-name">Git & GitHub</span><span class="skill-level" data-i18n="skills.level.intermediate">Intermediate</span></li>
+                        <li><span class="skill-name">VS Code</span><span class="skill-level" data-i18n="skills.level.intermediate">Intermediate</span></li>
+                        <li><span class="skill-name">Figma</span><span class="skill-level" data-i18n="skills.level.basic">Basic</span></li>
+                        <li><span class="skill-name">npm / Webpack</span><span class="skill-level" data-i18n="skills.level.familiar">Familiar</span></li>
+                        <li><span class="skill-name">Chrome DevTools</span><span class="skill-level" data-i18n="skills.level.intermediate">Intermediate</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section" id="projects">
+        <div class="container">
+            <h2 class="section-title" data-i18n="projects.title">Projects</h2>
+            <div class="projects-grid">
+                <article class="project-card">
+                    <div class="project-header">
+                        <h3 class="project-title" data-i18n="projects.ecommerce.title">E-Commerce Website</h3>
+                        <div class="project-links">
+                            <!-- link truy cập kho dự án -->
+                            <a href="#" target="_blank" rel="noopener" class="project-link" aria-label="View source code">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                            <!-- link dự án -->
+                            <a href="#" target="_blank" rel="noopener" class="project-link" aria-label="View live demo">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>
+                        </div>
+                    </div>
+                    <p class="project-description"><strong data-i18n="projects.personal">Personal Project</strong> - <span data-i18n="projects.ecommerce.description">Built a mock e-commerce website with product listing, shopping cart functionality, and checkout page. Learned to manage state and handle user interactions.</span></p>
+                    <div class="project-tech">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">CSS</span>
+                        <span class="tech-tag">Local Storage</span>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-header">
+                        <h3 class="project-title" data-i18n="projects.taskmanager.title">Task Management App</h3>
+                        <div class="project-links">
+                            <!-- link truy cập kho dự án -->
+                            <a href="#" target="_blank" rel="noopener" class="project-link" aria-label="View source code">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                            <!-- link dự án -->
+                            <a href="#" target="_blank" rel="noopener" class="project-link" aria-label="View live demo">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>
+                        </div>
+                    </div>
+                    <p class="project-description"><strong data-i18n="projects.academic">Academic Project</strong> - <span data-i18n="projects.taskmanager.description">Developed a to-do list application with CRUD operations for a Web Development course. Implemented filtering and sorting features to organize tasks efficiently.</span></p>
+                    <div class="project-tech">
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">HTML/CSS</span>
+                        <span class="tech-tag">DOM Manipulation</span>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-header">
+                        <h3 class="project-title" data-i18n="projects.weather.title">Weather Dashboard</h3>
+                        <div class="project-links">
+                            <!-- link truy cập kho dự án -->
+                            <a href="#" target="_blank" rel="noopener" class="project-link" aria-label="View source code">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                            <!-- link dự án -->
+                            <a href="#" target="_blank" rel="noopener" class="project-link" aria-label="View live demo">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>
+                        </div>
+                    </div>
+                    <p class="project-description"><strong data-i18n="projects.personal">Personal Project</strong> - <span data-i18n="projects.weather.description">Created a weather app that fetches real-time data from an API and displays current weather and forecasts. Learned API integration and asynchronous JavaScript.</span></p>
+                    <div class="project-tech">
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">Weather API</span>
+                        <span class="tech-tag">Fetch API</span>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-header">
+                        <h3 class="project-title" data-i18n="projects.portfolio.title">Portfolio Website</h3>
+                        <div class="project-links">
+                            <a href="https://github.com/Tuan-Quoc-2k8/Website" target="_blank" rel="noopener" class="project-link" aria-label="View source code">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                            <a href="https://tuan-quoc-2k8.github.io/Website/" target="_blank" rel="noopener" class="project-link" aria-label="View live demo">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>
+                        </div>
+                    </div>
+                    <p class="project-description"><strong data-i18n="projects.personal">Personal Project</strong> - <span data-i18n="projects.portfolio.description">Designed and built a responsive portfolio website to showcase projects and skills. Implemented smooth scrolling, dark mode toggle, and optimized for mobile devices.</span></p>
+                    <div class="project-tech">
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">CSS</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag" data-i18n="projects.portfolio.responsive">Responsive Design</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Languages & Localization Section -->
+    <section class="section section-alt" id="languages">
+        <div class="container">
+            <h2 class="section-title" data-i18n="languagesSection.title">Languages & Localization</h2>
+            <div class="about-content">
+                <p data-i18n="languagesSection.intro">I have practical experience implementing multilingual support for web applications, enabling content to be displayed in multiple languages for international audiences.</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title" data-i18n="languagesSection.implementation.title">Multilingual Website Implementation</h3>
+                        <p class="timeline-org" data-i18n="languagesSection.implementation.project">Personal Portfolio Project</p>
+                        <ul class="timeline-highlights">
+                            <li data-i18n="languagesSection.implementation.item1">Implemented language support for Vietnamese, English, and Japanese</li>
+                            <li data-i18n="languagesSection.implementation.item2">Built language toggle functionality using vanilla JavaScript without external libraries</li>
+                            <li data-i18n="languagesSection.implementation.item3">Structured translation content in JSON format for easy maintenance and scalability</li>
+                            <li data-i18n="languagesSection.implementation.item4">Ensured smooth user experience with instant language switching</li>
+                            <li data-i18n="languagesSection.implementation.item5">Applied frontend internationalization (i18n) best practices</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title" data-i18n="languagesSection.proficiency.title">Language Proficiency</h3>
+                        <ul class="timeline-highlights">
+                            <li data-i18n="languagesSection.proficiency.vietnamese">Vietnamese: Native speaker</li>
+                            <li data-i18n="languagesSection.proficiency.english">English: Proficient in reading technical documentation and writing code comments</li>
+                            <li data-i18n="languagesSection.proficiency.japanese">Japanese: Basic conversational level</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <div class="container">
+            <h2 class="section-title" data-i18n="contact.title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <svg class="contact-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <div>
+                            <h3 data-i18n="contact.email">Email</h3>
+                            <a href="tuanquoc.2008.developer@gmail.com">tuanquoc.2008.developer@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <svg class="contact-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        <div>
+                            <h3>GitHub</h3>
+                            <a href="https://github.com/Tuan-Quoc-2k8" target="_blank" rel="noopener">https://github.com/Tuan-Quoc-2k8</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <svg class="contact-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                        <div>
+                            <h3>LinkedIn</h3>
+                            <a href="#" target="_blank" rel="noopener">None</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <svg class="contact-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <div>
+                            <h3 data-i18n="contact.location">Location</h3>
+                            <p data-i18n ="contact.text">Dong Nai Province, Vietnam</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="contact-form">
+                    <div class="form-group">
+                        <label for="name" data-i18n="contact.form.name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" data-i18n="contact.form.email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message" data-i18n="contact.form.message">Message</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-i18n="contact.form.send">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p data-i18n="footer.copyright">&copy; 2026 Tuan Quoc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- CV Download Modal -->
+    <div class="modal" id="cv-modal">
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close" aria-label="Close modal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <h2 class="modal-title" data-i18n="modal.title">Download CV</h2>
+            <p class="modal-description" data-i18n="modal.description">Select your preferred language version</p>
+            <div class="cv-options">
+                <a href="assets/cv-en.pdf" class="cv-option" download>
+                    <div class="cv-option-icon">🇬🇧</div>
+                    <div class="cv-option-content">
+                        <h3 class="cv-option-title" data-i18n="modal.english">English Version</h3>
+                        <p class="cv-option-description" data-i18n="modal.englishDesc">Standard international format</p>
+                    </div>
+                    <svg class="cv-option-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14"></path>
+                        <path d="M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+                <a href="assets/cv-vi.pdf" class="cv-option" download>
+                    <div class="cv-option-icon">🇻🇳</div>
+                    <div class="cv-option-content">
+                        <h3 class="cv-option-title" data-i18n="modal.vietnamese">Vietnamese Version</h3>
+                        <p class="cv-option-description" data-i18n="modal.vietnameseDesc">For Vietnamese employers</p>
+                    </div>
+                    <svg class="cv-option-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14"></path>
+                        <path d="M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+                <a href="assets/cv-ja.pdf" class="cv-option" download>
+                    <div class="cv-option-icon">🇯🇵</div>
+                    <div class="cv-option-content">
+                        <h3 class="cv-option-title" data-i18n="modal.japanese">Japanese Version</h3>
+                        <p class="cv-option-description" data-i18n="modal.japaneseDesc">履歴書形式 (Rirekisho format)</p>
+                    </div>
+                    <svg class="cv-option-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14"></path>
+                        <path d="M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
