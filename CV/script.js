@@ -10,10 +10,11 @@ const translations = {
             contact: "Contact"
         },
         hero: {
+            name:"Tuan Quoc",
             subtitle: "IT Student & Web Developer Intern",
             tagline: "Computer Science student passionate about building modern web applications and learning new technologies",
             viewProjects: "View Projects",
-            downloadCV: "Download CV"
+            downloadCV: "Download CV",
         },
         about: {
             title: "About Me",
@@ -119,6 +120,7 @@ const translations = {
             contact: "Liên hệ"
         },
         hero: {
+            name:"Tuấn Quốc",
             subtitle: "Sinh viên CNTT & Thực tập sinh Lập trình Web",
             tagline: "Sinh viên Khoa học Máy tính đam mê xây dựng ứng dụng web hiện đại và học hỏi công nghệ mới",
             viewProjects: "Xem dự án",
@@ -228,6 +230,7 @@ const translations = {
             contact: "お問い合わせ"
         },
         hero: {
+            name:"トゥアン・クオック",
             subtitle: "IT学生・Webデベロッパーインターン",
             tagline: "最新のWebアプリケーション構築と新しい技術を学ぶことに情熱を持つコンピュータサイエンス学生",
             viewProjects: "プロジェクトを見る",
