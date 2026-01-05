@@ -1,0 +1,161 @@
+/**
+ * ============================================
+ * MOBILE BACK BUTTON HANDLER - STYLES
+ * ============================================
+ * 
+ * Optional CSS for visual feedback when using back button
+ * Most functionality works without these styles
+ */
+
+/* ============================================
+   OPTIONAL: BACK BUTTON INDICATOR
+   Shows a visual hint that back button can close modals
+   ============================================ */
+
+@media (max-width: 768px) {
+    
+    /* Add subtle indicator to modal headers */
+    .settings-modal.active .settings-header::before,
+    .premium-modal .premium-modal-header::before {
+        content: '◀';
+        position: absolute;
+        left: 1rem;
+        color: var(--text-sec);
+        font-size: 1.2rem;
+        opacity: 0.5;
+        animation: backHintPulse 2s ease-in-out infinite;
+        pointer-events: none;
+    }
+    
+    /* Pulse animation for back hint */
+    @keyframes backHintPulse {
+        0%, 100% {
+            opacity: 0.3;
+            transform: translateX(0);
+        }
+        50% {
+            opacity: 0.6;
+            transform: translateX(-3px);
+        }
+    }
+    
+    /* Adjust header padding to accommodate indicator */
+    .settings-modal.active .settings-header,
+    .premium-modal .premium-modal-header {
+        padding-left: 3rem;
+        position: relative;
+    }
+    
+    /* Hide indicator after 5 seconds (user got the hint) */
+    .settings-modal.active .settings-header::before,
+    .premium-modal .premium-modal-header::before {
+        animation: backHintPulse 2s ease-in-out 3, backHintFadeOut 0.5s ease-out 6s forwards;
+    }
+    
+    @keyframes backHintFadeOut {
+        to {
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+}
+
+/* ============================================
+   OPTIONAL: SMOOTH BACK TRANSITIONS
+   Enhance closing animations when back button is used
+   ============================================ */
+
+/* Add this class via JS when closing via back button for smoother effect */
+.closing-via-back {
+    animation: modalBackClose 0.25s ease-out forwards !important;
+}
+
+@keyframes modalBackClose {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY: FOCUS MANAGEMENT
+   ============================================ */
+
+/* Ensure modals don't trap focus when closed via back button */
+.settings-modal:not(.active),
+.premium-modal:not(.active),
+nav:not(.active) {
+    pointer-events: none;
+}
+
+/* ============================================
+   DEBUGGING STYLES (Enable via CONFIG.debug)
+   ============================================ */
+
+/* Add this class to body when debug mode is on */
+body.back-handler-debug::after {
+    content: '🔙 Back Handler Active';
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    z-index: 99999;
+    pointer-events: none;
+}
+
+/* Show active overlay count in debug mode */
+body.back-handler-debug::before {
+    content: attr(data-active-overlays);
+    position: fixed;
+    bottom: 3.5rem;
+    right: 1rem;
+    background: rgba(59, 130, 246, 0.9);
+    color: #fff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    z-index: 99999;
+    pointer-events: none;
+}
+
+/* ============================================
+   MOBILE OPTIMIZATION
+   ============================================ */
+
+@media (max-width: 768px) {
+    
+    /* Ensure modals don't interfere with browser chrome */
+    .settings-modal.active,
+    .premium-modal {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    /* Optimize touch targets for mobile */
+    .settings-close,
+    .premium-modal-close {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    /* Hide all modals when printing */
+    .settings-modal,
+    .premium-modal,
+    .nav-overlay {
+        display: none !important;
+    }
+}
