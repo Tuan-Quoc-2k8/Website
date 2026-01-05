@@ -8,6 +8,9 @@
 <!-- Favicon -->
 <link rel="icon" href="./favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="./img/logo-1.png">
+
+<!-- <link rel="stylesheet" href="./css/mobile-back-handler.css"> -->
+
 <style>
 :root{
     --primary:#1e3a8a;
@@ -115,6 +118,18 @@ body {
     line-height: 1.6;
     transition: background .3s, color .3s;
     overflow-x: hidden;
+}
+
+/* Nav overlay - hidden by default on desktop */
+.nav-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    z-index:999;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s;
 }
 
 h1, h2, h3 {
@@ -2097,7 +2112,7 @@ const projects=[
 
         tags:['CSS','UI','Login','Register','Form'],
         badge:'NEW',
-        link:'./css/wbsite_1.html'
+        link:'./CSS-web/wbsite_1.html'
     },
     {
         category:'game',
@@ -2154,7 +2169,7 @@ const projects=[
 
         tags:['CSS','UI','Login','Form'],
         badge:'NEW',
-        link:'./css/Website_trang-tim.html'
+        link:'./CSS-web/Website_trang-tim.html'
     },
 
     {
@@ -3520,5 +3535,11 @@ function renderSubFiltersSimple() {
     }
 }
 </script>
+<!-- <script src="./js/mobile-back-handler.js"></script>
+<script>
+    // Remove these lines in production
+    MobileBackHandler.setDebug(true);
+    console.log('Mobile back button handler loaded!');
+</script> -->
 </body>
 </html>
