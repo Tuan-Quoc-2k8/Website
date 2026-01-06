@@ -1,10 +1,12 @@
 /**
  * ============================================
- * MOBILE BACK BUTTON HANDLER - STYLES
+ * MOBILE BACK BUTTON HANDLER - STYLES (FIXED)
  * ============================================
  * 
  * Optional CSS for visual feedback when using back button
  * Most functionality works without these styles
+ * 
+ * BUG FIX: Removed nav:not(.active) rule that was blocking desktop navigation
  */
 
 /* ============================================
@@ -82,14 +84,36 @@
 }
 
 /* ============================================
-   ACCESSIBILITY: FOCUS MANAGEMENT
+   ACCESSIBILITY: FOCUS MANAGEMENT (FIXED)
    ============================================ */
 
-/* Ensure modals don't trap focus when closed via back button */
+/* ❌ BUG WAS HERE - REMOVED THIS RULE:
 .settings-modal:not(.active),
 .premium-modal:not(.active),
 nav:not(.active) {
     pointer-events: none;
+}
+*/
+
+/* ✅ FIXED VERSION - Only applies to modals, NOT nav */
+/* Only disable pointer events on INACTIVE modals on MOBILE */
+@media (max-width: 768px) {
+    .settings-modal:not(.active),
+    .premium-modal:not(.active) {
+        pointer-events: none;
+    }
+    
+    /* For mobile nav, only disable when explicitly closed */
+    nav:not(.active) {
+        pointer-events: none;
+    }
+}
+
+/* Desktop: Never disable nav pointer events */
+@media (min-width: 769px) {
+    nav {
+        pointer-events: auto !important;
+    }
 }
 
 /* ============================================
