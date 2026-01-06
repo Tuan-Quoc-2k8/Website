@@ -1230,6 +1230,12 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
     @keyframes spin {
         to { transform: translate(-50%, -50%) rotate(360deg); }
     }
+
+    .sub-filter-clear{
+        color: #fff;
+        background: var(--accent);
+        font-weight: 700;
+    }
 </style>
 </head>
 <body data-theme="blue">
@@ -2371,6 +2377,10 @@ const t={
         'unlock-button': 'Mở khóa',
         'unlock-success': '✓ Đã mở khóa chủ đề thành công!',
         'unlock-error': '✗ Mã không hợp lệ. Vui lòng thử lại.',
+        'filter-show':'Hiển thị',
+        'filter-hide':'Ẩn',
+        'filter-show-more':'Hiển thị thêm {count}',
+        'filter-show-less':'Thu gọn',
     },
 
     en:{
@@ -2472,6 +2482,10 @@ const t={
         'unlock-button': 'Unlock',
         'unlock-success': '✓ Theme unlocked successfully!',
         'unlock-error': '✗ Invalid key. Please try again.',
+        'filter-show':'Show',
+        'filter-hide':'Hide',
+        'filter-show-more':'Show {count} more',
+        'filter-show-less':'Show less',
 
     },
     ko:{
@@ -2571,6 +2585,10 @@ const t={
         'unlock-button': '잠금 해제',
         'unlock-success': '✓ 테마가 성공적으로 잠금 해제되었습니다!',
         'unlock-error': '✗ 잘못된 키입니다. 다시 시도하세요.',
+        'filter-show':'표시',
+        'filter-hide':'숨기기',
+        'filter-show-more':'{count}개 더 보기',
+        'filter-show-less':'접기',
 
     },
 
@@ -2673,6 +2691,10 @@ const t={
         'unlock-button': 'ロック解除',
         'unlock-success': '✓ テーマが正常にロック解除されました！',
         'unlock-error': '✗ 無効なキーです。もう一度お試しください。',
+        'filter-show':'表示',
+        'filter-hide':'非表示',
+        'filter-show-more':'さらに{count}件表示',
+        'filter-show-less':'折りたたむ',
 
     },
     zh:{
@@ -2775,6 +2797,10 @@ const t={
         'unlock-button': '解锁',
         'unlock-success': '✓ 主题解锁成功！',
         'unlock-error': '✗ 无效密钥。请重试。',
+        'filter-show':'显示',
+        'filter-hide':'隐藏',
+        'filter-show-more':'显示更多 {count} 项',
+        'filter-show-less':'收起',
 
     },
 
@@ -3265,7 +3291,7 @@ function renderSubFiltersCollapsible() {
             </span>
         </span>
         <button class="sub-filter-toggle ${FILTER_CONFIG.initiallyExpanded ? 'expanded' : ''}">
-            <span>${FILTER_CONFIG.initiallyExpanded ? 'Hide' : 'Show'}</span>
+            <span>${FILTER_CONFIG.initiallyExpanded ? t[lang]['filter-hide'] : t[lang]['filter-show']}</span>
             <span class="toggle-icon">▼</span>
         </button>
     `;
@@ -3308,7 +3334,7 @@ function renderSubFiltersCollapsible() {
     toggleBtn.addEventListener('click', () => {
         const isExpanded = content.classList.toggle('expanded');
         toggleBtn.classList.toggle('expanded');
-        toggleBtn.querySelector('span').textContent = isExpanded ? 'Hide' : 'Show';
+        toggleBtn.querySelector('span').textContent = isExpanded ? t[lang]['filter-hide'] : t[lang]['filter-show'];
     });
 }
 
