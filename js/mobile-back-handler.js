@@ -1,21 +1,11 @@
 /**
  * ============================================
- * MOBILE BACK BUTTON HANDLER (VERIFIED SAFE)
+ * MOBILE BACK BUTTON HANDLER v2.0 (FIXED)
  * ============================================
  * 
- * This module enables mobile users to close modals and panels
- * using the browser's back button (◀) instead of only X button.
- * 
- * Features:
- * - Settings modal back button support
- * - Premium unlock modal back button support
- * - Mobile navigation menu back button support
- * - Automatic history management
- * - Works with multiple overlays
- * 
- * ✅ VERIFIED: Does NOT interfere with desktop navigation
- * 
- * Usage: Include this file after your main scripts
+ * FIX: Prevents cascade closing when manually closing panels
+ * - Manual close (X/overlay): Only closes current panel
+ * - Back button: Closes panels step by step
  */
 
 (function() {
@@ -26,153 +16,132 @@
     // ============================================
     
     const CONFIG = {
-        // Enable/disable debug logging
         debug: false,
-        
-        // State identifiers for different modals
         states: {
             settings: 'settings-modal-open',
             premium: 'premium-modal-open',
             navigation: 'mobile-nav-open'
         },
-        
-        // Only activate on mobile screens
         mobileBreakpoint: 768
     };
-    
-    // ============================================
-    // MOBILE CHECK
-    // ============================================
-    
-    /**
-     * Check if we're on a mobile screen
-     * @returns {boolean} True if mobile screen size
-     */
-    function isMobile() {
-        return window.innerWidth <= CONFIG.mobileBreakpoint;
-    }
     
     // ============================================
     // STATE MANAGEMENT
     // ============================================
     
-    /**
-     * Track currently open modals/panels
-     */
     let activeOverlays = [];
     
-    /**
-     * Log debug messages if enabled
-     */
+    // 🆕 NEW: Flag to prevent cascade closing
+    let isManualClose = false;
+    
     function log(...args) {
         if (CONFIG.debug) {
             console.log('[Mobile Back Handler]', ...args);
         }
     }
     
-    /**
-     * Add a history state for back button support
-     * @param {string} stateId - Unique identifier for the state
-     */
+    function isMobile() {
+        return window.innerWidth <= CONFIG.mobileBreakpoint;
+    }
+    
     function pushModalState(stateId) {
-        // ✅ SAFETY CHECK: Only push on mobile
         if (!isMobile()) {
             log('Skipping state push on desktop:', stateId);
             return;
         }
         
-        // Only push if not already in history
         if (!activeOverlays.includes(stateId)) {
             const state = { modal: stateId };
             history.pushState(state, '', window.location.href);
             activeOverlays.push(stateId);
-            log('Pushed state:', stateId, 'Active overlays:', activeOverlays);
+            log('✅ Pushed state:', stateId, '| Active:', activeOverlays);
         }
     }
     
     /**
-     * Remove state when modal closed normally (not via back button)
-     * @param {string} stateId - State identifier to remove
+     * 🔧 FIXED: Remove state without triggering cascade close
      */
     function removeModalState(stateId) {
         const index = activeOverlays.indexOf(stateId);
-        if (index > -1) {
-            activeOverlays.splice(index, 1);
-            
-            // Go back in history to remove the state
-            if (history.state && history.state.modal === stateId) {
-                history.back();
-            }
-            
-            log('Removed state:', stateId, 'Active overlays:', activeOverlays);
+        if (index === -1) return;
+        
+        // Remove from tracking array
+        activeOverlays.splice(index, 1);
+        
+        // 🆕 Set flag to prevent popstate handler from closing other panels
+        isManualClose = true;
+        
+        // Go back in history to clean up
+        if (history.state && history.state.modal === stateId) {
+            history.back();
         }
+        
+        // 🆕 Reset flag after a short delay
+        setTimeout(() => {
+            isManualClose = false;
+        }, 50);
+        
+        log('❌ Removed state:', stateId, '| Active:', activeOverlays);
     }
     
-    /**
-     * Clear all modal states
-     */
     function clearAllStates() {
         const count = activeOverlays.length;
         activeOverlays = [];
         
-        // Go back for each active overlay
+        isManualClose = true;
+        
         for (let i = 0; i < count; i++) {
             if (history.state && history.state.modal) {
                 history.back();
             }
         }
         
-        log('Cleared all states');
+        setTimeout(() => {
+            isManualClose = false;
+        }, 50);
+        
+        log('🗑️ Cleared all states');
     }
     
     // ============================================
     // MODAL HANDLERS
     // ============================================
     
-    /**
-     * Handle settings modal
-     */
     function handleSettingsModal() {
         const settingsModal = document.getElementById('settings-modal');
         if (!settingsModal) return;
         
-        // INTERCEPT: When settings opens - ADD HISTORY STATE
         const originalOpenSettings = window.openSettings;
         window.openSettings = function() {
             if (originalOpenSettings) {
                 originalOpenSettings();
             }
             
-            // ✅ Only push state on mobile
             setTimeout(() => {
                 pushModalState(CONFIG.states.settings);
             }, 50);
         };
         
-        // INTERCEPT: When settings closes normally - REMOVE HISTORY STATE
         const originalCloseSettings = window.closeSettings;
         window.closeSettings = function() {
+            // 🆕 Remove state BEFORE closing (prevents race condition)
+            removeModalState(CONFIG.states.settings);
+            
             if (originalCloseSettings) {
                 originalCloseSettings();
             }
-            removeModalState(CONFIG.states.settings);
         };
         
-        log('Settings modal handler installed');
+        log('⚙️ Settings modal handler installed');
     }
     
-    /**
-     * Handle premium unlock modals
-     */
     function handlePremiumModals() {
-        // INTERCEPT: Premium modal creation
         const originalShowPremiumModal = window.showPremiumModal;
         
         if (originalShowPremiumModal) {
             window.showPremiumModal = function(...args) {
                 originalShowPremiumModal.apply(this, args);
                 
-                // ✅ Only push state on mobile
                 setTimeout(() => {
                     const premiumModal = document.querySelector('.premium-modal');
                     if (premiumModal) {
@@ -182,14 +151,12 @@
             };
         }
         
-        // INTERCEPT: Premium modal close
-        // Use MutationObserver to detect modal removal
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 mutation.removedNodes.forEach((node) => {
                     if (node.classList && node.classList.contains('premium-modal')) {
                         removeModalState(CONFIG.states.premium);
-                        log('Premium modal removed from DOM');
+                        log('💎 Premium modal removed');
                     }
                 });
             });
@@ -197,12 +164,9 @@
         
         observer.observe(document.body, { childList: true });
         
-        log('Premium modal handler installed');
+        log('💎 Premium modal handler installed');
     }
     
-    /**
-     * Handle mobile navigation menu
-     */
     function handleMobileNavigation() {
         const nav = document.querySelector('nav');
         const navOverlay = document.querySelector('.nav-overlay');
@@ -210,9 +174,8 @@
         
         if (!nav || !navOverlay || !menuToggle) return;
         
-        // INTERCEPT: Menu open
+        // Menu open
         menuToggle.addEventListener('click', () => {
-            // ✅ Only push state on mobile
             setTimeout(() => {
                 if (nav.classList.contains('active') && isMobile()) {
                     pushModalState(CONFIG.states.navigation);
@@ -220,51 +183,80 @@
             }, 50);
         });
         
-        // INTERCEPT: Menu close via overlay click
-        navOverlay.addEventListener('click', () => {
-            removeModalState(CONFIG.states.navigation);
-        });
+        // 🔧 FIXED: Remove state BEFORE closing nav
+        const closeNav = () => {
+            if (nav.classList.contains('active')) {
+                removeModalState(CONFIG.states.navigation);
+                
+                // 🔧 FIX: Ensure scroll is enabled when nav closes
+                setTimeout(() => {
+                    const openPanels = getOpenPanels();
+                    const hasBlockingPanel = openPanels.some(panel => 
+                        panel === 'settings' || panel === 'premium'
+                    );
+                    
+                    if (!hasBlockingPanel) {
+                        document.body.style.overflow = '';
+                        log('✅ Scroll restored after nav close');
+                    }
+                }, 100);
+            }
+        };
         
-        // INTERCEPT: Menu close via nav link clicks
+        // Overlay click
+        navOverlay.addEventListener('click', closeNav);
+        
+        // Nav link clicks
         document.querySelectorAll('nav a').forEach(link => {
             link.addEventListener('click', () => {
                 if (link.getAttribute('onclick') !== 'openSettings()') {
-                    removeModalState(CONFIG.states.navigation);
+                    closeNav();
                 }
             });
         });
         
-        log('Mobile navigation handler installed');
+        log('📱 Mobile navigation handler installed');
     }
     
     // ============================================
-    // BACK BUTTON HANDLER
+    // BACK BUTTON HANDLER (FIXED)
     // ============================================
     
-    /**
-     * Close the appropriate modal when back button is pressed
-     * @param {string} stateId - The state identifier to close
-     */
     function closeModalByState(stateId) {
-        log('Back button pressed, closing:', stateId);
+        log('◀️ Back button closing:', stateId);
+        
+        // Remove from tracking (without calling history.back again)
+        const index = activeOverlays.indexOf(stateId);
+        if (index > -1) {
+            activeOverlays.splice(index, 1);
+        }
         
         switch (stateId) {
             case CONFIG.states.settings:
-                // Close settings modal
                 const settingsModal = document.getElementById('settings-modal');
                 if (settingsModal && settingsModal.classList.contains('active')) {
-                    activeOverlays = activeOverlays.filter(s => s !== stateId);
-                    if (window.closeSettings) {
-                        window.closeSettings();
-                    }
+                    settingsModal.classList.remove('active');
+                    
+                    // 🔧 FIX: Add delay to ensure DOM updates before checking
+                    setTimeout(() => {
+                        const openPanels = getOpenPanels();
+                        
+                        // 🔧 FIX: On mobile, only modal panels block scroll
+                        const hasBlockingPanel = openPanels.some(panel => 
+                            panel === 'settings' || panel === 'premium'
+                        );
+                        
+                        if (!hasBlockingPanel) {
+                            document.body.style.overflow = '';
+                            log('✅ Scroll restored via back button');
+                        }
+                    }, 100);
                 }
                 break;
                 
             case CONFIG.states.premium:
-                // Close premium modal
                 const premiumModal = document.querySelector('.premium-modal');
                 if (premiumModal) {
-                    activeOverlays = activeOverlays.filter(s => s !== stateId);
                     const closeBtn = premiumModal.querySelector('.premium-modal-close');
                     if (closeBtn) {
                         closeBtn.click();
@@ -275,11 +267,9 @@
                 break;
                 
             case CONFIG.states.navigation:
-                // Close mobile navigation
                 const nav = document.querySelector('nav');
                 const navOverlay = document.querySelector('.nav-overlay');
                 if (nav && nav.classList.contains('active')) {
-                    activeOverlays = activeOverlays.filter(s => s !== stateId);
                     nav.classList.remove('active');
                     if (navOverlay) {
                         navOverlay.classList.remove('active');
@@ -288,43 +278,69 @@
                 break;
                 
             default:
-                log('Unknown state:', stateId);
+                log('❓ Unknown state:', stateId);
         }
     }
     
     /**
-     * Listen for browser back button
+     * 🔧 FIXED: Only close panel if back button was pressed (not manual close)
      */
     function setupBackButtonListener() {
         window.addEventListener('popstate', (event) => {
-            log('Popstate event:', event.state);
+            log('📍 Popstate event:', event.state, '| Manual close:', isManualClose);
             
-            // ✅ Only handle on mobile
             if (!isMobile()) {
-                log('Ignoring popstate on desktop');
+                log('🖥️ Ignoring popstate on desktop');
                 return;
             }
             
-            // If we have an active overlay and back button was pressed
+            // 🆕 CRITICAL FIX: Skip if this was triggered by manual close
+            if (isManualClose) {
+                log('⏭️ Skipping - manual close in progress');
+                return;
+            }
+            
+            // Only process if back button was actually pressed
             if (activeOverlays.length > 0) {
                 const lastOverlay = activeOverlays[activeOverlays.length - 1];
                 closeModalByState(lastOverlay);
             }
         });
         
-        log('Back button listener installed');
+        log('◀️ Back button listener installed');
     }
     
     // ============================================
-    // SCREEN RESIZE HANDLER
+    // UTILITY FUNCTIONS
     // ============================================
     
     /**
-     * Clear states when switching from mobile to desktop
+     * 🆕 Helper to check what panels are open (from main code)
      */
+    function getOpenPanels() {
+        const panels = [];
+        
+        const nav = document.querySelector('nav');
+        if (nav && nav.classList.contains('active')) {
+            panels.push('nav');
+        }
+        
+        const settings = document.getElementById('settings-modal');
+        if (settings && settings.classList.contains('active')) {
+            panels.push('settings');
+        }
+        
+        const premium = document.querySelector('.premium-modal');
+        if (premium) {
+            panels.push('premium');
+        }
+        
+        return panels;
+    }
+    
     function handleResize() {
         if (!isMobile() && activeOverlays.length > 0) {
-            log('Switched to desktop, clearing mobile states');
+            log('📏 Switched to desktop, clearing mobile states');
             clearAllStates();
         }
     }
@@ -333,63 +349,49 @@
     // INITIALIZATION
     // ============================================
     
-    /**
-     * Initialize the back button handler
-     */
     function init() {
-        log('Initializing mobile back button handler...');
+        log('🚀 Initializing mobile back button handler v2.0...');
         
-        // Wait for DOM to be ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
             return;
         }
         
-        // Setup all handlers
         handleSettingsModal();
         handlePremiumModals();
         handleMobileNavigation();
         setupBackButtonListener();
         
-        // Handle screen resize
         window.addEventListener('resize', handleResize);
         
-        // Handle page unload - clear states
         window.addEventListener('beforeunload', () => {
             clearAllStates();
         });
         
-        log('Mobile back button handler initialized successfully!');
-        log('Mobile mode:', isMobile());
+        log('✅ Mobile back button handler v2.0 initialized!');
+        log('📱 Mobile mode:', isMobile());
     }
     
-    // Start initialization
     init();
     
     // ============================================
-    // PUBLIC API (Optional)
+    // PUBLIC API
     // ============================================
     
-    /**
-     * Expose public methods if needed
-     */
     window.MobileBackHandler = {
-        // Enable/disable debug mode
         setDebug: (enabled) => {
             CONFIG.debug = enabled;
-            log('Debug mode:', enabled);
+            log('🐛 Debug mode:', enabled);
         },
         
-        // Get current active overlays
         getActiveOverlays: () => [...activeOverlays],
-        
-        // Check if mobile
         isMobile: isMobile,
-        
-        // Manually push/remove states (advanced usage)
         pushState: pushModalState,
         removeState: removeModalState,
-        clearAll: clearAllStates
+        clearAll: clearAllStates,
+        
+        // 🆕 New: Check if manual close is in progress
+        isManualClose: () => isManualClose
     };
     
 })();
