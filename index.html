@@ -3722,23 +3722,6 @@ function renderSubFiltersSimple() {
     }
 }
 
-function checkPanels() {
-    const panels = [];
-    
-    if (document.querySelector('nav')?.classList.contains('active')) {
-        panels.push('✅ Nav');
-    }
-    if (document.getElementById('settings-modal')?.classList.contains('active')) {
-        panels.push('✅ Settings');
-    }
-    if (document.querySelector('.premium-modal')) {
-        panels.push('✅ Premium');
-    }
-    
-    console.log('Open panels:', panels.length ? panels : '❌ None');
-    console.log('Body scroll:', document.body.style.overflow || 'normal');
-}
-
 // Usage:
 checkPanels();
 </script>
