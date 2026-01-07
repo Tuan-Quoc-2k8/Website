@@ -1363,119 +1363,125 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
     </script>
 
 <div id="loading">
-<div class="loading-particles" id="particles"></div>
-<div class="loading-content">
-<div class="loading-logo">TQ</div>
-<div class="loading-text">
-<span>Loading</span>
-<div class="loading-dots">
-<div class="loading-dot"></div>
-<div class="loading-dot"></div>
-<div class="loading-dot"></div>
-</div>
-</div>
-<div style="display:flex;flex-direction:column;align-items:center">
-<div class="loading-progress">
-<div class="loading-progress-bar"></div>
-</div>
-<div class="loading-percentage">0%</div>
-</div>
-</div>
+    <div class="loading-particles" id="particles"></div>
+    <div class="loading-content">
+        <div class="loading-logo">TQ</div>
+        <div class="loading-text">
+            <span>Loading</span>
+            <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center">
+            <div class="loading-progress">
+                <div class="loading-progress-bar"></div>
+            </div>
+            <div class="loading-percentage">0%</div>
+        </div>
+    </div>
 </div>
 <div class="nav-overlay"></div>
 <div class="settings-modal" id="settings-modal">
-<div class="settings-content">
-<div class="settings-header">
-<h2 data-lang="settings-title">⚙️ Cài đặt</h2>
-<button class="settings-close" onclick="closeSettings()">×</button>
-</div>
-<div class="settings-section">
-<h3 data-lang="theme-section">🎨 Giao diện</h3>
-<div class="theme-grid">
-<div class="theme-card active" data-theme="blue">
-<div class="theme-color" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)"></div>
-<div class="theme-name" data-lang="theme-blue">Xanh dương</div>
-</div>
-<div class="theme-card" data-theme="purple">
-<div class="theme-color" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"></div>
-<div class="theme-name" data-lang="theme-purple">Tím</div>
-</div>
-<div class="theme-card" data-theme="green">
-<div class="theme-color" style="background:linear-gradient(135deg,#047857,#10b981)"></div>
-<div class="theme-name" data-lang="theme-green">Xanh lá</div>
-</div>
-<div class="theme-card" data-theme="orange">
-<div class="theme-color" style="background:linear-gradient(135deg,#c2410c,#f97316)"></div>
-<div class="theme-name" data-lang="theme-orange">Cam</div>
-</div>
-<div class="theme-card" data-theme="pink">
-<div class="theme-color" style="background:linear-gradient(135deg,#be185d,#ec4899)"></div>
-<div class="theme-name" data-lang="theme-pink">Hồng</div>
-</div>
-<div class="theme-card" data-theme="yellow">
-<div class="theme-color" style="background:linear-gradient(135deg,#ca8a04,#eab308)"></div>
-<div class="theme-name" data-lang="theme-yellow">Vàng</div>
-</div>
-<div class="theme-card" data-theme="red">
-<div class="theme-color" style="background:linear-gradient(135deg,#b91c1c,#ef4444)"></div>
-<div class="theme-name" data-lang="theme-red">Đỏ</div>
-</div>
+    <div class="settings-content">
+        <div class="settings-header">
+            <h2 data-lang="settings-title">⚙️ Cài đặt</h2>
+            <button class="settings-close" onclick="closeTopmostPanel()">×</button>
+        </div>
+        <div class="settings-section">
+            <h3 data-lang="theme-section">🎨 Giao diện</h3>
+            <div class="theme-grid">
+                <div class="theme-card active" data-theme="blue">
+                    <div class="theme-color" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)"></div>
+                    <div class="theme-name" data-lang="theme-blue">Xanh dương</div>
+                </div>
 
-<!-- Premium Theme Card -->
-<div class="theme-card" data-theme="gradient-premium" id="premium-theme-card">
-    <div class="theme-color" style="background:linear-gradient(135deg,#0891b2,#06b6d4,#14b8a6)"></div>
-    <div class="theme-name" data-lang="theme-gradient-premium">Gradient Premium</div>
-</div>
+                <div class="theme-card" data-theme="purple">
+                    <div class="theme-color" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"></div>
+                    <div class="theme-name" data-lang="theme-purple">Tím</div>
+                </div>
 
-<!-- Exclusive Theme Card -->
-<div class="theme-card" data-theme="gradient-exclusive" id="exclusive-theme-card">
-    <div class="theme-color" style="background:linear-gradient(135deg,#F1C9FD,#FC0061)"></div>
-    <div class="theme-name" data-lang="theme-gradient-exclusive">Pink Exclusive</div>
-</div>
+                <div class="theme-card" data-theme="green">
+                    <div class="theme-color" style="background:linear-gradient(135deg,#047857,#10b981)"></div>
+                    <div class="theme-name" data-lang="theme-green">Xanh lá</div>
+                </div>
 
-</div>
-</div>
-<div class="settings-section">
-<h3 data-lang="mode-section">🌓 Chế độ hiển thị</h3>
-<div class="settings-option">
-<div class="option-label">
-<span class="option-icon">🌙</span>
-<span data-lang="dark-mode">Chế độ tối</span>
-</div>
-<div class="toggle-switch" id="dark-mode-toggle" onclick="toggleDarkMode()"></div>
-</div>
-</div>
-<div class="settings-section">
-<h3 data-lang="lang-section">🌍 Ngôn ngữ</h3>
-<div class="lang-grid">
-    <div class="lang-card active" data-lang-code="vi">
-        <div class="lang-flag">VN</div>
-        <div class="lang-name">Tiếng Việt</div>
+                <div class="theme-card" data-theme="orange">
+                    <div class="theme-color" style="background:linear-gradient(135deg,#c2410c,#f97316)"></div>
+                    <div class="theme-name" data-lang="theme-orange">Cam</div>
+                </div>
+
+                <div class="theme-card" data-theme="pink">
+                    <div class="theme-color" style="background:linear-gradient(135deg,#be185d,#ec4899)"></div>
+                    <div class="theme-name" data-lang="theme-pink">Hồng</div>
+                </div>
+
+                <div class="theme-card" data-theme="yellow">
+                    <div class="theme-color" style="background:linear-gradient(135deg,#ca8a04,#eab308)"></div>
+                    <div class="theme-name" data-lang="theme-yellow">Vàng</div>
+                </div>
+
+                <div class="theme-card" data-theme="red">
+                    <div class="theme-color" style="background:linear-gradient(135deg,#b91c1c,#ef4444)"></div>
+                    <div class="theme-name" data-lang="theme-red">Đỏ</div>
+                </div>
+
+                <!-- Premium Theme Card -->
+                <div class="theme-card" data-theme="gradient-premium" id="premium-theme-card">
+                    <div class="theme-color" style="background:linear-gradient(135deg,#0891b2,#06b6d4,#14b8a6)"></div>
+                    <div class="theme-name" data-lang="theme-gradient-premium">Gradient Premium</div>
+                </div>
+
+                <!-- Exclusive Theme Card -->
+                <div class="theme-card" data-theme="gradient-exclusive" id="exclusive-theme-card">
+                    <div class="theme-color" style="background:linear-gradient(135deg,#F1C9FD,#FC0061)"></div>
+                    <div class="theme-name" data-lang="theme-gradient-exclusive">Pink Exclusive</div>
+                </div>
+
+            </div>
+        </div>
+        <div class="settings-section">
+            <h3 data-lang="mode-section">🌓 Chế độ hiển thị</h3>
+            <div class="settings-option">
+                <div class="option-label">
+                    <span class="option-icon">🌙</span>
+                    <span data-lang="dark-mode">Chế độ tối</span>
+                </div>
+                <div class="toggle-switch" id="dark-mode-toggle" onclick="toggleDarkMode()"></div>
+            </div>
+        </div>
+        <div class="settings-section">
+            <h3 data-lang="lang-section">🌍 Ngôn ngữ</h3>
+            <div class="lang-grid">
+                <div class="lang-card active" data-lang-code="vi">
+                    <div class="lang-flag">VN</div>
+                    <div class="lang-name">Tiếng Việt</div>
+                </div>
+
+                <div class="lang-card" data-lang-code="en">
+                    <div class="lang-flag">EN</div>
+                    <div class="lang-name">English</div>
+                </div>
+
+                <div class="lang-card" data-lang-code="ko">
+                    <div class="lang-flag">KR</div>
+                    <div class="lang-name">한국어</div>
+                </div>
+
+                <div class="lang-card" data-lang-code="ja">
+                    <div class="lang-flag">JP</div>
+                    <div class="lang-name">日本語</div>
+                </div>
+
+                <div class="lang-card" data-lang-code="zh">
+                    <div class="lang-flag">CN</div>
+                    <div class="lang-name">中文（简体）</div>
+                </div>
+
+            </div>
+        </div>
     </div>
-
-    <div class="lang-card" data-lang-code="en">
-        <div class="lang-flag">EN</div>
-        <div class="lang-name">English</div>
-    </div>
-
-    <div class="lang-card" data-lang-code="ko">
-        <div class="lang-flag">KR</div>
-        <div class="lang-name">한국어</div>
-    </div>
-
-    <div class="lang-card" data-lang-code="ja">
-        <div class="lang-flag">JP</div>
-        <div class="lang-name">日本語</div>
-    </div>
-
-    <div class="lang-card" data-lang-code="zh">
-        <div class="lang-flag">CN</div>
-        <div class="lang-name">中文（简体）</div>
-    </div>
-
-</div>
-</div>
-</div>
 </div>
 <header>
 <div class="container">
@@ -1914,7 +1920,7 @@ function showPremiumModal(themeType = 'premium') {
         <div class="premium-modal-content">
             <div class="premium-modal-header">
                 <h3>${t[lang][config.titleKey]}</h3>
-                <button class="premium-modal-close" onclick="this.closest('.premium-modal').remove()">×</button>
+                <button class="premium-modal-close" onclick="closeTopmostPanel()">×</button>
             </div>
             <div class="premium-modal-body">
                 <div style="width: 100%; height: 60px; background: ${config.gradient}; border-radius: 12px; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
@@ -3077,7 +3083,115 @@ function renderPagination(){
 }
 function changePage(page){const totalPages=Math.ceil(filteredProjects.length/CONFIG.projectsPerPage);if(page<1||page>totalPages)return;currentPage=page;renderProjects();renderPagination();scrollToSection('projects')}
 function openSettings(){document.getElementById('settings-modal').classList.add('active');document.body.style.overflow='hidden'}
-function closeSettings(){document.getElementById('settings-modal').classList.remove('active');document.body.style.overflow=''}
+/* ============================================
+   PANEL LAYER MANAGEMENT
+   ============================================ */
+
+/**
+ * Get currently open panels in order (bottom to top)
+ * @returns {Array} Array of open panel names
+ */
+function getOpenPanels() {
+    const panels = [];
+    
+    const nav = document.querySelector('nav');
+    if (nav && nav.classList.contains('active')) {
+        panels.push('nav');
+    }
+    
+    const settings = document.getElementById('settings-modal');
+    if (settings && settings.classList.contains('active')) {
+        panels.push('settings');
+    }
+    
+    const premium = document.querySelector('.premium-modal');
+    if (premium) {
+        panels.push('premium');
+    }
+    
+    return panels;
+}
+
+/**
+ * Close only the topmost panel
+ */
+function closeTopmostPanel() {
+    const openPanels = getOpenPanels();
+    
+    if (openPanels.length === 0) return;
+    
+    const topPanel = openPanels[openPanels.length - 1];
+    
+    switch(topPanel) {
+        case 'premium':
+            const premiumModal = document.querySelector('.premium-modal');
+            const closeBtn = premiumModal?.querySelector('.premium-modal-close');
+            if (closeBtn) {
+                closeBtn.click();
+            } else {
+                premiumModal?.remove();
+            }
+            break;
+            
+        case 'settings':
+            closeSettings();
+            break;
+            
+        case 'nav':
+            const nav = document.querySelector('nav');
+            const navOverlay = document.querySelector('.nav-overlay');
+            nav?.classList.remove('active');
+            navOverlay?.classList.remove('active');
+            break;
+    }
+}
+
+function closeSettings() {
+    const settingsModal = document.getElementById('settings-modal');
+    settingsModal.classList.remove('active');
+    
+    // 🔧 FIX: Check after a short delay to ensure DOM has updated
+    setTimeout(() => {
+        const openPanels = getOpenPanels();
+        
+        // 🔧 FIX: On mobile, nav overlay doesn't block scroll, so always restore
+        const isMobile = window.innerWidth <= 768;
+        const hasBlockingPanel = openPanels.some(panel => 
+            panel === 'settings' || panel === 'premium'
+        );
+        
+        if (openPanels.length === 0 || (isMobile && !hasBlockingPanel)) {
+            document.body.style.overflow = '';
+            console.log('✅ Scroll restored | Open panels:', openPanels);
+        } else {
+            console.log('⏸️ Scroll still locked | Open panels:', openPanels);
+        }
+    }, 100);
+}
+
+function ensureScrollEnabled() {
+    // Only run on mobile
+    if (window.innerWidth > 768) return;
+    
+    const openPanels = getOpenPanels();
+    const hasBlockingPanel = openPanels.some(panel => 
+        panel === 'settings' || panel === 'premium'
+    );
+    
+    // If no blocking panels but scroll is disabled, fix it
+    if (!hasBlockingPanel && document.body.style.overflow === 'hidden') {
+        document.body.style.overflow = '';
+        console.warn('🚨 Emergency scroll restore triggered!');
+    }
+}
+
+// Run check every 500ms, but only on mobile and only when needed
+setInterval(() => {
+    if (window.innerWidth <= 768 && document.body.style.overflow === 'hidden') {
+        ensureScrollEnabled();
+    }
+}, 500);
+
 function toggleDarkMode(){document.body.classList.toggle('dark');const toggle=document.getElementById('dark-mode-toggle');toggle.classList.toggle('active');localStorage.setItem('darkMode',document.body.classList.contains('dark')?'true':'false')}
 // Update setTheme function to check multiple themes
 function setTheme(theme) {
@@ -3237,13 +3351,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 document.querySelector('.menu-toggle').addEventListener('click',()=>{document.querySelector('nav').classList.toggle('active');document.querySelector('.nav-overlay').classList.toggle('active')});
-document.querySelector('.nav-overlay').addEventListener('click',()=>{document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')});
+
+document.querySelector('.nav-overlay').addEventListener('click', () => {
+    // Only close nav if it's the topmost panel
+    const openPanels = getOpenPanels();
+    if (openPanels[openPanels.length - 1] === 'nav') {
+        document.querySelector('nav').classList.remove('active');
+        document.querySelector('.nav-overlay').classList.remove('active');
+    }
+});
+
 document.querySelectorAll('nav a').forEach(l=>l.addEventListener('click',()=>{if(l.getAttribute('onclick')!=='openSettings()'){document.querySelector('nav').classList.remove('active');document.querySelector('.nav-overlay').classList.remove('active')}}));
 document.querySelectorAll('.skill-card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('active')));
 document.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter-btn').forEach(btn=>btn.classList.remove('active'));b.classList.add('active');filterProjects(b.getAttribute('data-filter'))}));
 document.querySelectorAll('.theme-card').forEach(c=>c.addEventListener('click',()=>setTheme(c.getAttribute('data-theme'))));
 document.querySelectorAll('.lang-card').forEach(c=>c.addEventListener('click',()=>setLanguage(c.getAttribute('data-lang-code'))));
-document.getElementById('settings-modal').addEventListener('click',e=>{if(e.target.id==='settings-modal')closeSettings()});
+
+document.getElementById('settings-modal').addEventListener('click', e => {
+    if (e.target.id === 'settings-modal') {
+        closeTopmostPanel();
+        
+        // 🔧 FIX: Force scroll restore after overlay click on mobile
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                const openPanels = getOpenPanels();
+                if (!openPanels.includes('settings') && !openPanels.includes('premium')) {
+                    document.body.style.overflow = '';
+                    console.log('✅ Scroll restored after overlay click');
+                }
+            }, 150);
+        }
+    }
+});
+
 document.getElementById('contact-form').addEventListener('submit',e=>{e.preventDefault();const btn=e.target.querySelector('button');const txt=btn.textContent;btn.textContent=lang==='vi'?'Đang gửi...':'Sending...';btn.disabled=true;setTimeout(()=>{btn.textContent=lang==='vi'?'✓ Đã gửi!':'✓ Sent!';setTimeout(()=>{btn.textContent=txt;btn.disabled=false;e.target.reset()},2000)},1500)});
 
 let resizeTimer;
@@ -3581,6 +3721,26 @@ function renderSubFiltersSimple() {
         subFiltersContainer.appendChild(clearBtn);
     }
 }
+
+function checkPanels() {
+    const panels = [];
+    
+    if (document.querySelector('nav')?.classList.contains('active')) {
+        panels.push('✅ Nav');
+    }
+    if (document.getElementById('settings-modal')?.classList.contains('active')) {
+        panels.push('✅ Settings');
+    }
+    if (document.querySelector('.premium-modal')) {
+        panels.push('✅ Premium');
+    }
+    
+    console.log('Open panels:', panels.length ? panels : '❌ None');
+    console.log('Body scroll:', document.body.style.overflow || 'normal');
+}
+
+// Usage:
+checkPanels();
 </script>
 <script src="./js/mobile-back-handler.js"></script>
 <script>
