@@ -183,3 +183,46 @@ body.back-handler-debug::before {
         display: none !important;
     }
 }
+
+/* ============================================
+   PREMIUM MODAL - CLICK HANDLING FIX
+   ============================================ */
+
+.premium-modal {
+    /* Ensure overlay is clickable */
+    cursor: pointer;
+}
+
+.premium-modal-content {
+    /* Prevent clicks from bubbling to overlay */
+    cursor: default;
+}
+
+.premium-modal-close,
+.premium-cancel-btn {
+    /* Make buttons obviously clickable */
+    cursor: pointer;
+    user-select: none;
+}
+
+.premium-modal-close:hover {
+    background: var(--border);
+    transform: rotate(90deg);
+}
+
+.premium-modal-close:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+/* Better touch targets for mobile */
+@media (max-width: 768px) {
+    .premium-modal-close {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .premium-cancel-btn,
+    .premium-unlock-btn {
+        min-height: 44px;
+    }
+}
