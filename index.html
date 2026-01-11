@@ -1921,7 +1921,7 @@ function showPremiumModal(themeType = 'premium') {
         <div class="premium-modal-content">
             <div class="premium-modal-header">
                 <h3>${t[lang][config.titleKey]}</h3>
-                <button class="premium-modal-close" onclick="closeTopmostPanel()">×</button>
+                <button class="premium-modal-close">×</button>
             </div>
             <div class="premium-modal-body">
                 <div style="width: 100%; height: 60px; background: ${config.gradient}; border-radius: 12px; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
@@ -1930,13 +1930,81 @@ function showPremiumModal(themeType = 'premium') {
                 <div id="premium-error" class="premium-error"></div>
             </div>
             <div class="premium-modal-footer">
-                <button class="btn btn-secondary" onclick="this.closest('.premium-modal').remove()">${t[lang]['unlock-cancel']}</button>
-                <button class="btn btn-primary" onclick="verifyPremiumKey('${themeType}')">${t[lang]['unlock-button']}</button>
+                <button class="btn btn-secondary premium-cancel-btn">${t[lang]['unlock-cancel']}</button>
+                <button class="btn btn-primary premium-unlock-btn">${t[lang]['unlock-button']}</button>
             </div>
         </div>
     `;
     
     document.body.appendChild(modal);
+    
+    // 🔧 FIX: Proper event listeners instead of onclick attributes
+    
+    // Close button handler
+    const closeBtn = modal.querySelector('.premium-modal-close');
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        modal.remove();
+        
+        // Restore scroll on mobile
+        setTimeout(() => {
+            const remaining = getOpenPanels();
+            const hasBlockingPanel = remaining.some(panel => 
+                panel === 'settings' || panel === 'premium'
+            );
+            
+            if (!hasBlockingPanel) {
+                document.body.style.overflow = '';
+                console.log('✅ Scroll restored after premium X click');
+            }
+        }, 100);
+    });
+    
+    // Cancel button handler
+    const cancelBtn = modal.querySelector('.premium-cancel-btn');
+    cancelBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        modal.remove();
+        
+        // Restore scroll on mobile
+        setTimeout(() => {
+            const remaining = getOpenPanels();
+            const hasBlockingPanel = remaining.some(panel => 
+                panel === 'settings' || panel === 'premium'
+            );
+            
+            if (!hasBlockingPanel) {
+                document.body.style.overflow = '';
+                console.log('✅ Scroll restored after premium cancel');
+            }
+        }, 100);
+    });
+    
+    // Unlock button handler
+    const unlockBtn = modal.querySelector('.premium-unlock-btn');
+    unlockBtn.addEventListener('click', () => {
+        verifyPremiumKey(themeType);
+    });
+    
+    // 🔧 FIX: Click outside to close
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+            
+            // Restore scroll on mobile
+            setTimeout(() => {
+                const remaining = getOpenPanels();
+                const hasBlockingPanel = remaining.some(panel => 
+                    panel === 'settings' || panel === 'premium'
+                );
+                
+                if (!hasBlockingPanel) {
+                    document.body.style.overflow = '';
+                    console.log('✅ Scroll restored after premium overlay click');
+                }
+            }, 100);
+        }
+    });
     
     // Focus input after a small delay to ensure DOM is ready
     setTimeout(() => {
@@ -1945,13 +2013,14 @@ function showPremiumModal(themeType = 'premium') {
     }, 100);
     
     // Handle Enter key
-    document.getElementById('premium-key-input').addEventListener('keypress', (e) => {
+    const keyInput = document.getElementById('premium-key-input');
+    keyInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             verifyPremiumKey(themeType);
         }
     });
+    
 }
-
 function verifyPremiumKey(themeType = 'premium') {
     const input = document.getElementById('premium-key-input');
     const error = document.getElementById('premium-error');
@@ -3178,11 +3247,22 @@ function closeTopmostPanel() {
     switch(topPanel) {
         case 'premium':
             const premiumModal = document.querySelector('.premium-modal');
-            const closeBtn = premiumModal?.querySelector('.premium-modal-close');
-            if (closeBtn) {
-                closeBtn.click();
-            } else {
-                premiumModal?.remove();
+            if (premiumModal) {
+                // 🔧 FIX: Directly remove the modal instead of trying to click button
+                premiumModal.remove();
+                
+                // 🔧 FIX: Restore scroll on mobile if no other blocking panels
+                setTimeout(() => {
+                    const remaining = getOpenPanels();
+                    const hasBlockingPanel = remaining.some(panel => 
+                        panel === 'settings' || panel === 'premium'
+                    );
+                    
+                    if (!hasBlockingPanel) {
+                        document.body.style.overflow = '';
+                        console.log('✅ Scroll restored after premium close');
+                    }
+                }, 100);
             }
             break;
             
@@ -3198,7 +3278,6 @@ function closeTopmostPanel() {
             break;
     }
 }
-
 function closeSettings() {
     const settingsModal = document.getElementById('settings-modal');
     settingsModal.classList.remove('active');
@@ -3775,8 +3854,6 @@ function renderSubFiltersSimple() {
     }
 }
 
-// Usage:
-checkPanels();
 </script>
 <script src="./js/mobile-back-handler.js"></script>
 <script>
