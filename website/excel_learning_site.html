@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Master - Learn Excel Free</title>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/css/pluginsCss.css'/>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/plugins.css'/>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/css/luckysheet.css'/>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/assets/iconfont/iconfont.css'/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#2563eb;--secondary:#10b981;--danger:#ef4444;--warning:#f59e0b;
+  --bg:#f8fafc;--text:#1e293b;--border:#e2e8f0;--card:#fff;
+  --success:#10b981;--info:#3b82f6;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.6;
+}
+body.dark{
+  --bg:#0f172a;--text:#f1f5f9;--card:#1e293b;--border:#334155;
+}
+body.dark .lesson-description,body.dark .stat-label{color:#94a3b8}
+body.dark .lesson-content p,body.dark .lesson-content li{color:#cbd5e1}
+body.dark .exercise-box{background:#1e3a5f;color:#e0f2fe}
+body.dark .hint-box{background:#422006;border-color:#f59e0b;color:#fef3c7}
+body.dark .explanation-box{background:#1e3a8a;border-color:#3b82f6;color:#dbeafe}
+body.dark .quick-tips{background:#1e3a8a;color:#dbeafe}
+body.dark .lesson-content code{background:#334155;color:#fbbf24}
+.header{
+  background:linear-gradient(135deg,var(--primary),#1d4ed8);color:#fff;
+  padding:1.5rem 2rem;box-shadow:0 4px 6px rgba(0,0,0,.1);
+  position:sticky;top:0;z-index:100;
+}
+.header-content{
+  max-width:1400px;margin:0 auto;display:flex;
+  justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;
+}
+.logo{display:flex;align-items:center;gap:.75rem;font-size:1.5rem;font-weight:bold}
+.logo-icon{
+  width:40px;height:40px;background:#fff;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;
+}
+.user-info{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.language-btn-header{
+  padding:.5rem 1rem;border:none;background:rgba(255,255,255,.2);
+  color:#fff;border-radius:6px;cursor:pointer;font-weight:600;
+  transition:all .3s;display:flex;align-items:center;gap:.5rem;
+}
+.language-btn-header:hover{background:rgba(255,255,255,.3)}
+.account-btn{
+  width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);
+  border:none;color:#fff;font-size:1.2rem;cursor:pointer;transition:all .3s;
+}
+.account-btn:hover{background:rgba(255,255,255,.3);transform:scale(1.1)}
+.btn{
+  padding:.5rem 1.5rem;border:none;border-radius:6px;font-weight:600;
+  cursor:pointer;transition:all .3s;font-size:.95rem;
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.btn-primary{background:var(--secondary);color:#fff}
+.btn-primary:hover{background:#059669;transform:translateY(-2px)}
+.btn-secondary{background:#fff;color:var(--primary)}
+.btn-secondary:hover{background:#f1f5f9}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-warning{background:var(--warning);color:#fff}
+.btn-info{background:var(--info);color:#fff}
+.container{max-width:1400px;margin:2rem auto;padding:0 2rem}
+.page-title{font-size:2rem;font-weight:bold;margin-bottom:1.5rem;color:var(--text)}
+.page-subtitle{font-size:1.1rem;color:#64748b;margin-bottom:2rem}
+.filter-section{
+  display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;align-items:center;
+}
+.level-tabs{display:flex;gap:1rem;flex-wrap:wrap}
+.level-tab{
+  padding:.75rem 2rem;background:var(--card);border:2px solid var(--border);
+  border-radius:8px;font-weight:600;cursor:pointer;transition:all .3s;
+  text-transform:capitalize;color:var(--text);
+}
+.level-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.category-filter{
+  padding:.5rem 1rem;border:2px solid var(--border);border-radius:8px;
+  background:var(--card);cursor:pointer;color:var(--text);
+}
+.lessons-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:1.5rem;
+}
+.lesson-card{
+  background:var(--card);border-radius:12px;padding:1.5rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);transition:all .3s;
+  border:2px solid transparent;position:relative;cursor:pointer;
+}
+.lesson-card:hover{
+  transform:translateY(-4px);box-shadow:0 8px 16px rgba(0,0,0,.15);
+  border-color:var(--primary);
+}
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:start;margin-bottom:1rem;
+}
+.lesson-number{
+  background:var(--primary);color:#fff;width:32px;height:32px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:bold;font-size:.9rem;
+}
+.lesson-meta{display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap}
+.lesson-tag{
+  padding:.25rem .75rem;border-radius:12px;font-size:.75rem;font-weight:600;
+}
+.tag-difficulty{background:#dbeafe;color:#1e40af}
+.tag-time{background:#fef3c7;color:#92400e}
+.tag-category{background:#f3e8ff;color:#6b21a8}
+.lesson-title{font-size:1.25rem;font-weight:bold;margin-bottom:.5rem;color:var(--text)}
+.lesson-description{color:#64748b;font-size:.95rem;margin-bottom:1rem}
+.practice-layout{
+  display:grid;grid-template-columns:420px 1fr;gap:1.5rem;
+  height:calc(100vh - 140px);
+}
+.instructions-panel{
+  background:var(--card);border-radius:12px;padding:1.5rem;
+  overflow-y:auto;box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+.spreadsheet-panel{
+  background:var(--card);border-radius:12px;padding:1rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;flex-direction:column;
+}
+.lesson-content{margin-bottom:1.5rem}
+.lesson-content h3{margin-top:1rem;margin-bottom:.5rem;color:var(--primary)}
+.lesson-content p{margin-bottom:.75rem;color:var(--text)}
+.lesson-content ul{margin-left:1.5rem;margin-bottom:1rem}
+.lesson-content li{margin-bottom:.5rem;color:var(--text)}
+.lesson-content code{
+  background:#f1f5f9;padding:.125rem .375rem;border-radius:3px;
+  font-family:'Courier New',monospace;
+}
+.exercise-box{
+  background:#eff6ff;border-left:4px solid var(--primary);
+  padding:1rem;border-radius:6px;margin-bottom:1.5rem;
+}
+.exercise-box h4{color:var(--primary);margin-bottom:.5rem}
+.hint-box,.explanation-box{
+  background:#eff6ff;border:2px solid var(--info);
+  border-radius:8px;padding:1rem;margin-top:1rem;
+}
+.hint-header,.explanation-header{
+  display:flex;align-items:center;gap:.5rem;font-weight:bold;
+  color:var(--info);margin-bottom:.5rem;
+}
+.quick-tips{background:#eff6ff;border-radius:8px;padding:1rem;margin-top:1rem}
+.quick-tips h4{color:var(--primary);margin-bottom:.5rem}
+.quick-tips ul{margin-left:1.5rem;font-size:.9rem}
+#luckysheet-container{flex:1;margin-top:1rem}
+.spreadsheet-controls{display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
+.modal-overlay{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.5);z-index:999;display:flex;
+  align-items:center;justify-content:center;
+}
+.modal{
+  background:var(--card);border-radius:12px;padding:2rem;
+  max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);
+  z-index:1000;position:relative;
+}
+.modal-close{
+  position:absolute;top:1rem;right:1rem;background:transparent;
+  border:none;font-size:1.5rem;cursor:pointer;color:var(--text);
+  opacity:.5;transition:opacity .3s;
+}
+.modal-close:hover{opacity:1}
+.user-avatar{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:2rem;margin:0 auto 1rem;
+}
+.username{
+  text-align:center;font-size:1.25rem;font-weight:bold;
+  margin-bottom:1.5rem;color:var(--text);
+}
+.modal-section{
+  margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);
+}
+.modal-section:last-child{border-bottom:none}
+.modal-section h3{font-size:1.1rem;margin-bottom:1rem;color:var(--primary)}
+.setting-row{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:.75rem;color:var(--text);
+}
+.theme-toggle{
+  width:50px;height:26px;background:#ccc;border-radius:13px;
+  position:relative;cursor:pointer;transition:.3s;
+}
+.theme-toggle.active{background:var(--primary)}
+.theme-toggle-slider{
+  width:22px;height:22px;background:#fff;border-radius:50%;
+  position:absolute;top:2px;left:2px;transition:.3s;
+}
+.theme-toggle.active .theme-toggle-slider{left:26px}
+.language-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-top:1rem;
+}
+.language-option{
+  padding:1rem;border:2px solid var(--border);border-radius:8px;
+  cursor:pointer;transition:all .3s;text-align:center;background:var(--card);
+}
+.language-option:hover{border-color:var(--primary);transform:translateY(-2px)}
+.language-option.active{
+  border-color:var(--primary);background:var(--primary);color:#fff;
+}
+.language-option .flag{font-size:2rem;margin-bottom:.5rem}
+.language-option .name{font-weight:600}
+.toast-container{
+  position:fixed;top:80px;right:20px;z-index:9999;
+  display:flex;flex-direction:column;gap:.5rem;max-width:400px;
+}
+.toast{
+  background:var(--card);padding:1rem 1.5rem;border-radius:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;align-items:center;
+  gap:.75rem;animation:slideIn .3s ease;border-left:4px solid var(--info);
+}
+.toast.success{border-left-color:var(--success)}
+.toast.error{border-left-color:var(--danger)}
+.toast.warning{border-left-color:var(--warning)}
+@keyframes slideIn{
+  from{transform:translateX(400px);opacity:0}
+  to{transform:translateX(0);opacity:1}
+}
+.toast-icon{font-size:1.5rem}
+.toast-content{flex:1}
+.toast-title{font-weight:600;margin-bottom:.25rem;color:var(--text)}
+.toast-message{font-size:.9rem;color:#64748b}
+.loading-overlay{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(135deg,var(--primary),#1d4ed8);
+  z-index:10000;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:2rem;
+}
+.loading-spinner{
+  width:80px;height:80px;position:relative;
+}
+.loading-spinner div{
+  position:absolute;width:100%;height:100%;
+  border:4px solid rgba(255,255,255,.2);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 1s cubic-bezier(.5,0,.5,1) infinite;
+}
+.loading-spinner div:nth-child(2){animation-delay:-.3s}
+.loading-spinner div:nth-child(3){animation-delay:-.15s}
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+.loading-text{
+  color:#fff;font-size:1.5rem;font-weight:600;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:.5}
+}
+.loading-subtitle{
+  color:rgba(255,255,255,.8);font-size:1rem;
+}
+.hidden{display:none!important}
+.mt-1{margin-top:.5rem}
+.mt-2{margin-top:1rem}
+.mb-1{margin-bottom:.5rem}
+.mb-2{margin-bottom:1rem}
+.text-center{text-align:center}
+.font-bold{font-weight:bold}
+.text-sm{font-size:.875rem}
+@media(max-width:1024px){
+  .practice-layout{grid-template-columns:1fr;height:auto}
+  .instructions-panel{max-height:500px}
+  .spreadsheet-panel{min-height:600px}
+}
+@media(max-width:768px){
+  .header-content{flex-direction:column}
+  .lessons-grid{grid-template-columns:1fr}
+  .container{padding:0 1rem}
+  .language-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<!-- Loading Screen -->
+<div id="loading-overlay" class="loading-overlay">
+  <div class="loading-spinner">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <div class="loading-text">Excel Master</div>
+  <div class="loading-subtitle">Loading your learning experience...</div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-content">
+    <div class="logo">
+      <div class="logo-icon">📊</div>
+      <span id="app-title">Excel Master</span>
+    </div>
+    <div class="user-info">
+      <button class="language-btn-header" onclick="UI.openLanguageModal()">
+        <span>🌐</span>
+        <span id="current-lang">English</span>
+      </button>
+      <button class="account-btn" onclick="UI.openAccountModal()">👤</button>
+      <button class="btn btn-secondary" onclick="App.goToHome()"><span id="home-btn">Home</span></button>
+    </div>
+  </div>
+</header>
+
+<!-- Main Container -->
+<div class="container">
+  <!-- Course Page -->
+  <div id="course-page">
+    <h1 class="page-title" id="page-title">Learn Excel - Free & Interactive</h1>
+    <p class="page-subtitle" id="page-subtitle">Explore Excel functions at your own pace. No pressure, no tests, just learning.</p>
+    
+    <div class="filter-section">
+      <div class="level-tabs">
+        <button class="level-tab active" data-level="beginner" onclick="App.switchLevel('beginner')">
+          <span id="level-beginner">Beginner</span>
+        </button>
+        <button class="level-tab" data-level="intermediate" onclick="App.switchLevel('intermediate')">
+          <span id="level-intermediate">Intermediate</span>
+        </button>
+        <button class="level-tab" data-level="advanced" onclick="App.switchLevel('advanced')">
+          <span id="level-advanced">Advanced</span>
+        </button>
+      </div>
+      <select class="category-filter" id="category-filter" onchange="App.filterByCategory()">
+        <option value="all">All Categories</option>
+        <option value="basics">Basics</option>
+        <option value="analysis">Analysis</option>
+        <option value="finance">Finance</option>
+        <option value="text">Text</option>
+        <option value="logic">Logic</option>
+        <option value="lookup">Lookup</option>
+        <option value="datetime">Date & Time</option>
+        <option value="math">Math</option>
+      </select>
+    </div>
+    
+    <div id="lessons-container" class="lessons-grid"></div>
+  </div>
+  
+  <!-- Practice Page -->
+  <div id="practice-page" class="hidden">
+    <button class="btn btn-secondary mb-2" onclick="App.goToHome()">
+      ← <span id="back-btn">Back to Home</span>
+    </button>
+    
+    <div class="practice-layout">
+      <div class="instructions-panel">
+        <h2 id="practice-lesson-title" class="lesson-title"></h2>
+        
+        <div id="lesson-content" class="lesson-content"></div>
+        
+        <div class="exercise-box">
+          <h4>📝 <span id="practice-label">Practice</span></h4>
+          <p id="exercise-description"></p>
+        </div>
+        
+        <div id="hint-container" class="hidden"></div>
+        
+        <div class="quick-tips">
+          <h4>💡 <span id="tips-label">Quick Tips</span></h4>
+          <ul id="tips-list">
+            <li>Formulas start with =</li>
+            <li>Click cells to reference</li>
+            <li>Use : for ranges</li>
+            <li>Experiment freely</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="spreadsheet-panel">
+        <h3 class="font-bold mb-1" id="excel-label">Excel Spreadsheet</h3>
+        <div class="spreadsheet-controls">
+          <button class="btn btn-info" onclick="Practice.toggleHelp()">
+            💡 <span id="help-btn">Help</span>
+          </button>
+          <button class="btn btn-secondary" onclick="Practice.resetExercise()">
+            ↻ <span id="reset-btn">Reset</span>
+          </button>
+        </div>
+        <div id="luckysheet-container"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Account Modal -->
+<div id="account-modal" class="hidden">
+  <div class="modal-overlay" onclick="UI.closeAccountModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="UI.closeAccountModal()">×</button>
+      <div class="modal-section">
+        <div class="user-avatar">👤</div>
+        <div class="username" id="modal-username">Guest User</div>
+      </div>
+      <div class="modal-section">
+        <h3>⚙️ <span id="settings-title">Settings</span></h3>
+        <div class="setting-row">
+          <span id="theme-label">Theme</span>
+          <div class="theme-toggle" id="theme-toggle" onclick="UI.toggleTheme()">
+            <div class="theme-toggle-slider"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Language Modal -->
+<div id="language-modal" class="hidden">
+  <div class="modal-overlay" onclick="UI.closeLanguageModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="UI.closeLanguageModal()">×</button>
+      <h3 id="select-lang-title">Select Language</h3>
+      <div class="language-grid">
+        <div class="language-option active" onclick="I18n.changeLanguage('en')">
+          <div class="flag">🇬🇧</div>
+          <div class="name">English</div>
+        </div>
+        <div class="language-option" onclick="I18n.changeLanguage('vi')">
+          <div class="flag">🇻🇳</div>
+          <div class="name">Tiếng Việt</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/js/plugin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/luckysheet.umd.js"></script>
+
+<script>
+const translationsEN = {
+  app: {title: 'Excel Master', tagline: 'Learn Excel - Free & Interactive', subtitle: 'Explore Excel functions at your own pace. No pressure, no tests, just learning.'},
+  ui: {home: 'Home', help: 'Help', reset: 'Reset', back: 'Back to Home', practice: 'Practice', settings: 'Settings', theme: 'Theme', selectLanguage: 'Select Language', tips: 'Quick Tips', start: 'Start Learning'},
+  level: {beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced'},
+  categories: {all: 'All Categories', basics: 'Basics', analysis: 'Analysis', finance: 'Finance', text: 'Text', logic: 'Logic', lookup: 'Lookup', datetime: 'Date & Time', math: 'Math'},
+  tips: ['Formulas start with =', 'Click cells to reference', 'Use : for ranges', 'Experiment freely'],
+  hint: 'Hint', explanation: 'Detailed Explanation'
+};
+
+const translationsVI = {
+  app: {title: 'Học Excel', tagline: 'Học Excel - Miễn phí & Tương tác', subtitle: 'Khám phá các hàm Excel theo tốc độ của bạn. Không áp lực, không kiểm tra, chỉ học.'},
+  ui: {home: 'Trang chủ', help: 'Trợ giúp', reset: 'Làm lại', back: 'Về trang chủ', practice: 'Thực hành', settings: 'Cài đặt', theme: 'Giao diện', selectLanguage: 'Chọn ngôn ngữ', tips: 'Mẹo nhanh', start: 'Bắt đầu học'},
+  level: {beginner: 'Cơ bản', intermediate: 'Trung cấp', advanced: 'Nâng cao'},
+  categories: {all: 'Tất cả', basics: 'Cơ bản', analysis: 'Phân tích', finance: 'Tài chính', text: 'Văn bản', logic: 'Logic', lookup: 'Tra cứu', datetime: 'Ngày giờ', math: 'Toán học'},
+  tips: ['Công thức bắt đầu =', 'Click ô để tham chiếu', 'Dùng : cho phạm vi', 'Thử nghiệm tự do'],
+  hint: 'Gợi ý', explanation: 'Giải thích chi tiết'
+};
+
+const I18n = {
+  currentLang: localStorage.getItem('lang') || 'en',
+  translations: {en: translationsEN, vi: translationsVI},
+  t(k) {
+    const keys = k.split('.'), v = this.translations[this.currentLang];
+    let result = v;
+    for (const key of keys) result = result?.[key];
+    return result || k;
+  },
+  changeLanguage(l) {
+    this.currentLang = l;
+    localStorage.setItem('lang', l);
+    this.updateUI();
+    UI.closeLanguageModal();
+    Toast.show('Language changed', '', 'success');
+  },
+  updateUI() {
+    document.getElementById('app-title').textContent = this.t('app.title');
+    document.getElementById('current-lang').textContent = this.currentLang === 'en' ? 'English' : 'Tiếng Việt';
+    document.getElementById('home-btn').textContent = this.t('ui.home');
+    document.getElementById('page-title').textContent = this.t('app.tagline');
+    document.getElementById('page-subtitle').textContent = this.t('app.subtitle');
+    document.getElementById('level-beginner').textContent = this.t('level.beginner');
+    document.getElementById('level-intermediate').textContent = this.t('level.intermediate');
+    document.getElementById('level-advanced').textContent = this.t('level.advanced');
+    document.getElementById('back-btn').textContent = this.t('ui.back');
+    document.getElementById('practice-label').textContent = this.t('ui.practice');
+    document.getElementById('tips-label').textContent = this.t('ui.tips');
+    document.getElementById('excel-label').textContent = 'Excel';
+    document.getElementById('help-btn').textContent = this.t('ui.help');
+    document.getElementById('reset-btn').textContent = this.t('ui.reset');
+    document.getElementById('settings-title').textContent = this.t('ui.settings');
+    document.getElementById('theme-label').textContent = this.t('ui.theme');
+    document.getElementById('select-lang-title').textContent = this.t('ui.selectLanguage');
+    const categoryFilter = document.getElementById('category-filter');
+    categoryFilter.innerHTML = Object.keys(this.t('categories')).map(c => `<option value="${c}">${this.t('categories.' + c)}</option>`).join('');
+    const tipsList = document.getElementById('tips-list');
+    tipsList.innerHTML = this.t('tips').map(t => `<li>${t}</li>`).join('');
+    document.querySelectorAll('.language-option').forEach((o, i) => o.classList.toggle('active', (i === 0 && this.currentLang === 'en') || (i === 1 && this.currentLang === 'vi')));
+    if (!document.getElementById('course-page').classList.contains('hidden')) LessonManager.renderLessons();
+  }
+};
+
+const Toast = {
+  show(msg, title = '', type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icons = {success: '✓', error: '✗', warning: '⚠', info: 'ℹ'};
+    toast.innerHTML = `<div class="toast-icon">${icons[type] || 'ℹ'}</div><div class="toast-content">${title ? `<div class="toast-title">${title}</div>` : ''}<div class="toast-message">${msg}</div></div>`;
+    container.appendChild(toast);
+    setTimeout(() => {toast.style.animation = 'slideIn .3s ease reverse'; setTimeout(() => toast.remove(), 300)}, 3000);
+  }
+};
+
+const UI = {
+  openLanguageModal: () => document.getElementById('language-modal').classList.remove('hidden'),
+  closeLanguageModal: () => document.getElementById('language-modal').classList.add('hidden'),
+  openAccountModal: () => {
+    document.getElementById('modal-username').textContent = localStorage.getItem('username') || 'Guest';
+    document.getElementById('account-modal').classList.remove('hidden');
+  },
+  closeAccountModal: () => document.getElementById('account-modal').classList.add('hidden'),
+  toggleTheme: () => {
+    document.body.classList.toggle('dark');
+    document.getElementById('theme-toggle').classList.toggle('active');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  },
+  showLoading: () => document.getElementById('loading-overlay').classList.remove('hidden'),
+  hideLoading: () => document.getElementById('loading-overlay').classList.add('hidden')
+};
+
+const LessonData = {
+  lessons: {
+    beginner: [
+      {
+        id: 'b1',
+        title: {en: 'Cells & Basic Formulas', vi: 'Ô và Công thức Cơ bản'},
+        description: {en: 'Learn cell references and basic arithmetic', vi: 'Học tham chiếu ô và phép tính cơ bản'},
+        category: 'basics', difficulty: 'easy', estimatedTime: 10,
+        content: {
+          en: '<h3>Excel Basics</h3><p>Cells are identified by column letter and row number (A1, B2, etc.)</p><p><strong>Formulas always start with =</strong></p><ul><li>=A1+B1 (addition)</li><li>=A1*B1 (multiplication)</li><li>=A1-B1 (subtraction)</li><li>=A1/B1 (division)</li></ul>',
+          vi: '<h3>Cơ bản</h3><p>Ô được xác định bởi chữ cột và số hàng (A1, B2, ...)</p><p><strong>Công thức luôn bắt đầu =</strong></p><ul><li>=A1+B1 (cộng)</li><li>=A1*B1 (nhân)</li><li>=A1-B1 (trừ)</li><li>=A1/B1 (chia)</li></ul>'
+        },
+        exercises: [{
+          description: {en: 'Try: Calculate totals by multiplying quantity × price', vi: 'Thử: Tính tổng bằng cách nhân số lượng × giá'},
+          initialData: [{r:0,c:0,v:{v:'Product'}},{r:0,c:1,v:{v:'Qty'}},{r:0,c:2,v:{v:'Price'}},{r:0,c:3,v:{v:'Total'}},{r:1,c:0,v:{v:'Apples'}},{r:1,c:1,v:{v:5}},{r:1,c:2,v:{v:2}},{r:2,c:0,v:{v:'Oranges'}},{r:2,c:1,v:{v:3}},{r:2,c:2,v:{v:3}},{r:3,c:0,v:{v:'Bananas'}},{r:3,c:1,v:{v:8}},{r:3,c:2,v:{v:1}}],
+          hint: {en: 'Try entering =B2*C2 in cell D2 to multiply quantity by price', vi: 'Thử nhập =B2*C2 vào ô D2 để nhân số lượng với giá'},
+          explanation: {en: 'Formula =B2*C2 multiplies the value in B2 (quantity) by C2 (price). You can copy this formula down to other rows. Excel will automatically adjust the cell references (B3*C3, B4*C4, etc.)', vi: 'Công thức =B2*C2 nhân giá trị trong B2 (số lượng) với C2 (giá). Bạn có thể sao chép công thức này xuống các hàng khác. Excel sẽ tự động điều chỉnh tham chiếu ô (B3*C3, B4*C4, ...)'}
+        }]
+      },
+      {
+        id: 'b2',
+        title: {en: 'SUM Function', vi: 'Hàm SUM'},
+        description: {en: 'Add numbers together quickly', vi: 'Cộng các số nhanh chóng'},
+        category: 'basics', difficulty: 'easy', estimatedTime: 12,
+        content: {
+          en: '<h3>SUM Function</h3><p>SUM adds multiple cells together.</p><p><strong>Syntax:</strong> =SUM(range)</p><p>Example: =SUM(A1:A5) adds cells A1 through A5</p>',
+          vi: '<h3>Hàm SUM</h3><p>SUM cộng nhiều ô.</p><p><strong>Cú pháp:</strong> =SUM(phạm_vi)</p><p>Ví dụ: =SUM(A1:A5) cộng ô A1 đến A5</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Calculate the total of all monthly sales', vi: 'Thử: Tính tổng doanh số các tháng'},
+          initialData: [{r:0,c:0,v:{v:'Month'}},{r:0,c:1,v:{v:'Sales'}},{r:1,c:0,v:{v:'Jan'}},{r:1,c:1,v:{v:1200}},{r:2,c:0,v:{v:'Feb'}},{r:2,c:1,v:{v:1500}},{r:3,c:0,v:{v:'Mar'}},{r:3,c:1,v:{v:1800}},{r:4,c:0,v:{v:'Apr'}},{r:4,c:1,v:{v:1400}},{r:5,c:0,v:{v:'Total'}}],
+          hint: {en: 'Use =SUM(B2:B5) in cell B6 to add all sales values', vi: 'Dùng =SUM(B2:B5) trong ô B6 để cộng tất cả doanh số'},
+          explanation: {en: '=SUM(B2:B5) adds all values from B2 to B5. The colon (:) creates a range. This is much faster than writing =B2+B3+B4+B5, especially with many cells.', vi: '=SUM(B2:B5) cộng tất cả giá trị từ B2 đến B5. Dấu hai chấm (:) tạo phạm vi. Cách này nhanh hơn nhiều so với viết =B2+B3+B4+B5, đặc biệt với nhiều ô.'}
+        }]
+      },
+      {
+        id: 'b3',
+        title: {en: 'AVERAGE Function', vi: 'Hàm AVERAGE'},
+        description: {en: 'Calculate the mean of numbers', vi: 'Tính trung bình các số'},
+        category: 'basics', difficulty: 'easy', estimatedTime: 10,
+        content: {
+          en: '<h3>AVERAGE</h3><p>Calculates the arithmetic mean.</p><p><strong>Syntax:</strong> =AVERAGE(range)</p><p>Example: =AVERAGE(A1:A10)</p>',
+          vi: '<h3>AVERAGE</h3><p>Tính trung bình cộng.</p><p><strong>Cú pháp:</strong> =AVERAGE(phạm_vi)</p><p>Ví dụ: =AVERAGE(A1:A10)</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Find the average score', vi: 'Thử: Tìm điểm trung bình'},
+          initialData: [{r:0,c:0,v:{v:'Student'}},{r:0,c:1,v:{v:'Score'}},{r:1,c:0,v:{v:'Alice'}},{r:1,c:1,v:{v:85}},{r:2,c:0,v:{v:'Bob'}},{r:2,c:1,v:{v:92}},{r:3,c:0,v:{v:'Charlie'}},{r:3,c:1,v:{v:78}},{r:4,c:0,v:{v:'Diana'}},{r:4,c:1,v:{v:88}},{r:6,c:0,v:{v:'Average:'}}],
+          hint: {en: 'Use =AVERAGE(B2:B5) to find the mean score', vi: 'Dùng =AVERAGE(B2:B5) để tìm điểm trung bình'},
+          explanation: {en: '=AVERAGE(B2:B5) adds all scores and divides by the count. It\'s equivalent to =SUM(B2:B5)/COUNT(B2:B5).', vi: '=AVERAGE(B2:B5) cộng tất cả điểm và chia cho số lượng. Tương đương =SUM(B2:B5)/COUNT(B2:B5).'}
+        }]
+      },
+      {
+        id: 'b4',
+        title: {en: 'COUNT Function', vi: 'Hàm COUNT'},
+        description: {en: 'Count cells with numbers', vi: 'Đếm ô có số'},
+        category: 'basics', difficulty: 'easy', estimatedTime: 8,
+        content: {
+          en: '<h3>COUNT</h3><p>Counts cells containing numbers.</p><p><strong>Syntax:</strong> =COUNT(range)</p><p>Example: =COUNT(A1:A10)</p>',
+          vi: '<h3>COUNT</h3><p>Đếm ô chứa số.</p><p><strong>Cú pháp:</strong> =COUNT(phạm_vi)</p><p>Ví dụ: =COUNT(A1:A10)</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Count how many scores are recorded', vi: 'Thử: Đếm có bao nhiêu điểm được ghi'},
+          initialData: [{r:0,c:0,v:{v:'Student'}},{r:0,c:1,v:{v:'Score'}},{r:1,c:0,v:{v:'Alice'}},{r:1,c:1,v:{v:85}},{r:2,c:0,v:{v:'Bob'}},{r:2,c:1,v:{v:92}},{r:3,c:0,v:{v:'Charlie'}},{r:3,c:1,v:{v:78}},{r:4,c:0,v:{v:'Diana'}},{r:5,c:0,v:{v:'Count:'}}],
+          hint: {en: 'Use =COUNT(B2:B5) to count numeric values', vi: 'Dùng =COUNT(B2:B5) để đếm giá trị số'},
+          explanation: {en: '=COUNT(B2:B5) counts only cells with numbers, ignoring empty cells and text. Note: Diana has no score, so the count is 3, not 4.', vi: '=COUNT(B2:B5) chỉ đếm ô có số, bỏ qua ô trống và văn bản. Lưu ý: Diana không có điểm nên đếm là 3, không phải 4.'}
+        }]
+      }
+    ],
+    intermediate: [
+      {
+        id: 'i1',
+        title: {en: 'MIN and MAX', vi: 'MIN và MAX'},
+        description: {en: 'Find minimum and maximum values', vi: 'Tìm giá trị nhỏ nhất và lớn nhất'},
+        category: 'analysis', difficulty: 'medium', estimatedTime: 12,
+        content: {
+          en: '<h3>MIN & MAX</h3><p>=MIN(range) finds the smallest value</p><p>=MAX(range) finds the largest value</p><p>Very useful for data analysis.</p>',
+          vi: '<h3>MIN & MAX</h3><p>=MIN(phạm_vi) tìm giá trị nhỏ nhất</p><p>=MAX(phạm_vi) tìm giá trị lớn nhất</p><p>Rất hữu ích cho phân tích dữ liệu.</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Find the highest and lowest temperatures', vi: 'Thử: Tìm nhiệt độ cao nhất và thấp nhất'},
+          initialData: [{r:0,c:0,v:{v:'Day'}},{r:0,c:1,v:{v:'Temp'}},{r:1,c:0,v:{v:'Mon'}},{r:1,c:1,v:{v:25}},{r:2,c:0,v:{v:'Tue'}},{r:2,c:1,v:{v:28}},{r:3,c:0,v:{v:'Wed'}},{r:3,c:1,v:{v:22}},{r:4,c:0,v:{v:'Thu'}},{r:4,c:1,v:{v:30}},{r:6,c:0,v:{v:'Highest:'}},{r:7,c:0,v:{v:'Lowest:'}}],
+          hint: {en: 'Use =MAX(B2:B5) for highest, =MIN(B2:B5) for lowest', vi: 'Dùng =MAX(B2:B5) cho cao nhất, =MIN(B2:B5) cho thấp nhất'},
+          explanation: {en: '=MAX(B2:B5) returns 30 (Thursday\'s temperature). =MIN(B2:B5) returns 22 (Wednesday\'s temperature). These functions scan all values and return the extreme values.', vi: '=MAX(B2:B5) trả về 30 (nhiệt độ thứ Năm). =MIN(B2:B5) trả về 22 (nhiệt độ thứ Tư). Các hàm này quét tất cả giá trị và trả về giá trị cực trị.'}
+        }]
+      },
+      {
+        id: 'i2',
+        title: {en: 'IF Function', vi: 'Hàm IF'},
+        description: {en: 'Make decisions with logic', vi: 'Ra quyết định với logic'},
+        category: 'logic', difficulty: 'medium', estimatedTime: 18,
+        content: {
+          en: '<h3>IF Function</h3><p>Tests a condition and returns different values.</p><p><strong>Syntax:</strong> =IF(condition, value_if_true, value_if_false)</p><p>Example: =IF(A1>60,"Pass","Fail")</p>',
+          vi: '<h3>Hàm IF</h3><p>Kiểm tra điều kiện và trả về giá trị khác nhau.</p><p><strong>Cú pháp:</strong> =IF(điều_kiện, giá_trị_đúng, giá_trị_sai)</p><p>Ví dụ: =IF(A1>60,"Đạt","Trượt")</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Determine Pass/Fail (≥60 = Pass)', vi: 'Thử: Xác định Đạt/Trượt (≥60 = Đạt)'},
+          initialData: [{r:0,c:0,v:{v:'Student'}},{r:0,c:1,v:{v:'Score'}},{r:0,c:2,v:{v:'Result'}},{r:1,c:0,v:{v:'John'}},{r:1,c:1,v:{v:75}},{r:2,c:0,v:{v:'Sarah'}},{r:2,c:1,v:{v:45}},{r:3,c:0,v:{v:'Mike'}},{r:3,c:1,v:{v:60}}],
+          hint: {en: 'Use =IF(B2>=60,"Pass","Fail") in C2', vi: 'Dùng =IF(B2>=60,"Pass","Fail") trong C2'},
+          explanation: {en: '=IF(B2>=60,"Pass","Fail") checks if the score in B2 is 60 or higher. If true, it shows "Pass", otherwise "Fail". Copy the formula down to check all students. John (75) and Mike (60) pass, Sarah (45) fails.', vi: '=IF(B2>=60,"Pass","Fail") kiểm tra điểm trong B2 có từ 60 trở lên không. Nếu đúng hiển thị "Pass", ngược lại "Fail". Sao chép công thức xuống để kiểm tra tất cả học sinh. John (75) và Mike (60) đạt, Sarah (45) trượt.'}
+        }]
+      },
+      {
+        id: 'i3',
+        title: {en: 'COUNTIF Function', vi: 'Hàm COUNTIF'},
+        description: {en: 'Count cells matching criteria', vi: 'Đếm ô thỏa điều kiện'},
+        category: 'analysis', difficulty: 'medium', estimatedTime: 15,
+        content: {
+          en: '<h3>COUNTIF</h3><p>Counts cells that meet a condition.</p><p><strong>Syntax:</strong> =COUNTIF(range, criteria)</p><p>Example: =COUNTIF(A1:A10,">50")</p>',
+          vi: '<h3>COUNTIF</h3><p>Đếm ô thỏa điều kiện.</p><p><strong>Cú pháp:</strong> =COUNTIF(phạm_vi, tiêu_chí)</p><p>Ví dụ: =COUNTIF(A1:A10,">50")</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Count how many scores are ≥60', vi: 'Thử: Đếm có bao nhiêu điểm ≥60'},
+          initialData: [{r:0,c:0,v:{v:'Student'}},{r:0,c:1,v:{v:'Score'}},{r:1,c:0,v:{v:'Alice'}},{r:1,c:1,v:{v:85}},{r:2,c:0,v:{v:'Bob'}},{r:2,c:1,v:{v:45}},{r:3,c:0,v:{v:'Charlie'}},{r:3,c:1,v:{v:78}},{r:4,c:0,v:{v:'Diana'}},{r:4,c:1,v:{v:55}},{r:6,c:0,v:{v:'Passing:'}}],
+          hint: {en: 'Use =COUNTIF(B2:B5,">=60")', vi: 'Dùng =COUNTIF(B2:B5,">=60")'},
+          explanation: {en: '=COUNTIF(B2:B5,">=60") counts cells in range B2:B5 that contain values ≥60. Result is 2 (Alice: 85, Charlie: 78). Bob (45) and Diana (55) are below 60.', vi: '=COUNTIF(B2:B5,">=60") đếm ô trong phạm vi B2:B5 có giá trị ≥60. Kết quả là 2 (Alice: 85, Charlie: 78). Bob (45) và Diana (55) dưới 60.'}
+        }]
+      },
+      {
+        id: 'i4',
+        title: {en: 'SUMIF Function', vi: 'Hàm SUMIF'},
+        description: {en: 'Sum cells matching criteria', vi: 'Cộng ô thỏa điều kiện'},
+        category: 'analysis', difficulty: 'medium', estimatedTime: 15,
+        content: {
+          en: '<h3>SUMIF</h3><p>Sums cells that meet a condition.</p><p><strong>Syntax:</strong> =SUMIF(range, criteria, sum_range)</p><p>Example: =SUMIF(A1:A10,"Apple",B1:B10)</p>',
+          vi: '<h3>SUMIF</h3><p>Cộng ô thỏa điều kiện.</p><p><strong>Cú pháp:</strong> =SUMIF(phạm_vi, tiêu_chí, phạm_vi_cộng)</p><p>Ví dụ: =SUMIF(A1:A10,"Táo",B1:B10)</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Sum sales for "East" region only', vi: 'Thử: Cộng doanh số chỉ của vùng "East"'},
+          initialData: [{r:0,c:0,v:{v:'Region'}},{r:0,c:1,v:{v:'Sales'}},{r:1,c:0,v:{v:'East'}},{r:1,c:1,v:{v:1200}},{r:2,c:0,v:{v:'West'}},{r:2,c:1,v:{v:1500}},{r:3,c:0,v:{v:'East'}},{r:3,c:1,v:{v:800}},{r:4,c:0,v:{v:'North'}},{r:4,c:1,v:{v:900}},{r:6,c:0,v:{v:'East Total:'}}],
+          hint: {en: 'Use =SUMIF(A2:A5,"East",B2:B5)', vi: 'Dùng =SUMIF(A2:A5,"East",B2:B5)'},
+          explanation: {en: '=SUMIF(A2:A5,"East",B2:B5) checks each cell in A2:A5 for "East", then sums corresponding values in B2:B5. Result: 1200 + 800 = 2000. West (1500) and North (900) are excluded.', vi: '=SUMIF(A2:A5,"East",B2:B5) kiểm tra mỗi ô trong A2:A5 có "East", sau đó cộng giá trị tương ứng trong B2:B5. Kết quả: 1200 + 800 = 2000. West (1500) và North (900) bị loại.'}
+        }]
+      }
+    ],
+    advanced: [
+      {
+        id: 'a1',
+        title: {en: 'VLOOKUP Function', vi: 'Hàm VLOOKUP'},
+        description: {en: 'Vertical lookup in tables', vi: 'Tra cứu dọc trong bảng'},
+        category: 'lookup', difficulty: 'hard', estimatedTime: 25,
+        content: {
+          en: '<h3>VLOOKUP</h3><p>Searches vertically in a table.</p><p><strong>Syntax:</strong> =VLOOKUP(lookup_value, table, col_index, [range_lookup])</p><p>Example: =VLOOKUP("Apple",A1:C10,3,FALSE)</p>',
+          vi: '<h3>VLOOKUP</h3><p>Tìm kiếm dọc trong bảng.</p><p><strong>Cú pháp:</strong> =VLOOKUP(giá_trị_tìm, bảng, số_cột, [tìm_gần])</p><p>Ví dụ: =VLOOKUP("Táo",A1:C10,3,FALSE)</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Look up product price by code', vi: 'Thử: Tra cứu giá sản phẩm theo mã'},
+          initialData: [{r:0,c:0,v:{v:'Code'}},{r:0,c:1,v:{v:'Product'}},{r:0,c:2,v:{v:'Price'}},{r:1,c:0,v:{v:'A001'}},{r:1,c:1,v:{v:'Apple'}},{r:1,c:2,v:{v:2}},{r:2,c:0,v:{v:'B002'}},{r:2,c:1,v:{v:'Banana'}},{r:2,c:2,v:{v:1}},{r:3,c:0,v:{v:'C003'}},{r:3,c:1,v:{v:'Cherry'}},{r:3,c:2,v:{v:5}},{r:5,c:0,v:{v:'Find:'}},{r:5,c:1,v:{v:'B002'}},{r:6,c:0,v:{v:'Price:'}}],
+          hint: {en: 'Use =VLOOKUP(B6,A2:C4,3,FALSE) in B7', vi: 'Dùng =VLOOKUP(B6,A2:C4,3,FALSE) trong B7'},
+          explanation: {en: '=VLOOKUP(B6,A2:C4,3,FALSE) looks for B002 in the first column (A2:A4), then returns the value from the 3rd column (C2:C4). Result: 1 (Banana price). FALSE means exact match only.', vi: '=VLOOKUP(B6,A2:C4,3,FALSE) tìm B002 trong cột đầu (A2:A4), sau đó trả về giá trị cột thứ 3 (C2:C4). Kết quả: 1 (giá Chuối). FALSE nghĩa là chỉ khớp chính xác.'}
+        }]
+      },
+      {
+        id: 'a2',
+        title: {en: 'INDEX Function', vi: 'Hàm INDEX'},
+        description: {en: 'Return value from specific position', vi: 'Trả về giá trị từ vị trí cụ thể'},
+        category: 'lookup', difficulty: 'hard', estimatedTime: 20,
+        content: {
+          en: '<h3>INDEX Function</h3><p>Returns a value from a specific row and column.</p><p><strong>Syntax:</strong> =INDEX(array, row_num, col_num)</p><p>Example: =INDEX(A1:C10, 3, 2) returns the value at row 3, column 2</p><p>Very powerful when combined with MATCH!</p>',
+          vi: '<h3>Hàm INDEX</h3><p>Trả về giá trị từ hàng và cột cụ thể.</p><p><strong>Cú pháp:</strong> =INDEX(mảng, số_hàng, số_cột)</p><p>Ví dụ: =INDEX(A1:C10, 3, 2) trả về giá trị ở hàng 3, cột 2</p><p>Rất mạnh khi kết hợp với MATCH!</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Get the price of the 3rd product using INDEX', vi: 'Thử: Lấy giá sản phẩm thứ 3 dùng INDEX'},
+          initialData: [{r:0,c:0,v:{v:'Product'}},{r:0,c:1,v:{v:'Price'}},{r:1,c:0,v:{v:'Apple'}},{r:1,c:1,v:{v:2}},{r:2,c:0,v:{v:'Banana'}},{r:2,c:1,v:{v:1}},{r:3,c:0,v:{v:'Cherry'}},{r:3,c:1,v:{v:5}},{r:5,c:0,v:{v:'3rd Price:'}}],
+          hint: {en: 'Use =INDEX(B2:B4, 3) to get the 3rd item in the price column', vi: 'Dùng =INDEX(B2:B4, 3) để lấy mục thứ 3 trong cột giá'},
+          explanation: {en: '=INDEX(B2:B4, 3) returns the value at position 3 in range B2:B4, which is 5 (Cherry\'s price). Think of INDEX as saying "give me the Nth item from this list". When combined with MATCH, you can create flexible lookups that work horizontally and vertically!', vi: '=INDEX(B2:B4, 3) trả về giá trị ở vị trí 3 trong phạm vi B2:B4, là 5 (giá Cherry). Nghĩ INDEX như "cho tôi mục thứ N trong danh sách này". Khi kết hợp với MATCH, bạn có thể tạo tra cứu linh hoạt cả ngang và dọc!'}
+        }]
+      },
+      {
+        id: 'a3',
+        title: {en: 'Date Functions', vi: 'Hàm Ngày'},
+        description: {en: 'TODAY, YEAR, MONTH, DAY', vi: 'TODAY, YEAR, MONTH, DAY'},
+        category: 'datetime', difficulty: 'medium', estimatedTime: 20,
+        content: {
+          en: '<h3>Date Functions</h3><p>=TODAY() returns current date</p><p>=YEAR(date) extracts year</p><p>=MONTH(date) extracts month</p><p>=DAY(date) extracts day</p><p>Useful for tracking and calculations.</p>',
+          vi: '<h3>Hàm Ngày</h3><p>=TODAY() trả về ngày hiện tại</p><p>=YEAR(ngày) lấy năm</p><p>=MONTH(ngày) lấy tháng</p><p>=DAY(ngày) lấy ngày</p><p>Hữu ích cho theo dõi và tính toán.</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Extract year, month, day from a date', vi: 'Thử: Tách năm, tháng, ngày từ một ngày'},
+          initialData: [{r:0,c:0,v:{v:'Date'}},{r:0,c:1,v:{v:'Year'}},{r:0,c:2,v:{v:'Month'}},{r:0,c:3,v:{v:'Day'}},{r:1,c:0,v:{v:'2024-03-15'}}],
+          hint: {en: 'Use =YEAR(A2), =MONTH(A2), =DAY(A2)', vi: 'Dùng =YEAR(A2), =MONTH(A2), =DAY(A2)'},
+          explanation: {en: '=YEAR(A2) extracts 2024, =MONTH(A2) extracts 3 (March), =DAY(A2) extracts 15. These functions are perfect for analyzing date data, calculating age, or filtering by time periods.', vi: '=YEAR(A2) lấy 2024, =MONTH(A2) lấy 3 (Tháng 3), =DAY(A2) lấy 15. Các hàm này hoàn hảo để phân tích dữ liệu ngày, tính tuổi, hoặc lọc theo thời gian.'}
+        }]
+      },
+      {
+        id: 'a4',
+        title: {en: 'TEXT Functions', vi: 'Hàm Văn bản'},
+        description: {en: 'CONCATENATE, LEFT, RIGHT, MID', vi: 'CONCATENATE, LEFT, RIGHT, MID'},
+        category: 'text', difficulty: 'hard', estimatedTime: 22,
+        content: {
+          en: '<h3>Text Functions</h3><p>=CONCATENATE(text1, text2, ...) joins text</p><p>=LEFT(text, num) gets leftmost characters</p><p>=RIGHT(text, num) gets rightmost characters</p><p>=MID(text, start, num) gets middle characters</p>',
+          vi: '<h3>Hàm Văn bản</h3><p>=CONCATENATE(text1, text2, ...) nối văn bản</p><p>=LEFT(văn_bản, số) lấy ký tự bên trái</p><p>=RIGHT(văn_bản, số) lấy ký tự bên phải</p><p>=MID(văn_bản, bắt_đầu, số) lấy ký tự giữa</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Extract first 3 characters from product codes', vi: 'Thử: Lấy 3 ký tự đầu từ mã sản phẩm'},
+          initialData: [{r:0,c:0,v:{v:'Code'}},{r:0,c:1,v:{v:'Category'}},{r:1,c:0,v:{v:'ABC123'}},{r:2,c:0,v:{v:'DEF456'}},{r:3,c:0,v:{v:'GHI789'}}],
+          hint: {en: 'Use =LEFT(A2, 3) to get first 3 characters', vi: 'Dùng =LEFT(A2, 3) để lấy 3 ký tự đầu'},
+          explanation: {en: '=LEFT(A2, 3) returns "ABC" from "ABC123". LEFT extracts characters from the start. You can use this to categorize products, extract area codes from phone numbers, or split data.', vi: '=LEFT(A2, 3) trả về "ABC" từ "ABC123". LEFT lấy ký tự từ đầu. Bạn có thể dùng để phân loại sản phẩm, lấy mã vùng từ số điện thoại, hoặc tách dữ liệu.'}
+        }]
+      },
+      {
+        id: 'a5',
+        title: {en: 'ROUND Functions', vi: 'Hàm Làm tròn'},
+        description: {en: 'ROUND, ROUNDUP, ROUNDDOWN', vi: 'ROUND, ROUNDUP, ROUNDDOWN'},
+        category: 'math', difficulty: 'medium', estimatedTime: 15,
+        content: {
+          en: '<h3>Rounding</h3><p>=ROUND(number, digits) rounds normally</p><p>=ROUNDUP(number, digits) always rounds up</p><p>=ROUNDDOWN(number, digits) always rounds down</p><p>Essential for financial calculations!</p>',
+          vi: '<h3>Làm tròn</h3><p>=ROUND(số, chữ_số) làm tròn thông thường</p><p>=ROUNDUP(số, chữ_số) luôn làm tròn lên</p><p>=ROUNDDOWN(số, chữ_số) luôn làm tròn xuống</p><p>Cần thiết cho tính toán tài chính!</p>'
+        },
+        exercises: [{
+          description: {en: 'Try: Round prices to 2 decimal places', vi: 'Thử: Làm tròn giá đến 2 chữ số thập phân'},
+          initialData: [{r:0,c:0,v:{v:'Product'}},{r:0,c:1,v:{v:'Price'}},{r:0,c:2,v:{v:'Rounded'}},{r:1,c:0,v:{v:'Item A'}},{r:1,c:1,v:{v:12.456}},{r:2,c:0,v:{v:'Item B'}},{r:2,c:1,v:{v:8.123}},{r:3,c:0,v:{v:'Item C'}},{r:3,c:1,v:{v:15.789}}],
+          hint: {en: 'Use =ROUND(B2, 2) to round to 2 decimals', vi: 'Dùng =ROUND(B2, 2) để làm tròn đến 2 thập phân'},
+          explanation: {en: '=ROUND(B2, 2) rounds 12.456 to 12.46. The second argument (2) specifies decimal places. ROUNDUP would give 12.46, ROUNDDOWN would give 12.45. Choose based on your business rules!', vi: '=ROUND(B2, 2) làm tròn 12.456 thành 12.46. Tham số thứ hai (2) chỉ định chữ số thập phân. ROUNDUP cho 12.46, ROUNDDOWN cho 12.45. Chọn theo quy tắc kinh doanh của bạn!'}
+        }]
+      }
+    ]
+  }
+};
+
+const LuckysheetService = {
+  instance: null,
+  init(containerId, initialData) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    const celldata = initialData.map(c => ({r: c.r, c: c.c, v: c.v}));
+    luckysheet.create({
+      container: containerId, title: 'Excel', lang: 'en',
+      showinfobar: false, showsheetbar: false, showstatisticBar: false,
+      sheetFormulaBar: true, enableAddRow: false, enableAddCol: false,
+      userInfo: false, myFolderUrl: false,
+      data: [{name: 'Sheet1', celldata: celldata, row: 30, column: 10}]
+    });
+    this.instance = luckysheet;
+  },
+  destroy() {
+    try {
+      const c = document.getElementById('luckysheet-container');
+      if (c) c.innerHTML = '';
+      if (typeof luckysheet !== 'undefined' && luckysheet.destroy) luckysheet.destroy();
+    } catch (e) {}
+    this.instance = null;
+  }
+};
+
+const Practice = {
+  lesson: null, exercise: null, helpState: 0,
+  init(lessonId) {
+    UI.showLoading();
+    setTimeout(() => {
+      this.lesson = LessonManager.getLesson(lessonId);
+      if (!this.lesson) {Toast.show('Lesson not found', '', 'error'); return}
+      this.exercise = this.lesson.exercises[0];
+      this.helpState = 0;
+      this.renderPage();
+      setTimeout(() => {this.initSpreadsheet(); UI.hideLoading()}, 100);
+    }, 500);
+  },
+  renderPage() {
+    const lang = I18n.currentLang;
+    document.getElementById('practice-lesson-title').textContent = this.lesson.title[lang] || this.lesson.title.en;
+    document.getElementById('lesson-content').innerHTML = this.lesson.content[lang] || this.lesson.content.en;
+    document.getElementById('exercise-description').textContent = this.exercise.description[lang] || this.exercise.description.en;
+    document.getElementById('hint-container').classList.add('hidden');
+  },
+  initSpreadsheet() {LuckysheetService.init('luckysheet-container', this.exercise.initialData)},
+  toggleHelp() {
+    const container = document.getElementById('hint-container');
+    const ex = this.exercise;
+    const lang = I18n.currentLang;
+    if (this.helpState === 0) {
+      container.className = 'hint-box';
+      container.innerHTML = `<div class="hint-header">💡 ${I18n.t('hint')}</div><p>${ex.hint[lang] || ex.hint.en}</p>`;
+      container.classList.remove('hidden');
+      this.helpState = 1;
+    } else if (this.helpState === 1) {
+      container.className = 'explanation-box';
+      container.innerHTML = `<div class="explanation-header">📖 ${I18n.t('explanation')}</div><p>${ex.explanation[lang] || ex.explanation.en}</p>`;
+      this.helpState = 2;
+    } else {
+      container.classList.add('hidden');
+      this.helpState = 0;
+    }
+  },
+  resetExercise() {
+    LuckysheetService.destroy();
+    setTimeout(() => {
+      this.initSpreadsheet();
+      this.helpState = 0;
+      document.getElementById('hint-container').classList.add('hidden');
+      Toast.show('Spreadsheet reset', '', 'info');
+    }, 200);
+  }
+};
+
+const LessonManager = {
+  getLesson: id => {
+    for (const lv in LessonData.lessons) {
+      const l = LessonData.lessons[lv].find(x => x.id === id);
+      if (l) return l;
+    }
+    return null;
+  },
+  getLessons: (level, category = 'all') => {
+    let ls = LessonData.lessons[level] || [];
+    if (category !== 'all') ls = ls.filter(l => l.category === category);
+    return ls;
+  },
+  renderLessons() {
+    const level = App.currentLevel, category = App.currentCategory;
+    const lessons = this.getLessons(level, category);
+    const container = document.getElementById('lessons-container');
+    const lang = I18n.currentLang;
+    container.innerHTML = lessons.map(l => {
+      const title = l.title[lang] || l.title.en;
+      const desc = l.description[lang] || l.description.en;
+      return `<div class="lesson-card" onclick="App.startLesson('${l.id}')"><div class="lesson-header"><div class="lesson-number">${l.id.toUpperCase()}</div></div><div class="lesson-meta"><span class="lesson-tag tag-difficulty">${l.difficulty}</span><span class="lesson-tag tag-time">${l.estimatedTime}min</span><span class="lesson-tag tag-category">${l.category}</span></div><div class="lesson-title">${title}</div><div class="lesson-description">${desc}</div><button class="btn btn-primary" onclick="event.stopPropagation();App.startLesson('${l.id}')">${I18n.t('ui.start')} →</button></div>`;
+    }).join('');
+  }
+};
+
+const App = {
+  currentLevel: 'beginner', currentCategory: 'all',
+  init() {
+    const savedLang = localStorage.getItem('lang');
+    if (savedLang) I18n.currentLang = savedLang;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+      document.getElementById('theme-toggle').classList.add('active');
+    }
+    I18n.updateUI();
+    LessonManager.renderLessons();
+    setTimeout(() => UI.hideLoading(), 800);
+  },
+  goToHome() {
+    document.getElementById('course-page').classList.remove('hidden');
+    document.getElementById('practice-page').classList.add('hidden');
+    LuckysheetService.destroy();
+    LessonManager.renderLessons();
+  },
+  startLesson(id) {
+    document.getElementById('course-page').classList.add('hidden');
+    document.getElementById('practice-page').classList.remove('hidden');
+    Practice.init(id);
+  },
+  switchLevel(lv) {
+    this.currentLevel = lv;
+    document.querySelectorAll('.level-tab').forEach(t => t.classList.toggle('active', t.getAttribute('data-level') === lv));
+    LessonManager.renderLessons();
+  },
+  filterByCategory() {
+    this.currentCategory = document.getElementById('category-filter').value;
+    LessonManager.renderLessons();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>
