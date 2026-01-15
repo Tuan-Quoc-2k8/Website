@@ -55,8 +55,14 @@ const UserStore = {
       this.userProgress.level = 'advanced';
     } else if (xp >= 500) {
       this.userProgress.level = 'intermediate';
-    } else {
+    } else if (xp >= 1500){
       this.userProgress.level = 'beginner';
+    } else if (xp >= 3000){
+      this.userProgress.level = 'professional';
+    } else if (xp >= 5000){
+      this.userProgress.level = 'expert';
+    } else if (xp >= 10000){
+      this.userProgress.level = 'master';
     }
     
     this.save();
