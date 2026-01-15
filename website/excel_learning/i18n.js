@@ -38,7 +38,15 @@ const translationsEN = {
     streak: 'Streak',
     badges: 'Badges'
   },
-  level: { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' },
+  level: { 
+    beginner: 'Beginner', 
+    intermediate: 'Intermediate', 
+    advanced: 'Advanced',
+    professional: 'Professional',
+    expert: 'Expert',
+    master: 'Master',
+
+  },
   difficulty: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
   stats: { completed: 'Completed', streak: 'Day Streak', overall: 'Progress', badges: 'Badges' },
   achievements: {
@@ -117,7 +125,14 @@ const translationsVI = {
     streak: 'Chuỗi',
     badges: 'Huy hiệu'
   },
-  level: { beginner: 'Cơ bản', intermediate: 'Trung cấp', advanced: 'Nâng cao' },
+  level: { 
+    beginner: 'Cơ bản', 
+    intermediate: 'Trung cấp', 
+    advanced: 'Nâng cao',
+    professional: 'Chuyên nghiệp',
+    expert: 'Chuyên gia',
+    master: 'Bậc thầy',
+  },
   difficulty: { easy: 'Dễ', medium: 'Trung bình', hard: 'Khó' },
   stats: { completed: 'Hoàn thành', streak: 'Chuỗi ngày', overall: 'Tiến độ', badges: 'Huy hiệu' },
   achievements: {
@@ -186,10 +201,15 @@ const I18n = {
     document.getElementById('stat-progress-label').textContent = this.t('stats.overall');
     document.getElementById('stat-badges-label').textContent = this.t('stats.badges');
     document.getElementById('page-title').textContent = this.t('course.title');
+
+    //tap
     document.getElementById('level-beginner').textContent = this.t('level.beginner');
     document.getElementById('level-intermediate').textContent = this.t('level.intermediate');
     document.getElementById('level-advanced').textContent = this.t('level.advanced');
-    
+    document.getElementById('level-professional').textContent = this.t('level.professional');
+    document.getElementById('level-expert').textContent = this.t('level.expert');
+    document.getElementById('level-master').textContent = this.t('level.master');  
+
     document.getElementById('back-btn').textContent = this.t('ui.back');
     document.getElementById('progress-label').textContent = this.t('ui.progress');
     document.getElementById('task-label').textContent = this.t('ui.task');
