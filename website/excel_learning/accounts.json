@@ -1,0 +1,87 @@
+{
+  "admin": {
+    "password": "admin123",
+    "role": "admin",
+    "displayName": "Administrator",
+    "progress": {
+      "xp": 5000,
+      "score": 10000,
+      "gems": 9999,
+      "level": "advanced",
+      "completedLessons": ["b1", "b2", "b3", "i1", "i2", "i3", "a1", "a2"],
+      "lessonProgress": {},
+      "achievements": ["first", "five", "ten", "week"],
+      "streak": 30,
+      "lastActive": null,
+      "allUnlocked": true
+    }
+  },
+  "teacher": {
+    "password": "teacher123",
+    "role": "teacher",
+    "displayName": "Teacher",
+    "progress": {
+      "xp": 3000,
+      "score": 5000,
+      "gems": 5000,
+      "level": "advanced",
+      "completedLessons": ["b1", "b2", "b3", "i1", "i2"],
+      "lessonProgress": {},
+      "achievements": ["first", "five"],
+      "streak": 15,
+      "lastActive": null,
+      "allUnlocked": true
+    }
+  },
+  "student1": {
+    "password": "student123",
+    "role": "student",
+    "displayName": "Student One",
+    "progress": {
+      "xp": 0,
+      "score": 0,
+      "gems": 100,
+      "level": "beginner",
+      "completedLessons": [],
+      "lessonProgress": {},
+      "achievements": [],
+      "streak": 0,
+      "lastActive": null,
+      "allUnlocked": false
+    }
+  },
+  "student2": {
+    "password": "student123",
+    "role": "student",
+    "displayName": "Student Two",
+    "progress": {
+      "xp": 0,
+      "score": 0,
+      "gems": 100,
+      "level": "beginner",
+      "completedLessons": [],
+      "lessonProgress": {},
+      "achievements": [],
+      "streak": 0,
+      "lastActive": null,
+      "allUnlocked": false
+    }
+  },
+  "guest": {
+    "password": "guest",
+    "role": "guest",
+    "displayName": "Guest User",
+    "progress": {
+      "xp": 0,
+      "score": 0,
+      "gems": 100,
+      "level": "beginner",
+      "completedLessons": [],
+      "lessonProgress": {},
+      "achievements": [],
+      "streak": 0,
+      "lastActive": null,
+      "allUnlocked": false
+    }
+  }
+}
