@@ -225,12 +225,6 @@ const I18n = {
     document.getElementById('modal-streak-label').textContent = this.t('ui.streak');
     document.getElementById('modal-badges-label').textContent = this.t('ui.badges');
     
-    // Reward codes
-    document.getElementById('available-codes').textContent = this.t('ui.availableCodes');
-    document.getElementById('code-unlock').textContent = this.t('ui.codeUnlock');
-    document.getElementById('code-starter').textContent = this.t('ui.codeStarter');
-    document.getElementById('code-bonus').textContent = this.t('ui.codeBonus');
-    
     const categoryFilter = document.getElementById('category-filter');
     categoryFilter.innerHTML = Object.keys(this.t('categories')).map(cat => 
       `<option value="${cat}">${this.t('categories.' + cat)}</option>`
