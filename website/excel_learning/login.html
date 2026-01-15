@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Master - Login</title>
+<link rel='stylesheet' href='styles.css'/>
+<style>
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+}
+
+.login-container {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 3rem;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 25px 50px rgba(0,0,0,.3);
+  border: 1px solid var(--border);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.login-logo {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 24px rgba(102,126,234,.3);
+}
+
+.login-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  background: var(--card);
+  color: var(--text);
+  transition: all 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(59,130,246,.1);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102,126,234,.4);
+}
+
+.login-btn:active {
+  transform: translateY(0);
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.theme-toggle-login {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  width: 54px;
+  height: 28px;
+  background: rgba(255,255,255,.2);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: 2px solid rgba(255,255,255,.3);
+  backdrop-filter: blur(10px);
+}
+
+.theme-toggle-login.active {
+  background: rgba(255,255,255,.4);
+}
+
+.theme-toggle-login .slider {
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  transition: 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,.3);
+}
+
+.theme-toggle-login.active .slider {
+  left: 28px;
+}
+
+.error-message {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-left: 4px solid #dc2626;
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.lang-toggle {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  background: rgba(255,255,255,.2);
+  border: 2px solid rgba(255,255,255,.3);
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  backdrop-filter: blur(10px);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s;
+}
+
+.lang-toggle:hover {
+  background: rgba(255,255,255,.3);
+  transform: scale(1.05);
+}
+
+.demo-accounts {
+  background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.demo-accounts-title {
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.demo-account-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.demo-account-item:last-child {
+  border-bottom: none;
+}
+
+.demo-account-user {
+  font-weight: 600;
+}
+
+.demo-account-pass {
+  font-family: 'Courier New', monospace;
+  color: var(--text-secondary);
+}
+
+body.dark .demo-accounts {
+  background: rgba(59,130,246,0.15);
+  border-color: rgba(59,130,246,0.4);
+}
+
+body.dark .error-message {
+  background: #7f1d1d;
+  color: #fecaca;
+  border-left-color: #dc2626;
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<div class="theme-toggle-login" id="theme-toggle" onclick="toggleTheme()">
+  <div class="slider"></div>
+</div>
+
+<!-- Language Toggle -->
+<div class="lang-toggle" id="lang-toggle" onclick="changeLanguage()">
+  <span id="lang-flag">🇬🇧</span>
+  <span id="lang-name">EN</span>
+</div>
+
+<div class="login-page">
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-logo">📊</div>
+      <h1 class="login-title" id="page-title">Excel Master</h1>
+      <p class="login-subtitle" id="page-subtitle">Master Excel formulas interactively</p>
+    </div>
+
+    <div class="error-message" id="error-message"></div>
+
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="username" id="username-label">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username"
+          placeholder="" 
+          autocomplete="username"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password" id="password-label">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          placeholder="" 
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <button type="submit" class="login-btn" id="login-btn">
+        <span id="btn-text">Login</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p id="footer-text">Contact administrator for account access</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Load accounts from JSON file
+let accounts = {};
+
+// Load accounts on page load
+async function loadAccounts() {
+  try {
+    const response = await fetch('accounts.json');
+    if (!response.ok) throw new Error('Failed to load accounts');
+    accounts = await response.json();
+    console.log('Accounts loaded successfully');
+  } catch (error) {
+    console.error('Error loading accounts:', error);
+    showError(loginTranslations[currentLang].errors.loadError);
+  }
+}
+
+// Translations for login page
+const loginTranslations = {
+  en: {
+    title: 'Excel Master',
+    subtitle: 'Master Excel formulas interactively',
+    username: 'Username',
+    usernamePlaceholder: 'Enter username',
+    password: 'Password',
+    passwordPlaceholder: 'Enter password',
+    loginBtn: 'Login',
+    footer: 'Contact administrator for account access',
+    loading: 'Logging in...',
+    demoTitle: 'Demo Accounts',
+    errors: {
+      emptyFields: 'Please fill in all fields',
+      invalidCredentials: 'Invalid username or password',
+      loadError: 'Failed to load accounts. Please make sure accounts.json is in the same folder and refresh the page.'
+    }
+  },
+  vi: {
+    title: 'Học Excel',
+    subtitle: 'Thành thạo công thức Excel tương tác',
+    username: 'Tên đăng nhập',
+    usernamePlaceholder: 'Nhập tên đăng nhập',
+    password: 'Mật khẩu',
+    passwordPlaceholder: 'Nhập mật khẩu',
+    loginBtn: 'Đăng nhập',
+    footer: 'Liên hệ quản trị viên để được cấp tài khoản',
+    loading: 'Đang đăng nhập...',
+    demoTitle: 'Tài khoản Demo',
+    errors: {
+      emptyFields: 'Vui lòng điền đầy đủ thông tin',
+      invalidCredentials: 'Tên đăng nhập hoặc mật khẩu không đúng',
+      loadError: 'Không thể tải danh sách tài khoản. Vui lòng kiểm tra file accounts.json cùng thư mục và tải lại trang.'
+    }
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'en';
+
+// Load accounts on page load
+
+
+// Handle login
+function handleLogin(event) {
+  event.preventDefault();
+  
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  
+  hideError();
+  
+  if (!username || !password) {
+    showError(loginTranslations[currentLang].errors.emptyFields);
+    return;
+  }
+  
+  const account = accounts[username];
+  
+  if (!account || account.password !== password) {
+    showError(loginTranslations[currentLang].errors.invalidCredentials);
+    return;
+  }
+  
+  const btn = document.getElementById('login-btn');
+  const btnText = document.getElementById('btn-text');
+  btnText.textContent = loginTranslations[currentLang].loading;
+  btn.classList.add('loading');
+  
+  setTimeout(() => {
+    sessionStorage.setItem('currentUser', username);
+    
+    const progressKey = `progress_${username}`;
+    if (!localStorage.getItem(progressKey)) {
+      localStorage.setItem(progressKey, JSON.stringify(account.progress));
+    }
+    
+    window.location.href = 'app.html';
+  }, 500);
+}
+
+function showError(message) {
+  const errorEl = document.getElementById('error-message');
+  errorEl.textContent = message;
+  errorEl.classList.add('show');
+}
+
+function hideError() {
+  const errorEl = document.getElementById('error-message');
+  errorEl.classList.remove('show');
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  document.getElementById('theme-toggle').classList.toggle('active');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+function changeLanguage() {
+  currentLang = currentLang === 'en' ? 'vi' : 'en';
+  localStorage.setItem('lang', currentLang);
+  updateLanguage();
+}
+
+function updateLanguage() {
+  const t = loginTranslations[currentLang];
+  document.getElementById('page-title').textContent = t.title;
+  document.getElementById('page-subtitle').textContent = t.subtitle;
+  document.getElementById('username-label').textContent = t.username;
+  document.getElementById('username').placeholder = t.usernamePlaceholder;
+  document.getElementById('password-label').textContent = t.password;
+  document.getElementById('password').placeholder = t.passwordPlaceholder;
+  document.getElementById('btn-text').textContent = t.loginBtn;
+  document.getElementById('footer-text').textContent = t.footer;
+  
+  // Update language toggle
+  document.getElementById('lang-flag').textContent = currentLang === 'en' ? '🇬🇧' : '🇻🇳';
+  document.getElementById('lang-name').textContent = currentLang === 'en' ? 'EN' : 'VI';
+}
+
+// Initialize
+window.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('theme-toggle').classList.add('active');
+  }
+  
+  const savedLang = localStorage.getItem('lang');
+  if (savedLang) {
+    currentLang = savedLang;
+  }
+  updateLanguage();
+  
+  loadAccounts();
+  
+  document.getElementById('username').focus();
+});
+</script>
+</body>
+</html>
