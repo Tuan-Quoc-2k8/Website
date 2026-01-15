@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Master - Master Excel formulas interactively</title>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/css/pluginsCss.css'/>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/plugins.css'/>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/css/luckysheet.css'/>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/assets/iconfont/iconfont.css'/>
+<link rel='stylesheet' href='styles.css'/>
+</head>
+<body>
+
+<!-- Toast Container -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Modern Header -->
+<header class="header">
+  <div class="header-content">
+    <!-- Left: Home button -->
+    <div class="header-left">
+      <button class="btn btn-secondary" onclick="App.goToHome()">
+        <span id="home-btn">Home</span>
+      </button>
+    </div>
+    
+    <!-- Center: Logo -->
+    <div class="logo">
+      <div class="logo-icon">📊</div>
+      <span id="app-title">Excel Master</span>
+    </div>
+    
+    <!-- Right: User info -->
+    <div class="user-info">
+      <div class="xp-badge">⚡<span id="user-xp">0</span> XP</div>
+      <div class="score-badge">🏆<span id="user-score">0</span> <span id="points-label">points</span></div>
+      <div class="gems-badge">💎<span id="user-gems">100</span> <span id="gems-label">gems</span></div>
+      
+      <div id="user-name-display" class="hidden"></div>
+      
+      <button class="account-btn" onclick="UI.openAccountModal()">👤</button>
+    </div>
+  </div>
+</header>
+
+<!-- Main Container -->
+<div class="container">
+  <!-- Course Page -->
+  <div id="course-page">
+    <div class="stats-dashboard">
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-value" id="stat-completed">0</div>
+        <div class="stat-label" id="stat-completed-label">Completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value" id="stat-streak">0</div>
+        <div class="stat-label" id="stat-streak-label">Day Streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-value" id="stat-progress">0%</div>
+        <div class="stat-label" id="stat-progress-label">Progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏅</div>
+        <div class="stat-value" id="stat-badges">0</div>
+        <div class="stat-label" id="stat-badges-label">Badges</div>
+      </div>
+    </div>
+    
+    <h1 class="page-title" id="page-title">Choose Your Learning Path</h1>
+    
+    <div class="filter-section">
+      <div class="level-tabs">
+        <button class="level-tab active" data-level="beginner" onclick="App.switchLevel('beginner')">
+          <span id="level-beginner">Beginner</span>
+        </button>
+        <button class="level-tab" data-level="intermediate" onclick="App.switchLevel('intermediate')">
+          <span id="level-intermediate">Intermediate</span>
+        </button>
+        <button class="level-tab" data-level="advanced" onclick="App.switchLevel('advanced')">
+          <span id="level-advanced">Advanced</span>
+        </button>
+      </div>
+      <select class="category-filter" id="category-filter" onchange="App.filterByCategory()">
+        <option value="all">All Categories</option>
+      </select>
+    </div>
+    
+    <div id="lessons-container" class="lessons-grid"></div>
+  </div>
+  
+  <!-- Practice Page -->
+  <div id="practice-page" class="hidden">
+    <button class="btn btn-secondary mb-2" onclick="App.goToHome()">
+      ← <span id="back-btn">Back to Home</span>
+    </button>
+    
+    <div class="practice-layout">
+      <div class="instructions-panel">
+        <h2 id="practice-lesson-title" class="lesson-title"></h2>
+        
+        <div class="lesson-progress-tracker">
+          <div class="progress-header">
+            <span class="font-bold" id="progress-label">Progress</span>
+            <span id="task-progress-text">0/0</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="task-progress-bar" style="width:0%"></div>
+          </div>
+        </div>
+        
+        <div id="lesson-content" class="lesson-content"></div>
+        
+        <div class="exercise-box">
+          <h4>📝 <span id="task-label">Task</span></h4>
+          <p id="exercise-description"></p>
+        </div>
+        
+        <div id="current-task-box" class="current-task">
+          <div class="task-header">
+            <div class="task-number">1</div>
+            <div>
+              <strong id="current-task-label">Current Task</strong>
+              <p class="text-sm mt-1" id="current-task-text"></p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="task-progress">
+          <h4 class="font-bold mb-1" id="tasks-label">Tasks</h4>
+          <div id="tasks-list"></div>
+        </div>
+        
+        <div id="hint-container" class="hidden"></div>
+        <div id="explanation-container" class="hidden"></div>
+        
+        <div class="quick-tips">
+          <h4>💡 <span id="tips-label">Quick Tips</span></h4>
+          <ul id="tips-list">
+            <li>Formulas start with =</li>
+            <li>Click cells to reference</li>
+            <li>Use : for ranges</li>
+            <li>Check progress above</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="spreadsheet-panel">
+        <h3 class="font-bold mb-1" id="excel-label">Excel Spreadsheet</h3>
+        <div class="spreadsheet-controls">
+          <button class="btn btn-primary" onclick="Practice.checkAllFormulas()">
+            ✓ <span id="check-btn">Check All</span>
+          </button>
+          <button class="btn btn-warning" onclick="Practice.showHint()">
+            💡 <span id="hint-btn">Show Hint</span>
+          </button>
+          <button class="btn btn-info" onclick="Practice.showExplanation()">
+            📖 <span id="explain-btn">Explain (25G)</span>
+          </button>
+          <button class="btn btn-secondary" onclick="Practice.refreshFormulas()">
+            🔄 <span id="refresh-btn">Refresh</span>
+          </button>
+          <button class="btn btn-secondary" onclick="Practice.resetExercise()">
+            ↻ <span id="reset-btn">Reset</span>
+          </button>
+        </div>
+        <div id="luckysheet-container"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div id="success-modal" class="hidden">
+  <div class="modal-overlay" onclick="UI.closeSuccessModal()">
+    <div class="modal success-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="UI.closeSuccessModal()">×</button>
+      <div class="celebration-icon">🎉</div>
+      <h2 id="congrats-title">Congratulations!</h2>
+      <p class="mt-1" id="lesson-complete-msg">Lesson completed successfully!</p>
+      <div class="rewards-container">
+        <div class="xp-earned" id="xp-earned">+50 XP</div>
+        <div class="gems-earned" id="gems-earned">+25G</div>
+      </div>
+      <div id="achievement-notification"></div>
+      <div style="display:flex;flex-direction:column;gap:.75rem;margin-top:2rem">
+        <button class="btn btn-primary" onclick="UI.closeSuccessModal()" style="width:100%;justify-content:center">
+          <span id="continue-btn">Continue</span>
+        </button>
+        <button class="btn btn-secondary" onclick="App.goToHome(); UI.closeSuccessModal();" style="width:100%;justify-content:center">
+          <span id="view-results-btn">View Results</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Compact Account Modal -->
+<div id="account-modal" class="hidden">
+  <div class="modal-overlay" onclick="UI.closeAccountModal()">
+    <div class="modal compact-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="UI.closeAccountModal()">×</button>
+      
+      <!-- User Info Header -->
+      <div class="compact-header">
+        <div class="user-avatar-small">👤</div>
+        <div>
+          <div class="username-small" id="modal-username">Guest</div>
+          <span class="account-level-badge-small" id="account-level-badge">Beginner</span>
+        </div>
+      </div>
+      
+      <!-- Tabs -->
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-tab="stats" onclick="UI.switchTab('stats')">
+          <span id="tab-stats">Stats</span>
+        </button>
+        <button class="modal-tab" data-tab="achievements" onclick="UI.switchTab('achievements')">
+          <span id="tab-achievements">Badges</span>
+        </button>
+        <button class="modal-tab" data-tab="settings" onclick="UI.switchTab('settings')">
+          <span id="tab-settings">Settings</span>
+        </button>
+      </div>
+      
+      <!-- Tab Content -->
+      <div class="tab-content" id="tab-stats-content">
+        <div class="stats-grid-compact">
+          <div class="stat-compact">
+            <div class="stat-compact-value" id="modal-xp">0</div>
+            <div class="stat-compact-label">XP</div>
+          </div>
+          <div class="stat-compact">
+            <div class="stat-compact-value" id="modal-score">0</div>
+            <div class="stat-compact-label" id="modal-score-label">Score</div>
+          </div>
+          <div class="stat-compact">
+            <div class="stat-compact-value" id="modal-gems">100</div>
+            <div class="stat-compact-label" id="modal-gems-label">Gems</div>
+          </div>
+          <div class="stat-compact">
+            <div class="stat-compact-value" id="modal-completed">0</div>
+            <div class="stat-compact-label" id="modal-completed-label">Completed</div>
+          </div>
+          <div class="stat-compact">
+            <div class="stat-compact-value" id="modal-streak">0</div>
+            <div class="stat-compact-label" id="modal-streak-label">Streak</div>
+          </div>
+          <div class="stat-compact">
+            <div class="stat-compact-value" id="modal-badges">0</div>
+            <div class="stat-compact-label" id="modal-badges-label">Badges</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tab-content hidden" id="tab-achievements-content">
+        <div id="achievements-list-compact"></div>
+      </div>
+      
+      <div class="tab-content hidden" id="tab-settings-content">
+        <div class="setting-row-compact">
+          <span id="theme-label">Theme</span>
+          <div class="theme-toggle" id="theme-toggle-modal" onclick="UI.toggleTheme()">
+            <div class="theme-toggle-slider"></div>
+          </div>
+        </div>
+        <div class="setting-row-compact">
+          <span id="language-label">Language</span>
+          <select class="language-select-compact" id="language-select" onchange="I18n.changeLanguage(this.value)">
+            <option value="en">🇬🇧 EN</option>
+            <option value="vi">🇻🇳 VI</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-compact" onclick="UI.openRewardModal()">
+          🎁 <span id="reward-code-btn">Reward Code</span>
+        </button>
+      </div>
+      
+      <!-- Logout Button -->
+      <div class="modal-footer-compact">
+        <button class="btn btn-danger btn-compact" onclick="Auth.logout()">
+          <span id="logout-btn">Logout</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reward Code Modal -->
+<div id="reward-modal" class="hidden">
+  <div class="modal-overlay" onclick="UI.closeRewardModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="UI.closeRewardModal()">×</button>
+      <h3 id="reward-title">Enter Reward Code</h3>
+      <p class="mt-1" id="reward-desc">Enter a reward code to unlock special features</p>
+      <input type="text" class="reward-input" id="reward-code-input" name="reward-code" placeholder="XXXXX-XXXXX" autocomplete="off">
+      <button class="btn btn-primary mt-2" style="width:100%;justify-content:center" onclick="UserStore.applyRewardCode()">
+        <span id="apply-code-btn">Apply Code</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirm-modal" class="hidden">
+  <div class="modal-overlay" onclick="UI.closeConfirmModal(false)">
+    <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
+      <button class="modal-close" onclick="UI.closeConfirmModal(false)">×</button>
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <div style="font-size:4rem;margin-bottom:1rem">⚠️</div>
+        <h3 id="confirm-title" style="margin-bottom:1rem;font-size:1.5rem">Confirm Action</h3>
+        <p id="confirm-message" style="color:var(--text-secondary);line-height:1.6">Are you sure?</p>
+      </div>
+      <div style="display:flex;gap:.75rem;margin-top:2rem">
+        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="UI.closeConfirmModal(false)">
+          <span id="confirm-cancel">Cancel</span>
+        </button>
+        <button class="btn btn-danger" style="flex:1;justify-content:center" onclick="UI.closeConfirmModal(true)">
+          <span id="confirm-ok">Confirm</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts: Load in correct order -->
+<script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/js/plugin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/luckysheet.umd.js"></script>
+<script src="i18n.js"></script>
+<script src="lessons.js"></script>
+<script src="validator.js"></script>
+<script src="luckysheet.js"></script>
+<script src="ui.js"></script>
+<script src="userStore.js"></script>
+<script src="lessonManager.js"></script>
+<script src="practice.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
