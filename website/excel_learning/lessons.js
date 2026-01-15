@@ -1,3 +1,25 @@
+// ==================== LEVEL CONFIGURATION ====================
+
+const LevelConfig = {
+  levels: [
+    { key: 'beginner', order: 1, minXP: 0 },
+    { key: 'intermediate', order: 2, minXP: 500 },
+    { key: 'advanced', order: 3, minXP: 1000 },
+    { key: 'professional', order: 4, minXP: 2000 },
+    { key: 'expert', order: 5, minXP: 3500 },
+    { key: 'master', order: 6, minXP: 5000 }
+  ],
+  
+  getLevelByXP(xp) {
+    const sorted = [...this.levels].sort((a, b) => b.minXP - a.minXP);
+    return sorted.find(level => xp >= level.minXP)?.key || 'beginner';
+  },
+  
+  getAllKeys() {
+    return this.levels.map(l => l.key);
+  }
+};
+
 // ==================== LESSON DATA ====================
 
 const LessonData = {
@@ -568,6 +590,288 @@ const LessonData = {
             }
           ]
         }]
+      }
+    ],
+
+    professional: [
+      {
+        id: 'p6',
+        title: {
+          en: 'Advanced Exam Data Processing',
+          vi: 'Xử lý dữ liệu thi nâng cao'
+        },
+        description: {
+          en: 'Real-world Excel exam combining VLOOKUP, HLOOKUP, INDEX & MATCH',
+          vi: 'Bài thi Excel thực tế kết hợp VLOOKUP, HLOOKUP, INDEX & MATCH'
+        },
+        category: 'analysis',
+        difficulty: 'hard',
+        estimatedTime: 45,
+        prerequisites: ['a2','a4','a5'],
+        content: {
+          en: `
+            <h3>Advanced Excel Exam</h3>
+            <p>This task simulates a real IT Excel exam:</p>
+            <p>• Lookup subject scores using INDEX + MATCH (2D)</p>
+            <p>• Apply semester coefficient with HLOOKUP</p>
+            <p>• Calculate final score using VLOOKUP</p>
+            <p>• Classify student results</p>
+          `,
+          vi: `
+            <h3>Bài thi Excel nâng cao</h3>
+            <p>Mô phỏng bài thi CNTT Excel thực tế:</p>
+            <p>• Tra cứu điểm theo 2 chiều bằng INDEX + MATCH</p>
+            <p>• Áp dụng hệ số học kỳ bằng HLOOKUP</p>
+            <p>• Tính điểm cuối bằng VLOOKUP</p>
+            <p>• Xếp loại kết quả sinh viên</p>
+          `
+        },
+
+        exercises: [{
+          description: {
+            en: 'Process student exam results and classification',
+            vi: 'Xử lý kết quả thi và xếp loại sinh viên'
+          },
+
+          initialData: [
+            // ==== BẢNG ĐIỂM ====
+            {r:0,c:0,v:{v:'Student'}},{r:0,c:1,v:{v:'Math'}},{r:0,c:2,v:{v:'IT'}},{r:0,c:3,v:{v:'English'}},
+            {r:1,c:0,v:{v:'SV01'}},{r:1,c:1,v:{v:8}},{r:1,c:2,v:{v:9}},{r:1,c:3,v:{v:7}},
+            {r:2,c:0,v:{v:'SV02'}},{r:2,c:1,v:{v:6}},{r:2,c:2,v:{v:7}},{r:2,c:3,v:{v:8}},
+            {r:3,c:0,v:{v:'SV03'}},{r:3,c:1,v:{v:9}},{r:3,c:2,v:{v:8}},{r:3,c:3,v:{v:9}},
+
+            // ==== BẢNG HỆ SỐ HỌC KỲ ====
+            {r:5,c:1,v:{v:'Semester 1'}},{r:5,c:2,v:{v:'Semester 2'}},
+            {r:6,c:0,v:{v:'Coefficient'}},{r:6,c:1,v:{v:1}},{r:6,c:2,v:{v:1.2}},
+
+            // ==== BẢNG XẾP LOẠI ====
+            {r:8,c:0,v:{v:'Score'}},{r:8,c:1,v:{v:'Grade'}},
+            {r:9,c:0,v:{v:0}},{r:9,c:1,v:{v:'Fail'}},
+            {r:10,c:0,v:{v:5}},{r:10,c:1,v:{v:'Average'}},
+            {r:11,c:0,v:{v:7}},{r:11,c:1,v:{v:'Good'}},
+            {r:12,c:0,v:{v:8.5}},{r:12,c:1,v:{v:'Excellent'}},
+
+            // ==== KẾT QUẢ ====
+            {r:1,c:5,v:{v:'Final Score'}},
+            {r:1,c:6,v:{v:'Grade'}}
+          ],
+
+          tasks: [
+            {
+              cell: 'F2',
+              requiredFormula: '=INDEX(B2:D2,MATCH("IT",B1:D1,0))*HLOOKUP("Semester 2",B6:C7,2,0)',
+              acceptableFormulas: [
+                '=INDEX($B2:$D2,MATCH("IT",$B$1:$D$1,0))*HLOOKUP("Semester 2",$B$6:$C$7,2,0)'
+              ],
+              hint: {
+                en: 'Final score is calculated by taking the IT subject score of the student and multiplying it by the coefficient of Semester 2',
+                vi: 'Điểm cuối được tính bằng điểm môn IT của sinh viên nhân với hệ số của học kỳ 2'
+              },
+              explanation: {
+                en: 'Uses INDEX MATCH (2D) combined with HLOOKUP',
+                vi: 'Kết hợp INDEX MATCH 2 chiều và HLOOKUP'
+              }
+            },
+
+            {
+              cell: 'G2',
+              requiredFormula: '=VLOOKUP(F2,A9:B12,2,TRUE)',
+              acceptableFormulas: [
+                '=VLOOKUP(F2,$A$9:$B$12,2,TRUE)'
+              ],
+              hint: {
+                en: 'Student grade is determined by comparing the final score with the grading scale in the classification table',
+                vi: 'Xếp loại sinh viên bằng cách đối chiếu điểm cuối với thang xếp loại trong bảng phân loại'
+              },
+              explanation: {
+                en: 'Uses VLOOKUP with approximate match',
+                vi: 'Sử dụng VLOOKUP dò gần đúng'
+              }
+            }
+          ]
+        }]
+      },
+
+      {
+        id: 'p7',
+        title: {
+          en: 'Sales Invoice Processing',
+          vi: 'Xử lý hóa đơn bán hàng'
+        },
+        description: {
+          en: 'Real Excel IT exam: lookup, pricing and commission calculation',
+          vi: 'Bài thi CNTT Excel thực tế: tra cứu, tính giá và hoa hồng'
+        },
+        category: 'analysis',
+        difficulty: 'hard',
+        estimatedTime: 40,
+        prerequisites: ['a3','a5','a6'],
+        content: {
+          en: `
+            <h3>Sales Data Processing</h3>
+            <p>Skills required:</p>
+            <p>• LEFT + VLOOKUP for product identification</p>
+            <p>• HLOOKUP for price table</p>
+            <p>• IF for commission calculation</p>
+            <p>• Real-world invoice logic</p>
+          `,
+          vi: `
+            <h3>Xử lý dữ liệu bán hàng</h3>
+            <p>Kỹ năng cần có:</p>
+            <p>• LEFT + VLOOKUP để xác định hàng hóa</p>
+            <p>• HLOOKUP tra bảng giá</p>
+            <p>• IF để tính hoa hồng</p>
+            <p>• Logic hóa đơn thực tế</p>
+          `
+        },
+
+        exercises: [{
+          description: {
+            en: 'Calculate product info, price difference and commission',
+            vi: 'Tính thông tin hàng hóa, chênh lệch giá và hoa hồng'
+          },
+
+          initialData: [
+            // ===== BẢNG HÓA ĐƠN =====
+            {r:0,c:0,v:{v:'STT'}},{r:0,c:1,v:{v:'Product Code'}},{r:0,c:2,v:{v:'Product Name'}},
+            {r:0,c:3,v:{v:'Quantity'}},{r:0,c:4,v:{v:'Buy Price'}},{r:0,c:5,v:{v:'Sell Price'}},
+            {r:0,c:6,v:{v:'Price Diff'}},{r:0,c:7,v:{v:'Commission'}},
+
+            {r:1,c:0,v:{v:1}},{r:1,c:1,v:{v:'S100X'}},{r:1,c:3,v:{v:10}},
+            {r:2,c:0,v:{v:2}},{r:2,c:1,v:{v:'M200Y'}},{r:2,c:3,v:{v:5}},
+            {r:3,c:0,v:{v:3}},{r:3,c:1,v:{v:'D150X'}},{r:3,c:3,v:{v:8}},
+            {r:4,c:0,v:{v:4}},{r:4,c:1,v:{v:'N120X'}},{r:4,c:3,v:{v:12}},
+
+            // ===== BẢNG TRA 1 =====
+            {r:6,c:0,v:{v:'Product Type'}},{r:6,c:1,v:{v:'Product Name'}},{r:6,c:2,v:{v:'Buy Price'}},
+            {r:7,c:0,v:{v:'S'}},{r:7,c:1,v:{v:'Milk'}},{r:7,c:2,v:{v:300000}},
+            {r:8,c:0,v:{v:'M'}},{r:8,c:1,v:{v:'Salt'}},{r:8,c:2,v:{v:150000}},
+            {r:9,c:0,v:{v:'D'}},{r:9,c:1,v:{v:'Sugar'}},{r:9,c:2,v:{v:250000}},
+            {r:10,c:0,v:{v:'N'}},{r:10,c:1,v:{v:'Mineral Water'}},{r:10,c:2,v:{v:75000}},
+
+            // ===== BẢNG GIÁ BÁN =====
+            {r:6,c:4,v:{v:'Type'}},{r:6,c:5,v:{v:'S'}},{r:6,c:6,v:{v:'M'}},{r:6,c:7,v:{v:'D'}},{r:6,c:8,v:{v:'N'}},
+            {r:7,c:4,v:{v:'Sell Price'}},{r:7,c:5,v:{v:350}},{r:7,c:6,v:{v:200}},{r:7,c:7,v:{v:300}},{r:7,c:8,v:{v:100}}
+          ],
+
+          tasks: [
+            {
+              cell: 'C2',
+              requiredFormula: '=VLOOKUP(LEFT(B2,1),A8:C11,2,0)',
+              acceptableFormulas: ['=VLOOKUP(LEFT(B2,1),$A$8:$C$11,2,0)'],
+              hint: {
+                en: 'Product name is determined by the first letter of the product code using the reference table',
+                vi: 'Tên hàng được xác định dựa vào ký tự đầu của mã hàng trong bảng tra'
+              },
+              explanation: {
+                en: 'LEFT extracts code, VLOOKUP returns product name',
+                vi: 'LEFT lấy ký tự đầu, VLOOKUP trả về tên hàng'
+              }
+            },
+
+            {
+              cell: 'E2',
+              requiredFormula: '=VLOOKUP(LEFT(B2,1),A8:C11,3,0)',
+              acceptableFormulas: ['=VLOOKUP(LEFT(B2,1),$A$8:$C$11,3,0)'],
+              hint: {
+                en: 'Buy price depends on product type (first letter of code) and is taken from the reference price table',
+                vi: 'Đơn giá mua phụ thuộc vào loại hàng (ký tự đầu mã hàng) và lấy từ bảng tra đơn giá'
+              },
+              explanation: {
+                en: 'Buy price from lookup table',
+                vi: 'Đơn giá mua từ bảng tra'
+              }
+            },
+
+            {
+              cell: 'F2',
+              requiredFormula: '=HLOOKUP(LEFT(B2,1),F7:J8,2,0)',
+              acceptableFormulas: ['=HLOOKUP(LEFT(B2,1),$F$7:$J$8,2,0)'],
+              hint: {
+                en: 'Lookup sell price using HLOOKUP',
+                vi: 'Tra đơn giá bán bằng HLOOKUP'
+              },
+              explanation: {
+                en: 'Sell price is determined by product type and is listed horizontally in the selling price table',
+                vi: 'Đơn giá bán phụ thuộc vào loại hàng và được bố trí theo hàng ngang trong bảng giá bán'
+              }
+            },
+
+            {
+              cell: 'G2',
+              requiredFormula: '=(F2-E2)*D2',
+              acceptableFormulas: ['=(F2-E2)*D2'],
+              hint: {
+                en: 'Calculate total price difference',
+                vi: 'Tính tổng tiền chênh lệch'
+              },
+              explanation: {
+                en: 'Total price difference equals (sell price − buy price) multiplied by quantity',
+                vi: 'Tiền chênh lệch = (đơn giá bán − đơn giá mua) × số lượng'
+              }
+            },
+
+            {
+              cell: 'H2',
+              requiredFormula: '=IF(G2>0,G2*10%,0)',
+              acceptableFormulas: ['=IF(G2>0,G2*0.1,0)'],
+              hint: {
+                en: 'Commission is 10% of total price difference only if the difference is positive; otherwise, no commission',
+                vi: 'Hoa hồng bằng 10% tiền chênh lệch nếu chênh lệch dương, ngược lại bằng 0'
+              },
+              explanation: {
+                en: 'Conditional commission calculation',
+                vi: 'Tính hoa hồng có điều kiện'
+              }
+            }
+          ]
+        }]
+      },
+    ],
+    
+    expert: [
+      {
+        id: 'e1',
+        title: { 
+          en: 'Array Formulas & Dynamic Arrays', 
+          vi: 'Công thức Mảng & Mảng Động' 
+        },
+        description: { 
+          en: 'Work with powerful array formulas', 
+          vi: 'Làm việc với công thức mảng mạnh mẽ' 
+        },
+        category: 'advanced',
+        difficulty: 'hard',
+        estimatedTime: 35,
+        prerequisites: ['p1'],
+        content: {
+          en: '<h3>Array Formulas</h3><p>Master dynamic arrays and spill ranges...</p>',
+          vi: '<h3>Công thức Mảng</h3><p>Làm chủ mảng động và phạm vi tràn...</p>'
+        },
+        exercises: [/* your exercises */]
+      }
+    ],
+    
+    master: [
+      {
+        id: 'm1',
+        title: { 
+          en: 'Power Query & Data Modeling', 
+          vi: 'Power Query & Mô hình Dữ liệu' 
+        },
+        description: { 
+          en: 'Professional data transformation techniques', 
+          vi: 'Kỹ thuật chuyển đổi dữ liệu chuyên nghiệp' 
+        },
+        category: 'analysis',
+        difficulty: 'hard',
+        estimatedTime: 45,
+        prerequisites: ['e1'],
+        content: {
+          en: '<h3>Power Query</h3><p>Transform and model data like a pro...</p>',
+          vi: '<h3>Power Query</h3><p>Chuyển đổi và mô hình hóa dữ liệu chuyên nghiệp...</p>'
+        },
+        exercises: [/* your exercises */]
       }
     ]
   }
