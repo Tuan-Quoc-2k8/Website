@@ -8,7 +8,7 @@
       "score": 10000,
       "gems": 9999,
       "level": "advanced",
-      "completedLessons": ["b1", "b2", "b3", "i1", "i2", "i3", "a1", "a2"],
+      "completedLessons": ["b1", "b2", "b3","b4", "i1", "i2", "i3","i4", "a1", "a2","a3","a4","a5"],
       "lessonProgress": {},
       "achievements": ["first", "five", "ten", "week"],
       "streak": 30,
