@@ -1735,3 +1735,115 @@ body.dark .luckysheet-dark-mode .luckysheet-rows-h-c{
     padding: 2rem 1.5rem;
   }
 }
+
+/* ==================== FORMULA OVERFLOW FIX ==================== */
+
+/* Fix code elements overflow */
+.lesson-content code,
+.exercise-box code,
+.current-task code,
+.task-item code,
+.explanation-box code,
+.hint-box code {
+  word-wrap: break-word !important;
+  word-break: break-all !important;
+  overflow-wrap: break-word !important;
+  white-space: pre-wrap !important;
+  max-width: 100%;
+  display: inline-block;
+}
+
+/* Fix task descriptions */
+.current-task p,
+.exercise-box p,
+.task-item p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Fix instruction panel overflow */
+.instructions-panel {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.instructions-panel * {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* Fix current task box */
+.current-task {
+  overflow: hidden;
+}
+
+.current-task .task-header {
+  overflow: hidden;
+}
+
+/* Fix task list items */
+.task-item {
+  overflow: hidden;
+}
+
+.task-item .task-text {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Fix exercise box */
+.exercise-box {
+  overflow: hidden;
+}
+
+/* Fix lesson content */
+.lesson-content {
+  overflow-x: hidden;
+}
+
+.lesson-content pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Fix hint and explanation boxes */
+.hint-box,
+.explanation-box {
+  overflow: hidden;
+}
+
+.hint-box p,
+.explanation-box p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Ensure formulas in different contexts wrap properly */
+[id*="task"],
+[id*="exercise"],
+[class*="formula"],
+[class*="task"] {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Fix for long formulas in practice page */
+#practice-page code {
+  word-wrap: break-word !important;
+  word-break: break-all !important;
+  overflow-wrap: break-word !important;
+  white-space: pre-wrap !important;
+}
+
+/* Responsive text handling */
+@media (max-width: 768px) {
+  .lesson-content code,
+  .exercise-box code,
+  .current-task code {
+    font-size: 0.8rem;
+  }
+}
