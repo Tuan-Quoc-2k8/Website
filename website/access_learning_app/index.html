@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Microsoft Access Learning Simulator - Educational web application for learning database fundamentals">
+    <title>Microsoft Access Learning Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Ribbon Header -->
+    <header class="ribbon-header">
+        <div class="app-branding">
+            <h1 class="app-title" data-i18n="app.title">Microsoft Access Learning Simulator</h1>
+        </div>
+        
+        <nav class="ribbon-tabs" role="navigation">
+            <button class="ribbon-tab active" data-tab="lessons" data-i18n="tabs.lessons">Lessons</button>
+            <button class="ribbon-tab" data-tab="tables" data-i18n="tabs.tables">Tables</button>
+            <button class="ribbon-tab" data-tab="queries" data-i18n="tabs.queries">Queries</button>
+            <button class="ribbon-tab" data-tab="relationships" data-i18n="tabs.relationships">Relationships</button>
+        </nav>
+        
+        <div class="header-controls">
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="en" aria-label="Switch to English">EN</button>
+                <button class="lang-btn" data-lang="vi" aria-label="Switch to Vietnamese">VI</button>
+            </div>
+            <div class="progress-indicator">
+                <span data-i18n="progress.label">Progress:</span>
+                <span id="progress-count">0/15</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Left Sidebar - Lesson Navigation -->
+        <aside class="sidebar" role="complementary">
+            <nav class="lesson-navigation">
+                <!-- Introduction Category -->
+                <section class="lesson-category">
+                    <h2 class="category-title" data-i18n="category.intro">Introduction</h2>
+                    <ul class="lesson-list">
+                        <li class="lesson-item active" data-lesson="intro-1">
+                            <span data-i18n="lesson.intro1">What is Microsoft Access?</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="intro-2">
+                            <span data-i18n="lesson.intro2">Database Fundamentals</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="intro-3">
+                            <span data-i18n="lesson.intro3">Relational Database Concepts</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Tables & Data Category -->
+                <section class="lesson-category">
+                    <h2 class="category-title" data-i18n="category.tables">Tables & Data</h2>
+                    <ul class="lesson-list">
+                        <li class="lesson-item" data-lesson="table-1">
+                            <span data-i18n="lesson.table1">Creating Your First Table</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="table-2">
+                            <span data-i18n="lesson.table2">Understanding Data Types</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="table-3">
+                            <span data-i18n="lesson.table3">Primary Keys Explained</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="table-4">
+                            <span data-i18n="lesson.table4">Field Properties</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Queries Category -->
+                <section class="lesson-category">
+                    <h2 class="category-title" data-i18n="category.queries">Queries</h2>
+                    <ul class="lesson-list">
+                        <li class="lesson-item" data-lesson="query-1">
+                            <span data-i18n="lesson.query1">Introduction to Queries</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="query-2">
+                            <span data-i18n="lesson.query2">SELECT Statements</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="query-3">
+                            <span data-i18n="lesson.query3">WHERE Clause Filtering</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="query-4">
+                            <span data-i18n="lesson.query4">Sorting with ORDER BY</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Relationships Category -->
+                <section class="lesson-category">
+                    <h2 class="category-title" data-i18n="category.relationships">Relationships</h2>
+                    <ul class="lesson-list">
+                        <li class="lesson-item" data-lesson="rel-1">
+                            <span data-i18n="lesson.rel1">Table Relationships</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="rel-2">
+                            <span data-i18n="lesson.rel2">Foreign Keys</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="rel-3">
+                            <span data-i18n="lesson.rel3">One-to-Many Relationships</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Forms & Reports Category -->
+                <section class="lesson-category">
+                    <h2 class="category-title" data-i18n="category.forms">Forms & Reports</h2>
+                    <ul class="lesson-list">
+                        <li class="lesson-item" data-lesson="form-1">
+                            <span data-i18n="lesson.form1">Introduction to Forms</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                        <li class="lesson-item" data-lesson="report-1">
+                            <span data-i18n="lesson.report1">Basic Reports</span>
+                            <span class="lesson-status"></span>
+                        </li>
+                    </ul>
+                </section>
+            </nav>
+        </aside>
+
+        <!-- Main Workspace -->
+        <section class="workspace" id="workspace" role="main">
+            <!-- Dynamic content will be loaded here by app.js -->
+            <div class="lesson-content">
+                <h2 class="lesson-title">Loading...</h2>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
