@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Access Learning Simulator</title>
+    <style>
+        :root {
+            --primary-red: #DC3545;
+            --dark-red: #C82333;
+            --light-red: #E57373;
+            --accent-red: #FFCDD2;
+            --bg-main: #FFF5F5;
+            --bg-panel: #FFFFFF;
+            --border-color: #FFDDDD;
+            --text-dark: #4E2D2D;
+            --success: #28A745;
+            --error: #DC3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-dark);
+            overflow: hidden;
+        }
+
+        /* Top Ribbon Header */
+        .ribbon-header {
+            background: var(--primary-red);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .ribbon-tabs {
+            display: flex;
+            gap: 5px;
+        }
+
+        .ribbon-tab {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .ribbon-tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .ribbon-tab.active {
+            background: white;
+            color: var(--primary-red);
+            font-weight: 600;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .lang-switcher {
+            display: flex;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: var(--primary-red);
+            font-weight: 600;
+        }
+
+        .progress-indicator {
+            font-size: 13px;
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 50px);
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-panel);
+            border-right: 2px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .lesson-category {
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-red);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .lesson-item {
+            padding: 10px 12px;
+            margin-bottom: 5px;
+            background: var(--bg-main);
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lesson-item:hover {
+            background: var(--accent-red);
+        }
+
+        .lesson-item.active {
+            background: var(--light-red);
+            border-left-color: var(--primary-red);
+            color: white;
+            font-weight: 600;
+        }
+
+        .lesson-item.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .lesson-item.completed::after {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Main Workspace */
+        .workspace {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .lesson-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .lesson-title {
+            font-size: 28px;
+            color: var(--dark-red);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .lesson-section {
+            background: var(--bg-panel);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: var(--primary-red);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .lesson-text {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        /* Simulator Components */
+        .simulator-workspace {
+            background: var(--bg-panel);
+            padding: 25px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-red);
+            margin: 20px 0;
+        }
+
+        .table-designer {
+            margin-top: 20px;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 200px 150px 80px 80px 50px;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .field-row.header {
+            font-weight: 600;
+            color: var(--dark-red);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .field-input {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .field-select {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .field-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-red);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-add {
+            background: var(--light-red);
+            color: white;
+            margin-top: 10px;
+        }
+
+        /* SQL Editor */
+        .sql-editor {
+            margin-top: 20px;
+        }
+
+        .sql-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .sql-controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .result-table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .result-table th {
+            background: var(--primary-red);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .result-table td {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .result-table tr:nth-child(even) {
+            background: var(--bg-main);
+        }
+
+        /* Feedback Messages */
+        .feedback {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-weight: 500;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .feedback.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .task-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .hint-box {
+            background: var(--accent-red);
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-main);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--light-red);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-red);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Ribbon Header -->
+    <div class="ribbon-header">
+        <div class="app-title" data-i18n="app.title">Microsoft Access Learning Simulator</div>
+        <div class="ribbon-tabs">
+            <button class="ribbon-tab active" data-tab="lessons" data-i18n="tabs.lessons">Lessons</button>
+            <button class="ribbon-tab" data-tab="tables" data-i18n="tabs.tables">Tables</button>
+            <button class="ribbon-tab" data-tab="queries" data-i18n="tabs.queries">Queries</button>
+            <button class="ribbon-tab" data-tab="relationships" data-i18n="tabs.relationships">Relationships</button>
+        </div>
+        <div class="header-controls">
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="vi">VI</button>
+            </div>
+            <div class="progress-indicator">
+                <span data-i18n="progress.label">Progress:</span> <span id="progress-text">0/12</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="lesson-category">
+                <div class="category-title" data-i18n="category.intro">Introduction</div>
+                <div class="lesson-item active" data-lesson="intro-1">
+                    <span data-i18n="lesson.intro1">What is Microsoft Access?</span>
+                </div>
+                <div class="lesson-item" data-lesson="intro-2">
+                    <span data-i18n="lesson.intro2">Database Fundamentals</span>
+                </div>
+            </div>
+
+            <div class="lesson-category">
+                <div class="category-title" data-i18n="category.tables">Tables & Data</div>
+                <div class="lesson-item" data-lesson="table-1">
+                    <span data-i18n="lesson.table1">Creating Your First Table</span>
+                </div>
+                <div class="lesson-item" data-lesson="table-2">
+                    <span data-i18n="lesson.table2">Data Types</span>
+                </div>
+                <div class="lesson-item" data-lesson="table-3">
+                    <span data-i18n="lesson.table3">Primary Keys</span>
+                </div>
+            </div>
+
+            <div class="lesson-category">
+                <div class="category-title" data-i18n="category.queries">Queries</div>
+                <div class="lesson-item" data-lesson="query-1">
+                    <span data-i18n="lesson.query1">Introduction to Queries</span>
+                </div>
+                <div class="lesson-item" data-lesson="query-2">
+                    <span data-i18n="lesson.query2">SELECT Statements</span>
+                </div>
+                <div class="lesson-item" data-lesson="query-3">
+                    <span data-i18n="lesson.query3">WHERE Clause</span>
+                </div>
+            </div>
+
+            <div class="lesson-category">
+                <div class="category-title" data-i18n="category.relationships">Relationships</div>
+                <div class="lesson-item" data-lesson="rel-1">
+                    <span data-i18n="lesson.rel1">Table Relationships</span>
+                </div>
+                <div class="lesson-item" data-lesson="rel-2">
+                    <span data-i18n="lesson.rel2">Foreign Keys</span>
+                </div>
+            </div>
+
+            <div class="lesson-category">
+                <div class="category-title" data-i18n="category.forms">Forms & Reports</div>
+                <div class="lesson-item" data-lesson="form-1">
+                    <span data-i18n="lesson.form1">Creating Forms</span>
+                </div>
+                <div class="lesson-item" data-lesson="report-1">
+                    <span data-i18n="lesson.report1">Basic Reports</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="workspace" id="workspace">
+            <!-- Dynamic content loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Translation Data
+        const translations = {
+            en: {
+                app: { title: "Microsoft Access Learning Simulator" },
+                tabs: { lessons: "Lessons", tables: "Tables", queries: "Queries", relationships: "Relationships" },
+                progress: { label: "Progress:" },
+                category: {
+                    intro: "Introduction",
+                    tables: "Tables & Data",
+                    queries: "Queries",
+                    relationships: "Relationships",
+                    forms: "Forms & Reports"
+                },
+                lesson: {
+                    intro1: "What is Microsoft Access?",
+                    intro2: "Database Fundamentals",
+                    table1: "Creating Your First Table",
+                    table2: "Data Types",
+                    table3: "Primary Keys",
+                    query1: "Introduction to Queries",
+                    query2: "SELECT Statements",
+                    query3: "WHERE Clause",
+                    rel1: "Table Relationships",
+                    rel2: "Foreign Keys",
+                    form1: "Creating Forms",
+                    report1: "Basic Reports"
+                },
+                buttons: {
+                    validate: "Validate Task",
+                    execute: "Execute Query",
+                    addField: "Add Field",
+                    next: "Next Lesson",
+                    clear: "Clear"
+                }
+            },
+            vi: {
+                app: { title: "Chương Trình Học Microsoft Access" },
+                tabs: { lessons: "Bài Học", tables: "Bảng", queries: "Truy Vấn", relationships: "Quan Hệ" },
+                progress: { label: "Tiến Độ:" },
+                category: {
+                    intro: "Giới Thiệu",
+                    tables: "Bảng & Dữ Liệu",
+                    queries: "Truy Vấn",
+                    relationships: "Quan Hệ",
+                    forms: "Biểu Mẫu & Báo Cáo"
+                },
+                lesson: {
+                    intro1: "Microsoft Access Là Gì?",
+                    intro2: "Cơ Bản Về Cơ Sở Dữ Liệu",
+                    table1: "Tạo Bảng Đầu Tiên",
+                    table2: "Kiểu Dữ Liệu",
+                    table3: "Khóa Chính",
+                    query1: "Giới Thiệu Truy Vấn",
+                    query2: "Câu Lệnh SELECT",
+                    query3: "Mệnh Đề WHERE",
+                    rel1: "Quan Hệ Giữa Các Bảng",
+                    rel2: "Khóa Ngoại",
+                    form1: "Tạo Biểu Mẫu",
+                    report1: "Báo Cáo Cơ Bản"
+                },
+                buttons: {
+                    validate: "Kiểm Tra",
+                    execute: "Thực Thi",
+                    addField: "Thêm Trường",
+                    next: "Bài Tiếp Theo",
+                    clear: "Xóa"
+                }
+            }
+        };
+
+        // Lesson Content
+        const lessons = {
+            'intro-1': {
+                en: {
+                    title: "What is Microsoft Access?",
+                    content: "Microsoft Access is a database management system (DBMS) that combines a relational database engine with a graphical user interface. It allows users to store, organize, and retrieve data efficiently.",
+                    task: "No task for this introductory lesson. Click 'Next Lesson' to continue.",
+                    type: 'info'
+                },
+                vi: {
+                    title: "Microsoft Access Là Gì?",
+                    content: "Microsoft Access là hệ quản trị cơ sở dữ liệu (DBMS) kết hợp công cụ cơ sở dữ liệu quan hệ với giao diện người dùng đồ họa. Nó cho phép người dùng lưu trữ, tổ chức và truy xuất dữ liệu hiệu quả.",
+                    task: "Không có bài tập cho bài giới thiệu này. Nhấn 'Bài Tiếp Theo' để tiếp tục.",
+                    type: 'info'
+                }
+            },
+            'intro-2': {
+                en: {
+                    title: "Database Fundamentals",
+                    content: "A database is a structured collection of data. Key concepts include: Tables (store data), Fields (columns), Records (rows), Primary Keys (unique identifiers), and Relationships (connections between tables).",
+                    task: "Understand these five core concepts before proceeding.",
+                    type: 'info'
+                },
+                vi: {
+                    title: "Cơ Bản Về Cơ Sở Dữ Liệu",
+                    content: "Cơ sở dữ liệu là tập hợp dữ liệu có cấu trúc. Các khái niệm chính: Bảng (lưu dữ liệu), Trường (cột), Bản ghi (hàng), Khóa chính (định danh duy nhất), và Quan hệ (kết nối giữa các bảng).",
+                    task: "Hiểu năm khái niệm cốt lõi này trước khi tiếp tục.",
+                    type: 'info'
+                }
+            },
+            'table-1': {
+                en: {
+                    title: "Creating Your First Table",
+                    content: "Tables are the foundation of any database. Each table stores data about a specific subject. A table consists of fields (columns) and records (rows).",
+                    task: "Create a table named 'Students' with at least 3 fields and set a primary key.",
+                    type: 'table-designer',
+                    validation: (data) => {
+                        if (!data.tableName || data.tableName.toLowerCase() !== 'students') {
+                            return { valid: false, message: "Table name must be 'Students'" };
+                        }
+                        if (data.fields.length < 3) {
+                            return { valid: false, message: "You need at least 3 fields" };
+                        }
+                        const hasPrimaryKey = data.fields.some(f => f.isPrimary);
+                        if (!hasPrimaryKey) {
+                            return { valid: false, message: "You must set a primary key" };
+                        }
+                        return { valid: true, message: "Excellent! You've created your first table correctly!" };
+                    }
+                },
+                vi: {
+                    title: "Tạo Bảng Đầu Tiên",
+                    content: "Bảng là nền tảng của bất kỳ cơ sở dữ liệu nào. Mỗi bảng lưu trữ dữ liệu về một chủ đề cụ thể. Bảng bao gồm các trường (cột) và bản ghi (hàng).",
+                    task: "Tạo bảng tên 'Students' với ít nhất 3 trường và đặt khóa chính.",
+                    type: 'table-designer',
+                    validation: (data) => {
+                        if (!data.tableName || data.tableName.toLowerCase() !== 'students') {
+                            return { valid: false, message: "Tên bảng phải là 'Students'" };
+                        }
+                        if (data.fields.length < 3) {
+                            return { valid: false, message: "Bạn cần ít nhất 3 trường" };
+                        }
+                        const hasPrimaryKey = data.fields.some(f => f.isPrimary);
+                        if (!hasPrimaryKey) {
+                            return { valid: false, message: "Bạn phải đặt khóa chính" };
+                        }
+                        return { valid: true, message: "Tuyệt vời! Bạn đã tạo bảng đầu tiên đúng cách!" };
+                    }
+                }
+            },
+            'query-2': {
+                en: {
+                    title: "SELECT Statements",
+                    content: "The SELECT statement is used to query data from tables. Basic syntax: SELECT field1, field2 FROM tableName;",
+                    task: "Write a SELECT query to retrieve all fields from the 'Products' table.",
+                    type: 'sql-editor',
+                    validation: (sql) => {
+                        const normalized = sql.toLowerCase().trim();
+                        if (normalized.includes('select') && normalized.includes('products') && (normalized.includes('*') || normalized.includes('from'))) {
+                            return { valid: true, message: "Perfect! Your SELECT query is correct!" };
+                        }
+                        return { valid: false, message: "Make sure to use SELECT * FROM Products;" };
+                    }
+                },
+                vi: {
+                    title: "Câu Lệnh SELECT",
+                    content: "Câu lệnh SELECT được sử dụng để truy vấn dữ liệu từ bảng. Cú pháp cơ bản: SELECT trường1, trường2 FROM tênBảng;",
+                    task: "Viết truy vấn SELECT để lấy tất cả trường từ bảng 'Products'.",
+                    type: 'sql-editor',
+                    validation: (sql) => {
+                        const normalized = sql.toLowerCase().trim();
+                        if (normalized.includes('select') && normalized.includes('products') && (normalized.includes('*') || normalized.includes('from'))) {
+                            return { valid: true, message: "Hoàn hảo! Truy vấn SELECT của bạn đúng rồi!" };
+                        }
+                        return { valid: false, message: "Hãy chắc chắn sử dụng SELECT * FROM Products;" };
+                    }
+                }
+            }
+        };
+
+        // App State
+        let currentLang = 'en';
+        let currentLesson = 'intro-1';
+        let completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+
+        // Initialize App
+        function init() {
+            loadLesson(currentLesson);
+            updateProgress();
+            setupEventListeners();
+            updateCompletedUI();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Language switcher
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentLang = btn.dataset.lang;
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    translatePage();
+                    loadLesson(currentLesson);
+                });
+            });
+
+            // Lesson items
+            document.querySelectorAll('.lesson-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    if (!item.classList.contains('locked')) {
+                        currentLesson = item.dataset.lesson;
+                        document.querySelectorAll('.lesson-item').forEach(i => i.classList.remove('active'));
+                        item.classList.add('active');
+                        loadLesson(currentLesson);
+                    }
+                });
+            });
+        }
+
+        // Translate Page
+        function translatePage() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                const keys = key.split('.');
+                let value = translations[currentLang];
+                keys.forEach(k => value = value?.[k]);
+                if (value) el.textContent = value;
+            });
+        }
+
+        // Load Lesson
+        function loadLesson(lessonId) {
+            const lesson = lessons[lessonId];
+            if (!lesson) return;
+
+            const content = lesson[currentLang];
+            const workspace = document.getElementById('workspace');
+
+            let html = `
+                <div class="lesson-content">
+                    <h1 class="lesson-title">${content.title}</h1>
+                    
+                    <div class="lesson-section">
+                        <h2 class="section-title">${currentLang === 'en' ? 'Explanation' : 'Giải Thích'}</h2>
+                        <p class="lesson-text">${content.content}</p>
+                    </div>
+
+                    <div class="task-box">
+                        <div class="task-title">${currentLang === 'en' ? 'Task' : 'Nhiệm Vụ'}</div>
+                        <p>${content.task}</p>
+                    </div>
+            `;
+
+            if (content.type === 'table-designer') {
+                html += renderTableDesigner();
+            } else if (content.type === 'sql-editor') {
+                html += renderSQLEditor();
+            } else {
+                html += `
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="nextLesson()">${translations[currentLang].buttons.next}</button>
+                    </div>
+                `;
+            }
+
+            html += `<div class="feedback" id="feedback"></div></div>`;
+            workspace.innerHTML = html;
+            
+            // Add initial field row for table designer lessons
+            if (content.type === 'table-designer') {
+                addField();
+            }
+        }
+
+        // Render Table Designer
+        function renderTableDesigner() {
+            return `
+                <div class="simulator-workspace">
+                    <h3 class="section-title">${currentLang === 'en' ? 'Table Design View' : 'Chế Độ Thiết Kế Bảng'}</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: 600; margin-right: 10px;">${currentLang === 'en' ? 'Table Name:' : 'Tên Bảng:'}</label>
+                        <input type="text" id="tableName" class="field-input" placeholder="${currentLang === 'en' ? 'Enter table name' : 'Nhập tên bảng'}" style="width: 250px;">
+                    </div>
+                    <div class="table-designer">
+                        <div class="field-row header">
+                            <div>${currentLang === 'en' ? 'Field Name' : 'Tên Trường'}</div>
+                            <div>${currentLang === 'en' ? 'Data Type' : 'Kiểu Dữ Liệu'}</div>
+                            <div>${currentLang === 'en' ? 'Primary Key' : 'Khóa Chính'}</div>
+                            <div>${currentLang === 'en' ? 'Required' : 'Bắt Buộc'}</div>
+                            <div></div>
+                        </div>
+                        <div id="fields-container"></div>
+                        <button class="btn btn-add" onclick="addField()">${translations[currentLang].buttons.addField}</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="validateTableDesign()">${translations[currentLang].buttons.validate}</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render SQL Editor
+        function renderSQLEditor() {
+            return `
+                <div class="simulator-workspace">
+                    <h3 class="section-title">${currentLang === 'en' ? 'SQL Query Editor' : 'Trình Soạn Truy Vấn SQL'}</h3>
+                    <div class="sql-editor">
+                        <textarea id="sqlQuery" class="sql-textarea" placeholder="${currentLang === 'en' ? 'Enter your SQL query here...' : 'Nhập truy vấn SQL của bạn tại đây...'}"></textarea>
+                        <div class="sql-controls">
+                            <button class="btn btn-primary" onclick="executeQuery()">${translations[currentLang].buttons.execute}</button>
+                            <button class="btn" onclick="clearQuery()">${translations[currentLang].buttons.clear}</button>
+                        </div>
+                    </div>
+                    <div id="queryResults"></div>
+                </div>
+            `;
+        }
+
+        // Add Field to Table Designer
+        function addField() {
+            const container = document.getElementById('fields-container');
+            const fieldId = Date.now();
+            const fieldHTML = `
+                <div class="field-row" data-field-id="${fieldId}">
+                    <input type="text" class="field-input field-name" placeholder="${currentLang === 'en' ? 'Field name' : 'Tên trường'}">
+                    <select class="field-select field-type">
+                        <option value="Short Text">Short Text</option>
+                        <option value="Number">Number</option>
+                        <option value="Date/Time">Date/Time</option>
+                        <option value="Yes/No">Yes/No</option>
+                        <option value="AutoNumber">AutoNumber</option>
+                    </select>
+                    <input type="checkbox" class="field-checkbox field-primary">
+                    <input type="checkbox" class="field-checkbox field-required">
+                    <button class="btn" onclick="removeField(${fieldId})" style="padding: 5px 10px; background: #dc3545; color: white;">×</button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', fieldHTML);
+        }
+
+        // Remove Field
+        function removeField(fieldId) {
+            const field = document.querySelector(`[data-field-id="${fieldId}"]`);
+            if (field) field.remove();
+        }
+
+        // Validate Table Design
+        function validateTableDesign() {
+            const tableName = document.getElementById('tableName').value.trim();
+            const fieldRows = document.querySelectorAll('.field-row:not(.header)');
+            
+            const fields = [];
+            fieldRows.forEach(row => {
+                const name = row.querySelector('.field-name').value.trim();
+                const type = row.querySelector('.field-type').value;
+                const isPrimary = row.querySelector('.field-primary').checked;
+                const isRequired = row.querySelector('.field-required').checked;
+                
+                if (name) {
+                    fields.push({ name, type, isPrimary, isRequired });
+                }
+            });
+
+            const data = { tableName, fields };
+            const lesson = lessons[currentLesson][currentLang];
+            const result = lesson.validation(data);
+            
+            showFeedback(result.valid ? 'success' : 'error', result.message);
+            
+            if (result.valid) {
+                markLessonComplete();
+            }
+        }
+
+        // Execute SQL Query
+        function executeQuery() {
+            const sql = document.getElementById('sqlQuery').value.trim();
+            const lesson = lessons[currentLesson][currentLang];
+            
+            if (!sql) {
+                showFeedback('error', currentLang === 'en' ? 'Please enter a SQL query' : 'Vui lòng nhập truy vấn SQL');
+                return;
+            }
+
+            const result = lesson.validation(sql);
+            showFeedback(result.valid ? 'success' : 'error', result.message);
+            
+            if (result.valid) {
+                // Simulate query results
+                const resultsHTML = `
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>ProductID</th>
+                                <th>ProductName</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>Laptop</td><td>$999</td></tr>
+                            <tr><td>2</td><td>Mouse</td><td>$25</td></tr>
+                            <tr><td>3</td><td>Keyboard</td><td>$75</td></tr>
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('queryResults').innerHTML = resultsHTML;
+                markLessonComplete();
+            }
+        }
+
+        // Clear Query
+        function clearQuery() {
+            document.getElementById('sqlQuery').value = '';
+            document.getElementById('queryResults').innerHTML = '';
+        }
+
+        // Show Feedback
+        function showFeedback(type, message) {
+            const feedback = document.getElementById('feedback');
+            feedback.className = `feedback ${type} show`;
+            feedback.textContent = message;
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 5000);
+        }
+
+        // Mark Lesson as Complete
+        function markLessonComplete() {
+            if (!completedLessons.includes(currentLesson)) {
+                completedLessons.push(currentLesson);
+                localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+                updateProgress();
+                updateCompletedUI();
+            }
+        }
+
+        // Update Completed UI
+        function updateCompletedUI() {
+            document.querySelectorAll('.lesson-item').forEach(item => {
+                const lessonId = item.dataset.lesson;
+                if (completedLessons.includes(lessonId)) {
+                    item.classList.add('completed');
+                }
+            });
+        }
+
+        // Update Progress
+        function updateProgress() {
+            const total = Object.keys(lessons).length;
+            const completed = completedLessons.length;
+            document.getElementById('progress-text').textContent = `${completed}/${total}`;
+        }
+
+        // Next Lesson
+        function nextLesson() {
+            markLessonComplete();
+            
+            const lessonOrder = ['intro-1', 'intro-2', 'table-1', 'table-2', 'table-3', 'query-1', 'query-2', 'query-3', 'rel-1', 'rel-2', 'form-1', 'report-1'];
+            const currentIndex = lessonOrder.indexOf(currentLesson);
+            
+            if (currentIndex < lessonOrder.length - 1) {
+                const nextLessonId = lessonOrder[currentIndex + 1];
+                const nextLessonItem = document.querySelector(`[data-lesson="${nextLessonId}"]`);
+                if (nextLessonItem) {
+                    nextLessonItem.click();
+                }
+            } else {
+                showFeedback('success', currentLang === 'en' ? 'Congratulations! You have completed all lessons!' : 'Chúc mừng! Bạn đã hoàn thành tất cả các bài học!');
+            }
+        }
+
+        // Initialize on page load
+        init();
+    </script>
+</body>
+</html>
