@@ -22,7 +22,7 @@
   --bg: #f8fafc;
   --bg-secondary: #f1f5f9;
   --card: #ffffff;
-  --nav: #3ec35d;
+  --nav: #21A366;
   
   /* Text Colors */
   --text: #0f172a;
@@ -187,7 +187,7 @@ code, pre {
 
 /* ==================== HEADER ==================== */
 body.dark .header{
-  --nav: #006635;
+  --nav: #0E5C2F;
 }
 
 .header {
