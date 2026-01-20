@@ -325,7 +325,11 @@ section{padding:5rem 0}
     flex: 1;
 }
 .project-title{font-size:1.3rem;margin-bottom:.5rem}
-.project-desc{color:var(--text-sec);margin-bottom:1rem;font-size:.9rem}
+.project-desc{
+    color:var(--text-sec);
+    margin-bottom:1rem;font-size:.9rem;
+    text-align: justify;
+}
 .project-tags{
     display:flex;
     gap:.5rem;
@@ -2137,6 +2141,28 @@ function updateScrollGradients() {
     }
 }
 const projects=[
+    {
+        category: 'website',
+        icon: '🗄️',
+        image: './img/learning-SQL.png',
+
+        title: 'Web Học SQL Server',
+        titleEn: 'SQL Server Learning Web App',
+        titleKo: 'SQL Server 학습 웹사이트',
+        titleJa: 'SQL Server 学習ウェブアプリ',
+        titleZh: 'SQL Server 学习网站',
+
+        desc: 'Website học SQL Server với môi trường giả lập truy vấn SQL, bài học từ cơ bản đến nâng cao và thực hành theo tình huống thực tế.',
+        descEn: 'A SQL Server learning website with a simulated SQL query environment and practical lessons from basic to advanced.',
+        descKo: 'SQL 쿼리 시뮬레이션 환경을 제공하며 기초부터 고급까지 실습 중심으로 학습할 수 있는 SQL Server 학습 웹사이트입니다.',
+        descJa: 'SQLクエリのシミュレーション環境を備え、基礎から応用まで実践的に学べるSQL Server学習サイトです。',
+        descZh: '一个提供 SQL 查询模拟环境、从基础到高级进行实践学习的 SQL Server 学习网站。',
+
+        tags: ['SQL Server','SQL','Database','Backend'],
+        badge: 'NEW',
+        link: './website/sql-learning-platform.html'
+    },
+
     {
         category:'website',
         icon:'🗄️',
