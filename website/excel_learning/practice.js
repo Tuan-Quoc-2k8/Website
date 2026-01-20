@@ -41,8 +41,8 @@ const Practice = {
   
   updateCurrentTask() {
     const task = this.exercise.tasks[this.taskIndex];
-    const hint = task.hint[I18n.currentLang] || task.hint.en;
-    document.getElementById('current-task-text').textContent = hint;
+    const description = task.description[I18n.currentLang] || task.description.en;
+    document.getElementById('current-task-text').textContent = description;
     document.querySelector('.task-number').textContent = this.taskIndex + 1;
   },
   
@@ -66,14 +66,14 @@ const Practice = {
         icon = '🔒';
       }
       
-      const hint = task.hint[I18n.currentLang] || task.hint.en;
+      const description = task.description[I18n.currentLang] || task.description.en;  // ✅ Use description
       const itemClass = `task-item ${state.done ? 'completed' : ''} ${locked ? 'locked' : ''} ${state.tries > 0 && !state.done ? 'error' : ''}`;
       
       return `
         <div class="${itemClass}">
           <div class="task-status-icon ${statusClass}">${icon}</div>
-          <div style="flex:1">
-            <strong>${task.cell}</strong>: ${hint.substring(0, 50)}
+          <div class="task-text">
+            <strong>${task.cell}:</strong> ${description}  <!-- ✅ Show description in task list -->
           </div>
         </div>
       `;
@@ -100,6 +100,47 @@ const Practice = {
     
     const taskCells = this.exercise.tasks.map(t => t.cell);
     LuckysheetService.setTaskCells(taskCells);
+    
+    // Prevent scrolling when clicking spreadsheet
+    this.preventSpreadsheetScroll();
+  },
+
+  preventSpreadsheetScroll() {
+    const container = document.getElementById('luckysheet-container');
+    if (!container) return;
+    
+    let savedScrollY = 0;
+    
+    // Save scroll position when interacting with spreadsheet
+    container.addEventListener('mousedown', () => {
+      savedScrollY = window.scrollY;
+    }, true);
+    
+    container.addEventListener('click', () => {
+      savedScrollY = window.scrollY;
+    }, true);
+    
+    // Restore scroll if it changed
+    container.addEventListener('focusin', () => {
+      setTimeout(() => {
+        if (Math.abs(window.scrollY - savedScrollY) > 5) {
+          window.scrollTo(0, savedScrollY);
+        }
+      }, 0);
+    }, true);
+    
+    // Watch for scroll attempts and restore
+    let scrollTimeout;
+    const checkScroll = () => {
+      if (Math.abs(window.scrollY - savedScrollY) > 5) {
+        window.scrollTo(0, savedScrollY);
+      }
+    };
+    
+    container.addEventListener('focus', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(checkScroll, 10);
+    }, true);
   },
   
   checkAllFormulas() {
