@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Effects Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #141b3d;
+            --bg-tertiary: #1e2749;
+            --text-primary: #e4e8f0;
+            --text-secondary: #9da5b8;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --border: rgba(99, 102, 241, 0.2);
+            --shadow: rgba(0, 0, 0, 0.3);
+            --grid-color: rgba(99, 102, 241, 0.05);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --border: rgba(99, 102, 241, 0.3);
+            --shadow: rgba(0, 0, 0, 0.1);
+            --grid-color: rgba(99, 102, 241, 0.03);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .lang-selector {
+            position: relative;
+        }
+
+        .lang-button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+            border-color: var(--accent);
+        }
+
+        .lang-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            min-width: 120px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 8px 24px var(--shadow);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .lang-dropdown.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .lang-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lang-option:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .lang-option.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+            border-color: var(--accent);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .effects-sidebar {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .effects-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .effects-sidebar::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .effects-sidebar::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        .category-section {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        .effect-card {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .effect-card:hover {
+            border-color: var(--accent);
+            transform: translateX(5px) scale(1.02);
+        }
+
+        .effect-card.active {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(129, 140, 248, 0.1));
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .effect-card h3 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .effect-card p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .preview-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            min-height: 450px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .preview-header h2 {
+            font-size: 20px;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .preview-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 350px;
+            position: relative;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .demo-element {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Hover Effects */
+        .effect-glow {
+            box-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent-light);
+            animation: glow-pulse 2s infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent-light); }
+            50% { box-shadow: 0 0 50px var(--accent), 0 0 100px var(--accent-light); }
+        }
+
+        .effect-magnetic {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .effect-tilt {
+            transform: perspective(1000px) rotateX(10deg) rotateY(-10deg);
+        }
+
+        .effect-tilt:hover {
+            transform: perspective(1000px) rotateX(-10deg) rotateY(10deg);
+        }
+
+        /* Animation Effects */
+        .effect-aurora {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: aurora-flow 8s ease infinite;
+        }
+
+        @keyframes aurora-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .effect-hologram {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(129, 140, 248, 0.6));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .effect-hologram::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: hologram-scan 3s linear infinite;
+        }
+
+        @keyframes hologram-scan {
+            0% { transform: translateY(-100%) rotate(45deg); }
+            100% { transform: translateY(100%) rotate(45deg); }
+        }
+
+        .effect-morphing {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: morphing-blob 8s ease-in-out infinite;
+        }
+
+        @keyframes morphing-blob {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+            75% { border-radius: 60% 40% 60% 40% / 70% 30% 50% 60%; }
+        }
+
+        .effect-particles {
+            position: relative;
+        }
+
+        .effect-particles::before,
+        .effect-particles::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: particle-float 3s infinite;
+        }
+
+        .effect-particles::before {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .effect-particles::after {
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes particle-float {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
+            50% { transform: translateY(-30px) scale(1.5); opacity: 1; }
+        }
+
+        /* Text Effects */
+        .effect-gradient-text {
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4facfe);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-text-flow 3s linear infinite;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        @keyframes gradient-text-flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .effect-glitch {
+            position: relative;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .effect-glitch::before,
+        .effect-glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .effect-glitch::before {
+            animation: glitch-1 2s infinite;
+            color: #ff00ff;
+            z-index: -1;
+        }
+
+        .effect-glitch::after {
+            animation: glitch-2 2s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+        }
+
+        .effect-neon-text {
+            color: #fff;
+            font-size: 32px;
+            font-weight: 800;
+            text-shadow: 
+                0 0 10px var(--accent),
+                0 0 20px var(--accent),
+                0 0 30px var(--accent),
+                0 0 40px var(--accent-light);
+            animation: neon-text-flicker 1.5s infinite alternate;
+        }
+
+        @keyframes neon-text-flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 
+                    0 0 10px var(--accent),
+                    0 0 20px var(--accent),
+                    0 0 30px var(--accent),
+                    0 0 40px var(--accent-light);
+            }
+            20%, 24%, 55% { text-shadow: none; }
+        }
+
+        /* Layout Effects */
+        .effect-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .effect-glass-advanced {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .effect-glass-advanced::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="n"><feTurbulence baseFrequency="0.9"/></filter><rect width="100" height="100" filter="url(%23n)" opacity="0.05"/></svg>');
+        }
+
+        .effect-gradient-border {
+            position: relative;
+            background: var(--bg-secondary);
+            border: none;
+        }
+
+        .effect-gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 3px;
+            background: linear-gradient(45deg, var(--accent), var(--accent-light), #ec4899, #f59e0b);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: gradient-rotate 3s linear infinite;
+        }
+
+        @keyframes gradient-rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .controls-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-tertiary);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .control-group input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            background: var(--bg-tertiary);
+        }
+
+        .control-value {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .code-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .code-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .code-tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s ease;
+        }
+
+        .code-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .code-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .code-content {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block {
+            display: none;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            color: var(--text-primary);
+        }
+
+        .code-block.active {
+            display: block;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .learning-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .learning-section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        .learning-section p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .properties-list {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .property-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .property-item:last-child {
+            border-bottom: none;
+        }
+
+        .property-name {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .property-value {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .effects-sidebar {
+                max-height: none;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo" data-i18n="appTitle">⚡ CSS Effects Studio</div>
+            <div class="header-controls">
+                <div class="lang-selector">
+                    <button class="lang-button" onclick="App.toggleLangDropdown()">
+                        🌐 <span id="current-lang">EN</span>
+                    </button>
+                    <div class="lang-dropdown" id="lang-dropdown">
+                        <div class="lang-option" onclick="App.setLanguage('en')">
+                            🇬🇧 English
+                        </div>
+                        <div class="lang-option" onclick="App.setLanguage('vi')">
+                            🇻🇳 Tiếng Việt
+                        </div>
+                        <div class="lang-option" onclick="App.setLanguage('ja')">
+                            🇯🇵 日本語
+                        </div>
+                    </div>
+                </div>
+                <button class="theme-toggle" onclick="App.toggleTheme()">
+                    <span id="theme-icon">🌙</span> <span data-i18n="toggleTheme">Toggle Theme</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <aside class="effects-sidebar">
+                <div class="category-section">
+                    <div class="category-title" data-i18n="categoryHover">HOVER EFFECTS</div>
+                    <div id="hover-effects"></div>
+                </div>
+                <div class="category-section">
+                    <div class="category-title" data-i18n="categoryAnimation">ANIMATION EFFECTS</div>
+                    <div id="animation-effects"></div>
+                </div>
+                <div class="category-section">
+                    <div class="category-title" data-i18n="categoryText">TEXT EFFECTS</div>
+                    <div id="text-effects"></div>
+                </div>
+                <div class="category-section">
+                    <div class="category-title" data-i18n="categoryLayout">LAYOUT EFFECTS</div>
+                    <div id="layout-effects"></div>
+                </div>
+            </aside>
+
+            <main class="workspace">
+                <section class="preview-section">
+                    <div class="preview-header">
+                        <h2 id="effect-title">Glow Effect</h2>
+                        <div class="preview-controls">
+                            <button class="btn btn-secondary" onclick="App.toggleAnimation()">
+                                <span id="animation-toggle" data-i18n="pause">⏸ Pause</span>
+                            </button>
+                            <button class="btn" onclick="App.exportEffect()">
+                                <span data-i18n="export">📤 Export</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="preview-area">
+                        <div class="demo-element effect-glow" id="demo" data-text="Hover Me">
+                            <span data-i18n="hoverMe">Hover Me</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="controls-section">
+                    <h3 style="margin-bottom: 20px;" data-i18n="customize">Customize Effect</h3>
+                    <div class="controls-grid" id="controls-container"></div>
+                </section>
+
+                <section class="learning-section">
+                    <h3 data-i18n="howItWorks">📚 How It Works</h3>
+                    <p id="effect-description"></p>
+                    <div class="properties-list" id="key-properties"></div>
+                </section>
+
+                <section class="code-section">
+                    <div class="code-tabs">
+                        <button class="code-tab active" onclick="App.switchCodeTab('html')">HTML</button>
+                        <button class="code-tab" onclick="App.switchCodeTab('css')">CSS</button>
+                        <button class="code-tab" onclick="App.switchCodeTab('js')">JavaScript</button>
+                    </div>
+                    <div class="code-content">
+                        <button class="copy-btn" onclick="App.copyCode()">
+                            <span data-i18n="copy">📋 Copy</span>
+                        </button>
+                        <pre class="code-block active" id="code-html"></pre>
+                        <pre class="code-block" id="code-css"></pre>
+                        <pre class="code-block" id="code-js"></pre>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // ==================== LANGUAGE FILES ====================
+        // Simulating external language files as ES6 modules
+        
+        const lang_en = {
+            appTitle: "⚡ CSS Effects Studio",
+            effectsGallery: "Effects Gallery",
+            categoryHover: "HOVER EFFECTS",
+            categoryAnimation: "ANIMATION EFFECTS",
+            categoryText: "TEXT EFFECTS",
+            categoryLayout: "LAYOUT EFFECTS",
+            customize: "Customize Effect",
+            export: "📤 Export",
+            pause: "⏸ Pause",
+            play: "▶ Play",
+            copy: "📋 Copy",
+            copied: "✓ Copied!",
+            toggleTheme: "Toggle Theme",
+            howItWorks: "📚 How It Works",
+            hoverMe: "Hover Me",
+            duration: "Duration",
+            primaryColor: "Primary Color",
+            secondaryColor: "Secondary Color",
+            blur: "Blur",
+            opacity: "Opacity",
+            // Effect names
+            glowEffect: "✨ Glow Effect",
+            glowDesc: "Pulsing shadow animation",
+            magneticEffect: "🧲 Magnetic Hover",
+            magneticDesc: "Follows your cursor",
+            tiltEffect: "🎭 3D Tilt",
+            tiltDesc: "Perspective transform",
+            auroraEffect: "🌌 Aurora Gradient",
+            auroraDesc: "Flowing gradient colors",
+            hologramEffect: "👾 Hologram",
+            hologramDesc: "Sci-fi scanning effect",
+            morphingEffect: "🫧 Morphing Blob",
+            morphingDesc: "Shape-shifting animation",
+            particlesEffect: "✨ Particles",
+            particlesDesc: "CSS-only particles",
+            gradientTextEffect: "🌈 Gradient Text",
+            gradientTextDesc: "Flowing text gradient",
+            glitchEffect: "📺 Glitch Text",
+            glitchDesc: "Distorted RGB effect",
+            neonTextEffect: "💡 Neon Text",
+            neonTextDesc: "Flickering neon glow",
+            glassEffect: "🪟 Glassmorphism",
+            glassDesc: "Frosted glass effect",
+            glassAdvancedEffect: "🪟 Advanced Glass",
+            glassAdvancedDesc: "Glass with noise texture",
+            gradientBorderEffect: "🌈 Gradient Border",
+            gradientBorderDesc: "Animated gradient outline",
+            // Descriptions
+            glowDescription: "The glow effect uses CSS box-shadow with multiple layers and a keyframe animation to create a pulsing luminous effect. The animation alternates between different shadow intensities to simulate a glowing neon light.",
+            magneticDescription: "The magnetic hover effect uses JavaScript to track mouse position and applies smooth transform animations. The element follows your cursor with elastic easing for a natural magnetic attraction feeling.",
+            tiltDescription: "The 3D tilt effect uses CSS transform with perspective to create a three-dimensional rotation. The perspective property adds depth, while rotateX and rotateY create the tilting motion on hover.",
+            auroraDescription: "The aurora effect uses a multi-color linear gradient with background-size and background-position animation. The gradient slowly flows across the element, creating a mesmerizing aurora borealis effect.",
+            hologramDescription: "The hologram effect combines semi-transparent backgrounds with an animated pseudo-element that creates a scanning beam of light. This simulates the appearance of a futuristic holographic display.",
+            morphingDescription: "The morphing blob uses border-radius animation to continuously change the element's shape. By animating between different border-radius values, it creates an organic, shape-shifting effect.",
+            particlesDescription: "This effect uses CSS pseudo-elements (::before and ::after) with opacity and transform animations to simulate floating particles. No JavaScript or canvas required - pure CSS magic!",
+            gradientTextDescription: "The gradient text effect applies a linear gradient to text using background-clip: text and -webkit-text-fill-color: transparent. The gradient position animates to create a flowing color effect.",
+            glitchDescription: "The glitch effect uses pseudo-elements with color channels (cyan and magenta) and offset animations. The staggered transform timing creates the appearance of a digital glitch or VHS distortion.",
+            neonTextDescription: "The neon text effect uses multiple text-shadow layers with animation to create a glowing neon sign appearance. The flickering animation simulates electrical surges in neon lighting.",
+            glassDescription: "Glassmorphism creates a frosted glass appearance using backdrop-filter with blur, semi-transparent backgrounds, and subtle borders. This modern effect works best over colorful or gradient backgrounds.",
+            glassAdvancedDescription: "Advanced glassmorphism adds a noise texture overlay using SVG filter and enhanced backdrop-filter with saturation. This creates a more realistic frosted glass effect with depth and texture.",
+            gradientBorderDescription: "An animated gradient border effect created using a pseudo-element with a gradient background, mask compositing, and rotation animation. The gradient continuously rotates around the border creating a dynamic frame."
+        };
+
+        const lang_vi = {
+            appTitle: "⚡ Phòng Thí Nghiệm CSS",
+            effectsGallery: "Bộ Sưu Tập Hiệu Ứng",
+            categoryHover: "HIỆU ỨNG HOVER",
+            categoryAnimation: "HIỆU ỨNG HOẠT CẢNH",
+            categoryText: "HIỆU ỨNG CHỮ",
+            categoryLayout: "HIỆU ỨNG BỐ CỤC",
+            customize: "Tùy Chỉnh Hiệu Ứng",
+            export: "📤 Xuất",
+            pause: "⏸ Tạm dừng",
+            play: "▶ Phát",
+            copy: "📋 Sao chép",
+            copied: "✓ Đã sao chép!",
+            toggleTheme: "Đổi Giao Diện",
+            howItWorks: "📚 Cách Hoạt Động",
+            hoverMe: "Di Chuột Vào",
+            duration: "Thời lượng",
+            primaryColor: "Màu Chính",
+            secondaryColor: "Màu Phụ",
+            blur: "Độ Mờ",
+            opacity: "Độ Trong Suốt",
+            // Effect names
+            glowEffect: "✨ Hiệu Ứng Phát Sáng",
+            glowDesc: "Ánh sáng nhấp nháy",
+            magneticEffect: "🧲 Hiệu Ứng Nam Châm",
+            magneticDesc: "Theo dõi con trỏ chuột",
+            tiltEffect: "🎭 Nghiêng 3D",
+            tiltDesc: "Biến đổi góc nhìn",
+            auroraEffect: "🌌 Cực Quang",
+            auroraDesc: "Màu sắc chuyển động",
+            hologramEffect: "👾 Hiệu Ứng Hologram",
+            hologramDesc: "Quét laser khoa học viễn tưởng",
+            morphingEffect: "🫧 Biến Hình",
+            morphingDesc: "Hoạt cảnh thay đổi hình dạng",
+            particlesEffect: "✨ Hạt Bay",
+            particlesDesc: "Hạt bay bằng CSS",
+            gradientTextEffect: "🌈 Chữ Chuyển Màu",
+            gradientTextDesc: "Chữ gradient chuyển động",
+            glitchEffect: "📺 Chữ Nhiễu",
+            glitchDesc: "Hiệu ứng RGB bị lỗi",
+            neonTextEffect: "💡 Chữ Neon",
+            neonTextDesc: "Ánh sáng neon nhấp nháy",
+            glassEffect: "🪟 Kính Mờ",
+            glassDesc: "Hiệu ứng kính mờ",
+            glassAdvancedEffect: "🪟 Kính Mờ Nâng Cao",
+            glassAdvancedDesc: "Kính với kết cấu nhiễu",
+            gradientBorderEffect: "🌈 Viền Chuyển Màu",
+            gradientBorderDesc: "Viền gradient xoay",
+            // Descriptions
+            glowDescription: "Hiệu ứng phát sáng sử dụng box-shadow của CSS với nhiều lớp và hoạt cảnh keyframe để tạo hiệu ứng ánh sáng nhấp nháy. Hoạt cảnh thay đổi giữa các cường độ bóng khác nhau để mô phỏng đèn neon phát sáng.",
+            magneticDescription: "Hiệu ứng nam châm sử dụng JavaScript để theo dõi vị trí chuột và áp dụng hoạt cảnh transform mượt mà. Phần tử theo con trỏ của bạn với độ co giãn tự nhiên như lực hút nam châm.",
+            tiltDescription: "Hiệu ứng nghiêng 3D sử dụng transform của CSS với perspective để tạo xoay ba chiều. Thuộc tính perspective thêm chiều sâu, trong khi rotateX và rotateY tạo chuyển động nghiêng khi di chuột.",
+            auroraDescription: "Hiệu ứng cực quang sử dụng gradient tuyến tính nhiều màu với hoạt cảnh background-size và background-position. Gradient chuyển động chậm qua phần tử, tạo hiệu ứng cực quang mê hoặc.",
+            hologramDescription: "Hiệu ứng hologram kết hợp nền bán trong suốt với phần tử giả tạo tia sáng quét. Điều này mô phỏng vẻ ngoài của màn hình hologram tương lai.",
+            morphingDescription: "Blob biến hình sử dụng hoạt cảnh border-radius để liên tục thay đổi hình dạng phần tử. Bằng cách hoạt cảnh giữa các giá trị border-radius khác nhau, nó tạo hiệu ứng thay đổi hình dạng tự nhiên.",
+            particlesDescription: "Hiệu ứng này sử dụng phần tử giả CSS (::before và ::after) với hoạt cảnh opacity và transform để mô phỏng hạt bay. Không cần JavaScript hay canvas - chỉ CSS thuần túy!",
+            gradientTextDescription: "Hiệu ứng chữ gradient áp dụng gradient tuyến tính lên chữ bằng background-clip: text và -webkit-text-fill-color: transparent. Vị trí gradient hoạt cảnh tạo hiệu ứng màu chảy.",
+            glitchDescription: "Hiệu ứng nhiễu sử dụng phần tử giả với kênh màu (cyan và magenta) và hoạt cảnh offset. Thời gian transform lệch nhau tạo vẻ ngoài của lỗi kỹ thuật số hoặc méo VHS.",
+            neonTextDescription: "Hiệu ứng chữ neon sử dụng nhiều lớp text-shadow với hoạt cảnh để tạo vẻ ngoài biển hiệu neon phát sáng. Hoạt cảnh nhấp nháy mô phỏng dòng điện trong đèn neon.",
+            glassDescription: "Glassmorphism tạo vẻ ngoài kính mờ bằng backdrop-filter với blur, nền bán trong suốt và viền tinh tế. Hiệu ứng hiện đại này hoạt động tốt nhất trên nền có màu sắc hoặc gradient.",
+            glassAdvancedDescription: "Glassmorphism nâng cao thêm lớp kết cấu nhiễu bằng bộ lọc SVG và backdrop-filter nâng cao với độ bão hòa. Điều này tạo hiệu ứng kính mờ chân thực hơn với chiều sâu và kết cấu.",
+            gradientBorderDescription: "Hiệu ứng viền gradient hoạt cảnh được tạo bằng phần tử giả với nền gradient, mask compositing và hoạt cảnh xoay. Gradient liên tục xoay quanh viền tạo khung động."
+        };
+
+        const lang_ja = {
+            appTitle: "⚡ CSSエフェクトスタジオ",
+            effectsGallery: "エフェクトギャラリー",
+            categoryHover: "ホバーエフェクト",
+            categoryAnimation: "アニメーションエフェクト",
+            categoryText: "テキストエフェクト",
+            categoryLayout: "レイアウトエフェクト",
+            customize: "エフェクトをカスタマイズ",
+            export: "📤 エクスポート",
+            pause: "⏸ 一時停止",
+            play: "▶ 再生",
+            copy: "📋 コピー",
+            copied: "✓ コピーしました！",
+            toggleTheme: "テーマ切替",
+            howItWorks: "📚 仕組み",
+            hoverMe: "ホバーしてね",
+            duration: "期間",
+            primaryColor: "プライマリカラー",
+            secondaryColor: "セカンダリカラー",
+            blur: "ぼかし",
+            opacity: "不透明度",
+            // Effect names
+            glowEffect: "✨ グローエフェクト",
+            glowDesc: "パルス状の影アニメーション",
+            magneticEffect: "🧲 マグネットホバー",
+            magneticDesc: "カーソルを追跡",
+            tiltEffect: "🎭 3Dチルト",
+            tiltDesc: "パースペクティブ変換",
+            auroraEffect: "🌌 オーロラグラデーション",
+            auroraDesc: "流れるグラデーションカラー",
+            hologramEffect: "👾 ホログラム",
+            hologramDesc: "SFスキャンエフェクト",
+            morphingEffect: "🫧 モーフィングブロブ",
+            morphingDesc: "形状変化アニメーション",
+            particlesEffect: "✨ パーティクル",
+            particlesDesc: "CSSのみのパーティクル",
+            gradientTextEffect: "🌈 グラデーションテキスト",
+            gradientTextDesc: "流れるテキストグラデーション",
+            glitchEffect: "📺 グリッチテキスト",
+            glitchDesc: "歪んだRGBエフェクト",
+            neonTextEffect: "💡 ネオンテキスト",
+            neonTextDesc: "点滅するネオングロー",
+            glassEffect: "🪟 グラスモーフィズム",
+            glassDesc: "曇りガラス効果",
+            glassAdvancedEffect: "🪟 高度なガラス",
+            glassAdvancedDesc: "ノイズテクスチャ付きガラス",
+            gradientBorderEffect: "🌈 グラデーションボーダー",
+            gradientBorderDesc: "アニメーション付きグラデーションアウトライン",
+            // Descriptions
+            glowDescription: "グローエフェクトは、CSSのbox-shadowを複数レイヤーとキーフレームアニメーションで使用して、パルス状の発光効果を作成します。アニメーションは異なる影の強度を交互に変えて、ネオンライトの輝きをシミュレートします。",
+            magneticDescription: "マグネットホバーエフェクトは、JavaScriptを使用してマウス位置を追跡し、スムーズな変形アニメーションを適用します。要素は磁気引力のような自然な感覚で、カーソルに追従します。",
+            tiltDescription: "3Dチルトエフェクトは、パースペクティブを持つCSS変形を使用して3次元回転を作成します。perspectiveプロパティが深度を追加し、rotateXとrotateYがホバー時の傾斜動作を作成します。",
+            auroraDescription: "オーロラエフェクトは、background-sizeとbackground-positionアニメーションを持つ多色線形グラデーションを使用します。グラデーションは要素全体をゆっくりと流れ、魅惑的なオーロラ効果を作り出します。",
+            hologramDescription: "ホログラムエフェクトは、半透明の背景と光のスキャンビームを作成するアニメーション化された擬似要素を組み合わせます。これは未来的なホログラフィックディスプレイの外観をシミュレートします。",
+            morphingDescription: "モーフィングブロブは、border-radiusアニメーションを使用して要素の形状を継続的に変更します。異なるborder-radius値の間をアニメーション化することで、有機的な形状変化効果を作成します。",
+            particlesDescription: "このエフェクトは、opacityとtransformアニメーションを持つCSS擬似要素（::beforeと::after）を使用して浮遊粒子をシミュレートします。JavaScriptやcanvasは不要 - 純粋なCSSマジック！",
+            gradientTextDescription: "グラデーションテキストエフェクトは、background-clip: textと-webkit-text-fill-color: transparentを使用してテキストに線形グラデーションを適用します。グラデーション位置がアニメーション化され、流れる色効果を作成します。",
+            glitchDescription: "グリッチエフェクトは、カラーチャンネル（シアンとマゼンタ）とオフセットアニメーションを持つ擬似要素を使用します。ずらされたtransformタイミングがデジタルグリッチやVHS歪みの外観を作成します。",
+            neonTextDescription: "ネオンテキストエフェクトは、アニメーション付きの複数のtext-shadowレイヤーを使用して、輝くネオンサインの外観を作成します。点滅アニメーションはネオン照明の電気サージをシミュレートします。",
+            glassDescription: "グラスモーフィズムは、ブラー付きbackdrop-filter、半透明背景、微妙なボーダーを使用して曇りガラスの外観を作成します。この現代的なエフェクトは、カラフルまたはグラデーション背景で最もよく機能します。",
+            glassAdvancedDescription: "高度なグラスモーフィズムは、SVGフィルターと彩度付きの強化されたbackdrop-filterを使用してノイズテクスチャオーバーレイを追加します。これにより、深度とテクスチャを持つ、よりリアルな曇りガラス効果が作成されます。",
+            gradientBorderDescription: "アニメーション化されたグラデーションボーダーエフェクトは、グラデーション背景、マスクコンポジティング、回転アニメーションを持つ擬似要素を使用して作成されます。グラデーションはボーダーの周りを継続的に回転し、ダイナミックなフレームを作成します。"
+        };
+
+        // ==================== LANGUAGE MANAGER ====================
+        const LanguageManager = {
+            current: localStorage.getItem('cssStudioLang') || 'en',
+            languages: { en: lang_en, vi: lang_vi, ja: lang_ja },
+            
+            // Get translation for a key
+            t(key) {
+                return this.languages[this.current][key] || key;
+            },
+            
+            // Set language and update UI
+            setLanguage(lang) {
+                if (this.languages[lang]) {
+                    this.current = lang;
+                    localStorage.setItem('cssStudioLang', lang);
+                    this.updateUI();
+                }
+            },
+            
+            // Update all translatable elements
+            updateUI() {
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    const translation = this.t(key);
+                    
+                    if (el.tagName === 'INPUT' && el.type === 'button') {
+                        el.value = translation;
+                    } else {
+                        el.textContent = translation;
+                    }
+                });
+                
+                // Update current language display
+                const langMap = { en: 'EN', vi: 'VI', ja: '日本' };
+                document.getElementById('current-lang').textContent = langMap[this.current];
+                
+                // Update active language option
+                document.querySelectorAll('.lang-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                
+                // Re-render effects with new language
+                App.renderEffects();
+                
+                // Update current effect display
+                if (App.currentEffect) {
+                    App.selectEffect(App.currentEffect);
+                }
+            }
+        };
+
+        // ==================== EFFECTS LIBRARY ====================
+        const EffectsLibrary = {
+            hover: [
+                {
+                    id: 'glow',
+                    icon: '✨',
+                    class: 'effect-glow',
+                    nameKey: 'glowEffect',
+                    descKey: 'glowDesc',
+                    fullDescKey: 'glowDescription',
+                    properties: [
+                        { name: 'box-shadow:', value: ' 0 0 30px color, 0 0 60px color' },
+                        { name: 'animation:', value: ' glow-pulse 2s infinite' }
+                    ],
+                    html: `<div class="glow-effect">
+  Hover Me
+</div>`,
+                    css: `.glow-effect {
+  box-shadow: 0 0 30px #6366f1, 0 0 60px #818cf8;
+  animation: glow-pulse 2s infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 30px #6366f1, 0 0 60px #818cf8; 
+  }
+  50% { 
+    box-shadow: 0 0 50px #6366f1, 0 0 100px #818cf8; 
+  }
+}`,
+                    js: `// No JavaScript required for this effect!
+// Pure CSS animation`,
+                    controls: ['duration', 'primaryColor', 'secondaryColor']
+                },
+                {
+                    id: 'magnetic',
+                    icon: '🧲',
+                    class: 'effect-magnetic',
+                    nameKey: 'magneticEffect',
+                    descKey: 'magneticDesc',
+                    fullDescKey: 'magneticDescription',
+                    properties: [
+                        { name: 'transition:', value: ' transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)' },
+                        { name: 'transform:', value: ' translate(x, y) based on mouse position' }
+                    ],
+                    html: `<div class="magnetic-effect">
+  Hover Me
+</div>`,
+                    css: `.magnetic-effect {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}`,
+                    js: `const el = document.querySelector('.magnetic-effect');
+const strength = 0.3;
+
+el.addEventListener('mousemove', (e) => {
+  const rect = el.getBoundingClientRect();
+  const x = (e.clientX - rect.left - rect.width / 2) * strength;
+  const y = (e.clientY - rect.top - rect.height / 2) * strength;
+  el.style.transform = \`translate(\${x}px, \${y}px)\`;
+});
+
+el.addEventListener('mouseleave', () => {
+  el.style.transform = 'translate(0, 0)';
+});`,
+                    controls: ['duration']
+                },
+                {
+                    id: 'tilt',
+                    icon: '🎭',
+                    class: 'effect-tilt',
+                    nameKey: 'tiltEffect',
+                    descKey: 'tiltDesc',
+                    fullDescKey: 'tiltDescription',
+                    properties: [
+                        { name: 'transform:', value: ' perspective(1000px) rotateX(10deg) rotateY(-10deg)' },
+                        { name: 'transition:', value: ' all 0.3s ease' }
+                    ],
+                    html: `<div class="tilt-effect">
+  Hover Me
+</div>`,
+                    css: `.tilt-effect {
+  transform: perspective(1000px) rotateX(10deg) rotateY(-10deg);
+  transition: all 0.3s ease;
+}
+
+.tilt-effect:hover {
+  transform: perspective(1000px) rotateX(-10deg) rotateY(10deg);
+}`,
+                    js: `// Enhanced with mouse tracking (optional)
+const el = document.querySelector('.tilt-effect');
+el.addEventListener('mousemove', (e) => {
+  const rect = el.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width - 0.5;
+  const y = (e.clientY - rect.top) / rect.height - 0.5;
+  el.style.transform = \`perspective(1000px) rotateX(\${y * 20}deg) rotateY(\${x * 20}deg)\`;
+});`,
+                    controls: ['duration']
+                }
+            ],
+            animation: [
+                {
+                    id: 'aurora',
+                    icon: '🌌',
+                    class: 'effect-aurora',
+                    nameKey: 'auroraEffect',
+                    descKey: 'auroraDesc',
+                    fullDescKey: 'auroraDescription',
+                    properties: [
+                        { name: 'background:', value: ' linear-gradient(45deg, multiple colors)' },
+                        { name: 'background-size:', value: ' 400% 400%' },
+                        { name: 'animation:', value: ' aurora-flow 8s ease infinite' }
+                    ],
+                    html: `<div class="aurora-effect">
+  Hover Me
+</div>`,
+                    css: `.aurora-effect {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+  background-size: 400% 400%;
+  animation: aurora-flow 8s ease infinite;
+}
+
+@keyframes aurora-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}`,
+                    js: `// No JavaScript required!`,
+                    controls: ['duration']
+                },
+                {
+                    id: 'hologram',
+                    icon: '👾',
+                    class: 'effect-hologram',
+                    nameKey: 'hologramEffect',
+                    descKey: 'hologramDesc',
+                    fullDescKey: 'hologramDescription',
+                    properties: [
+                        { name: 'background:', value: ' semi-transparent gradient' },
+                        { name: '::before:', value: ' animated scanning beam' },
+                        { name: 'overflow:', value: ' hidden (for beam effect)' }
+                    ],
+                    html: `<div class="hologram-effect">
+  Hover Me
+</div>`,
+                    css: `.hologram-effect {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(129, 140, 248, 0.6));
+  position: relative;
+  overflow: hidden;
+}
+
+.hologram-effect::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: rotate(45deg);
+  animation: hologram-scan 3s linear infinite;
+}
+
+@keyframes hologram-scan {
+  0% { transform: translateY(-100%) rotate(45deg); }
+  100% { transform: translateY(100%) rotate(45deg); }
+}`,
+                    js: `// Pure CSS effect!`,
+                    controls: ['duration']
+                },
+                {
+                    id: 'morphing',
+                    icon: '🫧',
+                    class: 'effect-morphing',
+                    nameKey: 'morphingEffect',
+                    descKey: 'morphingDesc',
+                    fullDescKey: 'morphingDescription',
+                    properties: [
+                        { name: 'border-radius:', value: ' animated organic shapes' },
+                        { name: 'animation:', value: ' morphing-blob 8s ease-in-out infinite' }
+                    ],
+                    html: `<div class="morphing-effect">
+  Hover Me
+</div>`,
+                    css: `.morphing-effect {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  animation: morphing-blob 8s ease-in-out infinite;
+}
+
+@keyframes morphing-blob {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+  75% { border-radius: 60% 40% 60% 40% / 70% 30% 50% 60%; }
+}`,
+                    js: `// No JavaScript needed!`,
+                    controls: ['duration']
+                },
+                {
+                    id: 'particles',
+                    icon: '✨',
+                    class: 'effect-particles',
+                    nameKey: 'particlesEffect',
+                    descKey: 'particlesDesc',
+                    fullDescKey: 'particlesDescription',
+                    properties: [
+                        { name: '::before, ::after:', value: ' floating particles' },
+                        { name: 'animation:', value: ' particle-float with delays' },
+                        { name: 'opacity & transform:', value: ' animated for floating effect' }
+                    ],
+                    html: `<div class="particles-effect">
+  Hover Me
+</div>`,
+                    css: `.particles-effect {
+  position: relative;
+}
+
+.particles-effect::before,
+.particles-effect::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  animation: particle-float 3s infinite;
+}
+
+.particles-effect::before {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.particles-effect::after {
+  bottom: 20%;
+  right: 10%;
+  animation-delay: 1.5s;
+}
+
+@keyframes particle-float {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
+  50% { transform: translateY(-30px) scale(1.5); opacity: 1; }
+}`,
+                    js: `// Pure CSS particles!`,
+                    controls: ['duration']
+                }
+            ],
+            text: [
+                {
+                    id: 'gradient-text',
+                    icon: '🌈',
+                    class: 'effect-gradient-text',
+                    nameKey: 'gradientTextEffect',
+                    descKey: 'gradientTextDesc',
+                    fullDescKey: 'gradientTextDescription',
+                    properties: [
+                        { name: 'background:', value: ' linear-gradient with multiple colors' },
+                        { name: 'background-clip:', value: ' text' },
+                        { name: '-webkit-text-fill-color:', value: ' transparent' }
+                    ],
+                    html: `<div class="gradient-text-effect">
+  Hover Me
+</div>`,
+                    css: `.gradient-text-effect {
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4facfe);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-text-flow 3s linear infinite;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+@keyframes gradient-text-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}`,
+                    js: `// No JavaScript required!`,
+                    controls: ['duration']
+                },
+                {
+                    id: 'glitch',
+                    icon: '📺',
+                    class: 'effect-glitch',
+                    nameKey: 'glitchEffect',
+                    descKey: 'glitchDesc',
+                    fullDescKey: 'glitchDescription',
+                    properties: [
+                        { name: '::before, ::after:', value: ' color channel copies' },
+                        { name: 'animation:', value: ' offset transforms' },
+                        { name: 'colors:', value: ' cyan (#00ffff) and magenta (#ff00ff)' }
+                    ],
+                    html: `<div class="glitch-effect" data-text="Hover Me">
+  Hover Me
+</div>`,
+                    css: `.glitch-effect {
+  position: relative;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.glitch-effect::before,
+.glitch-effect::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-effect::before {
+  animation: glitch-1 2s infinite;
+  color: #ff00ff;
+  z-index: -1;
+}
+
+.glitch-effect::after {
+  animation: glitch-2 2s infinite;
+  color: #00ffff;
+  z-index: -2;
+}
+
+@keyframes glitch-1 {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+}
+
+@keyframes glitch-2 {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(2px, -2px); }
+  40% { transform: translate(2px, 2px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(-2px, 2px); }
+}`,
+                    js: `// Pure CSS glitch!`,
+                    controls: ['duration']
+                },
+                {
+                    id: 'neon-text',
+                    icon: '💡',
+                    class: 'effect-neon-text',
+                    nameKey: 'neonTextEffect',
+                    descKey: 'neonTextDesc',
+                    fullDescKey: 'neonTextDescription',
+                    properties: [
+                        { name: 'text-shadow:', value: ' multiple glow layers' },
+                        { name: 'animation:', value: ' neon-text-flicker' },
+                        { name: 'color:', value: ' white base with colored shadows' }
+                    ],
+                    html: `<div class="neon-text-effect">
+  Hover Me
+</div>`,
+                    css: `.neon-text-effect {
+  color: #fff;
+  font-size: 32px;
+  font-weight: 800;
+  text-shadow: 
+    0 0 10px #6366f1,
+    0 0 20px #6366f1,
+    0 0 30px #6366f1,
+    0 0 40px #818cf8;
+  animation: neon-text-flicker 1.5s infinite alternate;
+}
+
+@keyframes neon-text-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 
+      0 0 10px #6366f1,
+      0 0 20px #6366f1,
+      0 0 30px #6366f1,
+      0 0 40px #818cf8;
+  }
+  20%, 24%, 55% { text-shadow: none; }
+}`,
+                    js: `// No JavaScript needed!`,
+                    controls: ['duration', 'primaryColor']
+                }
+            ],
+            layout: [
+                {
+                    id: 'glass',
+                    icon: '🪟',
+                    class: 'effect-glass',
+                    nameKey: 'glassEffect',
+                    descKey: 'glassDesc',
+                    fullDescKey: 'glassDescription',
+                    properties: [
+                        { name: 'background:', value: ' rgba(255, 255, 255, 0.1)' },
+                        { name: 'backdrop-filter:', value: ' blur(10px)' },
+                        { name: 'border:', value: ' 1px solid rgba(255, 255, 255, 0.2)' }
+                    ],
+                    html: `<div class="glass-effect">
+  Hover Me
+</div>`,
+                    css: `.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}`,
+                    js: `// Works automatically with CSS!`,
+                    controls: ['blur', 'opacity']
+                },
+                {
+                    id: 'glass-advanced',
+                    icon: '🪟',
+                    class: 'effect-glass-advanced',
+                    nameKey: 'glassAdvancedEffect',
+                    descKey: 'glassAdvancedDesc',
+                    fullDescKey: 'glassAdvancedDescription',
+                    properties: [
+                        { name: 'backdrop-filter:', value: ' blur(12px) saturate(180%)' },
+                        { name: '::before:', value: ' SVG noise texture overlay' },
+                        { name: 'background:', value: ' rgba with reduced opacity' }
+                    ],
+                    html: `<div class="glass-advanced-effect">
+  Hover Me
+</div>`,
+                    css: `.glass-advanced-effect {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-advanced-effect::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('data:image/svg+xml,...'); /* SVG noise */
+}`,
+                    js: `// Pure CSS effect!`,
+                    controls: ['blur', 'opacity']
+                },
+                {
+                    id: 'gradient-border',
+                    icon: '🌈',
+                    class: 'effect-gradient-border',
+                    nameKey: 'gradientBorderEffect',
+                    descKey: 'gradientBorderDesc',
+                    fullDescKey: 'gradientBorderDescription',
+                    properties: [
+                        { name: '::before:', value: ' absolute positioned pseudo-element' },
+                        { name: 'background:', value: ' linear-gradient with multiple colors' },
+                        { name: 'mask-composite:', value: ' exclude for border-only effect' }
+                    ],
+                    html: `<div class="gradient-border-effect">
+  Hover Me
+</div>`,
+                    css: `.gradient-border-effect {
+  position: relative;
+  background: var(--bg-secondary);
+}
+
+.gradient-border-effect::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 3px;
+  background: linear-gradient(45deg, #6366f1, #818cf8, #ec4899, #f59e0b);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: gradient-rotate 3s linear infinite;
+}
+
+@keyframes gradient-rotate {
+  to { transform: rotate(360deg); }
+}`,
+                    js: `// Pure CSS magic!`,
+                    controls: ['duration']
+                }
+            ]
+        };
+
+        // ==================== MAIN APP ====================
+        const App = {
+            currentEffect: null,
+            currentCategory: 'hover',
+            animationPaused: false,
+            currentCodeTab: 'html',
+
+            init() {
+                // Initialize language
+                LanguageManager.updateUI();
+                
+                // Render all effects
+                this.renderEffects();
+                
+                // Select first effect
+                this.selectEffect('glow');
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.lang-selector')) {
+                        document.getElementById('lang-dropdown').classList.remove('active');
+                    }
+                });
+            },
+
+            renderEffects() {
+                Object.keys(EffectsLibrary).forEach(category => {
+                    const container = document.getElementById(`${category}-effects`);
+                    if (container) {
+                        container.innerHTML = EffectsLibrary[category].map(effect => `
+                            <div class="effect-card" data-effect-id="${effect.id}" onclick="App.selectEffect('${effect.id}', event)">
+                                <h3>${effect.icon} ${LanguageManager.t(effect.nameKey)}</h3>
+                                <p>${LanguageManager.t(effect.descKey)}</p>
+                            </div>
+                        `).join('');
+                    }
+                });
+            },
+
+            selectEffect(effectId, evt) {
+                this.currentEffect = effectId;
+                
+                // Find effect in library
+                let effect = null;
+                let category = null;
+                for (const [cat, effects] of Object.entries(EffectsLibrary)) {
+                    const found = effects.find(e => e.id === effectId);
+                    if (found) {
+                        effect = found;
+                        category = cat;
+                        break;
+                    }
+                }
+                
+                if (!effect) return;
+                
+                // Update active card
+                document.querySelectorAll('.effect-card').forEach(card => card.classList.remove('active'));
+                if (evt) {
+                    evt.target.closest('.effect-card').classList.add('active');
+                } else {
+                    // If no event, find by data attribute
+                    const card = document.querySelector(`[data-effect-id="${effectId}"]`);
+                    if (card) card.classList.add('active');
+                }
+                
+                // Update demo element
+                const demo = document.getElementById('demo');
+                demo.className = 'demo-element ' + effect.class;
+                demo.setAttribute('data-text', LanguageManager.t('hoverMe'));
+                
+                // Update title
+                document.getElementById('effect-title').textContent = LanguageManager.t(effect.nameKey);
+                
+                // Update description
+                document.getElementById('effect-description').textContent = LanguageManager.t(effect.fullDescKey);
+                
+                // Update properties
+                const propsContainer = document.getElementById('key-properties');
+                propsContainer.innerHTML = effect.properties.map(prop => 
+                    `<div class="property-item">
+                        <span class="property-name">${prop.name}</span>
+                        <span class="property-value">${prop.value}</span>
+                    </div>`
+                ).join('');
+                
+                // Update code blocks
+                document.getElementById('code-html').textContent = effect.html;
+                document.getElementById('code-css').textContent = effect.css;
+                document.getElementById('code-js').textContent = effect.js;
+                
+                // Update controls
+                this.renderControls(effect.controls || ['duration', 'primaryColor', 'secondaryColor']);
+                
+                // Reset animation state
+                this.animationPaused = false;
+                document.getElementById('animation-toggle').setAttribute('data-i18n', 'pause');
+                document.getElementById('animation-toggle').textContent = LanguageManager.t('pause');
+                
+                // Enable magnetic effect if needed
+                if (effectId === 'magnetic') {
+                    this.enableMagneticEffect(demo);
+                }
+            },
+
+            renderControls(controls) {
+                const container = document.getElementById('controls-container');
+                const controlTemplates = {
+                    duration: `
+                        <div class="control-group">
+                            <label><span data-i18n="duration">${LanguageManager.t('duration')}</span> <span class="control-value" id="duration-value">2s</span></label>
+                            <input type="range" min="0.5" max="5" step="0.1" value="2" oninput="App.updateDuration(this.value)">
+                        </div>
+                    `,
+                    primaryColor: `
+                        <div class="control-group">
+                            <label data-i18n="primaryColor">${LanguageManager.t('primaryColor')}</label>
+                            <input type="color" value="#6366f1" onchange="App.updatePrimaryColor(this.value)">
+                        </div>
+                    `,
+                    secondaryColor: `
+                        <div class="control-group">
+                            <label data-i18n="secondaryColor">${LanguageManager.t('secondaryColor')}</label>
+                            <input type="color" value="#818cf8" onchange="App.updateSecondaryColor(this.value)">
+                        </div>
+                    `,
+                    blur: `
+                        <div class="control-group">
+                            <label><span data-i18n="blur">${LanguageManager.t('blur')}</span> <span class="control-value" id="blur-value">10px</span></label>
+                            <input type="range" min="0" max="50" value="10" oninput="App.updateBlur(this.value)">
+                        </div>
+                    `,
+                    opacity: `
+                        <div class="control-group">
+                            <label><span data-i18n="opacity">${LanguageManager.t('opacity')}</span> <span class="control-value" id="opacity-value">0.1</span></label>
+                            <input type="range" min="0" max="1" step="0.05" value="0.1" oninput="App.updateOpacity(this.value)">
+                        </div>
+                    `
+                };
+                
+                container.innerHTML = controls.map(c => controlTemplates[c] || '').join('');
+            },
+
+            toggleTheme() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                html.setAttribute('data-theme', newTheme);
+                document.getElementById('theme-icon').textContent = newTheme === 'light' ? '☀️' : '🌙';
+            },
+
+            toggleLangDropdown() {
+                document.getElementById('lang-dropdown').classList.toggle('active');
+            },
+
+            setLanguage(lang) {
+                LanguageManager.setLanguage(lang);
+                document.getElementById('lang-dropdown').classList.remove('active');
+            },
+
+            toggleAnimation() {
+                const demo = document.getElementById('demo');
+                this.animationPaused = !this.animationPaused;
+                demo.style.animationPlayState = this.animationPaused ? 'paused' : 'running';
+                
+                const toggleBtn = document.getElementById('animation-toggle');
+                toggleBtn.setAttribute('data-i18n', this.animationPaused ? 'play' : 'pause');
+                toggleBtn.textContent = LanguageManager.t(this.animationPaused ? 'play' : 'pause');
+            },
+
+            switchCodeTab(tab) {
+                this.currentCodeTab = tab;
+                document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+                event.target.classList.add('active');
+                
+                document.querySelectorAll('.code-block').forEach(block => block.classList.remove('active'));
+                document.getElementById('code-' + tab).classList.add('active');
+            },
+
+            copyCode() {
+                const activeBlock = document.querySelector('.code-block.active');
+                const text = activeBlock.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = LanguageManager.t('copied');
+                    setTimeout(() => {
+                        btn.setAttribute('data-i18n', 'copy');
+                        btn.textContent = LanguageManager.t('copy');
+                    }, 2000);
+                });
+            },
+
+            updateDuration(value) {
+                document.getElementById('duration-value').textContent = value + 's';
+                document.getElementById('demo').style.animationDuration = value + 's';
+            },
+
+            updatePrimaryColor(color) {
+                document.documentElement.style.setProperty('--accent', color);
+                const demo = document.getElementById('demo');
+                const secondary = getComputedStyle(document.documentElement).getPropertyValue('--accent-light');
+                demo.style.background = `linear-gradient(135deg, ${color}, ${secondary})`;
+            },
+
+            updateSecondaryColor(color) {
+                document.documentElement.style.setProperty('--accent-light', color);
+                const demo = document.getElementById('demo');
+                const primary = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+                demo.style.background = `linear-gradient(135deg, ${primary}, ${color})`;
+            },
+
+            updateBlur(value) {
+                document.getElementById('blur-value').textContent = value + 'px';
+                document.getElementById('demo').style.backdropFilter = `blur(${value}px)`;
+            },
+
+            updateOpacity(value) {
+                document.getElementById('opacity-value').textContent = value;
+                document.getElementById('demo').style.background = `rgba(255, 255, 255, ${value})`;
+            },
+
+            enableMagneticEffect(el) {
+                const strength = 0.3;
+                
+                el.addEventListener('mousemove', (e) => {
+                    const rect = el.getBoundingClientRect();
+                    const x = (e.clientX - rect.left - rect.width / 2) * strength;
+                    const y = (e.clientY - rect.top - rect.height / 2) * strength;
+                    el.style.transform = `translate(${x}px, ${y}px)`;
+                });
+                
+                el.addEventListener('mouseleave', () => {
+                    el.style.transform = 'translate(0, 0)';
+                });
+            },
+
+            exportEffect() {
+                // Find current effect
+                let effect = null;
+                for (const effects of Object.values(EffectsLibrary)) {
+                    const found = effects.find(e => e.id === this.currentEffect);
+                    if (found) {
+                        effect = found;
+                        break;
+                    }
+                }
+                
+                if (!effect) return;
+                
+                const exportData = `/* ${LanguageManager.t(effect.nameKey)} */
+
+HTML:
+${effect.html}
+
+CSS:
+${effect.css}
+
+JavaScript:
+${effect.js}`;
+                
+                const blob = new Blob([exportData], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${this.currentEffect}-effect.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        };
+
+        // Initialize app when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            App.init();
+        });
+    </script>
+</body>
+</html>
