@@ -5,6 +5,7 @@ const LuckysheetService = {
   formulaCache: {},
   autoScanInterval: null,
   taskCells: [],
+  textObserver: null,
   
   init(containerId, initialData, lang) {
     const container = document.getElementById(containerId);
@@ -71,6 +72,7 @@ const LuckysheetService = {
           
           setTimeout(() => {
             luckysheet.refresh();
+            LuckysheetService.forceTextVisibility();  // ADD THIS LINE
           }, 50);
         },
         
@@ -91,10 +93,15 @@ const LuckysheetService = {
     });
     
     this.instance = luckysheet;
-    
+
     const isDark = document.body.classList.contains('dark');
     this.updateTheme(isDark);
-    
+
+    // Force text visibility after initialization
+    setTimeout(() => {
+      this.forceTextVisibility();
+    }, 500);
+
     this.startAutoScan();
   },
   
@@ -103,12 +110,94 @@ const LuckysheetService = {
       const container = document.getElementById('luckysheet-container');
       if (!container) return;
       
+      // Add dedicated class for text visibility
+      container.classList.add('luckysheet-force-black-text');
+      
       if (isDark) {
         container.classList.add('luckysheet-dark-mode');
       } else {
         container.classList.remove('luckysheet-dark-mode');
       }
     }, 100);
+  },
+
+  forceTextVisibility() {
+    const container = document.getElementById('luckysheet-container');
+    if (!container) return;
+    
+    // Apply black color to all text elements - MORE AGGRESSIVE
+    const applyBlackText = () => {
+      // Get ALL elements in the container
+      const allElements = container.getElementsByTagName('*');
+      
+      // Force black color on everything
+      for (let i = 0; i < allElements.length; i++) {
+        const el = allElements[i];
+        const tagName = el.tagName.toLowerCase();
+        
+        // Skip these elements
+        if (tagName === 'canvas' || tagName === 'img') continue;
+        
+        // Get computed style
+        const computedStyle = window.getComputedStyle(el);
+        const currentColor = computedStyle.color;
+        
+        // If it's not black or very dark, force it to black
+        if (currentColor !== 'rgb(0, 0, 0)' && 
+            currentColor !== '#000000' && 
+            currentColor !== 'black') {
+          el.style.setProperty('color', '#000000', 'important');
+        }
+      }
+      
+      // Target specific Luckysheet classes
+      const specificSelectors = [
+        '.luckysheet-cell',
+        '.luckysheet-cell *',
+        '.luckysheet-cell span',
+        '.luckysheet-cell div',
+        '.luckysheet-cell-text',
+        '.luckysheet-formula-text-color',
+        '[data-type="inlineStr"]'
+      ];
+      
+      specificSelectors.forEach(selector => {
+        try {
+          const elements = container.querySelectorAll(selector);
+          elements.forEach(el => {
+            el.style.setProperty('color', '#000000', 'important');
+          });
+        } catch (e) {
+          // Ignore selector errors
+        }
+      });
+    };
+    
+    // Apply immediately
+    applyBlackText();
+    
+    // Apply repeatedly for the first 2 seconds
+    const intervals = [100, 200, 500, 1000, 2000];
+    intervals.forEach(delay => {
+      setTimeout(applyBlackText, delay);
+    });
+    
+    // Clean up old observer
+    if (this.textObserver) {
+      this.textObserver.disconnect();
+    }
+    
+    // Watch for changes and reapply
+    this.textObserver = new MutationObserver((mutations) => {
+      applyBlackText();
+    });
+    
+    this.textObserver.observe(container, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class', 'data-type']
+    });
   },
   
   setTaskCells(cells) {
@@ -268,6 +357,13 @@ const LuckysheetService = {
   destroy() {
     try {
       this.stopAutoScan();
+      
+      // Clean up observer
+      if (this.textObserver) {
+        this.textObserver.disconnect();
+        this.textObserver = null;
+      }
+      
       const container = document.getElementById('luckysheet-container');
       if (container) container.innerHTML = '';
       if (typeof luckysheet !== 'undefined' && luckysheet.destroy) {
