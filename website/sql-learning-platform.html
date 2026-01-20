@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Server Learning Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #252526;
+            --bg-tertiary: #2d2d30;
+            --text-primary: #d4d4d4;
+            --text-secondary: #858585;
+            --border-color: #3e3e42;
+            --accent-blue: #007acc;
+            --accent-green: #4ec9b0;
+            --accent-orange: #ce9178;
+            --accent-purple: #c586c0;
+            --accent-yellow: #dcdcaa;
+            --error-red: #f48771;
+            --success-green: #89d185;
+        }
+
+        body.light-theme {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f3f3;
+            --bg-tertiary: #e8e8e8;
+            --text-primary: #1e1e1e;
+            --text-secondary: #616161;
+            --border-color: #d4d4d4;
+            --accent-blue: #0066cc;
+            --accent-green: #008080;
+            --accent-orange: #a31515;
+            --accent-purple: #af00db;
+            --accent-yellow: #795e26;
+            --error-red: #e51400;
+            --success-green: #107c10;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--bg-secondary);
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle, .lang-select {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 48px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-section {
+            padding: 15px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .lesson-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .lesson-item:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .lesson-item.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .db-structure {
+            margin-top: 20px;
+        }
+
+        .db-item {
+            margin: 8px 0;
+        }
+
+        .db-name {
+            font-weight: 600;
+            color: var(--accent-green);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .db-name:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .table-item {
+            margin-left: 15px;
+            color: var(--accent-yellow);
+            font-size: 12px;
+            padding: 3px;
+            cursor: pointer;
+        }
+
+        .table-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .column-item {
+            margin-left: 30px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            padding: 2px;
+        }
+
+        .pk-marker {
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .lesson-header {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .lesson-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .lesson-goal {
+            color: var(--accent-blue);
+            font-size: 14px;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .lesson-explanation {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 30px;
+            background: var(--border-color);
+            margin: 0 5px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #005a9e;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+
+        .editor-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 15px;
+            min-height: 0;
+        }
+
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .panel-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .code-editor {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .line-numbers {
+            background: var(--bg-tertiary);
+            padding: 10px 8px;
+            text-align: right;
+            color: var(--text-secondary);
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            user-select: none;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .code-input {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+        }
+
+        .result-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .result-container {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: auto;
+            padding: 10px;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .result-table th {
+            background: var(--bg-tertiary);
+            padding: 8px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+
+        .result-table td {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .result-message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .result-success {
+            background: rgba(137, 209, 133, 0.2);
+            color: var(--success-green);
+            border-left: 3px solid var(--success-green);
+        }
+
+        .result-error {
+            background: rgba(244, 135, 113, 0.2);
+            color: var(--error-red);
+            border-left: 3px solid var(--error-red);
+        }
+
+        .hint-box {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-yellow);
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .hint-box.visible {
+            display: block;
+        }
+
+        .visualization {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .visualization.visible {
+            display: block;
+        }
+
+        .join-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 30px;
+        }
+
+        .join-table {
+            background: var(--bg-tertiary);
+            padding: 15px 25px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .join-arrow {
+            font-size: 24px;
+            color: var(--accent-blue);
+        }
+
+        .toggle-viz {
+            font-size: 12px;
+            color: var(--accent-blue);
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        .collapse-icon {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .collapse-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-blue);
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .autocomplete-dropdown.visible {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.selected {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .autocomplete-icon {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .autocomplete-type {
+            margin-left: auto;
+            font-size: 10px;
+            opacity: 0.6;
+        }
+
+        .step-guide {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-green);
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .step-guide.current {
+            background: rgba(78, 201, 176, 0.1);
+            border-left-color: var(--accent-green);
+        }
+
+        .step-guide.completed {
+            opacity: 0.6;
+            border-left-color: var(--text-secondary);
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .step-guide.completed .step-number {
+            background: var(--text-secondary);
+        }
+
+        .quick-insert {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .quick-btn {
+            padding: 4px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            transition: all 0.2s;
+            color: var(--accent-blue);
+        }
+
+        .quick-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .template-selector {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .template-selector.visible {
+            display: block;
+        }
+
+        .template-option {
+            padding: 8px;
+            margin: 4px 0;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .template-option:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .help-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1000;
+        }
+
+        .help-popup.visible {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .help-popup-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        .help-popup-close:hover {
+            color: var(--text-primary);
+        }
+
+        .progress-indicator {
+            display: flex;
+            gap: 4px;
+            margin: 10px 0;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+        }
+
+        .progress-step.completed {
+            background: var(--accent-green);
+        }
+
+        .progress-step.current {
+            background: var(--accent-blue);
+        }
+
+        .btn-small {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        .validation-feedback {
+            background: var(--bg-tertiary);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .validation-feedback.visible {
+            display: block;
+        }
+
+        .validation-feedback.success {
+            border-left: 3px solid var(--success-green);
+            color: var(--success-green);
+        }
+
+        .validation-feedback.warning {
+            border-left: 3px solid var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+
+        .validation-feedback.error {
+            border-left: 3px solid var(--error-red);
+            color: var(--error-red);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🗄️ SQL Server Learning Platform</h1>
+        <div class="header-controls">
+            <select class="lang-select" id="langSelect">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="vi">Tiếng Việt</option>
+            </select>
+            <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 id="lessonsTitle">Lessons</h3>
+                <div id="lessonsList"></div>
+            </div>
+
+            <div class="sidebar-section db-structure">
+                <h3 id="dbStructureTitle">Database Structure</h3>
+                <div id="dbStructure"></div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="lesson-header">
+                <div class="lesson-title" id="lessonTitle">Welcome to SQL Server</div>
+                <div class="lesson-goal" id="lessonGoal">🎯 Learn the basics of SQL</div>
+            </div>
+
+            <div class="editor-container">
+                <div class="lesson-explanation" id="lessonExplanation"></div>
+
+                <div id="stepGuideContainer"></div>
+
+                <div class="editor-toolbar">
+                    <div class="toolbar-section">
+                        <button class="btn btn-primary" id="runBtn">▶ <span id="runBtnText">Run Query</span></button>
+                        <button class="btn btn-secondary" id="clearBtn">🧹 <span id="clearBtnText">Clear</span></button>
+                        <button class="btn btn-secondary" id="hintBtn">📘 <span id="hintBtnText">Show Hint</span></button>
+                    </div>
+                    <div class="toolbar-divider"></div>
+                    <div class="toolbar-section">
+                        <button class="btn btn-secondary btn-small" id="templateBtn">📋 <span id="templateBtnText">Templates</span></button>
+                        <button class="btn btn-secondary btn-small" id="guideBtn">🎯 <span id="guideBtnText">Step Guide</span></button>
+                        <button class="btn btn-secondary btn-small" id="exampleBtn">💡 <span id="exampleBtnText">Use Example</span></button>
+                    </div>
+                </div>
+
+                <div class="template-selector" id="templateSelector"></div>
+                <div class="validation-feedback" id="validationFeedback"></div>
+                <div class="hint-box" id="hintBox"></div>
+
+                <div class="quick-insert" id="quickInsert"></div>
+
+                <div class="editor-wrapper">
+                    <div class="editor-panel">
+                        <div class="panel-title" id="editorTitle">SQL Editor</div>
+                        <div class="code-editor" style="position: relative;">
+                            <div class="line-numbers" id="lineNumbers">1</div>
+                            <textarea class="code-input" id="codeInput" spellcheck="false" placeholder="-- Write your SQL query here...
+-- Press Ctrl+Space for suggestions"></textarea>
+                            <div class="autocomplete-dropdown" id="autocomplete"></div>
+                        </div>
+                    </div>
+
+                    <div class="result-panel">
+                        <div class="panel-title" id="resultsTitle">Results</div>
+                        <div class="result-container" id="resultContainer">
+                            <div class="result-message" style="color: var(--text-secondary);">
+                                <span id="resultsPlaceholder">Execute a query to see results here...</span>
+                            </div>
+                        </div>
+                        <div class="visualization" id="visualization"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-popup" id="helpPopup">
+                <button class="help-popup-close" onclick="closeHelpPopup()">×</button>
+                <div id="helpPopupContent"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Multi-language translations
+        const translations = {
+            en: {
+                title: "SQL Server Learning Platform",
+                lessonsLabel: "Lessons",
+                dbStructure: "Database Structure",
+                runBtn: "Run Query",
+                clearBtn: "Clear",
+                hintBtn: "Show Hint",
+                templateBtn: "Templates",
+                guideBtn: "Step Guide",
+                exampleBtn: "Use Example",
+                editorTitle: "SQL Editor",
+                resultsTitle: "Results",
+                resultsPlaceholder: "Execute a query to see results here...",
+                rowsAffected: "row(s) affected",
+                queryExecuted: "Query executed successfully!",
+                error: "Error",
+                stepGuide: "Step-by-Step Guide",
+                quickInsert: "Quick Insert",
+                templates: "SQL Templates",
+                validation: {
+                    good: "✓ Looking good! Try running the query.",
+                    needsFrom: "⚠ Don't forget the FROM clause",
+                    needsTable: "⚠ Specify a table name",
+                    incomplete: "⚠ This query looks incomplete"
+                }
+            },
+            es: {
+                title: "Plataforma de Aprendizaje SQL Server",
+                lessonsLabel: "Lecciones",
+                dbStructure: "Estructura de Base de Datos",
+                runBtn: "Ejecutar Consulta",
+                clearBtn: "Limpiar",
+                hintBtn: "Mostrar Pista",
+                templateBtn: "Plantillas",
+                guideBtn: "Guía Paso a Paso",
+                exampleBtn: "Usar Ejemplo",
+                editorTitle: "Editor SQL",
+                resultsTitle: "Resultados",
+                resultsPlaceholder: "Ejecuta una consulta para ver los resultados aquí...",
+                rowsAffected: "fila(s) afectada(s)",
+                queryExecuted: "¡Consulta ejecutada con éxito!",
+                error: "Error",
+                stepGuide: "Guía Paso a Paso",
+                quickInsert: "Inserción Rápida",
+                templates: "Plantillas SQL",
+                validation: {
+                    good: "✓ ¡Se ve bien! Intenta ejecutar la consulta.",
+                    needsFrom: "⚠ No olvides la cláusula FROM",
+                    needsTable: "⚠ Especifica un nombre de tabla",
+                    incomplete: "⚠ Esta consulta parece incompleta"
+                }
+            },
+            vi: {
+                title: "Nền tảng Học SQL Server",
+                lessonsLabel: "Bài học",
+                dbStructure: "Cấu trúc Cơ sở dữ liệu",
+                runBtn: "Chạy Truy vấn",
+                clearBtn: "Xóa",
+                hintBtn: "Hiện Gợi ý",
+                templateBtn: "Mẫu",
+                guideBtn: "Hướng dẫn Từng bước",
+                exampleBtn: "Dùng Ví dụ",
+                editorTitle: "Trình soạn SQL",
+                resultsTitle: "Kết quả",
+                resultsPlaceholder: "Thực hiện truy vấn để xem kết quả ở đây...",
+                rowsAffected: "dòng bị ảnh hưởng",
+                queryExecuted: "Truy vấn thực hiện thành công!",
+                error: "Lỗi",
+                stepGuide: "Hướng dẫn Từng bước",
+                quickInsert: "Chèn Nhanh",
+                templates: "Mẫu SQL",
+                validation: {
+                    good: "✓ Trông tốt! Thử chạy truy vấn.",
+                    needsFrom: "⚠ Đừng quên mệnh đề FROM",
+                    needsTable: "⚠ Chỉ định tên bảng",
+                    incomplete: "⚠ Truy vấn này có vẻ chưa hoàn chỉnh"
+                }
+            }
+        };
+
+        // Lesson content (fully multilingual)
+        const lessonsData = {
+            en: {
+                createDb: {
+                    title: "Create Database",
+                    goal: "🎯 Learn to create a new database",
+                    explanation: "The CREATE DATABASE statement creates a new database in SQL Server. This is the first step in building any database application.",
+                    task: "Create a database called 'CompanyDB'",
+                    hint: "Use: CREATE DATABASE DatabaseName;",
+                    solution: "CREATE DATABASE CompanyDB;"
+                },
+                createTable: {
+                    title: "Create Table",
+                    goal: "🎯 Learn to create tables with columns",
+                    explanation: "Tables store data in rows and columns. Use CREATE TABLE to define the structure. Each column needs a name and data type. Use IDENTITY for auto-incrementing IDs.",
+                    task: "Create a table 'Employees' with columns: EmployeeID (INT, IDENTITY), FirstName (NVARCHAR(50)), LastName (NVARCHAR(50)), HireDate (DATETIME)",
+                    hint: "CREATE TABLE TableName (Column1 DataType, Column2 DataType, ...);",
+                    solution: "CREATE TABLE Employees (EmployeeID INT IDENTITY(1,1) PRIMARY KEY, FirstName NVARCHAR(50), LastName NVARCHAR(50), HireDate DATETIME);"
+                },
+                insertData: {
+                    title: "Insert Data",
+                    goal: "🎯 Learn to add data to tables",
+                    explanation: "INSERT INTO adds new rows to a table. You can insert one or multiple rows. Use GETDATE() for current date/time.",
+                    task: "Insert two employees into the Employees table",
+                    hint: "INSERT INTO TableName (Column1, Column2) VALUES (Value1, Value2);",
+                    solution: "INSERT INTO Employees (FirstName, LastName, HireDate) VALUES ('John', 'Doe', GETDATE()), ('Jane', 'Smith', GETDATE());"
+                },
+                selectBasic: {
+                    title: "SELECT Statement",
+                    goal: "🎯 Learn to query data",
+                    explanation: "SELECT retrieves data from tables. Use * to select all columns, or specify column names. WHERE filters results.",
+                    task: "Select all employees from the Employees table",
+                    hint: "SELECT * FROM TableName;",
+                    solution: "SELECT * FROM Employees;"
+                },
+                whereClause: {
+                    title: "WHERE Clause",
+                    goal: "🎯 Learn to filter data",
+                    explanation: "WHERE filters rows based on conditions. You can use =, !=, >, <, >=, <=, LIKE, IN, BETWEEN, IS NULL, etc.",
+                    task: "Select employees with FirstName = 'John'",
+                    hint: "SELECT * FROM TableName WHERE Column = 'Value';",
+                    solution: "SELECT * FROM Employees WHERE FirstName = 'John';"
+                },
+                orderBy: {
+                    title: "ORDER BY",
+                    goal: "🎯 Learn to sort results",
+                    explanation: "ORDER BY sorts query results. Use ASC for ascending (default) or DESC for descending order.",
+                    task: "Select all employees ordered by LastName",
+                    hint: "SELECT * FROM TableName ORDER BY ColumnName;",
+                    solution: "SELECT * FROM Employees ORDER BY LastName;"
+                },
+                topClause: {
+                    title: "TOP Clause",
+                    goal: "🎯 Learn to limit results",
+                    explanation: "TOP limits the number of rows returned. This is SQL Server's equivalent to LIMIT in other databases.",
+                    task: "Select the top 5 employees",
+                    hint: "SELECT TOP N * FROM TableName;",
+                    solution: "SELECT TOP 5 * FROM Employees;"
+                },
+                joins: {
+                    title: "INNER JOIN",
+                    goal: "🎯 Learn to combine tables",
+                    explanation: "INNER JOIN combines rows from two tables based on a related column. Only matching rows are returned.",
+                    task: "Join Employees with Departments to see employee department information",
+                    hint: "SELECT * FROM Table1 INNER JOIN Table2 ON Table1.Column = Table2.Column;",
+                    solution: "SELECT e.FirstName, e.LastName, d.DepartmentName FROM Employees e INNER JOIN Departments d ON e.DepartmentID = d.DepartmentID;"
+                },
+                leftJoin: {
+                    title: "LEFT JOIN",
+                    goal: "🎯 Learn outer joins",
+                    explanation: "LEFT JOIN returns all rows from the left table and matching rows from the right table. NULL is returned when there's no match.",
+                    task: "Show all employees and their departments (including employees without departments)",
+                    hint: "SELECT * FROM Table1 LEFT JOIN Table2 ON Table1.Column = Table2.Column;",
+                    solution: "SELECT e.FirstName, e.LastName, d.DepartmentName FROM Employees e LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID;"
+                },
+                groupBy: {
+                    title: "GROUP BY",
+                    goal: "🎯 Learn to aggregate data",
+                    explanation: "GROUP BY groups rows with the same values. Use with aggregate functions like COUNT, SUM, AVG, MIN, MAX.",
+                    task: "Count employees in each department",
+                    hint: "SELECT Column, COUNT(*) FROM TableName GROUP BY Column;",
+                    solution: "SELECT DepartmentID, COUNT(*) as EmployeeCount FROM Employees GROUP BY DepartmentID;"
+                }
+            },
+            es: {
+                createDb: {
+                    title: "Crear Base de Datos",
+                    goal: "🎯 Aprende a crear una nueva base de datos",
+                    explanation: "La declaración CREATE DATABASE crea una nueva base de datos en SQL Server. Este es el primer paso para construir cualquier aplicación de base de datos.",
+                    task: "Crea una base de datos llamada 'CompanyDB'",
+                    hint: "Usa: CREATE DATABASE NombreBaseDatos;",
+                    solution: "CREATE DATABASE CompanyDB;"
+                },
+                createTable: {
+                    title: "Crear Tabla",
+                    goal: "🎯 Aprende a crear tablas con columnas",
+                    explanation: "Las tablas almacenan datos en filas y columnas. Usa CREATE TABLE para definir la estructura. Cada columna necesita un nombre y tipo de datos. Usa IDENTITY para IDs auto-incrementales.",
+                    task: "Crea una tabla 'Employees' con columnas: EmployeeID (INT, IDENTITY), FirstName (NVARCHAR(50)), LastName (NVARCHAR(50)), HireDate (DATETIME)",
+                    hint: "CREATE TABLE NombreTabla (Columna1 TipoDatos, Columna2 TipoDatos, ...);",
+                    solution: "CREATE TABLE Employees (EmployeeID INT IDENTITY(1,1) PRIMARY KEY, FirstName NVARCHAR(50), LastName NVARCHAR(50), HireDate DATETIME);"
+                },
+                insertData: {
+                    title: "Insertar Datos",
+                    goal: "🎯 Aprende a agregar datos a las tablas",
+                    explanation: "INSERT INTO agrega nuevas filas a una tabla. Puedes insertar una o varias filas. Usa GETDATE() para la fecha/hora actual.",
+                    task: "Inserta dos empleados en la tabla Employees",
+                    hint: "INSERT INTO NombreTabla (Columna1, Columna2) VALUES (Valor1, Valor2);",
+                    solution: "INSERT INTO Employees (FirstName, LastName, HireDate) VALUES ('John', 'Doe', GETDATE()), ('Jane', 'Smith', GETDATE());"
+                },
+                selectBasic: {
+                    title: "Declaración SELECT",
+                    goal: "🎯 Aprende a consultar datos",
+                    explanation: "SELECT recupera datos de las tablas. Usa * para seleccionar todas las columnas, o especifica nombres de columnas. WHERE filtra resultados.",
+                    task: "Selecciona todos los empleados de la tabla Employees",
+                    hint: "SELECT * FROM NombreTabla;",
+                    solution: "SELECT * FROM Employees;"
+                },
+                whereClause: {
+                    title: "Cláusula WHERE",
+                    goal: "🎯 Aprende a filtrar datos",
+                    explanation: "WHERE filtra filas según condiciones. Puedes usar =, !=, >, <, >=, <=, LIKE, IN, BETWEEN, IS NULL, etc.",
+                    task: "Selecciona empleados con FirstName = 'John'",
+                    hint: "SELECT * FROM NombreTabla WHERE Columna = 'Valor';",
+                    solution: "SELECT * FROM Employees WHERE FirstName = 'John';"
+                },
+                orderBy: {
+                    title: "ORDER BY",
+                    goal: "🎯 Aprende a ordenar resultados",
+                    explanation: "ORDER BY ordena los resultados de consulta. Usa ASC para ascendente (predeterminado) o DESC para descendente.",
+                    task: "Selecciona todos los empleados ordenados por LastName",
+                    hint: "SELECT * FROM NombreTabla ORDER BY NombreColumna;",
+                    solution: "SELECT * FROM Employees ORDER BY LastName;"
+                },
+                topClause: {
+                    title: "Cláusula TOP",
+                    goal: "🎯 Aprende a limitar resultados",
+                    explanation: "TOP limita el número de filas devueltas. Este es el equivalente de SQL Server a LIMIT en otras bases de datos.",
+                    task: "Selecciona los 5 primeros empleados",
+                    hint: "SELECT TOP N * FROM NombreTabla;",
+                    solution: "SELECT TOP 5 * FROM Employees;"
+                },
+                joins: {
+                    title: "INNER JOIN",
+                    goal: "🎯 Aprende a combinar tablas",
+                    explanation: "INNER JOIN combina filas de dos tablas según una columna relacionada. Solo se devuelven las filas coincidentes.",
+                    task: "Une Employees con Departments para ver la información del departamento del empleado",
+                    hint: "SELECT * FROM Tabla1 INNER JOIN Tabla2 ON Tabla1.Columna = Tabla2.Columna;",
+                    solution: "SELECT e.FirstName, e.LastName, d.DepartmentName FROM Employees e INNER JOIN Departments d ON e.DepartmentID = d.DepartmentID;"
+                },
+                leftJoin: {
+                    title: "LEFT JOIN",
+                    goal: "🎯 Aprende uniones externas",
+                    explanation: "LEFT JOIN devuelve todas las filas de la tabla izquierda y las filas coincidentes de la tabla derecha. Se devuelve NULL cuando no hay coincidencia.",
+                    task: "Muestra todos los empleados y sus departamentos (incluyendo empleados sin departamento)",
+                    hint: "SELECT * FROM Tabla1 LEFT JOIN Tabla2 ON Tabla1.Columna = Tabla2.Columna;",
+                    solution: "SELECT e.FirstName, e.LastName, d.DepartmentName FROM Employees e LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID;"
+                },
+                groupBy: {
+                    title: "GROUP BY",
+                    goal: "🎯 Aprende a agregar datos",
+                    explanation: "GROUP BY agrupa filas con los mismos valores. Úsalo con funciones de agregación como COUNT, SUM, AVG, MIN, MAX.",
+                    task: "Cuenta empleados en cada departamento",
+                    hint: "SELECT Columna, COUNT(*) FROM NombreTabla GROUP BY Columna;",
+                    solution: "SELECT DepartmentID, COUNT(*) as EmployeeCount FROM Employees GROUP BY DepartmentID;"
+                }
+            },
+            vi: {
+                createDb: {
+                    title: "Tạo Cơ sở dữ liệu",
+                    goal: "🎯 Học cách tạo cơ sở dữ liệu mới",
+                    explanation: "Câu lệnh CREATE DATABASE tạo một cơ sở dữ liệu mới trong SQL Server. Đây là bước đầu tiên để xây dựng bất kỳ ứng dụng cơ sở dữ liệu nào.",
+                    task: "Tạo một cơ sở dữ liệu có tên 'CompanyDB'",
+                    hint: "Sử dụng: CREATE DATABASE TênCơSởDữLiệu;",
+                    solution: "CREATE DATABASE CompanyDB;"
+                },
+                createTable: {
+                    title: "Tạo Bảng",
+                    goal: "🎯 Học cách tạo bảng với các cột",
+                    explanation: "Bảng lưu trữ dữ liệu theo hàng và cột. Sử dụng CREATE TABLE để định nghĩa cấu trúc. Mỗi cột cần có tên và kiểu dữ liệu. Sử dụng IDENTITY cho ID tự động tăng.",
+                    task: "Tạo bảng 'Employees' với các cột: EmployeeID (INT, IDENTITY), FirstName (NVARCHAR(50)), LastName (NVARCHAR(50)), HireDate (DATETIME)",
+                    hint: "CREATE TABLE TênBảng (Cột1 KiểuDữLiệu, Cột2 KiểuDữLiệu, ...);",
+                    solution: "CREATE TABLE Employees (EmployeeID INT IDENTITY(1,1) PRIMARY KEY, FirstName NVARCHAR(50), LastName NVARCHAR(50), HireDate DATETIME);"
+                },
+                insertData: {
+                    title: "Chèn Dữ liệu",
+                    goal: "🎯 Học cách thêm dữ liệu vào bảng",
+                    explanation: "INSERT INTO thêm các hàng mới vào bảng. Bạn có thể chèn một hoặc nhiều hàng. Sử dụng GETDATE() cho ngày/giờ hiện tại.",
+                    task: "Chèn hai nhân viên vào bảng Employees",
+                    hint: "INSERT INTO TênBảng (Cột1, Cột2) VALUES (GiáTrị1, GiáTrị2);",
+                    solution: "INSERT INTO Employees (FirstName, LastName, HireDate) VALUES ('John', 'Doe', GETDATE()), ('Jane', 'Smith', GETDATE());"
+                },
+                selectBasic: {
+                    title: "Câu lệnh SELECT",
+                    goal: "🎯 Học cách truy vấn dữ liệu",
+                    explanation: "SELECT lấy dữ liệu từ các bảng. Sử dụng * để chọn tất cả các cột hoặc chỉ định tên cột. WHERE lọc kết quả.",
+                    task: "Chọn tất cả nhân viên từ bảng Employees",
+                    hint: "SELECT * FROM TênBảng;",
+                    solution: "SELECT * FROM Employees;"
+                },
+                whereClause: {
+                    title: "Mệnh đề WHERE",
+                    goal: "🎯 Học cách lọc dữ liệu",
+                    explanation: "WHERE lọc các hàng dựa trên điều kiện. Bạn có thể sử dụng =, !=, >, <, >=, <=, LIKE, IN, BETWEEN, IS NULL, v.v.",
+                    task: "Chọn nhân viên có FirstName = 'John'",
+                    hint: "SELECT * FROM TênBảng WHERE Cột = 'GiáTrị';",
+                    solution: "SELECT * FROM Employees WHERE FirstName = 'John';"
+                },
+                orderBy: {
+                    title: "ORDER BY",
+                    goal: "🎯 Học cách sắp xếp kết quả",
+                    explanation: "ORDER BY sắp xếp kết quả truy vấn. Sử dụng ASC cho tăng dần (mặc định) hoặc DESC cho giảm dần.",
+                    task: "Chọn tất cả nhân viên được sắp xếp theo LastName",
+                    hint: "SELECT * FROM TênBảng ORDER BY TênCột;",
+                    solution: "SELECT * FROM Employees ORDER BY LastName;"
+                },
+                topClause: {
+                    title: "Mệnh đề TOP",
+                    goal: "🎯 Học cách giới hạn kết quả",
+                    explanation: "TOP giới hạn số hàng được trả về. Đây là tương đương SQL Server với LIMIT trong các cơ sở dữ liệu khác.",
+                    task: "Chọn 5 nhân viên đầu tiên",
+                    hint: "SELECT TOP N * FROM TênBảng;",
+                    solution: "SELECT TOP 5 * FROM Employees;"
+                },
+                joins: {
+                    title: "INNER JOIN",
+                    goal: "🎯 Học cách kết hợp bảng",
+                    explanation: "INNER JOIN kết hợp các hàng từ hai bảng dựa trên một cột liên quan. Chỉ trả về các hàng khớp.",
+                    task: "Kết nối Employees với Departments để xem thông tin phòng ban của nhân viên",
+                    hint: "SELECT * FROM Bảng1 INNER JOIN Bảng2 ON Bảng1.Cột = Bảng2.Cột;",
+                    solution: "SELECT e.FirstName, e.LastName, d.DepartmentName FROM Employees e INNER JOIN Departments d ON e.DepartmentID = d.DepartmentID;"
+                },
+                leftJoin: {
+                    title: "LEFT JOIN",
+                    goal: "🎯 Học cách kết nối ngoài",
+                    explanation: "LEFT JOIN trả về tất cả các hàng từ bảng bên trái và các hàng khớp từ bảng bên phải. NULL được trả về khi không có kết quả khớp.",
+                    task: "Hiển thị tất cả nhân viên và phòng ban của họ (bao gồm nhân viên không có phòng ban)",
+                    hint: "SELECT * FROM Bảng1 LEFT JOIN Bảng2 ON Bảng1.Cột = Bảng2.Cột;",
+                    solution: "SELECT e.FirstName, e.LastName, d.DepartmentName FROM Employees e LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID;"
+                },
+                groupBy: {
+                    title: "GROUP BY",
+                    goal: "🎯 Học cách tổng hợp dữ liệu",
+                    explanation: "GROUP BY nhóm các hàng có cùng giá trị. Sử dụng với các hàm tổng hợp như COUNT, SUM, AVG, MIN, MAX.",
+                    task: "Đếm nhân viên trong mỗi phòng ban",
+                    hint: "SELECT Cột, COUNT(*) FROM TênBảng GROUP BY Cột;",
+                    solution: "SELECT DepartmentID, COUNT(*) as EmployeeCount FROM Employees GROUP BY DepartmentID;"
+                }
+            }
+        };
+
+        // Database state
+        let databases = {};
+        let currentLanguage = 'en';
+        let currentLesson = 'createDb';
+
+        // Initialize sample database
+        function initializeDatabase() {
+            databases = {
+                CompanyDB: {
+                    tables: {
+                        Employees: {
+                            columns: {
+                                EmployeeID: { type: 'INT', identity: true, primaryKey: true },
+                                FirstName: { type: 'NVARCHAR(50)' },
+                                LastName: { type: 'NVARCHAR(50)' },
+                                HireDate: { type: 'DATETIME' },
+                                DepartmentID: { type: 'INT', foreignKey: 'Departments.DepartmentID' }
+                            },
+                            data: [
+                                { EmployeeID: 1, FirstName: 'John', LastName: 'Doe', HireDate: '2024-01-15', DepartmentID: 1 },
+                                { EmployeeID: 2, FirstName: 'Jane', LastName: 'Smith', HireDate: '2024-02-20', DepartmentID: 2 },
+                                { EmployeeID: 3, FirstName: 'Bob', LastName: 'Johnson', HireDate: '2024-03-10', DepartmentID: 1 },
+                                { EmployeeID: 4, FirstName: 'Alice', LastName: 'Williams', HireDate: '2024-04-05', DepartmentID: null }
+                            ],
+                            nextId: 5
+                        },
+                        Departments: {
+                            columns: {
+                                DepartmentID: { type: 'INT', identity: true, primaryKey: true },
+                                DepartmentName: { type: 'NVARCHAR(100)' }
+                            },
+                            data: [
+                                { DepartmentID: 1, DepartmentName: 'Engineering' },
+                                { DepartmentID: 2, DepartmentName: 'Sales' },
+                                { DepartmentID: 3, DepartmentName: 'Marketing' }
+                            ],
+                            nextId: 4
+                        }
+                    }
+                }
+            };
+        }
+
+        // SQL Parser and Executor
+        class SQLExecutor {
+            constructor() {
+                this.lastResult = null;
+            }
+
+            execute(sql) {
+                sql = sql.trim();
+                
+                // CREATE DATABASE
+                if (/^CREATE\s+DATABASE\s+(\w+)/i.test(sql)) {
+                    return this.createDatabase(sql);
+                }
+                
+                // CREATE TABLE
+                if (/^CREATE\s+TABLE\s+/i.test(sql)) {
+                    return this.createTable(sql);
+                }
+                
+                // INSERT INTO
+                if (/^INSERT\s+INTO\s+/i.test(sql)) {
+                    return this.insertData(sql);
+                }
+                
+                // SELECT
+                if (/^SELECT\s+/i.test(sql)) {
+                    return this.selectData(sql);
+                }
+                
+                return { error: 'Unsupported SQL command. Try CREATE DATABASE, CREATE TABLE, INSERT INTO, or SELECT.' };
+            }
+
+            createDatabase(sql) {
+                const match = sql.match(/CREATE\s+DATABASE\s+(\w+)/i);
+                if (!match) {
+                    return { error: 'Invalid CREATE DATABASE syntax. Use: CREATE DATABASE DatabaseName;' };
+                }
+                
+                const dbName = match[1];
+                if (databases[dbName]) {
+                    return { error: `Database '${dbName}' already exists.` };
+                }
+                
+                databases[dbName] = { tables: {} };
+                return { success: true, message: `Database '${dbName}' created successfully.`, affectedRows: 0 };
+            }
+
+            createTable(sql) {
+                const match = sql.match(/CREATE\s+TABLE\s+(\w+)\s*\((.*)\)/is);
+                if (!match) {
+                    return { error: 'Invalid CREATE TABLE syntax. Use: CREATE TABLE TableName (Column1 Type, Column2 Type, ...);' };
+                }
+                
+                const tableName = match[1];
+                const columnsDef = match[2];
+                
+                // Find database (use CompanyDB as default)
+                const dbName = Object.keys(databases)[0] || 'CompanyDB';
+                if (!databases[dbName]) {
+                    databases[dbName] = { tables: {} };
+                }
+                
+                if (databases[dbName].tables[tableName]) {
+                    return { error: `Table '${tableName}' already exists.` };
+                }
+                
+                // Parse columns
+                const columns = {};
+                const parts = columnsDef.split(',').map(p => p.trim());
+                
+                for (const part of parts) {
+                    const colMatch = part.match(/(\w+)\s+((?:N?VARCHAR|INT|DATETIME)(?:\([0-9,]+\))?)\s*(IDENTITY(?:\([0-9,]+\))?)?\s*(PRIMARY\s+KEY)?/i);
+                    if (colMatch) {
+                        const colName = colMatch[1];
+                        const colType = colMatch[2];
+                        const isIdentity = !!colMatch[3];
+                        const isPrimaryKey = !!colMatch[4];
+                        
+                        columns[colName] = { 
+                            type: colType,
+                            identity: isIdentity,
+                            primaryKey: isPrimaryKey
+                        };
+                    }
+                }
+                
+                databases[dbName].tables[tableName] = {
+                    columns: columns,
+                    data: [],
+                    nextId: 1
+                };
+                
+                return { success: true, message: `Table '${tableName}' created successfully.`, affectedRows: 0 };
+            }
+
+            insertData(sql) {
+                const match = sql.match(/INSERT\s+INTO\s+(\w+)\s*\((.*?)\)\s*VALUES\s*(.+)/is);
+                if (!match) {
+                    return { error: 'Invalid INSERT syntax. Use: INSERT INTO TableName (Col1, Col2) VALUES (Val1, Val2);' };
+                }
+                
+                const tableName = match[1];
+                const columnsStr = match[2];
+                const valuesStr = match[3];
+                
+                const dbName = Object.keys(databases)[0] || 'CompanyDB';
+                if (!databases[dbName] || !databases[dbName].tables[tableName]) {
+                    return { error: `Table '${tableName}' does not exist.` };
+                }
+                
+                const table = databases[dbName].tables[tableName];
+                const columns = columnsStr.split(',').map(c => c.trim());
+                
+                // Parse multiple value sets
+                const valuesSets = [];
+                const valuesMatch = valuesStr.matchAll(/\((.*?)\)/g);
+                for (const set of valuesMatch) {
+                    const values = this.parseValues(set[1]);
+                    valuesSets.push(values);
+                }
+                
+                let rowsInserted = 0;
+                for (const values of valuesSets) {
+                    const row = {};
+                    
+                    // Handle IDENTITY columns
+                    for (const colName in table.columns) {
+                        if (table.columns[colName].identity) {
+                            row[colName] = table.nextId++;
+                        }
+                    }
+                    
+                    // Add provided values
+                    for (let i = 0; i < columns.length; i++) {
+                        let value = values[i];
+                        if (value === 'GETDATE()') {
+                            value = new Date().toISOString().split('T')[0];
+                        }
+                        row[columns[i]] = value;
+                    }
+                    
+                    table.data.push(row);
+                    rowsInserted++;
+                }
+                
+                return { success: true, message: `${rowsInserted} row(s) inserted.`, affectedRows: rowsInserted };
+            }
+
+            parseValues(valuesStr) {
+                const values = [];
+                let current = '';
+                let inString = false;
+                
+                for (let i = 0; i < valuesStr.length; i++) {
+                    const char = valuesStr[i];
+                    
+                    if (char === "'" && (i === 0 || valuesStr[i-1] !== '\\')) {
+                        inString = !inString;
+                        continue;
+                    }
+                    
+                    if (char === ',' && !inString) {
+                        values.push(current.trim());
+                        current = '';
+                        continue;
+                    }
+                    
+                    current += char;
+                }
+                
+                if (current.trim()) {
+                    values.push(current.trim());
+                }
+                
+                return values;
+            }
+
+            selectData(sql) {
+                // Parse SELECT statement
+                const topMatch = sql.match(/SELECT\s+TOP\s+(\d+)/i);
+                const top = topMatch ? parseInt(topMatch[1]) : null;
+                
+                const fromMatch = sql.match(/FROM\s+(\w+)(?:\s+(\w+))?/i);
+                if (!fromMatch) {
+                    return { error: 'Missing FROM clause.' };
+                }
+                
+                const tableName = fromMatch[1];
+                const tableAlias = fromMatch[2] || tableName;
+                
+                const dbName = Object.keys(databases)[0] || 'CompanyDB';
+                if (!databases[dbName] || !databases[dbName].tables[tableName]) {
+                    return { error: `Table '${tableName}' does not exist.` };
+                }
+                
+                let data = [...databases[dbName].tables[tableName].data];
+                
+                // Handle JOIN
+                const joinMatch = sql.match(/(?:INNER|LEFT)\s+JOIN\s+(\w+)(?:\s+(\w+))?\s+ON\s+([\w.]+)\s*=\s*([\w.]+)/i);
+                if (joinMatch) {
+                    const joinType = sql.match(/(INNER|LEFT)\s+JOIN/i)[1].toUpperCase();
+                    const joinTable = joinMatch[1];
+                    const joinAlias = joinMatch[2] || joinTable;
+                    const leftCol = joinMatch[3].split('.').pop();
+                    const rightCol = joinMatch[4].split('.').pop();
+                    
+                    if (!databases[dbName].tables[joinTable]) {
+                        return { error: `Table '${joinTable}' does not exist.` };
+                    }
+                    
+                    const joinData = databases[dbName].tables[joinTable].data;
+                    const joined = [];
+                    
+                    for (const row1 of data) {
+                        let matched = false;
+                        for (const row2 of joinData) {
+                            if (row1[leftCol] === row2[rightCol]) {
+                                const combined = { ...row1 };
+                                for (const key in row2) {
+                                    combined[`${joinAlias}_${key}`] = row2[key];
+                                }
+                                joined.push(combined);
+                                matched = true;
+                            }
+                        }
+                        
+                        if (!matched && joinType === 'LEFT') {
+                            const combined = { ...row1 };
+                            for (const key in databases[dbName].tables[joinTable].columns) {
+                                combined[`${joinAlias}_${key}`] = null;
+                            }
+                            joined.push(combined);
+                        }
+                    }
+                    
+                    data = joined;
+                }
+                
+                // WHERE clause
+                const whereMatch = sql.match(/WHERE\s+(.+?)(?:ORDER BY|GROUP BY|$)/is);
+                if (whereMatch) {
+                    const condition = whereMatch[1].trim();
+                    data = data.filter(row => this.evaluateWhere(row, condition));
+                }
+                
+                // GROUP BY
+                const groupMatch = sql.match(/GROUP BY\s+([\w,\s]+)/i);
+                if (groupMatch) {
+                    const groupCol = groupMatch[1].trim();
+                    const grouped = {};
+                    
+                    for (const row of data) {
+                        const key = row[groupCol];
+                        if (!grouped[key]) {
+                            grouped[key] = [];
+                        }
+                        grouped[key].push(row);
+                    }
+                    
+                    data = Object.entries(grouped).map(([key, rows]) => ({
+                        [groupCol]: key,
+                        EmployeeCount: rows.length
+                    }));
+                }
+                
+                // ORDER BY
+                const orderMatch = sql.match(/ORDER BY\s+([\w.]+)(?:\s+(ASC|DESC))?/i);
+                if (orderMatch) {
+                    const orderCol = orderMatch[1].split('.').pop();
+                    const direction = orderMatch[2] && orderMatch[2].toUpperCase() === 'DESC' ? -1 : 1;
+                    
+                    data.sort((a, b) => {
+                        if (a[orderCol] < b[orderCol]) return -1 * direction;
+                        if (a[orderCol] > b[orderCol]) return 1 * direction;
+                        return 0;
+                    });
+                }
+                
+                // Apply TOP
+                if (top) {
+                    data = data.slice(0, top);
+                }
+                
+                // Select columns
+                const selectMatch = sql.match(/SELECT\s+(?:TOP\s+\d+\s+)?(.*?)\s+FROM/is);
+                if (selectMatch && selectMatch[1].trim() !== '*') {
+                    const columns = selectMatch[1].split(',').map(c => {
+                        const parts = c.trim().split(/\s+as\s+/i);
+                        return { expr: parts[0], alias: parts[1] || parts[0].split('.').pop() };
+                    });
+                    
+                    data = data.map(row => {
+                        const newRow = {};
+                        for (const col of columns) {
+                            if (col.expr.includes('COUNT')) {
+                                newRow[col.alias] = row.EmployeeCount || 0;
+                            } else {
+                                const colName = col.expr.split('.').pop();
+                                newRow[col.alias] = row[colName] !== undefined ? row[colName] : row[`d_${colName}`] || row[`e_${colName}`];
+                            }
+                        }
+                        return newRow;
+                    });
+                }
+                
+                this.lastResult = data;
+                return { success: true, data: data, affectedRows: data.length };
+            }
+
+            evaluateWhere(row, condition) {
+                // Simple WHERE evaluation
+                const match = condition.match(/(\w+)\s*(=|!=|>|<|>=|<=)\s*'?([^']+)'?/);
+                if (!match) return true;
+                
+                const column = match[1];
+                const operator = match[2];
+                const value = match[3].replace(/'/g, '');
+                
+                const rowValue = row[column];
+                
+                switch (operator) {
+                    case '=': return rowValue == value;
+                    case '!=': return rowValue != value;
+                    case '>': return rowValue > value;
+                    case '<': return rowValue < value;
+                    case '>=': return rowValue >= value;
+                    case '<=': return rowValue <= value;
+                    default: return true;
+                }
+            }
+        }
+
+        const sqlExecutor = new SQLExecutor();
+
+        // Autocomplete data
+        const sqlKeywords = [
+            'SELECT', 'FROM', 'WHERE', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'DELETE',
+            'CREATE', 'TABLE', 'DATABASE', 'DROP', 'ALTER', 'JOIN', 'INNER', 'LEFT',
+            'RIGHT', 'OUTER', 'ON', 'GROUP', 'BY', 'ORDER', 'ASC', 'DESC', 'HAVING',
+            'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'TOP', 'DISTINCT', 'AS', 'AND', 'OR',
+            'NOT', 'NULL', 'IS', 'LIKE', 'IN', 'BETWEEN', 'PRIMARY', 'KEY', 'FOREIGN',
+            'IDENTITY', 'GETDATE()', 'NVARCHAR', 'INT', 'DATETIME', 'VARCHAR'
+        ];
+
+        let autocompleteIndex = 0;
+        let showingAutocomplete = false;
+        let currentSteps = [];
+        let currentStepIndex = 0;
+
+        // Code templates for quick learning
+        const codeTemplates = {
+            en: {
+                select: {
+                    name: "SELECT - Basic Query",
+                    code: "SELECT * FROM TableName;"
+                },
+                selectWhere: {
+                    name: "SELECT with WHERE",
+                    code: "SELECT column1, column2\nFROM TableName\nWHERE condition = 'value';"
+                },
+                insert: {
+                    name: "INSERT - Add Data",
+                    code: "INSERT INTO TableName (column1, column2)\nVALUES ('value1', 'value2');"
+                },
+                createTable: {
+                    name: "CREATE TABLE",
+                    code: "CREATE TABLE TableName (\n    ID INT IDENTITY(1,1) PRIMARY KEY,\n    Name NVARCHAR(50),\n    CreatedDate DATETIME\n);"
+                },
+                join: {
+                    name: "INNER JOIN",
+                    code: "SELECT a.column1, b.column2\nFROM Table1 a\nINNER JOIN Table2 b ON a.id = b.id;"
+                }
+            },
+            es: {
+                select: {
+                    name: "SELECT - Consulta Básica",
+                    code: "SELECT * FROM NombreTabla;"
+                },
+                selectWhere: {
+                    name: "SELECT con WHERE",
+                    code: "SELECT columna1, columna2\nFROM NombreTabla\nWHERE condicion = 'valor';"
+                },
+                insert: {
+                    name: "INSERT - Agregar Datos",
+                    code: "INSERT INTO NombreTabla (columna1, columna2)\nVALUES ('valor1', 'valor2');"
+                },
+                createTable: {
+                    name: "CREATE TABLE",
+                    code: "CREATE TABLE NombreTabla (\n    ID INT IDENTITY(1,1) PRIMARY KEY,\n    Nombre NVARCHAR(50),\n    FechaCreacion DATETIME\n);"
+                },
+                join: {
+                    name: "INNER JOIN",
+                    code: "SELECT a.columna1, b.columna2\nFROM Tabla1 a\nINNER JOIN Tabla2 b ON a.id = b.id;"
+                }
+            },
+            vi: {
+                select: {
+                    name: "SELECT - Truy vấn Cơ bản",
+                    code: "SELECT * FROM TênBảng;"
+                },
+                selectWhere: {
+                    name: "SELECT với WHERE",
+                    code: "SELECT cột1, cột2\nFROM TênBảng\nWHERE điềukiện = 'giátrị';"
+                },
+                insert: {
+                    name: "INSERT - Thêm Dữ liệu",
+                    code: "INSERT INTO TênBảng (cột1, cột2)\nVALUES ('giátrị1', 'giátrị2');"
+                },
+                createTable: {
+                    name: "CREATE TABLE",
+                    code: "CREATE TABLE TênBảng (\n    ID INT IDENTITY(1,1) PRIMARY KEY,\n    Tên NVARCHAR(50),\n    NgàyTạo DATETIME\n);"
+                },
+                join: {
+                    name: "INNER JOIN",
+                    code: "SELECT a.cột1, b.cột2\nFROM Bảng1 a\nINNER JOIN Bảng2 b ON a.id = b.id;"
+                }
+            }
+        };
+
+        // Step-by-step guides for each lesson
+        const stepGuides = {
+            en: {
+                createDb: [
+                    "Type 'CREATE DATABASE'",
+                    "Add the database name (e.g., 'CompanyDB')",
+                    "End with a semicolon ';'",
+                    "Click 'Run Query' to execute"
+                ],
+                selectBasic: [
+                    "Type 'SELECT *'",
+                    "Type 'FROM' followed by the table name",
+                    "End with a semicolon ';'",
+                    "Run the query to see all data"
+                ],
+                insertData: [
+                    "Type 'INSERT INTO' and the table name",
+                    "Add column names in parentheses",
+                    "Type 'VALUES' followed by the data",
+                    "Run to add the new row"
+                ]
+            },
+            es: {
+                createDb: [
+                    "Escribe 'CREATE DATABASE'",
+                    "Agrega el nombre de la base de datos (ej., 'CompanyDB')",
+                    "Termina con punto y coma ';'",
+                    "Haz clic en 'Ejecutar Consulta'"
+                ],
+                selectBasic: [
+                    "Escribe 'SELECT *'",
+                    "Escribe 'FROM' seguido del nombre de la tabla",
+                    "Termina con punto y coma ';'",
+                    "Ejecuta para ver todos los datos"
+                ],
+                insertData: [
+                    "Escribe 'INSERT INTO' y el nombre de la tabla",
+                    "Agrega los nombres de columnas entre paréntesis",
+                    "Escribe 'VALUES' seguido de los datos",
+                    "Ejecuta para agregar la nueva fila"
+                ]
+            },
+            vi: {
+                createDb: [
+                    "Gõ 'CREATE DATABASE'",
+                    "Thêm tên cơ sở dữ liệu (vd: 'CompanyDB')",
+                    "Kết thúc bằng dấu chấm phẩy ';'",
+                    "Nhấp 'Chạy Truy vấn' để thực hiện"
+                ],
+                selectBasic: [
+                    "Gõ 'SELECT *'",
+                    "Gõ 'FROM' theo sau là tên bảng",
+                    "Kết thúc bằng dấu chấm phẩy ';'",
+                    "Chạy truy vấn để xem tất cả dữ liệu"
+                ],
+                insertData: [
+                    "Gõ 'INSERT INTO' và tên bảng",
+                    "Thêm tên cột trong ngoặc đơn",
+                    "Gõ 'VALUES' theo sau là dữ liệu",
+                    "Chạy để thêm hàng mới"
+                ]
+            }
+        };
+
+        // UI Functions
+        function updateLineNumbers() {
+            const code = document.getElementById('codeInput').value;
+            const lines = code.split('\n').length;
+            const lineNumbers = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
+            document.getElementById('lineNumbers').textContent = lineNumbers;
+        }
+
+        function showAutocomplete(inputElement) {
+            const text = inputElement.value;
+            const cursorPos = inputElement.selectionStart;
+            const textBeforeCursor = text.substring(0, cursorPos);
+            const words = textBeforeCursor.split(/\s+/);
+            const currentWord = words[words.length - 1].toUpperCase();
+
+            if (currentWord.length < 2) {
+                hideAutocomplete();
+                return;
+            }
+
+            // Get matching keywords and table/column names
+            const matches = [];
+            
+            // Match SQL keywords
+            sqlKeywords.forEach(keyword => {
+                if (keyword.toUpperCase().startsWith(currentWord)) {
+                    matches.push({ text: keyword, type: 'keyword', icon: '🔤' });
+                }
+            });
+
+            // Match table names
+            for (const dbName in databases) {
+                for (const tableName in databases[dbName].tables) {
+                    if (tableName.toUpperCase().startsWith(currentWord)) {
+                        matches.push({ text: tableName, type: 'table', icon: '📋' });
+                    }
+                    
+                    // Match column names
+                    const table = databases[dbName].tables[tableName];
+                    for (const colName in table.columns) {
+                        if (colName.toUpperCase().startsWith(currentWord)) {
+                            matches.push({ text: colName, type: 'column', icon: '📊' });
+                        }
+                    }
+                }
+            }
+
+            if (matches.length === 0) {
+                hideAutocomplete();
+                return;
+            }
+
+            const dropdown = document.getElementById('autocomplete');
+            dropdown.innerHTML = '';
+            
+            matches.slice(0, 10).forEach((match, index) => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item' + (index === 0 ? ' selected' : '');
+                item.innerHTML = `
+                    <span class="autocomplete-icon">${match.icon}</span>
+                    <span>${match.text}</span>
+                    <span class="autocomplete-type">${match.type}</span>
+                `;
+                item.onclick = () => insertAutocomplete(match.text, currentWord);
+                dropdown.appendChild(item);
+            });
+
+            // Position dropdown
+            const rect = inputElement.getBoundingClientRect();
+            dropdown.style.left = '60px';
+            dropdown.style.top = (rect.height - 60) + 'px';
+            dropdown.classList.add('visible');
+            showingAutocomplete = true;
+            autocompleteIndex = 0;
+        }
+
+        function hideAutocomplete() {
+            document.getElementById('autocomplete').classList.remove('visible');
+            showingAutocomplete = false;
+        }
+
+        function insertAutocomplete(text, currentWord) {
+            const input = document.getElementById('codeInput');
+            const cursorPos = input.selectionStart;
+            const textBefore = input.value.substring(0, cursorPos);
+            const textAfter = input.value.substring(cursorPos);
+            
+            const wordStart = textBefore.lastIndexOf(currentWord);
+            const newText = textBefore.substring(0, wordStart) + text + ' ' + textAfter;
+            
+            input.value = newText;
+            input.selectionStart = input.selectionEnd = wordStart + text.length + 1;
+            input.focus();
+            
+            hideAutocomplete();
+            updateLineNumbers();
+            validateQuery();
+        }
+
+        function validateQuery() {
+            const code = document.getElementById('codeInput').value.trim().toUpperCase();
+            const feedback = document.getElementById('validationFeedback');
+            
+            if (code.length < 3) {
+                feedback.classList.remove('visible');
+                return;
+            }
+
+            feedback.classList.add('visible');
+
+            if (code.startsWith('SELECT') && !code.includes('FROM')) {
+                feedback.className = 'validation-feedback visible warning';
+                feedback.textContent = translations[currentLanguage].validation.needsFrom;
+            } else if (code.startsWith('SELECT') && code.includes('FROM') && code.split(/\s+/).length < 4) {
+                feedback.className = 'validation-feedback visible warning';
+                feedback.textContent = translations[currentLanguage].validation.needsTable;
+            } else if (code.length > 10 && !code.endsWith(';')) {
+                feedback.className = 'validation-feedback visible warning';
+                feedback.textContent = translations[currentLanguage].validation.incomplete;
+            } else if (code.endsWith(';')) {
+                feedback.className = 'validation-feedback visible success';
+                feedback.textContent = translations[currentLanguage].validation.good;
+            } else {
+                feedback.classList.remove('visible');
+            }
+        }
+
+        function showStepGuide() {
+            const guides = stepGuides[currentLanguage];
+            if (!guides || !guides[currentLesson]) {
+                showHelp("Step guides are available for select lessons.");
+                return;
+            }
+
+            currentSteps = guides[currentLesson];
+            currentStepIndex = 0;
+
+            const container = document.getElementById('stepGuideContainer');
+            let html = '<div style="margin: 10px 0; font-weight: 600; font-size: 14px;">' + 
+                       translations[currentLanguage].stepGuide + '</div>';
+            
+            currentSteps.forEach((step, index) => {
+                html += `<div class="step-guide ${index === 0 ? 'current' : ''}" id="step-${index}">
+                    <span class="step-number">${index + 1}</span>${step}
+                </div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateStepProgress() {
+            if (currentSteps.length === 0) return;
+            
+            const code = document.getElementById('codeInput').value.toUpperCase();
+            
+            // Simple progress detection
+            let progress = 0;
+            if (code.includes('SELECT') || code.includes('CREATE') || code.includes('INSERT')) progress = 1;
+            if (code.includes('FROM') || code.includes('DATABASE') || code.includes('INTO')) progress = 2;
+            if (code.includes('WHERE') || code.includes('VALUES') || code.length > 20) progress = 3;
+            if (code.endsWith(';')) progress = 4;
+            
+            currentSteps.forEach((_, index) => {
+                const step = document.getElementById(`step-${index}`);
+                if (step) {
+                    step.className = 'step-guide';
+                    if (index < progress) {
+                        step.classList.add('completed');
+                    } else if (index === progress) {
+                        step.classList.add('current');
+                    }
+                }
+            });
+        }
+
+        function showTemplates() {
+            const selector = document.getElementById('templateSelector');
+            const templates = codeTemplates[currentLanguage];
+            
+            if (selector.classList.contains('visible')) {
+                selector.classList.remove('visible');
+                return;
+            }
+
+            let html = '<div style="font-weight: 600; margin-bottom: 8px;">' + 
+                       translations[currentLanguage].templates + '</div>';
+            
+            for (const key in templates) {
+                const template = templates[key];
+                html += `<div class="template-option" onclick="insertTemplate('${key}')">
+                    ${template.name}
+                </div>`;
+            }
+            
+            selector.innerHTML = html;
+            selector.classList.add('visible');
+        }
+
+        function insertTemplate(templateKey) {
+            const template = codeTemplates[currentLanguage][templateKey];
+            if (template) {
+                document.getElementById('codeInput').value = template.code;
+                updateLineNumbers();
+                validateQuery();
+            }
+            document.getElementById('templateSelector').classList.remove('visible');
+        }
+
+        function useExample() {
+            const lesson = lessonsData[currentLanguage][currentLesson];
+            if (lesson && lesson.solution) {
+                document.getElementById('codeInput').value = lesson.solution;
+                updateLineNumbers();
+                validateQuery();
+                showHelp("Example code loaded! Study it and click Run to see the result.");
+            }
+        }
+
+        function showHelp(message) {
+            const popup = document.getElementById('helpPopup');
+            document.getElementById('helpPopupContent').innerHTML = `
+                <div style="font-size: 13px; line-height: 1.6;">${message}</div>
+            `;
+            popup.classList.add('visible');
+            
+            setTimeout(() => {
+                popup.classList.remove('visible');
+            }, 5000);
+        }
+
+        function closeHelpPopup() {
+            document.getElementById('helpPopup').classList.remove('visible');
+        }
+
+        function generateQuickInserts() {
+            const container = document.getElementById('quickInsert');
+            const lesson = lessonsData[currentLanguage][currentLesson];
+            
+            if (!lesson) return;
+
+            let keywords = [];
+            
+            // Suggest keywords based on lesson
+            if (currentLesson === 'createDb') {
+                keywords = ['CREATE DATABASE', ';'];
+            } else if (currentLesson === 'createTable') {
+                keywords = ['CREATE TABLE', 'INT', 'NVARCHAR(50)', 'PRIMARY KEY', 'IDENTITY(1,1)', ');'];
+            } else if (currentLesson === 'insertData') {
+                keywords = ['INSERT INTO', 'VALUES', '(', '),', ');'];
+            } else if (currentLesson.includes('select') || currentLesson === 'whereClause' || currentLesson === 'orderBy') {
+                keywords = ['SELECT', 'FROM', 'WHERE', 'ORDER BY', '*', ';'];
+            } else if (currentLesson.includes('join')) {
+                keywords = ['SELECT', 'FROM', 'INNER JOIN', 'LEFT JOIN', 'ON', ';'];
+            } else if (currentLesson === 'groupBy') {
+                keywords = ['SELECT', 'FROM', 'GROUP BY', 'COUNT(*)', ';'];
+            }
+
+            if (keywords.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 5px;">' + 
+                       translations[currentLanguage].quickInsert + ':</div>';
+            
+            keywords.forEach(keyword => {
+                html += `<button class="quick-btn" onclick="insertKeyword('${keyword}')">${keyword}</button>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function insertKeyword(keyword) {
+            const input = document.getElementById('codeInput');
+            const cursorPos = input.selectionStart;
+            const textBefore = input.value.substring(0, cursorPos);
+            const textAfter = input.value.substring(cursorPos);
+            
+            input.value = textBefore + keyword + ' ' + textAfter;
+            input.selectionStart = input.selectionEnd = cursorPos + keyword.length + 1;
+            input.focus();
+            
+            updateLineNumbers();
+            validateQuery();
+            updateStepProgress();
+        }
+
+        function executeQuery() {
+            const sql = document.getElementById('codeInput').value.trim();
+            if (!sql) {
+                showResult({ error: 'Please enter a SQL query.' });
+                return;
+            }
+            
+            const result = sqlExecutor.execute(sql);
+            showResult(result);
+            updateDatabaseStructure();
+        }
+
+        function showResult(result) {
+            const container = document.getElementById('resultContainer');
+            container.innerHTML = '';
+            container.classList.add('fade-in');
+            
+            if (result.error) {
+                container.innerHTML = `
+                    <div class="result-message result-error">
+                        <strong>${translations[currentLanguage].error}:</strong> ${result.error}
+                    </div>
+                `;
+            } else if (result.data) {
+                if (result.data.length === 0) {
+                    container.innerHTML = `<div class="result-message result-success">Query returned 0 rows.</div>`;
+                } else {
+                    const columns = Object.keys(result.data[0]);
+                    let html = '<table class="result-table"><thead><tr>';
+                    columns.forEach(col => {
+                        html += `<th>${col}</th>`;
+                    });
+                    html += '</tr></thead><tbody>';
+                    
+                    result.data.forEach(row => {
+                        html += '<tr>';
+                        columns.forEach(col => {
+                            html += `<td>${row[col] !== null ? row[col] : 'NULL'}</td>`;
+                        });
+                        html += '</tr>';
+                    });
+                    html += '</tbody></table>';
+                    html += `<div class="result-message result-success">${result.affectedRows} ${translations[currentLanguage].rowsAffected}</div>`;
+                    
+                    container.innerHTML = html;
+                }
+            } else {
+                container.innerHTML = `
+                    <div class="result-message result-success">
+                        ${result.message}<br>
+                        <small>${result.affectedRows} ${translations[currentLanguage].rowsAffected}</small>
+                    </div>
+                `;
+            }
+        }
+
+        function updateDatabaseStructure() {
+            const container = document.getElementById('dbStructure');
+            let html = '';
+            
+            for (const dbName in databases) {
+                html += `<div class="db-item">
+                    <div class="db-name" onclick="toggleDbStructure('${dbName}')">
+                        <span class="collapse-icon" id="icon-${dbName}">▼</span> 📁 ${dbName}
+                    </div>
+                    <div id="db-${dbName}">`;
+                
+                for (const tableName in databases[dbName].tables) {
+                    const table = databases[dbName].tables[tableName];
+                    html += `<div class="table-item" onclick="toggleTableStructure('${dbName}', '${tableName}')">
+                        <span class="collapse-icon" id="icon-${dbName}-${tableName}">▼</span> 📋 ${tableName}
+                    </div>
+                    <div id="table-${dbName}-${tableName}">`;
+                    
+                    for (const colName in table.columns) {
+                        const col = table.columns[colName];
+                        const pk = col.primaryKey ? ' <span class="pk-marker">🔑 PK</span>' : '';
+                        html += `<div class="column-item">• ${colName} (${col.type})${pk}</div>`;
+                    }
+                    
+                    html += '</div>';
+                }
+                
+                html += '</div></div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function toggleDbStructure(dbName) {
+            const element = document.getElementById(`db-${dbName}`);
+            const icon = document.getElementById(`icon-${dbName}`);
+            if (element.style.display === 'none') {
+                element.style.display = 'block';
+                icon.classList.remove('collapsed');
+            } else {
+                element.style.display = 'none';
+                icon.classList.add('collapsed');
+            }
+        }
+
+        function toggleTableStructure(dbName, tableName) {
+            const element = document.getElementById(`table-${dbName}-${tableName}`);
+            const icon = document.getElementById(`icon-${dbName}-${tableName}`);
+            if (element.style.display === 'none') {
+                element.style.display = 'block';
+                icon.classList.remove('collapsed');
+            } else {
+                element.style.display = 'none';
+                icon.classList.add('collapsed');
+            }
+        }
+
+        function loadLesson(lessonId) {
+            currentLesson = lessonId;
+            
+            // Make sure lessonsData and language exist
+            if (!lessonsData[currentLanguage]) {
+                console.error('Language not found:', currentLanguage);
+                currentLanguage = 'en'; // fallback to English
+            }
+            
+            const lesson = lessonsData[currentLanguage][lessonId];
+            
+            if (!lesson) {
+                console.error('Lesson not found:', lessonId, 'in language:', currentLanguage);
+                return;
+            }
+            
+            document.getElementById('lessonTitle').textContent = lesson.title;
+            document.getElementById('lessonGoal').textContent = lesson.goal;
+            document.getElementById('lessonExplanation').textContent = lesson.explanation;
+            document.getElementById('hintBox').textContent = lesson.hint;
+            document.getElementById('hintBox').classList.remove('visible');
+            
+            document.querySelectorAll('.lesson-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const lessonElement = document.getElementById(`lesson-${lessonId}`);
+            if (lessonElement) {
+                lessonElement.classList.add('active');
+            }
+
+            // Reset helpers
+            document.getElementById('stepGuideContainer').innerHTML = '';
+            document.getElementById('validationFeedback').classList.remove('visible');
+            currentSteps = [];
+            generateQuickInserts();
+        }
+
+        function populateLessons() {
+            const container = document.getElementById('lessonsList');
+            
+            if (!lessonsData[currentLanguage]) {
+                console.error('Language not found:', currentLanguage);
+                currentLanguage = 'en'; // fallback to English
+            }
+            
+            let html = '';
+            
+            for (const lessonId in lessonsData[currentLanguage]) {
+                const lesson = lessonsData[currentLanguage][lessonId];
+                html += `<div class="lesson-item ${lessonId === currentLesson ? 'active' : ''}" id="lesson-${lessonId}" onclick="loadLesson('${lessonId}')">
+                    ${lesson.title}
+                </div>`;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            document.getElementById('runBtnText').textContent = translations[lang].runBtn;
+            document.getElementById('clearBtnText').textContent = translations[lang].clearBtn;
+            document.getElementById('hintBtnText').textContent = translations[lang].hintBtn;
+            document.getElementById('editorTitle').textContent = translations[lang].editorTitle;
+            document.getElementById('resultsTitle').textContent = translations[lang].resultsTitle;
+            document.getElementById('resultsPlaceholder').textContent = translations[lang].resultsPlaceholder;
+            document.getElementById('lessonsTitle').textContent = translations[lang].lessonsLabel;
+            document.getElementById('dbStructureTitle').textContent = translations[lang].dbStructure;
+            
+            populateLessons();
+            loadLesson(currentLesson);
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const btn = document.getElementById('themeToggle');
+            if (document.body.classList.contains('light-theme')) {
+                btn.textContent = '☀️ Light';
+            } else {
+                btn.textContent = '🌙 Dark';
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('codeInput').addEventListener('input', updateLineNumbers);
+        document.getElementById('runBtn').addEventListener('click', executeQuery);
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('codeInput').value = '';
+            updateLineNumbers();
+        });
+        document.getElementById('hintBtn').addEventListener('click', () => {
+            document.getElementById('hintBox').classList.toggle('visible');
+        });
+        document.getElementById('langSelect').addEventListener('change', (e) => {
+            changeLanguage(e.target.value);
+        });
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        // Tab key support
+        document.getElementById('codeInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = e.target.selectionStart;
+                const end = e.target.selectionEnd;
+                e.target.value = e.target.value.substring(0, start) + '    ' + e.target.value.substring(end);
+                e.target.selectionStart = e.target.selectionEnd = start + 4;
+                updateLineNumbers();
+            }
+        });
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            initializeDatabase();
+            updateDatabaseStructure();
+            populateLessons();
+            loadLesson('createDb');
+            updateLineNumbers();
+        });
+    </script>
+</body>
+</html>
