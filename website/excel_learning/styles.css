@@ -21,6 +21,8 @@
   /* Background Colors */
   --bg: #f8fafc;
   --bg-secondary: #f1f5f9;
+  --btn-bg-secondary: #21A366;
+  --text-bg-secondary: #000000;
   --card: #ffffff;
   --nav: #21A366;
   
@@ -139,8 +141,34 @@ body.dark .luckysheet-dark-mode .luckysheet-grid-container {
 body.dark #luckysheet-container .luckysheet-cell,
 body.dark .luckysheet-dark-mode .luckysheet-cell {
   background: #fff !important;
-  color: #1e293b !important;
+  color: #000000  !important;
   border-color: #cbd5e1 !important;
+}
+body.dark #luckysheet-container .luckysheet-cell *,
+body.dark .luckysheet-dark-mode .luckysheet-cell * {
+  color: #000000 !important;
+}
+
+/* Force all text content in cells to be visible */
+#luckysheet-container .luckysheet-cell,
+#luckysheet-container .luckysheet-cell *,
+#luckysheet-container .luckysheet-cell span,
+#luckysheet-container .luckysheet-cell div {
+  color: #000000 !important;
+}
+
+body.dark #luckysheet-container .luckysheet-cell,
+body.dark #luckysheet-container .luckysheet-cell *,
+body.dark #luckysheet-container .luckysheet-cell span,
+body.dark #luckysheet-container .luckysheet-cell div {
+  color: #000000 !important;
+}
+
+body.dark #luckysheet-container .luckysheet-cell-selected,
+body.dark #luckysheet-container .luckysheet-cell-selected *,
+body.dark .luckysheet-dark-mode .luckysheet-cell-selected,
+body.dark .luckysheet-dark-mode .luckysheet-cell-selected * {
+  color: #000000 !important;
 }
 
 body.dark #luckysheet-container .luckysheet-formula-bar-content,
@@ -165,7 +193,7 @@ body.dark .luckysheet-dark-mode .luckysheet-rows-h-c {
 
 /* ==================== BASE STYLES ==================== */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   overflow-x: hidden;
   font-size: 16px;
 }
@@ -354,7 +382,8 @@ body.dark .header{
 }
 
 .btn-secondary:hover {
-  background: var(--bg-secondary);
+  background: var(--btn-bg-secondary);
+  color: var(--text-bg-secondary);
   transform: translateY(-2px);
 }
 
@@ -872,7 +901,7 @@ body.dark .header{
 
 .task-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
   padding: 1rem;
   border-radius: 10px;
@@ -880,7 +909,7 @@ body.dark .header{
   background: var(--bg-secondary);
   transition: all .3s;
   border: 2px solid transparent;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .task-item:hover {
@@ -914,6 +943,8 @@ body.dark .header{
   overflow-wrap: break-word;
   flex: 1;
   min-width: 0;
+  white-space: normal;
+  line-height: 1.6;
 }
 
 @keyframes taskComplete {
@@ -981,12 +1012,15 @@ body.dark .header{
   border-radius: 12px;
   padding: 1.25rem;
   margin-top: 1rem;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hint-box p {
   word-wrap: break-word;
   overflow-wrap: break-word;
+  white-space: normal;
+  line-height: 1.6;
+  margin: 0;
 }
 
 .hint-header {
@@ -1005,7 +1039,7 @@ body.dark .header{
   border-radius: 12px;
   padding: 1.25rem;
   margin-top: 1rem;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .explanation-box p {
@@ -1068,11 +1102,43 @@ body.dark .header{
   min-height: 400px;
   overflow: hidden;
   border-radius: 10px;
+  contain: layout style paint; /* Prevent reflow affecting parent */
 }
 
+/* Prevent all scroll-into-view behavior */
+#luckysheet-container *:focus {
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+}
+
+#luckysheet-container input:focus,
+#luckysheet-container textarea:focus,
+#luckysheet-container [contenteditable]:focus {
+  scroll-margin-block: 0 !important;
+  scroll-margin-inline: 0 !important;
+}
+
+/* Prevent unwanted scrolling behavior */
 #luckysheet-container * {
-  scroll-margin: 0;
-  scroll-padding: 0;
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+}
+
+#luckysheet-container *:focus {
+  outline: none;
+  scroll-margin: 0 !important;
+}
+
+#luckysheet-container .luckysheet-grid-container,
+#luckysheet-container .luckysheet-cell-main {
+  scroll-behavior: auto !important;
+}
+
+/* Prevent focus from triggering page scroll */
+#luckysheet-container input,
+#luckysheet-container textarea,
+#luckysheet-container [contenteditable] {
+  scroll-margin: 0 !important;
 }
 
 #luckysheet-container *:focus {
@@ -1756,4 +1822,22 @@ code,
 [class*="task"] {
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+/* ==================== FORCE BLACK TEXT IN CELLS (BOTH MODES) ==================== */
+.luckysheet-force-black-text .luckysheet-cell,
+.luckysheet-force-black-text .luckysheet-cell *,
+.luckysheet-force-black-text .luckysheet-cell span,
+.luckysheet-force-black-text .luckysheet-cell div,
+.luckysheet-force-black-text .luckysheet-cell-text,
+.luckysheet-force-black-text [data-type="inlineStr"] {
+  color: #000000 !important;
+}
+
+/* Ensure it works in dark mode too */
+body.dark .luckysheet-force-black-text .luckysheet-cell,
+body.dark .luckysheet-force-black-text .luckysheet-cell *,
+body.dark .luckysheet-force-black-text .luckysheet-cell span,
+body.dark .luckysheet-force-black-text .luckysheet-cell div {
+  color: #000000 !important;
 }
