@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Interactive Microsoft Access Learning Simulator - Educational web application for learning database fundamentals">
+    <meta name="description" content="Interactive Microsoft Access Learning Simulator - Experience database design hands-on">
     <title>Microsoft Access Learning Simulator</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,144 +11,320 @@
     <!-- Top Ribbon Header -->
     <header class="ribbon-header">
         <div class="app-branding">
-            <h1 class="app-title" data-i18n="app.title">Microsoft Access Learning Simulator</h1>
+            <div class="app-icon">📊</div>
+            <h1 class="app-title" data-i18n="app.title">Access Learning Simulator</h1>
         </div>
         
-        <nav class="ribbon-tabs" role="navigation">
+        <nav class="ribbon-tabs" role="navigation" aria-label="Main navigation">
             <button class="ribbon-tab active" data-tab="lessons" data-i18n="tabs.lessons">Lessons</button>
-            <button class="ribbon-tab" data-tab="tables" data-i18n="tabs.tables">Tables</button>
-            <button class="ribbon-tab" data-tab="queries" data-i18n="tabs.queries">Queries</button>
+            <button class="ribbon-tab" data-tab="table-design" data-i18n="tabs.tableDesign">Table Design</button>
             <button class="ribbon-tab" data-tab="relationships" data-i18n="tabs.relationships">Relationships</button>
+            <button class="ribbon-tab" data-tab="query-design" data-i18n="tabs.queryDesign">Query Design</button>
         </nav>
         
         <div class="header-controls">
-            <div class="language-switcher">
-                <button class="lang-btn active" data-lang="en" aria-label="Switch to English">EN</button>
-                <button class="lang-btn" data-lang="vi" aria-label="Switch to Vietnamese">VI</button>
+            <div class="language-selector">
+                <button class="lang-dropdown-btn" id="langDropdownBtn" aria-label="Select language">
+                    🌐 <span id="currentLangCode">EN</span> ▼
+                </button>
+                <div class="lang-dropdown-menu" id="langDropdownMenu">
+                    <input type="text" class="lang-search" id="langSearch" placeholder="Search languages..." data-i18n="language.search">
+                    <div class="lang-options" id="langOptions"></div>
+                </div>
             </div>
             <div class="progress-indicator">
                 <span data-i18n="progress.label">Progress:</span>
-                <span id="progress-count">0/15</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <span id="progress-count">0/20</span>
             </div>
         </div>
     </header>
 
     <!-- Main Container -->
     <main class="main-container">
-        <!-- Left Sidebar - Lesson Navigation -->
-        <aside class="sidebar" role="complementary">
-            <nav class="lesson-navigation">
-                <!-- Introduction Category -->
-                <section class="lesson-category">
-                    <h2 class="category-title" data-i18n="category.intro">Introduction</h2>
-                    <ul class="lesson-list">
-                        <li class="lesson-item active" data-lesson="intro-1">
-                            <span data-i18n="lesson.intro1">What is Microsoft Access?</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="intro-2">
-                            <span data-i18n="lesson.intro2">Database Fundamentals</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="intro-3">
-                            <span data-i18n="lesson.intro3">Relational Database Concepts</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                    </ul>
-                </section>
-
-                <!-- Tables & Data Category -->
-                <section class="lesson-category">
-                    <h2 class="category-title" data-i18n="category.tables">Tables & Data</h2>
-                    <ul class="lesson-list">
-                        <li class="lesson-item" data-lesson="table-1">
-                            <span data-i18n="lesson.table1">Creating Your First Table</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="table-2">
-                            <span data-i18n="lesson.table2">Understanding Data Types</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="table-3">
-                            <span data-i18n="lesson.table3">Primary Keys Explained</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="table-4">
-                            <span data-i18n="lesson.table4">Field Properties</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                    </ul>
-                </section>
-
-                <!-- Queries Category -->
-                <section class="lesson-category">
-                    <h2 class="category-title" data-i18n="category.queries">Queries</h2>
-                    <ul class="lesson-list">
-                        <li class="lesson-item" data-lesson="query-1">
-                            <span data-i18n="lesson.query1">Introduction to Queries</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="query-2">
-                            <span data-i18n="lesson.query2">SELECT Statements</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="query-3">
-                            <span data-i18n="lesson.query3">WHERE Clause Filtering</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="query-4">
-                            <span data-i18n="lesson.query4">Sorting with ORDER BY</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                    </ul>
-                </section>
-
-                <!-- Relationships Category -->
-                <section class="lesson-category">
-                    <h2 class="category-title" data-i18n="category.relationships">Relationships</h2>
-                    <ul class="lesson-list">
-                        <li class="lesson-item" data-lesson="rel-1">
-                            <span data-i18n="lesson.rel1">Table Relationships</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="rel-2">
-                            <span data-i18n="lesson.rel2">Foreign Keys</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="rel-3">
-                            <span data-i18n="lesson.rel3">One-to-Many Relationships</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                    </ul>
-                </section>
-
-                <!-- Forms & Reports Category -->
-                <section class="lesson-category">
-                    <h2 class="category-title" data-i18n="category.forms">Forms & Reports</h2>
-                    <ul class="lesson-list">
-                        <li class="lesson-item" data-lesson="form-1">
-                            <span data-i18n="lesson.form1">Introduction to Forms</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                        <li class="lesson-item" data-lesson="report-1">
-                            <span data-i18n="lesson.report1">Basic Reports</span>
-                            <span class="lesson-status"></span>
-                        </li>
-                    </ul>
-                </section>
+        <!-- Left Sidebar - Navigation Panel -->
+        <aside class="sidebar" id="sidebar" role="complementary">
+            <div class="sidebar-header">
+                <h2 data-i18n="sidebar.title">Learning Path</h2>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">◀</button>
+            </div>
+            
+            <!-- Tab Switcher in Sidebar -->
+            <div class="sidebar-tabs">
+                <button class="sidebar-tab active" data-sidebar-tab="lessons">
+                    📚 <span data-i18n="tabs.lessons">Lessons</span>
+                </button>
+                <button class="sidebar-tab" data-sidebar-tab="tables">
+                    📋 <span data-i18n="tableManagement.title">Tables</span>
+                </button>
+            </div>
+            
+            <!-- Lessons Navigation -->
+            <nav class="lesson-navigation sidebar-content active" id="lessonNavigation" data-sidebar-content="lessons">
+                <!-- Dynamically populated by JavaScript -->
             </nav>
+            
+            <!-- Table Management Panel (NEW) -->
+            <div class="table-management-panel sidebar-content" id="tableManagementPanel" data-sidebar-content="tables">
+                <div class="table-management-header">
+                    <button class="btn btn-primary btn-sm" id="newTableBtn">
+                        ➕ <span data-i18n="tableManagement.newTable">New Table</span>
+                    </button>
+                </div>
+                <div class="table-list" id="tableList">
+                    <div class="no-tables-message" data-i18n="tableManagement.noTables">
+                        No tables yet. Create your first table!
+                    </div>
+                </div>
+            </div>
         </aside>
 
         <!-- Main Workspace -->
         <section class="workspace" id="workspace" role="main">
-            <!-- Dynamic content will be loaded here by app.js -->
-            <div class="lesson-content">
-                <h2 class="lesson-title">Loading...</h2>
+            <!-- Tab: Lessons View -->
+            <div class="tab-content active" data-tab-content="lessons">
+                <div id="lessonContent" class="lesson-content">
+                    <!-- Dynamic lesson content -->
+                </div>
+                <div class="lesson-controls" id="lessonControls">
+                    <button class="btn btn-secondary" id="guideMeBtn" style="display:none;">
+                        🎯 <span data-i18n="lessons.guideMe">Guide Me</span>
+                    </button>
+                    <button class="btn btn-primary" id="nextLessonBtn" disabled>
+                        <span data-i18n="lessons.nextLesson">Next Lesson</span> →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab: Table Design View -->
+            <div class="tab-content" data-tab-content="table-design">
+                <div class="table-design-view">
+                    <div class="design-toolbar">
+                        <div class="view-switcher">
+                            <button class="view-switch-btn active" data-view="design">
+                                <span data-i18n="tableDesign.designView">Design View</span>
+                            </button>
+                            <button class="view-switch-btn" data-view="data">
+                                <span data-i18n="tableDesign.dataView">Data View</span>
+                            </button>
+                        </div>
+                        <button class="btn btn-primary" id="saveTableBtn">💾 <span data-i18n="actions.save">Save</span></button>
+                        <div class="table-name-display">
+                            <label data-i18n="tableDesign.tableName">Table:</label>
+                            <input type="text" id="currentTableName" placeholder="Enter table name" value="Table1">
+                        </div>
+                    </div>
+
+                    <!-- Design View -->
+                    <div class="table-view active" data-table-view="design">
+                        <div class="design-grid-container">
+                            <!-- Field Definition Grid -->
+                            <div class="field-definition-grid">
+                                <div class="grid-header">
+                                    <div class="col-key"></div>
+                                    <div class="col-field-name" data-i18n="tableDesign.fieldName">Field Name</div>
+                                    <div class="col-data-type" data-i18n="tableDesign.dataType">Data Type</div>
+                                    <div class="col-description" data-i18n="tableDesign.description">Description</div>
+                                </div>
+                                <div class="grid-body" id="fieldDefinitionGrid">
+                                    <!-- Field rows populated by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Field Properties Panel -->
+                            <div class="field-properties-panel">
+                                <div class="properties-tabs">
+                                    <button class="prop-tab active" data-prop-tab="general">
+                                        <span data-i18n="fieldProperties.general">General</span>
+                                    </button>
+                                    <button class="prop-tab" data-prop-tab="lookup">
+                                        <span data-i18n="fieldProperties.lookup">Lookup</span>
+                                    </button>
+                                </div>
+                                <div class="properties-content" id="fieldPropertiesContent">
+                                    <div class="no-field-selected" data-i18n="fieldProperties.noSelection">
+                                        Select a field to view its properties
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data View (NEW) -->
+                    <div class="table-view" data-table-view="data">
+                        <div class="data-view-container">
+                            <div class="data-grid-wrapper" id="dataGridWrapper">
+                                <table class="data-grid" id="dataGrid">
+                                    <!-- Data grid populated by JS -->
+                                </table>
+                            </div>
+                            <div class="data-view-toolbar">
+                                <button class="btn btn-sm btn-add" id="addRecordBtn">➕ Add Record</button>
+                                <button class="btn btn-sm btn-secondary" id="deleteRecordBtn">🗑️ Delete Selected</button>
+                                <span class="record-count" id="recordCount">0 records</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Relationships Diagram -->
+            <div class="tab-content" data-tab-content="relationships">
+                <div class="relationships-view">
+                    <div class="relationships-toolbar">
+                        <button class="btn btn-primary" id="addTableToCanvas">
+                            ➕ <span data-i18n="relationships.addTable">Add Table</span>
+                        </button>
+                        <button class="btn btn-secondary" id="clearRelationships">
+                            🗑️ <span data-i18n="relationships.clear">Clear All</span>
+                        </button>
+                        <div class="relationship-mode-toggle">
+                            <label>
+                                <input type="checkbox" id="practiceModeToggle">
+                                <span data-i18n="relationships.practiceMode">Practice Mode</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="relationships-canvas" id="relationshipsCanvas">
+                        <svg id="relationshipsSvg" class="relationships-svg">
+                            <!-- Relationship lines drawn here -->
+                        </svg>
+                        <div class="table-boxes-container" id="tableBoxesContainer">
+                            <!-- Table boxes for dragging -->
+                        </div>
+                    </div>
+
+                    <!-- Relationship Configuration Modal -->
+                    <div class="modal" id="relationshipModal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 data-i18n="relationships.createRelationship">Create Relationship</h3>
+                                <button class="modal-close" id="closeRelModal">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="relationship-config">
+                                    <div class="rel-table-info">
+                                        <div class="rel-side">
+                                            <label data-i18n="relationships.sourceTable">Source Table:</label>
+                                            <div id="relSourceTableName" class="rel-table-name"></div>
+                                            <select id="relSourceField" class="field-select"></select>
+                                        </div>
+                                        <div class="rel-arrow">→</div>
+                                        <div class="rel-side">
+                                            <label data-i18n="relationships.targetTable">Target Table:</label>
+                                            <div id="relTargetTableName" class="rel-table-name"></div>
+                                            <select id="relTargetField" class="field-select"></select>
+                                        </div>
+                                    </div>
+                                    <div class="rel-options">
+                                        <h4 data-i18n="relationships.options">Relationship Options:</h4>
+                                        <label>
+                                            <input type="checkbox" id="enforceIntegrity" checked>
+                                            <span data-i18n="relationships.enforceIntegrity">Enforce Referential Integrity</span>
+                                        </label>
+                                        <label>
+                                            <input type="checkbox" id="cascadeUpdate">
+                                            <span data-i18n="relationships.cascadeUpdate">Cascade Update Related Fields</span>
+                                        </label>
+                                        <label>
+                                            <input type="checkbox" id="cascadeDelete">
+                                            <span data-i18n="relationships.cascadeDelete">Cascade Delete Related Records</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" id="createRelationshipBtn" data-i18n="actions.create">Create</button>
+                                <button class="btn btn-secondary" id="cancelRelBtn" data-i18n="actions.cancel">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Query Design View -->
+            <div class="tab-content" data-tab-content="query-design">
+                <div class="query-design-view">
+                    <div class="query-toolbar">
+                        <button class="btn btn-primary" id="runQueryBtn">▶ <span data-i18n="query.run">Run</span></button>
+                        <button class="btn btn-secondary" id="viewSqlBtn">👁 <span data-i18n="query.viewSql">View SQL</span></button>
+                        <button class="btn btn-secondary" id="clearQueryBtn">🗑️ <span data-i18n="query.clear">Clear</span></button>
+                        <div class="view-toggle">
+                            <button class="view-btn active" data-view="design">Design View</button>
+                            <button class="view-btn" data-view="sql">SQL View</button>
+                        </div>
+                    </div>
+
+                    <div class="query-design-container">
+                        <!-- Design View -->
+                        <div class="query-view active" data-query-view="design">
+                            <!-- Top: Table Boxes -->
+                            <div class="query-tables-area" id="queryTablesArea">
+                                <div class="add-table-prompt">
+                                    <button class="btn btn-add" id="addTableToQuery">
+                                        ➕ <span data-i18n="query.addTable">Add Table</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Bottom: Query Grid -->
+                            <div class="query-grid-area">
+                                <div class="query-grid" id="queryGrid">
+                                    <div class="grid-row grid-header">
+                                        <div class="grid-cell" data-i18n="query.field">Field:</div>
+                                        <div class="grid-cell" data-i18n="query.table">Table:</div>
+                                        <div class="grid-cell" data-i18n="query.sort">Sort:</div>
+                                        <div class="grid-cell" data-i18n="query.show">Show:</div>
+                                        <div class="grid-cell" data-i18n="query.criteria">Criteria:</div>
+                                        <div class="grid-cell" data-i18n="query.or">Or:</div>
+                                    </div>
+                                    <!-- Grid columns added dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SQL View -->
+                        <div class="query-view" data-query-view="sql">
+                            <div class="sql-view-container">
+                                <div class="sql-explanation" data-i18n="query.sqlExplanation">
+                                    This is the SQL code generated from your query design:
+                                </div>
+                                <textarea id="sqlTextarea" class="sql-textarea" readonly></textarea>
+                                <div class="sql-guide" id="sqlGuide">
+                                    <!-- SQL explanation -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Query Results -->
+                        <div class="query-results" id="queryResults">
+                            <!-- Results table appears here -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
 
+    <!-- Tooltip Container -->
+    <div class="tooltip" id="tooltip" role="tooltip"></div>
+
+    <!-- Feedback Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Sidebar Toggle Button (when collapsed) -->
+    <button class="sidebar-expand-btn" id="sidebarExpandBtn" aria-label="Show sidebar">
+        ☰
+    </button>
+
     <!-- JavaScript -->
+    <script src="i18n-messages.js"></script>
+    <script src="lessons.js"></script>
+    <script src="database-engine.js"></script>
+    <script src="learning-engine.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
