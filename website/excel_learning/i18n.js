@@ -47,7 +47,7 @@ const translationsEN = {
     master: 'Master',
 
   },
-  difficulty: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
+  difficulty: { easy: 'Easy', medium: 'Medium', hard: 'Hard', professional: 'Professional',expert: 'Expert',master:'Master' },
   stats: { completed: 'Completed', streak: 'Day Streak', overall: 'Progress', badges: 'Badges' },
   achievements: {
     first: 'First Steps',
@@ -133,7 +133,7 @@ const translationsVI = {
     expert: 'Chuyên gia',
     master: 'Bậc thầy',
   },
-  difficulty: { easy: 'Dễ', medium: 'Trung bình', hard: 'Khó' },
+  difficulty: { easy: 'Dễ', medium: 'Trung bình', hard: 'Khó', rofessional:'Chuyên nghiệp' ,expert: 'Chuyên gia', master:'Bậc thầy'},
   stats: { completed: 'Hoàn thành', streak: 'Chuỗi ngày', overall: 'Tiến độ', badges: 'Huy hiệu' },
   achievements: {
     first: 'Bước Đầu',
