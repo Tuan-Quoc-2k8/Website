@@ -22,6 +22,14 @@
             --border: rgba(99, 102, 241, 0.2);
             --shadow: rgba(0, 0, 0, 0.3);
             --grid-color: rgba(99, 102, 241, 0.05);
+            
+            /* Effect customization variables */
+            --effect-duration: 0.3s;
+            --effect-intensity: 1;
+            --effect-color-1: #6366f1;
+            --effect-color-2: #818cf8;
+            --effect-blur: 10px;
+            --effect-opacity: 0.1;
         }
 
         [data-theme="light"] {
@@ -30,11 +38,16 @@
             --bg-tertiary: #e9ecef;
             --text-primary: #212529;
             --text-secondary: #6c757d;
-            --accent: #6366f1;
-            --accent-light: #818cf8;
-            --border: rgba(99, 102, 241, 0.3);
             --shadow: rgba(0, 0, 0, 0.1);
             --grid-color: rgba(99, 102, 241, 0.03);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
 
         body {
@@ -42,7 +55,7 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: background 0.3s ease;
             background-image: 
                 linear-gradient(var(--grid-color) 1px, transparent 1px),
                 linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
@@ -83,7 +96,7 @@
             position: relative;
         }
 
-        .lang-button {
+        .lang-button, .theme-toggle {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             color: var(--text-primary);
@@ -97,7 +110,7 @@
             transition: all 0.3s ease;
         }
 
-        .lang-button:hover {
+        .lang-button:hover, .theme-toggle:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px var(--shadow);
             border-color: var(--accent);
@@ -115,15 +128,16 @@
             display: none;
             z-index: 1000;
             box-shadow: 0 8px 24px var(--shadow);
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .lang-dropdown.active {
             display: block;
-            opacity: 1;
-            transform: translateY(0);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .lang-option {
@@ -143,23 +157,6 @@
         .lang-option.active {
             background: var(--accent);
             color: white;
-        }
-
-        .theme-toggle {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--shadow);
-            border-color: var(--accent);
         }
 
         .main-grid {
@@ -311,252 +308,626 @@
             overflow: hidden;
         }
 
-        .demo-element {
-            width: 220px;
-            height: 220px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
+        /* ==================== BUTTON EFFECTS ==================== */
+        
+        /* Magnetic Button */
+        .btn-magnetic {
+            --btn-bg: var(--effect-color-1);
+            --btn-color: white;
+            background: var(--btn-bg);
+            color: var(--btn-color);
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
-            transition: all 0.3s ease;
-            position: relative;
+            cursor: pointer;
+            transition: transform var(--effect-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            will-change: transform;
         }
 
-        /* Hover Effects */
-        .effect-glow {
-            box-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent-light);
+        .btn-magnetic:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 4px;
+        }
+
+        /* Liquid Fill Button */
+        .btn-liquid {
+            --btn-bg: transparent;
+            --btn-color: var(--effect-color-1);
+            --btn-fill: var(--effect-color-1);
+            background: var(--btn-bg);
+            color: var(--btn-color);
+            padding: 12px 32px;
+            border: 2px solid var(--btn-color);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.4s ease;
+            z-index: 1;
+        }
+
+        .btn-liquid::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: var(--btn-fill);
+            transition: height 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: -1;
+        }
+
+        .btn-liquid:hover {
+            color: white;
+        }
+
+        .btn-liquid:hover::before {
+            height: 100%;
+        }
+
+        /* Gradient Sweep Button */
+        .btn-gradient-sweep {
+            --btn-color-1: var(--effect-color-1);
+            --btn-color-2: var(--effect-color-2);
+            background: linear-gradient(90deg, var(--btn-color-1), var(--btn-color-2));
+            background-size: 200% 100%;
+            background-position: 100% 0;
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-position 0.5s ease;
+        }
+
+        .btn-gradient-sweep:hover {
+            background-position: 0% 0;
+        }
+
+        /* Glow Pulse Button */
+        .btn-glow-pulse {
+            --btn-glow-color: var(--effect-color-1);
+            background: var(--btn-glow-color);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
             animation: glow-pulse 2s infinite;
         }
 
         @keyframes glow-pulse {
-            0%, 100% { box-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent-light); }
-            50% { box-shadow: 0 0 50px var(--accent), 0 0 100px var(--accent-light); }
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(99, 102, 241, 0.8), 0 0 60px rgba(99, 102, 241, 0.4);
+            }
         }
 
-        .effect-magnetic {
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Neon Border Button */
+        .btn-neon {
+            --btn-neon-color: var(--effect-color-1);
+            background: transparent;
+            color: var(--btn-neon-color);
+            padding: 12px 32px;
+            border: 2px solid var(--btn-neon-color);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
         }
 
-        .effect-tilt {
-            transform: perspective(1000px) rotateX(10deg) rotateY(-10deg);
+        .btn-neon:hover {
+            box-shadow: 
+                0 0 10px var(--btn-neon-color),
+                inset 0 0 10px rgba(99, 102, 241, 0.2);
+            text-shadow: 0 0 10px var(--btn-neon-color);
         }
 
-        .effect-tilt:hover {
-            transform: perspective(1000px) rotateX(-10deg) rotateY(10deg);
-        }
-
-        /* Animation Effects */
-        .effect-aurora {
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
-            background-size: 400% 400%;
-            animation: aurora-flow 8s ease infinite;
-        }
-
-        @keyframes aurora-flow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .effect-hologram {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(129, 140, 248, 0.6));
+        /* Ripple Button */
+        .btn-ripple {
+            background: var(--effect-color-1);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
             position: relative;
             overflow: hidden;
         }
 
-        .effect-hologram::before {
+        .btn-ripple::after {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(transparent, rgba(255, 255, 255, 0.3), transparent);
-            transform: rotate(45deg);
-            animation: hologram-scan 3s linear infinite;
-        }
-
-        @keyframes hologram-scan {
-            0% { transform: translateY(-100%) rotate(45deg); }
-            100% { transform: translateY(100%) rotate(45deg); }
-        }
-
-        .effect-morphing {
-            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-            animation: morphing-blob 8s ease-in-out infinite;
-        }
-
-        @keyframes morphing-blob {
-            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-            25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-            50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
-            75% { border-radius: 60% 40% 60% 40% / 70% 30% 50% 60%; }
-        }
-
-        .effect-particles {
-            position: relative;
-        }
-
-        .effect-particles::before,
-        .effect-particles::after {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: white;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
             border-radius: 50%;
-            animation: particle-float 3s infinite;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
         }
 
-        .effect-particles::before {
-            top: 20%;
-            left: 10%;
-            animation-delay: 0s;
+        .btn-ripple:active::after {
+            width: 300px;
+            height: 300px;
         }
 
-        .effect-particles::after {
-            bottom: 20%;
-            right: 10%;
-            animation-delay: 1.5s;
-        }
-
-        @keyframes particle-float {
-            0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
-            50% { transform: translateY(-30px) scale(1.5); opacity: 1; }
-        }
-
-        /* Text Effects */
-        .effect-gradient-text {
-            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4facfe);
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradient-text-flow 3s linear infinite;
-            font-size: 32px;
-            font-weight: 800;
-        }
-
-        @keyframes gradient-text-flow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 300% 50%; }
-        }
-
-        .effect-glitch {
+        /* Press Depth Button */
+        .btn-press {
+            background: var(--effect-color-1);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 0 var(--effect-color-2), 0 8px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.1s ease;
             position: relative;
-            font-size: 28px;
-            font-weight: 800;
-        }
-
-        .effect-glitch::before,
-        .effect-glitch::after {
-            content: attr(data-text);
-            position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
         }
 
-        .effect-glitch::before {
-            animation: glitch-1 2s infinite;
-            color: #ff00ff;
-            z-index: -1;
+        .btn-press:hover {
+            top: 2px;
+            box-shadow: 0 4px 0 var(--effect-color-2), 0 6px 10px rgba(0, 0, 0, 0.3);
         }
 
-        .effect-glitch::after {
-            animation: glitch-2 2s infinite;
-            color: #00ffff;
-            z-index: -2;
+        .btn-press:active {
+            top: 6px;
+            box-shadow: 0 0 0 var(--effect-color-2), 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
-        @keyframes glitch-1 {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
+        /* Elastic Bounce Button */
+        .btn-elastic {
+            background: var(--effect-color-1);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        @keyframes glitch-2 {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(2px, -2px); }
-            40% { transform: translate(2px, 2px); }
-            60% { transform: translate(-2px, -2px); }
-            80% { transform: translate(-2px, 2px); }
+        .btn-elastic:hover {
+            transform: scale(1.05);
         }
 
-        .effect-neon-text {
-            color: #fff;
-            font-size: 32px;
-            font-weight: 800;
-            text-shadow: 
-                0 0 10px var(--accent),
-                0 0 20px var(--accent),
-                0 0 30px var(--accent),
-                0 0 40px var(--accent-light);
-            animation: neon-text-flicker 1.5s infinite alternate;
+        .btn-elastic:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
         }
 
-        @keyframes neon-text-flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                text-shadow: 
-                    0 0 10px var(--accent),
-                    0 0 20px var(--accent),
-                    0 0 30px var(--accent),
-                    0 0 40px var(--accent-light);
-            }
-            20%, 24%, 55% { text-shadow: none; }
+        /* Loading Button */
+        .btn-loading {
+            background: var(--effect-color-1);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Layout Effects */
-        .effect-glass {
+        .btn-loading.loading {
+            pointer-events: none;
+            color: transparent;
+        }
+
+        .btn-loading.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success Button */
+        .btn-success {
+            background: var(--effect-color-1);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success.success {
+            background: #10b981;
+            animation: success-pulse 0.6s ease;
+        }
+
+        @keyframes success-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* ==================== CARD EFFECTS ==================== */
+
+        .demo-card {
+            width: 280px;
+            height: 200px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        /* 3D Tilt Card */
+        .card-tilt {
+            transform-style: preserve-3d;
+            transition: transform var(--effect-duration) ease;
+            will-change: transform;
+        }
+
+        .card-tilt:hover {
+            transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+        }
+
+        /* Glassmorphism Card */
+        .card-glass {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(var(--effect-blur));
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        .effect-glass-advanced {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .effect-glass-advanced::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="n"><feTurbulence baseFrequency="0.9"/></filter><rect width="100" height="100" filter="url(%23n)" opacity="0.05"/></svg>');
-        }
-
-        .effect-gradient-border {
+        /* Gradient Border Card */
+        .card-gradient-border {
             position: relative;
             background: var(--bg-secondary);
             border: none;
         }
 
-        .effect-gradient-border::before {
+        .card-gradient-border::before {
             content: '';
             position: absolute;
             inset: 0;
-            border-radius: 16px;
-            padding: 3px;
-            background: linear-gradient(45deg, var(--accent), var(--accent-light), #ec4899, #f59e0b);
+            border-radius: 12px;
+            padding: 2px;
+            background: linear-gradient(45deg, var(--effect-color-1), var(--effect-color-2));
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
-            animation: gradient-rotate 3s linear infinite;
+            opacity: 0;
+            transition: opacity var(--effect-duration) ease;
         }
 
-        @keyframes gradient-rotate {
-            to { transform: rotate(360deg); }
+        .card-gradient-border:hover::before {
+            opacity: 1;
+        }
+
+        /* Reveal Overlay Card */
+        .card-reveal {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-reveal::after {
+            content: 'Hover Content';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--effect-color-1), var(--effect-color-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .card-reveal:hover::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Floating Card */
+        .card-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Flip Card */
+        .card-flip-container {
+            perspective: 1000px;
+            width: 280px;
+            height: 200px;
+        }
+
+        .card-flip {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card-flip:hover {
+            transform: rotateY(180deg);
+        }
+
+        .card-flip-front,
+        .card-flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card-flip-front {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .card-flip-back {
+            background: linear-gradient(135deg, var(--effect-color-1), var(--effect-color-2));
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        /* Parallax Card */
+        .card-parallax {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-parallax::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: linear-gradient(135deg, var(--effect-color-1), var(--effect-color-2));
+            opacity: 0.1;
+            transition: transform 0.3s ease;
+        }
+
+        .card-parallax:hover::before {
+            transform: translate(10px, 10px) scale(1.1);
+        }
+
+        /* Select Card */
+        .card-select {
+            cursor: pointer;
+            transition: all var(--effect-duration) ease;
+            border: 2px solid transparent;
+        }
+
+        .card-select:hover {
+            border-color: var(--effect-color-1);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .card-select.selected {
+            border-color: var(--effect-color-1);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(129, 140, 248, 0.05));
+        }
+
+        /* Expand Card */
+        .card-expand {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .card-expand:hover {
+            height: 250px;
+        }
+
+        /* ==================== MICRO-INTERACTIONS ==================== */
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--bg-tertiary);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .toggle-switch.active {
+            background: var(--effect-color-1);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(30px);
+        }
+
+        /* Animated Checkbox */
+        .checkbox-animated {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-animated.checked {
+            background: var(--effect-color-1);
+            border-color: var(--effect-color-1);
+        }
+
+        .checkbox-animated.checked::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 3px;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            animation: checkmark 0.3s ease;
+        }
+
+        @keyframes checkmark {
+            0% {
+                height: 0;
+            }
+            100% {
+                height: 12px;
+            }
+        }
+
+        /* Tab Indicator */
+        .tabs-container {
+            display: flex;
+            gap: 20px;
+            position: relative;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .tab-item.active {
+            color: var(--text-primary);
+        }
+
+        .tab-indicator {
+            position: absolute;
+            bottom: -2px;
+            height: 2px;
+            background: var(--effect-color-1);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-badge::after {
+            content: '3';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: white;
+            font-weight: 600;
+            animation: badge-pulse 2s infinite;
+        }
+
+        @keyframes badge-pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--effect-color-1), var(--effect-color-2));
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progress-shimmer 2s infinite;
+        }
+
+        @keyframes progress-shimmer {
+            0% {
+                background-position: -200px 0;
+            }
+            100% {
+                background-position: 200px 0;
+            }
         }
 
         .controls-section {
@@ -792,40 +1163,33 @@
         <div class="main-grid">
             <aside class="effects-sidebar">
                 <div class="category-section">
-                    <div class="category-title" data-i18n="categoryHover">HOVER EFFECTS</div>
-                    <div id="hover-effects"></div>
+                    <div class="category-title" data-i18n="categoryButtons">BUTTON EFFECTS</div>
+                    <div id="buttons-effects"></div>
                 </div>
                 <div class="category-section">
-                    <div class="category-title" data-i18n="categoryAnimation">ANIMATION EFFECTS</div>
-                    <div id="animation-effects"></div>
+                    <div class="category-title" data-i18n="categoryCards">CARD EFFECTS</div>
+                    <div id="cards-effects"></div>
                 </div>
                 <div class="category-section">
-                    <div class="category-title" data-i18n="categoryText">TEXT EFFECTS</div>
-                    <div id="text-effects"></div>
-                </div>
-                <div class="category-section">
-                    <div class="category-title" data-i18n="categoryLayout">LAYOUT EFFECTS</div>
-                    <div id="layout-effects"></div>
+                    <div class="category-title" data-i18n="categoryMicro">MICRO-INTERACTIONS</div>
+                    <div id="micro-effects"></div>
                 </div>
             </aside>
 
             <main class="workspace">
                 <section class="preview-section">
                     <div class="preview-header">
-                        <h2 id="effect-title">Glow Effect</h2>
+                        <h2 id="effect-title">Magnetic Button</h2>
                         <div class="preview-controls">
-                            <button class="btn btn-secondary" onclick="App.toggleAnimation()">
-                                <span id="animation-toggle" data-i18n="pause">⏸ Pause</span>
-                            </button>
                             <button class="btn" onclick="App.exportEffect()">
                                 <span data-i18n="export">📤 Export</span>
                             </button>
                         </div>
                     </div>
-                    <div class="preview-area">
-                        <div class="demo-element effect-glow" id="demo" data-text="Hover Me">
-                            <span data-i18n="hoverMe">Hover Me</span>
-                        </div>
+                    <div class="preview-area" id="preview-area">
+                        <button class="btn-magnetic" id="demo">
+                            <span data-i18n="clickMe">Click Me</span>
+                        </button>
                     </div>
                 </section>
 
@@ -861,198 +1225,287 @@
 
     <script>
         // ==================== LANGUAGE FILES ====================
-        // Simulating external language files as ES6 modules
-        
         const lang_en = {
             appTitle: "⚡ CSS Effects Studio",
-            effectsGallery: "Effects Gallery",
-            categoryHover: "HOVER EFFECTS",
-            categoryAnimation: "ANIMATION EFFECTS",
-            categoryText: "TEXT EFFECTS",
-            categoryLayout: "LAYOUT EFFECTS",
+            categoryButtons: "BUTTON EFFECTS",
+            categoryCards: "CARD EFFECTS",
+            categoryMicro: "MICRO-INTERACTIONS",
             customize: "Customize Effect",
             export: "📤 Export",
-            pause: "⏸ Pause",
-            play: "▶ Play",
             copy: "📋 Copy",
             copied: "✓ Copied!",
             toggleTheme: "Toggle Theme",
             howItWorks: "📚 How It Works",
+            clickMe: "Click Me",
             hoverMe: "Hover Me",
             duration: "Duration",
             primaryColor: "Primary Color",
             secondaryColor: "Secondary Color",
             blur: "Blur",
             opacity: "Opacity",
-            // Effect names
-            glowEffect: "✨ Glow Effect",
-            glowDesc: "Pulsing shadow animation",
-            magneticEffect: "🧲 Magnetic Hover",
-            magneticDesc: "Follows your cursor",
-            tiltEffect: "🎭 3D Tilt",
-            tiltDesc: "Perspective transform",
-            auroraEffect: "🌌 Aurora Gradient",
-            auroraDesc: "Flowing gradient colors",
-            hologramEffect: "👾 Hologram",
-            hologramDesc: "Sci-fi scanning effect",
-            morphingEffect: "🫧 Morphing Blob",
-            morphingDesc: "Shape-shifting animation",
-            particlesEffect: "✨ Particles",
-            particlesDesc: "CSS-only particles",
-            gradientTextEffect: "🌈 Gradient Text",
-            gradientTextDesc: "Flowing text gradient",
-            glitchEffect: "📺 Glitch Text",
-            glitchDesc: "Distorted RGB effect",
-            neonTextEffect: "💡 Neon Text",
-            neonTextDesc: "Flickering neon glow",
-            glassEffect: "🪟 Glassmorphism",
-            glassDesc: "Frosted glass effect",
-            glassAdvancedEffect: "🪟 Advanced Glass",
-            glassAdvancedDesc: "Glass with noise texture",
-            gradientBorderEffect: "🌈 Gradient Border",
-            gradientBorderDesc: "Animated gradient outline",
+            intensity: "Intensity",
+            // Button effects
+            btnMagnetic: "🧲 Magnetic",
+            btnMagneticDesc: "Cursor attraction effect",
+            btnLiquid: "💧 Liquid Fill",
+            btnLiquidDesc: "Fill animation on hover",
+            btnGradient: "🌈 Gradient Sweep",
+            btnGradientDesc: "Sweeping gradient effect",
+            btnGlow: "✨ Glow Pulse",
+            btnGlowDesc: "Pulsing glow animation",
+            btnNeon: "💡 Neon Border",
+            btnNeonDesc: "Neon border on hover",
+            btnRipple: "〰️ Ripple",
+            btnRippleDesc: "Click ripple effect",
+            btnPress: "👆 Press Depth",
+            btnPressDesc: "3D press animation",
+            btnElastic: "🎈 Elastic",
+            btnElasticDesc: "Bounce scale effect",
+            btnLoading: "⏳ Loading",
+            btnLoadingDesc: "Loading spinner state",
+            btnSuccess: "✓ Success",
+            btnSuccessDesc: "Success state transition",
+            // Card effects
+            cardTilt: "🎭 3D Tilt",
+            cardTiltDesc: "Perspective tilt on hover",
+            cardGlass: "🪟 Glassmorphism",
+            cardGlassDesc: "Frosted glass effect",
+            cardGradientBorder: "🌈 Gradient Border",
+            cardGradientBorderDesc: "Animated gradient border",
+            cardReveal: "👁️ Reveal Overlay",
+            cardRevealDesc: "Slide-up overlay on hover",
+            cardFloat: "☁️ Floating",
+            cardFloatDesc: "Gentle floating animation",
+            cardFlip: "🔄 Flip Card",
+            cardFlipDesc: "3D flip front/back",
+            cardParallax: "📐 Parallax",
+            cardParallaxDesc: "Parallax background shift",
+            cardSelect: "✓ Selectable",
+            cardSelectDesc: "Clickable selection state",
+            cardExpand: "📏 Expandable",
+            cardExpandDesc: "Expands on hover",
+            // Micro-interactions
+            microToggle: "🔘 Toggle Switch",
+            microToggleDesc: "Smooth toggle animation",
+            microCheckbox: "☑️ Checkbox",
+            microCheckboxDesc: "Animated checkmark",
+            microTabs: "📑 Tab Indicator",
+            microTabsDesc: "Sliding tab indicator",
+            microBadge: "🔴 Badge Pulse",
+            microBadgeDesc: "Notification badge pulse",
+            microProgress: "📊 Progress Bar",
+            microProgressDesc: "Animated progress bar",
             // Descriptions
-            glowDescription: "The glow effect uses CSS box-shadow with multiple layers and a keyframe animation to create a pulsing luminous effect. The animation alternates between different shadow intensities to simulate a glowing neon light.",
-            magneticDescription: "The magnetic hover effect uses JavaScript to track mouse position and applies smooth transform animations. The element follows your cursor with elastic easing for a natural magnetic attraction feeling.",
-            tiltDescription: "The 3D tilt effect uses CSS transform with perspective to create a three-dimensional rotation. The perspective property adds depth, while rotateX and rotateY create the tilting motion on hover.",
-            auroraDescription: "The aurora effect uses a multi-color linear gradient with background-size and background-position animation. The gradient slowly flows across the element, creating a mesmerizing aurora borealis effect.",
-            hologramDescription: "The hologram effect combines semi-transparent backgrounds with an animated pseudo-element that creates a scanning beam of light. This simulates the appearance of a futuristic holographic display.",
-            morphingDescription: "The morphing blob uses border-radius animation to continuously change the element's shape. By animating between different border-radius values, it creates an organic, shape-shifting effect.",
-            particlesDescription: "This effect uses CSS pseudo-elements (::before and ::after) with opacity and transform animations to simulate floating particles. No JavaScript or canvas required - pure CSS magic!",
-            gradientTextDescription: "The gradient text effect applies a linear gradient to text using background-clip: text and -webkit-text-fill-color: transparent. The gradient position animates to create a flowing color effect.",
-            glitchDescription: "The glitch effect uses pseudo-elements with color channels (cyan and magenta) and offset animations. The staggered transform timing creates the appearance of a digital glitch or VHS distortion.",
-            neonTextDescription: "The neon text effect uses multiple text-shadow layers with animation to create a glowing neon sign appearance. The flickering animation simulates electrical surges in neon lighting.",
-            glassDescription: "Glassmorphism creates a frosted glass appearance using backdrop-filter with blur, semi-transparent backgrounds, and subtle borders. This modern effect works best over colorful or gradient backgrounds.",
-            glassAdvancedDescription: "Advanced glassmorphism adds a noise texture overlay using SVG filter and enhanced backdrop-filter with saturation. This creates a more realistic frosted glass effect with depth and texture.",
-            gradientBorderDescription: "An animated gradient border effect created using a pseudo-element with a gradient background, mask compositing, and rotation animation. The gradient continuously rotates around the border creating a dynamic frame."
+            btnMagneticDesc_full: "The magnetic button uses JavaScript to track cursor position and applies smooth transform with elastic easing. The button follows your cursor creating a natural magnetic attraction feeling.",
+            btnLiquidDesc_full: "The liquid fill effect uses a pseudo-element (::before) with height animation and cubic-bezier easing. The fill starts from bottom and smoothly covers the button on hover.",
+            btnGradientDesc_full: "The gradient sweep uses background-position animation on a gradient that's wider than the button. On hover, the gradient position shifts to reveal the color transition.",
+            btnGlowDesc_full: "The glow pulse uses box-shadow animation with keyframes to create a pulsing luminous effect. Multiple shadow layers create depth and intensity.",
+            btnNeonDesc_full: "The neon effect combines box-shadow (both outset and inset) with text-shadow on hover to create a glowing neon sign appearance.",
+            btnRippleDesc_full: "The ripple effect uses a ::after pseudo-element that expands from the center on click. The circular expansion creates a material-design-like ripple.",
+            btnPressDesc_full: "The press depth effect uses box-shadow and position offset to simulate a 3D button press. The shadow reduces and position shifts on active state.",
+            btnElasticDesc_full: "The elastic bounce uses cubic-bezier easing with negative values to create an overshoot effect. The button scales beyond target then settles.",
+            btnLoadingDesc_full: "The loading state uses a rotating border spinner created with a ::after pseudo-element. The button text becomes transparent during loading.",
+            btnSuccessDesc_full: "The success transition changes background color and uses a scale pulse animation to provide visual feedback for successful actions.",
+            cardTiltDesc_full: "The 3D tilt uses transform-style: preserve-3d with perspective and rotation on hover. This creates a realistic 3D card tilting effect.",
+            cardGlassDesc_full: "Glassmorphism uses backdrop-filter: blur() with semi-transparent background to create a frosted glass appearance. Works best over colorful backgrounds.",
+            cardGradientBorderDesc_full: "The gradient border uses a pseudo-element with mask-composite to create a border-only gradient effect that can be animated.",
+            cardRevealDesc_full: "The reveal overlay uses a positioned pseudo-element that slides up from bottom with transform and opacity animation on hover.",
+            cardFloatDesc_full: "The floating animation uses infinite keyframe animation with translateY to create a gentle up-and-down floating motion.",
+            cardFlipDesc_full: "The flip card uses 3D transforms with backface-visibility to create a card that rotates to reveal its back side on hover.",
+            cardParallaxDesc_full: "The parallax effect uses a background pseudo-element that moves at a different rate than the card on hover, creating depth.",
+            cardSelectDesc_full: "The selectable card changes border, shadow, and background on selection to provide clear visual feedback of active state.",
+            cardExpandDesc_full: "The expandable card animates height on hover using overflow: hidden and smooth transitions to reveal more content.",
+            microToggleDesc_full: "The toggle switch uses a pseudo-element for the slider with transform animation and background color transition for smooth state changes.",
+            microCheckboxDesc_full: "The animated checkbox uses a pseudo-element for the checkmark with animated height to create a drawing effect.",
+            microTabsDesc_full: "The tab indicator is an absolutely positioned element that smoothly slides using transform to follow the active tab.",
+            microBadgeDesc_full: "The notification badge uses a pulse animation with scale to draw attention while remaining subtle and non-intrusive.",
+            microProgressDesc_full: "The progress bar animates width with a shimmer effect created by animating background-position on a gradient."
         };
 
         const lang_vi = {
             appTitle: "⚡ Phòng Thí Nghiệm CSS",
-            effectsGallery: "Bộ Sưu Tập Hiệu Ứng",
-            categoryHover: "HIỆU ỨNG HOVER",
-            categoryAnimation: "HIỆU ỨNG HOẠT CẢNH",
-            categoryText: "HIỆU ỨNG CHỮ",
-            categoryLayout: "HIỆU ỨNG BỐ CỤC",
+            categoryButtons: "HIỆU ỨNG NÚT",
+            categoryCards: "HIỆU ỨNG THẺ",
+            categoryMicro: "VI TƯƠNG TÁC",
             customize: "Tùy Chỉnh Hiệu Ứng",
             export: "📤 Xuất",
-            pause: "⏸ Tạm dừng",
-            play: "▶ Phát",
             copy: "📋 Sao chép",
             copied: "✓ Đã sao chép!",
             toggleTheme: "Đổi Giao Diện",
             howItWorks: "📚 Cách Hoạt Động",
+            clickMe: "Nhấp Vào",
             hoverMe: "Di Chuột Vào",
             duration: "Thời lượng",
             primaryColor: "Màu Chính",
             secondaryColor: "Màu Phụ",
             blur: "Độ Mờ",
             opacity: "Độ Trong Suốt",
-            // Effect names
-            glowEffect: "✨ Hiệu Ứng Phát Sáng",
-            glowDesc: "Ánh sáng nhấp nháy",
-            magneticEffect: "🧲 Hiệu Ứng Nam Châm",
-            magneticDesc: "Theo dõi con trỏ chuột",
-            tiltEffect: "🎭 Nghiêng 3D",
-            tiltDesc: "Biến đổi góc nhìn",
-            auroraEffect: "🌌 Cực Quang",
-            auroraDesc: "Màu sắc chuyển động",
-            hologramEffect: "👾 Hiệu Ứng Hologram",
-            hologramDesc: "Quét laser khoa học viễn tưởng",
-            morphingEffect: "🫧 Biến Hình",
-            morphingDesc: "Hoạt cảnh thay đổi hình dạng",
-            particlesEffect: "✨ Hạt Bay",
-            particlesDesc: "Hạt bay bằng CSS",
-            gradientTextEffect: "🌈 Chữ Chuyển Màu",
-            gradientTextDesc: "Chữ gradient chuyển động",
-            glitchEffect: "📺 Chữ Nhiễu",
-            glitchDesc: "Hiệu ứng RGB bị lỗi",
-            neonTextEffect: "💡 Chữ Neon",
-            neonTextDesc: "Ánh sáng neon nhấp nháy",
-            glassEffect: "🪟 Kính Mờ",
-            glassDesc: "Hiệu ứng kính mờ",
-            glassAdvancedEffect: "🪟 Kính Mờ Nâng Cao",
-            glassAdvancedDesc: "Kính với kết cấu nhiễu",
-            gradientBorderEffect: "🌈 Viền Chuyển Màu",
-            gradientBorderDesc: "Viền gradient xoay",
-            // Descriptions
-            glowDescription: "Hiệu ứng phát sáng sử dụng box-shadow của CSS với nhiều lớp và hoạt cảnh keyframe để tạo hiệu ứng ánh sáng nhấp nháy. Hoạt cảnh thay đổi giữa các cường độ bóng khác nhau để mô phỏng đèn neon phát sáng.",
-            magneticDescription: "Hiệu ứng nam châm sử dụng JavaScript để theo dõi vị trí chuột và áp dụng hoạt cảnh transform mượt mà. Phần tử theo con trỏ của bạn với độ co giãn tự nhiên như lực hút nam châm.",
-            tiltDescription: "Hiệu ứng nghiêng 3D sử dụng transform của CSS với perspective để tạo xoay ba chiều. Thuộc tính perspective thêm chiều sâu, trong khi rotateX và rotateY tạo chuyển động nghiêng khi di chuột.",
-            auroraDescription: "Hiệu ứng cực quang sử dụng gradient tuyến tính nhiều màu với hoạt cảnh background-size và background-position. Gradient chuyển động chậm qua phần tử, tạo hiệu ứng cực quang mê hoặc.",
-            hologramDescription: "Hiệu ứng hologram kết hợp nền bán trong suốt với phần tử giả tạo tia sáng quét. Điều này mô phỏng vẻ ngoài của màn hình hologram tương lai.",
-            morphingDescription: "Blob biến hình sử dụng hoạt cảnh border-radius để liên tục thay đổi hình dạng phần tử. Bằng cách hoạt cảnh giữa các giá trị border-radius khác nhau, nó tạo hiệu ứng thay đổi hình dạng tự nhiên.",
-            particlesDescription: "Hiệu ứng này sử dụng phần tử giả CSS (::before và ::after) với hoạt cảnh opacity và transform để mô phỏng hạt bay. Không cần JavaScript hay canvas - chỉ CSS thuần túy!",
-            gradientTextDescription: "Hiệu ứng chữ gradient áp dụng gradient tuyến tính lên chữ bằng background-clip: text và -webkit-text-fill-color: transparent. Vị trí gradient hoạt cảnh tạo hiệu ứng màu chảy.",
-            glitchDescription: "Hiệu ứng nhiễu sử dụng phần tử giả với kênh màu (cyan và magenta) và hoạt cảnh offset. Thời gian transform lệch nhau tạo vẻ ngoài của lỗi kỹ thuật số hoặc méo VHS.",
-            neonTextDescription: "Hiệu ứng chữ neon sử dụng nhiều lớp text-shadow với hoạt cảnh để tạo vẻ ngoài biển hiệu neon phát sáng. Hoạt cảnh nhấp nháy mô phỏng dòng điện trong đèn neon.",
-            glassDescription: "Glassmorphism tạo vẻ ngoài kính mờ bằng backdrop-filter với blur, nền bán trong suốt và viền tinh tế. Hiệu ứng hiện đại này hoạt động tốt nhất trên nền có màu sắc hoặc gradient.",
-            glassAdvancedDescription: "Glassmorphism nâng cao thêm lớp kết cấu nhiễu bằng bộ lọc SVG và backdrop-filter nâng cao với độ bão hòa. Điều này tạo hiệu ứng kính mờ chân thực hơn với chiều sâu và kết cấu.",
-            gradientBorderDescription: "Hiệu ứng viền gradient hoạt cảnh được tạo bằng phần tử giả với nền gradient, mask compositing và hoạt cảnh xoay. Gradient liên tục xoay quanh viền tạo khung động."
+            intensity: "Cường Độ",
+            btnMagnetic: "🧲 Nam Châm",
+            btnMagneticDesc: "Hiệu ứng hút con trỏ",
+            btnLiquid: "💧 Đổ Đầy",
+            btnLiquidDesc: "Hoạt cảnh đổ đầy khi hover",
+            btnGradient: "🌈 Chuyển Màu",
+            btnGradientDesc: "Hiệu ứng chuyển màu gradient",
+            btnGlow: "✨ Phát Sáng",
+            btnGlowDesc: "Hoạt cảnh phát sáng nhấp nháy",
+            btnNeon: "💡 Viền Neon",
+            btnNeonDesc: "Viền neon khi hover",
+            btnRipple: "〰️ Gợn Sóng",
+            btnRippleDesc: "Hiệu ứng gợn sóng khi nhấp",
+            btnPress: "👆 Nhấn Sâu",
+            btnPressDesc: "Hoạt cảnh nhấn 3D",
+            btnElastic: "🎈 Đàn Hồi",
+            btnElasticDesc: "Hiệu ứng co giãn",
+            btnLoading: "⏳ Đang Tải",
+            btnLoadingDesc: "Trạng thái đang tải",
+            btnSuccess: "✓ Thành Công",
+            btnSuccessDesc: "Chuyển đổi trạng thái thành công",
+            cardTilt: "🎭 Nghiêng 3D",
+            cardTiltDesc: "Nghiêng góc nhìn khi hover",
+            cardGlass: "🪟 Kính Mờ",
+            cardGlassDesc: "Hiệu ứng kính mờ",
+            cardGradientBorder: "🌈 Viền Chuyển Màu",
+            cardGradientBorderDesc: "Viền gradient hoạt cảnh",
+            cardReveal: "👁️ Hiện Lớp Phủ",
+            cardRevealDesc: "Lớp phủ trượt lên khi hover",
+            cardFloat: "☁️ Bay Lơ Lửng",
+            cardFloatDesc: "Hoạt cảnh bay nhẹ nhàng",
+            cardFlip: "🔄 Lật Thẻ",
+            cardFlipDesc: "Lật 3D mặt trước/sau",
+            cardParallax: "📐 Thị Sai",
+            cardParallaxDesc: "Dịch nền thị sai",
+            cardSelect: "✓ Có Thể Chọn",
+            cardSelectDesc: "Trạng thái chọn khi nhấp",
+            cardExpand: "📏 Mở Rộng",
+            cardExpandDesc: "Mở rộng khi hover",
+            microToggle: "🔘 Công Tắc",
+            microToggleDesc: "Hoạt cảnh công tắc mượt",
+            microCheckbox: "☑️ Hộp Kiểm",
+            microCheckboxDesc: "Dấu kiểm hoạt cảnh",
+            microTabs: "📑 Chỉ Báo Tab",
+            microTabsDesc: "Chỉ báo tab trượt",
+            microBadge: "🔴 Huy Hiệu Nhấp Nháy",
+            microBadgeDesc: "Huy hiệu thông báo nhấp nháy",
+            microProgress: "📊 Thanh Tiến Độ",
+            microProgressDesc: "Thanh tiến độ hoạt cảnh",
+            btnMagneticDesc_full: "Nút nam châm sử dụng JavaScript để theo dõi vị trí con trỏ và áp dụng transform mượt mà với độ co giãn tự nhiên. Nút theo con trỏ tạo cảm giác hút nam châm.",
+            btnLiquidDesc_full: "Hiệu ứng đổ đầy sử dụng phần tử giả (::before) với hoạt cảnh chiều cao và cubic-bezier. Màu đổ đầy từ dưới lên và phủ kín nút khi hover.",
+            btnGradientDesc_full: "Chuyển màu gradient sử dụng hoạt cảnh background-position trên gradient rộng hơn nút. Khi hover, vị trí gradient dịch chuyển để hiện chuyển màu.",
+            btnGlowDesc_full: "Phát sáng nhấp nháy sử dụng hoạt cảnh box-shadow với keyframes để tạo hiệu ứng ánh sáng rực rỡ. Nhiều lớp bóng tạo chiều sâu.",
+            btnNeonDesc_full: "Hiệu ứng neon kết hợp box-shadow (cả bên ngoài và bên trong) với text-shadow khi hover để tạo vẻ ngoài biển hiệu neon phát sáng.",
+            btnRippleDesc_full: "Hiệu ứng gợn sóng sử dụng phần tử giả ::after mở rộng từ trung tâm khi nhấp. Sự mở rộng hình tròn tạo gợn sóng kiểu material-design.",
+            btnPressDesc_full: "Hiệu ứng nhấn sâu sử dụng box-shadow và offset vị trí để mô phỏng nút nhấn 3D. Bóng giảm và vị trí dịch khi ở trạng thái active.",
+            btnElasticDesc_full: "Đàn hồi nảy sử dụng cubic-bezier với giá trị âm để tạo hiệu ứng vượt quá. Nút scale vượt mục tiêu rồi ổn định.",
+            btnLoadingDesc_full: "Trạng thái đang tải sử dụng spinner viền xoay được tạo bằng phần tử giả ::after. Chữ trong nút trở nên trong suốt khi đang tải.",
+            btnSuccessDesc_full: "Chuyển đổi thành công thay đổi màu nền và sử dụng hoạt cảnh scale pulse để cung cấp phản hồi trực quan cho hành động thành công.",
+            cardTiltDesc_full: "Nghiêng 3D sử dụng transform-style: preserve-3d với perspective và rotation khi hover. Tạo hiệu ứng nghiêng thẻ 3D chân thực.",
+            cardGlassDesc_full: "Glassmorphism sử dụng backdrop-filter: blur() với nền bán trong suốt để tạo vẻ ngoài kính mờ. Hoạt động tốt nhất trên nền nhiều màu.",
+            cardGradientBorderDesc_full: "Viền gradient sử dụng phần tử giả với mask-composite để tạo hiệu ứng gradient chỉ ở viền có thể hoạt cảnh.",
+            cardRevealDesc_full: "Lớp phủ hiện ra sử dụng phần tử giả được định vị trượt lên từ dưới với transform và opacity khi hover.",
+            cardFloatDesc_full: "Hoạt cảnh bay lơ lửng sử dụng keyframe animation vô hạn với translateY để tạo chuyển động nhẹ nhàng lên xuống.",
+            cardFlipDesc_full: "Thẻ lật sử dụng transform 3D với backface-visibility để tạo thẻ xoay hiện mặt sau khi hover.",
+            cardParallaxDesc_full: "Hiệu ứng thị sai sử dụng phần tử giả nền di chuyển với tốc độ khác so với thẻ khi hover, tạo chiều sâu.",
+            cardSelectDesc_full: "Thẻ có thể chọn thay đổi viền, bóng và nền khi được chọn để cung cấp phản hồi trực quan rõ ràng về trạng thái active.",
+            cardExpandDesc_full: "Thẻ mở rộng hoạt cảnh chiều cao khi hover sử dụng overflow: hidden và transition mượt để hiện thêm nội dung.",
+            microToggleDesc_full: "Công tắc toggle sử dụng phần tử giả cho slider với hoạt cảnh transform và chuyển màu nền cho thay đổi trạng thái mượt mà.",
+            microCheckboxDesc_full: "Hộp kiểm hoạt cảnh sử dụng phần tử giả cho dấu kiểm với chiều cao hoạt cảnh để tạo hiệu ứng vẽ.",
+            microTabsDesc_full: "Chỉ báo tab là phần tử định vị tuyệt đối trượt mượt mà bằng transform để theo tab đang active.",
+            microBadgeDesc_full: "Huy hiệu thông báo sử dụng hoạt cảnh pulse với scale để thu hút sự chú ý trong khi vẫn tinh tế.",
+            microProgressDesc_full: "Thanh tiến độ hoạt cảnh width với hiệu ứng lấp lánh được tạo bằng hoạt cảnh background-position trên gradient."
         };
 
         const lang_ja = {
             appTitle: "⚡ CSSエフェクトスタジオ",
-            effectsGallery: "エフェクトギャラリー",
-            categoryHover: "ホバーエフェクト",
-            categoryAnimation: "アニメーションエフェクト",
-            categoryText: "テキストエフェクト",
-            categoryLayout: "レイアウトエフェクト",
+            categoryButtons: "ボタンエフェクト",
+            categoryCards: "カードエフェクト",
+            categoryMicro: "マイクロインタラクション",
             customize: "エフェクトをカスタマイズ",
             export: "📤 エクスポート",
-            pause: "⏸ 一時停止",
-            play: "▶ 再生",
             copy: "📋 コピー",
             copied: "✓ コピーしました！",
             toggleTheme: "テーマ切替",
             howItWorks: "📚 仕組み",
+            clickMe: "クリックしてね",
             hoverMe: "ホバーしてね",
             duration: "期間",
             primaryColor: "プライマリカラー",
             secondaryColor: "セカンダリカラー",
             blur: "ぼかし",
             opacity: "不透明度",
-            // Effect names
-            glowEffect: "✨ グローエフェクト",
-            glowDesc: "パルス状の影アニメーション",
-            magneticEffect: "🧲 マグネットホバー",
-            magneticDesc: "カーソルを追跡",
-            tiltEffect: "🎭 3Dチルト",
-            tiltDesc: "パースペクティブ変換",
-            auroraEffect: "🌌 オーロラグラデーション",
-            auroraDesc: "流れるグラデーションカラー",
-            hologramEffect: "👾 ホログラム",
-            hologramDesc: "SFスキャンエフェクト",
-            morphingEffect: "🫧 モーフィングブロブ",
-            morphingDesc: "形状変化アニメーション",
-            particlesEffect: "✨ パーティクル",
-            particlesDesc: "CSSのみのパーティクル",
-            gradientTextEffect: "🌈 グラデーションテキスト",
-            gradientTextDesc: "流れるテキストグラデーション",
-            glitchEffect: "📺 グリッチテキスト",
-            glitchDesc: "歪んだRGBエフェクト",
-            neonTextEffect: "💡 ネオンテキスト",
-            neonTextDesc: "点滅するネオングロー",
-            glassEffect: "🪟 グラスモーフィズム",
-            glassDesc: "曇りガラス効果",
-            glassAdvancedEffect: "🪟 高度なガラス",
-            glassAdvancedDesc: "ノイズテクスチャ付きガラス",
-            gradientBorderEffect: "🌈 グラデーションボーダー",
-            gradientBorderDesc: "アニメーション付きグラデーションアウトライン",
-            // Descriptions
-            glowDescription: "グローエフェクトは、CSSのbox-shadowを複数レイヤーとキーフレームアニメーションで使用して、パルス状の発光効果を作成します。アニメーションは異なる影の強度を交互に変えて、ネオンライトの輝きをシミュレートします。",
-            magneticDescription: "マグネットホバーエフェクトは、JavaScriptを使用してマウス位置を追跡し、スムーズな変形アニメーションを適用します。要素は磁気引力のような自然な感覚で、カーソルに追従します。",
-            tiltDescription: "3Dチルトエフェクトは、パースペクティブを持つCSS変形を使用して3次元回転を作成します。perspectiveプロパティが深度を追加し、rotateXとrotateYがホバー時の傾斜動作を作成します。",
-            auroraDescription: "オーロラエフェクトは、background-sizeとbackground-positionアニメーションを持つ多色線形グラデーションを使用します。グラデーションは要素全体をゆっくりと流れ、魅惑的なオーロラ効果を作り出します。",
-            hologramDescription: "ホログラムエフェクトは、半透明の背景と光のスキャンビームを作成するアニメーション化された擬似要素を組み合わせます。これは未来的なホログラフィックディスプレイの外観をシミュレートします。",
-            morphingDescription: "モーフィングブロブは、border-radiusアニメーションを使用して要素の形状を継続的に変更します。異なるborder-radius値の間をアニメーション化することで、有機的な形状変化効果を作成します。",
-            particlesDescription: "このエフェクトは、opacityとtransformアニメーションを持つCSS擬似要素（::beforeと::after）を使用して浮遊粒子をシミュレートします。JavaScriptやcanvasは不要 - 純粋なCSSマジック！",
-            gradientTextDescription: "グラデーションテキストエフェクトは、background-clip: textと-webkit-text-fill-color: transparentを使用してテキストに線形グラデーションを適用します。グラデーション位置がアニメーション化され、流れる色効果を作成します。",
-            glitchDescription: "グリッチエフェクトは、カラーチャンネル（シアンとマゼンタ）とオフセットアニメーションを持つ擬似要素を使用します。ずらされたtransformタイミングがデジタルグリッチやVHS歪みの外観を作成します。",
-            neonTextDescription: "ネオンテキストエフェクトは、アニメーション付きの複数のtext-shadowレイヤーを使用して、輝くネオンサインの外観を作成します。点滅アニメーションはネオン照明の電気サージをシミュレートします。",
-            glassDescription: "グラスモーフィズムは、ブラー付きbackdrop-filter、半透明背景、微妙なボーダーを使用して曇りガラスの外観を作成します。この現代的なエフェクトは、カラフルまたはグラデーション背景で最もよく機能します。",
-            glassAdvancedDescription: "高度なグラスモーフィズムは、SVGフィルターと彩度付きの強化されたbackdrop-filterを使用してノイズテクスチャオーバーレイを追加します。これにより、深度とテクスチャを持つ、よりリアルな曇りガラス効果が作成されます。",
-            gradientBorderDescription: "アニメーション化されたグラデーションボーダーエフェクトは、グラデーション背景、マスクコンポジティング、回転アニメーションを持つ擬似要素を使用して作成されます。グラデーションはボーダーの周りを継続的に回転し、ダイナミックなフレームを作成します。"
+            intensity: "強度",
+            btnMagnetic: "🧲 マグネット",
+            btnMagneticDesc: "カーソル吸引効果",
+            btnLiquid: "💧 リキッドフィル",
+            btnLiquidDesc: "ホバーで塗りつぶしアニメ",
+            btnGradient: "🌈 グラデーションスイープ",
+            btnGradientDesc: "グラデーション移動効果",
+            btnGlow: "✨ グローパルス",
+            btnGlowDesc: "パルス発光アニメーション",
+            btnNeon: "💡 ネオンボーダー",
+            btnNeonDesc: "ホバーでネオンボーダー",
+            btnRipple: "〰️ リップル",
+            btnRippleDesc: "クリックでリップル効果",
+            btnPress: "👆 プレス深度",
+            btnPressDesc: "3Dプレスアニメーション",
+            btnElastic: "🎈 エラスティック",
+            btnElasticDesc: "バウンススケール効果",
+            btnLoading: "⏳ ローディング",
+            btnLoadingDesc: "ローディング状態",
+            btnSuccess: "✓ 成功",
+            btnSuccessDesc: "成功状態の遷移",
+            cardTilt: "🎭 3Dチルト",
+            cardTiltDesc: "ホバーでパースチルト",
+            cardGlass: "🪟 グラスモーフィズム",
+            cardGlassDesc: "曇りガラス効果",
+            cardGradientBorder: "🌈 グラデーションボーダー",
+            cardGradientBorderDesc: "アニメーションボーダー",
+            cardReveal: "👁️ オーバーレイ表示",
+            cardRevealDesc: "ホバーでスライドアップ",
+            cardFloat: "☁️ フローティング",
+            cardFloatDesc: "優しいフローティング",
+            cardFlip: "🔄 フリップカード",
+            cardFlipDesc: "3D反転前後",
+            cardParallax: "📐 パララックス",
+            cardParallaxDesc: "パララックス背景移動",
+            cardSelect: "✓ 選択可能",
+            cardSelectDesc: "クリック選択状態",
+            cardExpand: "📏 拡張可能",
+            cardExpandDesc: "ホバーで拡張",
+            microToggle: "🔘 トグルスイッチ",
+            microToggleDesc: "スムーズトグルアニメ",
+            microCheckbox: "☑️ チェックボックス",
+            microCheckboxDesc: "アニメーションチェック",
+            microTabs: "📑 タブインジケータ",
+            microTabsDesc: "スライドタブインジケータ",
+            microBadge: "🔴 バッジパルス",
+            microBadgeDesc: "通知バッジパルス",
+            microProgress: "📊 プログレスバー",
+            microProgressDesc: "アニメーションプログレス",
+            btnMagneticDesc_full: "マグネットボタンはJavaScriptを使用してカーソル位置を追跡し、エラスティックイージングでスムーズな変形を適用します。ボタンがカーソルに追従し、自然な磁気引力の感覚を作り出します。",
+            btnLiquidDesc_full: "リキッドフィルエフェクトは、疑似要素(::before)を使用して高さアニメーションとcubic-bezierイージングを実現します。塗りつぶしは下から始まり、ホバー時にボタンをスムーズにカバーします。",
+            btnGradientDesc_full: "グラデーションスイープは、ボタンよりも広いグラデーションのbackground-positionアニメーションを使用します。ホバー時にグラデーション位置がシフトして色の遷移を表示します。",
+            btnGlowDesc_full: "グローパルスは、キーフレームを使用したbox-shadowアニメーションでパルス発光効果を作成します。複数のシャドウレイヤーが深度と強度を作り出します。",
+            btnNeonDesc_full: "ネオンエフェクトは、ホバー時にbox-shadow(外側と内側の両方)とtext-shadowを組み合わせて、輝くネオンサインの外観を作成します。",
+            btnRippleDesc_full: "リップルエフェクトは、クリック時に中心から拡大する::after疑似要素を使用します。円形の拡大がマテリアルデザインのようなリップルを作成します。",
+            btnPressDesc_full: "プレス深度エフェクトは、box-shadowと位置オフセットを使用して3Dボタンプレスをシミュレートします。アクティブ状態でシャドウが減少し、位置がシフトします。",
+            btnElasticDesc_full: "エラスティックバウンスは、負の値を持つcubic-bezierイージングを使用してオーバーシュート効果を作成します。ボタンがターゲットを超えてスケールし、その後落ち着きます。",
+            btnLoadingDesc_full: "ローディング状態は、::after疑似要素で作成された回転するボーダースピナーを使用します。ローディング中はボタンのテキストが透明になります。",
+            btnSuccessDesc_full: "成功遷移は背景色を変更し、スケールパルスアニメーションを使用して成功したアクションの視覚的フィードバックを提供します。",
+            cardTiltDesc_full: "3Dチルトは、transform-style: preserve-3dをホバー時のperspectiveとrotationで使用します。これにより、リアルな3Dカード傾斜効果が作成されます。",
+            cardGlassDesc_full: "グラスモーフィズムは、backdrop-filter: blur()と半透明の背景を使用して曇りガラスの外観を作成します。カラフルな背景で最もよく機能します。",
+            cardGradientBorderDesc_full: "グラデーションボーダーは、mask-compositeを使用した疑似要素を使用して、アニメーション可能なボーダーのみのグラデーション効果を作成します。",
+            cardRevealDesc_full: "オーバーレイ表示は、ホバー時にtransformとopacityアニメーションで下から上にスライドする配置された疑似要素を使用します。",
+            cardFloatDesc_full: "フローティングアニメーションは、translateYを使用した無限のキーフレームアニメーションを使用して、優しい上下のフローティングモーションを作成します。",
+            cardFlipDesc_full: "フリップカードは、backface-visibilityを使用した3Dトランスフォームを使用して、ホバー時に裏面を表示するために回転するカードを作成します。",
+            cardParallaxDesc_full: "パララックスエフェクトは、ホバー時にカードとは異なる速度で移動する背景疑似要素を使用して深度を作成します。",
+            cardSelectDesc_full: "選択可能なカードは、選択時にボーダー、シャドウ、背景を変更して、アクティブ状態の明確な視覚的フィードバックを提供します。",
+            cardExpandDesc_full: "拡張可能なカードは、overflow: hiddenとスムーズなトランジションを使用してホバー時に高さをアニメーション化し、より多くのコンテンツを表示します。",
+            microToggleDesc_full: "トグルスイッチは、スライダー用の疑似要素を使用し、transformアニメーションと背景色の遷移でスムーズな状態変化を実現します。",
+            microCheckboxDesc_full: "アニメーションチェックボックスは、チェックマーク用の疑似要素を使用し、高さをアニメーション化して描画効果を作成します。",
+            microTabsDesc_full: "タブインジケータは、transformを使用してアクティブなタブに従ってスムーズにスライドする絶対配置の要素です。",
+            microBadgeDesc_full: "通知バッジは、scaleを使用したパルスアニメーションを使用して、控えめながら注意を引きます。",
+            microProgressDesc_full: "プログレスバーは、グラデーションのbackground-positionをアニメーション化して作成されたシマー効果でwidthをアニメーション化します。"
         };
 
         // ==================== LANGUAGE MANAGER ====================
@@ -1060,12 +1513,10 @@
             current: localStorage.getItem('cssStudioLang') || 'en',
             languages: { en: lang_en, vi: lang_vi, ja: lang_ja },
             
-            // Get translation for a key
             t(key) {
                 return this.languages[this.current][key] || key;
             },
             
-            // Set language and update UI
             setLanguage(lang) {
                 if (this.languages[lang]) {
                     this.current = lang;
@@ -1074,7 +1525,6 @@
                 }
             },
             
-            // Update all translatable elements
             updateUI() {
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.getAttribute('data-i18n');
@@ -1087,19 +1537,13 @@
                     }
                 });
                 
-                // Update current language display
                 const langMap = { en: 'EN', vi: 'VI', ja: '日本' };
                 document.getElementById('current-lang').textContent = langMap[this.current];
                 
-                // Update active language option
-                document.querySelectorAll('.lang-option').forEach(opt => {
-                    opt.classList.remove('active');
-                });
+                document.querySelectorAll('.lang-option').forEach(opt => opt.classList.remove('active'));
                 
-                // Re-render effects with new language
                 App.renderEffects();
                 
-                // Update current effect display
                 if (App.currentEffect) {
                     App.selectEffect(App.currentEffect);
                 }
@@ -1108,482 +1552,1100 @@
 
         // ==================== EFFECTS LIBRARY ====================
         const EffectsLibrary = {
-            hover: [
+            buttons: [
                 {
-                    id: 'glow',
-                    icon: '✨',
-                    class: 'effect-glow',
-                    nameKey: 'glowEffect',
-                    descKey: 'glowDesc',
-                    fullDescKey: 'glowDescription',
+                    id: 'btn-magnetic',
+                    nameKey: 'btnMagnetic',
+                    descKey: 'btnMagneticDesc',
+                    fullDescKey: 'btnMagneticDesc_full',
+                    demoHTML: '<button class="btn-magnetic" id="demo">Click Me</button>',
                     properties: [
-                        { name: 'box-shadow:', value: ' 0 0 30px color, 0 0 60px color' },
-                        { name: 'animation:', value: ' glow-pulse 2s infinite' }
+                        { name: 'transition:', value: ' transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)' },
+                        { name: 'will-change:', value: ' transform' }
                     ],
-                    html: `<div class="glow-effect">
-  Hover Me
-</div>`,
-                    css: `.glow-effect {
-  box-shadow: 0 0 30px #6366f1, 0 0 60px #818cf8;
+                    html: `<button class="btn-magnetic">Click Me</button>`,
+                    css: `.btn-magnetic {
+  --btn-bg: #6366f1;
+  --btn-color: white;
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: transform;
+}
+
+.btn-magnetic:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 4px;
+}`,
+                    js: `const btn = document.querySelector('.btn-magnetic');
+const strength = 0.3;
+
+btn.addEventListener('mousemove', (e) => {
+  const rect = btn.getBoundingClientRect();
+  const x = (e.clientX - rect.left - rect.width / 2) * strength;
+  const y = (e.clientY - rect.top - rect.height / 2) * strength;
+  btn.style.transform = \`translate(\${x}px, \${y}px)\`;
+});
+
+btn.addEventListener('mouseleave', () => {
+  btn.style.transform = 'translate(0, 0)';
+});`,
+                    controls: ['duration', 'primaryColor', 'intensity'],
+                    needsJS: true
+                },
+                {
+                    id: 'btn-liquid',
+                    nameKey: 'btnLiquid',
+                    descKey: 'btnLiquidDesc',
+                    fullDescKey: 'btnLiquidDesc_full',
+                    demoHTML: '<button class="btn-liquid" id="demo">Hover Me</button>',
+                    properties: [
+                        { name: '::before:', value: ' pseudo-element for fill effect' },
+                        { name: 'transition:', value: ' height 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)' }
+                    ],
+                    html: `<button class="btn-liquid">Hover Me</button>`,
+                    css: `.btn-liquid {
+  --btn-color: #6366f1;
+  --btn-fill: #6366f1;
+  background: transparent;
+  color: var(--btn-color);
+  padding: 12px 32px;
+  border: 2px solid var(--btn-color);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.4s ease;
+  z-index: 1;
+}
+
+.btn-liquid::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--btn-fill);
+  transition: height 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: -1;
+}
+
+.btn-liquid:hover {
+  color: white;
+}
+
+.btn-liquid:hover::before {
+  height: 100%;
+}`,
+                    js: `// No JavaScript required!
+// Pure CSS effect`,
+                    controls: ['duration', 'primaryColor'],
+                    needsJS: false
+                },
+                {
+                    id: 'btn-gradient',
+                    nameKey: 'btnGradient',
+                    descKey: 'btnGradientDesc',
+                    fullDescKey: 'btnGradientDesc_full',
+                    demoHTML: '<button class="btn-gradient-sweep" id="demo">Hover Me</button>',
+                    properties: [
+                        { name: 'background:', value: ' linear-gradient(90deg, color1, color2)' },
+                        { name: 'background-size:', value: ' 200% 100%' },
+                        { name: 'background-position:', value: ' animated on hover' }
+                    ],
+                    html: `<button class="btn-gradient-sweep">Hover Me</button>`,
+                    css: `.btn-gradient-sweep {
+  --btn-color-1: #6366f1;
+  --btn-color-2: #818cf8;
+  background: linear-gradient(90deg, var(--btn-color-1), var(--btn-color-2));
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  color: white;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-position 0.5s ease;
+}
+
+.btn-gradient-sweep:hover {
+  background-position: 0% 0;
+}`,
+                    js: `// No JavaScript required!`,
+                    controls: ['duration', 'primaryColor', 'secondaryColor'],
+                    needsJS: false
+                },
+                {
+                    id: 'btn-glow',
+                    nameKey: 'btnGlow',
+                    descKey: 'btnGlowDesc',
+                    fullDescKey: 'btnGlowDesc_full',
+                    demoHTML: '<button class="btn-glow-pulse" id="demo">Click Me</button>',
+                    properties: [
+                        { name: 'animation:', value: ' glow-pulse 2s infinite' },
+                        { name: 'box-shadow:', value: ' animated glow layers' }
+                    ],
+                    html: `<button class="btn-glow-pulse">Click Me</button>`,
+                    css: `.btn-glow-pulse {
+  --btn-glow-color: #6366f1;
+  background: var(--btn-glow-color);
+  color: white;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
   animation: glow-pulse 2s infinite;
 }
 
 @keyframes glow-pulse {
-  0%, 100% { 
-    box-shadow: 0 0 30px #6366f1, 0 0 60px #818cf8; 
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
   }
-  50% { 
-    box-shadow: 0 0 50px #6366f1, 0 0 100px #818cf8; 
+  50% {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.8), 
+                0 0 60px rgba(99, 102, 241, 0.4);
   }
 }`,
-                    js: `// No JavaScript required for this effect!
-// Pure CSS animation`,
-                    controls: ['duration', 'primaryColor', 'secondaryColor']
+                    js: `// Pure CSS animation!`,
+                    controls: ['duration', 'primaryColor'],
+                    needsJS: false
                 },
                 {
-                    id: 'magnetic',
-                    icon: '🧲',
-                    class: 'effect-magnetic',
-                    nameKey: 'magneticEffect',
-                    descKey: 'magneticDesc',
-                    fullDescKey: 'magneticDescription',
+                    id: 'btn-neon',
+                    nameKey: 'btnNeon',
+                    descKey: 'btnNeonDesc',
+                    fullDescKey: 'btnNeonDesc_full',
+                    demoHTML: '<button class="btn-neon" id="demo">Hover Me</button>',
                     properties: [
-                        { name: 'transition:', value: ' transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)' },
-                        { name: 'transform:', value: ' translate(x, y) based on mouse position' }
+                        { name: 'border:', value: ' 2px solid color' },
+                        { name: 'box-shadow:', value: ' outset and inset glow on hover' },
+                        { name: 'text-shadow:', value: ' color glow' }
                     ],
-                    html: `<div class="magnetic-effect">
-  Hover Me
-</div>`,
-                    css: `.magnetic-effect {
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}`,
-                    js: `const el = document.querySelector('.magnetic-effect');
-const strength = 0.3;
-
-el.addEventListener('mousemove', (e) => {
-  const rect = el.getBoundingClientRect();
-  const x = (e.clientX - rect.left - rect.width / 2) * strength;
-  const y = (e.clientY - rect.top - rect.height / 2) * strength;
-  el.style.transform = \`translate(\${x}px, \${y}px)\`;
-});
-
-el.addEventListener('mouseleave', () => {
-  el.style.transform = 'translate(0, 0)';
-});`,
-                    controls: ['duration']
-                },
-                {
-                    id: 'tilt',
-                    icon: '🎭',
-                    class: 'effect-tilt',
-                    nameKey: 'tiltEffect',
-                    descKey: 'tiltDesc',
-                    fullDescKey: 'tiltDescription',
-                    properties: [
-                        { name: 'transform:', value: ' perspective(1000px) rotateX(10deg) rotateY(-10deg)' },
-                        { name: 'transition:', value: ' all 0.3s ease' }
-                    ],
-                    html: `<div class="tilt-effect">
-  Hover Me
-</div>`,
-                    css: `.tilt-effect {
-  transform: perspective(1000px) rotateX(10deg) rotateY(-10deg);
+                    html: `<button class="btn-neon">Hover Me</button>`,
+                    css: `.btn-neon {
+  --btn-neon-color: #6366f1;
+  background: transparent;
+  color: var(--btn-neon-color);
+  padding: 12px 32px;
+  border: 2px solid var(--btn-neon-color);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
   transition: all 0.3s ease;
 }
 
-.tilt-effect:hover {
-  transform: perspective(1000px) rotateX(-10deg) rotateY(10deg);
+.btn-neon:hover {
+  box-shadow: 
+    0 0 10px var(--btn-neon-color),
+    inset 0 0 10px rgba(99, 102, 241, 0.2);
+  text-shadow: 0 0 10px var(--btn-neon-color);
 }`,
-                    js: `// Enhanced with mouse tracking (optional)
-const el = document.querySelector('.tilt-effect');
-el.addEventListener('mousemove', (e) => {
-  const rect = el.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / rect.width - 0.5;
-  const y = (e.clientY - rect.top) / rect.height - 0.5;
-  el.style.transform = \`perspective(1000px) rotateX(\${y * 20}deg) rotateY(\${x * 20}deg)\`;
-});`,
-                    controls: ['duration']
-                }
-            ],
-            animation: [
-                {
-                    id: 'aurora',
-                    icon: '🌌',
-                    class: 'effect-aurora',
-                    nameKey: 'auroraEffect',
-                    descKey: 'auroraDesc',
-                    fullDescKey: 'auroraDescription',
-                    properties: [
-                        { name: 'background:', value: ' linear-gradient(45deg, multiple colors)' },
-                        { name: 'background-size:', value: ' 400% 400%' },
-                        { name: 'animation:', value: ' aurora-flow 8s ease infinite' }
-                    ],
-                    html: `<div class="aurora-effect">
-  Hover Me
-</div>`,
-                    css: `.aurora-effect {
-  background: linear-gradient(45deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
-  background-size: 400% 400%;
-  animation: aurora-flow 8s ease infinite;
-}
-
-@keyframes aurora-flow {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}`,
-                    js: `// No JavaScript required!`,
-                    controls: ['duration']
+                    js: `// No JavaScript needed!`,
+                    controls: ['duration', 'primaryColor'],
+                    needsJS: false
                 },
                 {
-                    id: 'hologram',
-                    icon: '👾',
-                    class: 'effect-hologram',
-                    nameKey: 'hologramEffect',
-                    descKey: 'hologramDesc',
-                    fullDescKey: 'hologramDescription',
+                    id: 'btn-ripple',
+                    nameKey: 'btnRipple',
+                    descKey: 'btnRippleDesc',
+                    fullDescKey: 'btnRippleDesc_full',
+                    demoHTML: '<button class="btn-ripple" id="demo">Click Me</button>',
                     properties: [
-                        { name: 'background:', value: ' semi-transparent gradient' },
-                        { name: '::before:', value: ' animated scanning beam' },
-                        { name: 'overflow:', value: ' hidden (for beam effect)' }
+                        { name: '::after:', value: ' expanding circle on click' },
+                        { name: 'transition:', value: ' width and height' }
                     ],
-                    html: `<div class="hologram-effect">
-  Hover Me
-</div>`,
-                    css: `.hologram-effect {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(129, 140, 248, 0.6));
+                    html: `<button class="btn-ripple">Click Me</button>`,
+                    css: `.btn-ripple {
+  background: #6366f1;
+  color: white;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
   position: relative;
   overflow: hidden;
 }
 
-.hologram-effect::before {
+.btn-ripple::after {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(transparent, rgba(255, 255, 255, 0.3), transparent);
-  transform: rotate(45deg);
-  animation: hologram-scan 3s linear infinite;
-}
-
-@keyframes hologram-scan {
-  0% { transform: translateY(-100%) rotate(45deg); }
-  100% { transform: translateY(100%) rotate(45deg); }
-}`,
-                    js: `// Pure CSS effect!`,
-                    controls: ['duration']
-                },
-                {
-                    id: 'morphing',
-                    icon: '🫧',
-                    class: 'effect-morphing',
-                    nameKey: 'morphingEffect',
-                    descKey: 'morphingDesc',
-                    fullDescKey: 'morphingDescription',
-                    properties: [
-                        { name: 'border-radius:', value: ' animated organic shapes' },
-                        { name: 'animation:', value: ' morphing-blob 8s ease-in-out infinite' }
-                    ],
-                    html: `<div class="morphing-effect">
-  Hover Me
-</div>`,
-                    css: `.morphing-effect {
-  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-  animation: morphing-blob 8s ease-in-out infinite;
-}
-
-@keyframes morphing-blob {
-  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-  25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-  50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
-  75% { border-radius: 60% 40% 60% 40% / 70% 30% 50% 60%; }
-}`,
-                    js: `// No JavaScript needed!`,
-                    controls: ['duration']
-                },
-                {
-                    id: 'particles',
-                    icon: '✨',
-                    class: 'effect-particles',
-                    nameKey: 'particlesEffect',
-                    descKey: 'particlesDesc',
-                    fullDescKey: 'particlesDescription',
-                    properties: [
-                        { name: '::before, ::after:', value: ' floating particles' },
-                        { name: 'animation:', value: ' particle-float with delays' },
-                        { name: 'opacity & transform:', value: ' animated for floating effect' }
-                    ],
-                    html: `<div class="particles-effect">
-  Hover Me
-</div>`,
-                    css: `.particles-effect {
-  position: relative;
-}
-
-.particles-effect::before,
-.particles-effect::after {
-  content: '';
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: white;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
   border-radius: 50%;
-  animation: particle-float 3s infinite;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
-.particles-effect::before {
-  top: 20%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.particles-effect::after {
-  bottom: 20%;
-  right: 10%;
-  animation-delay: 1.5s;
-}
-
-@keyframes particle-float {
-  0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
-  50% { transform: translateY(-30px) scale(1.5); opacity: 1; }
+.btn-ripple:active::after {
+  width: 300px;
+  height: 300px;
 }`,
-                    js: `// Pure CSS particles!`,
-                    controls: ['duration']
-                }
-            ],
-            text: [
+                    js: `// Pure CSS ripple effect!
+// Uses :active pseudo-class`,
+                    controls: ['duration', 'primaryColor'],
+                    needsJS: false
+                },
                 {
-                    id: 'gradient-text',
-                    icon: '🌈',
-                    class: 'effect-gradient-text',
-                    nameKey: 'gradientTextEffect',
-                    descKey: 'gradientTextDesc',
-                    fullDescKey: 'gradientTextDescription',
+                    id: 'btn-press',
+                    nameKey: 'btnPress',
+                    descKey: 'btnPressDesc',
+                    fullDescKey: 'btnPressDesc_full',
+                    demoHTML: '<button class="btn-press" id="demo">Press Me</button>',
                     properties: [
-                        { name: 'background:', value: ' linear-gradient with multiple colors' },
-                        { name: 'background-clip:', value: ' text' },
-                        { name: '-webkit-text-fill-color:', value: ' transparent' }
+                        { name: 'box-shadow:', value: ' creates 3D depth' },
+                        { name: 'position:', value: ' relative with top offset' }
                     ],
-                    html: `<div class="gradient-text-effect">
-  Hover Me
-</div>`,
-                    css: `.gradient-text-effect {
-  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4facfe);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradient-text-flow 3s linear infinite;
-  font-size: 32px;
-  font-weight: 800;
+                    html: `<button class="btn-press">Press Me</button>`,
+                    css: `.btn-press {
+  background: #6366f1;
+  color: white;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #818cf8, 0 8px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.1s ease;
+  position: relative;
+  top: 0;
 }
 
-@keyframes gradient-text-flow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
+.btn-press:hover {
+  top: 2px;
+  box-shadow: 0 4px 0 #818cf8, 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn-press:active {
+  top: 6px;
+  box-shadow: 0 0 0 #818cf8, 0 2px 5px rgba(0, 0, 0, 0.3);
 }`,
                     js: `// No JavaScript required!`,
-                    controls: ['duration']
+                    controls: ['primaryColor', 'secondaryColor'],
+                    needsJS: false
                 },
                 {
-                    id: 'glitch',
-                    icon: '📺',
-                    class: 'effect-glitch',
-                    nameKey: 'glitchEffect',
-                    descKey: 'glitchDesc',
-                    fullDescKey: 'glitchDescription',
+                    id: 'btn-elastic',
+                    nameKey: 'btnElastic',
+                    descKey: 'btnElasticDesc',
+                    fullDescKey: 'btnElasticDesc_full',
+                    demoHTML: '<button class="btn-elastic" id="demo">Click Me</button>',
                     properties: [
-                        { name: '::before, ::after:', value: ' color channel copies' },
-                        { name: 'animation:', value: ' offset transforms' },
-                        { name: 'colors:', value: ' cyan (#00ffff) and magenta (#ff00ff)' }
+                        { name: 'transition:', value: ' cubic-bezier(0.68, -0.55, 0.265, 1.55)' },
+                        { name: 'transform:', value: ' scale on hover/active' }
                     ],
-                    html: `<div class="glitch-effect" data-text="Hover Me">
-  Hover Me
-</div>`,
-                    css: `.glitch-effect {
+                    html: `<button class="btn-elastic">Click Me</button>`,
+                    css: `.btn-elastic {
+  background: #6366f1;
+  color: white;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.btn-elastic:hover {
+  transform: scale(1.05);
+}
+
+.btn-elastic:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}`,
+                    js: `// Pure CSS bounce effect!`,
+                    controls: ['duration', 'primaryColor'],
+                    needsJS: false
+                },
+                {
+                    id: 'btn-loading',
+                    nameKey: 'btnLoading',
+                    descKey: 'btnLoadingDesc',
+                    fullDescKey: 'btnLoadingDesc_full',
+                    demoHTML: '<button class="btn-loading" id="demo" onclick="App.toggleLoading()">Start Loading</button>',
+                    properties: [
+                        { name: '::after:', value: ' rotating spinner' },
+                        { name: 'animation:', value: ' spin 0.6s linear infinite' }
+                    ],
+                    html: `<button class="btn-loading" id="loadBtn">
+  Start Loading
+</button>`,
+                    css: `.btn-loading {
+  background: #6366f1;
+  color: white;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
   position: relative;
-  font-size: 28px;
-  font-weight: 800;
+  overflow: hidden;
 }
 
-.glitch-effect::before,
-.glitch-effect::after {
-  content: attr(data-text);
+.btn-loading.loading {
+  pointer-events: none;
+  color: transparent;
+}
+
+.btn-loading.loading::after {
+  content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
 }
 
-.glitch-effect::before {
-  animation: glitch-1 2s infinite;
-  color: #ff00ff;
-  z-index: -1;
-}
-
-.glitch-effect::after {
-  animation: glitch-2 2s infinite;
-  color: #00ffff;
-  z-index: -2;
-}
-
-@keyframes glitch-1 {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-}
-
-@keyframes glitch-2 {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(2px, -2px); }
-  40% { transform: translate(2px, 2px); }
-  60% { transform: translate(-2px, -2px); }
-  80% { transform: translate(-2px, 2px); }
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }`,
-                    js: `// Pure CSS glitch!`,
-                    controls: ['duration']
+                    js: `const btn = document.getElementById('loadBtn');
+
+btn.addEventListener('click', () => {
+  btn.classList.add('loading');
+  
+  // Simulate loading
+  setTimeout(() => {
+    btn.classList.remove('loading');
+  }, 2000);
+});`,
+                    controls: ['primaryColor'],
+                    needsJS: true
                 },
                 {
-                    id: 'neon-text',
-                    icon: '💡',
-                    class: 'effect-neon-text',
-                    nameKey: 'neonTextEffect',
-                    descKey: 'neonTextDesc',
-                    fullDescKey: 'neonTextDescription',
+                    id: 'btn-success',
+                    nameKey: 'btnSuccess',
+                    descKey: 'btnSuccessDesc',
+                    fullDescKey: 'btnSuccessDesc_full',
+                    demoHTML: '<button class="btn-success" id="demo" onclick="App.toggleSuccess()">Save</button>',
                     properties: [
-                        { name: 'text-shadow:', value: ' multiple glow layers' },
-                        { name: 'animation:', value: ' neon-text-flicker' },
-                        { name: 'color:', value: ' white base with colored shadows' }
+                        { name: 'background:', value: ' changes to success color' },
+                        { name: 'animation:', value: ' success-pulse 0.6s ease' }
                     ],
-                    html: `<div class="neon-text-effect">
-  Hover Me
-</div>`,
-                    css: `.neon-text-effect {
-  color: #fff;
-  font-size: 32px;
-  font-weight: 800;
-  text-shadow: 
-    0 0 10px #6366f1,
-    0 0 20px #6366f1,
-    0 0 30px #6366f1,
-    0 0 40px #818cf8;
-  animation: neon-text-flicker 1.5s infinite alternate;
+                    html: `<button class="btn-success" id="saveBtn">
+  Save
+</button>`,
+                    css: `.btn-success {
+  background: #6366f1;
+  color: white;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-@keyframes neon-text-flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-    text-shadow: 
-      0 0 10px #6366f1,
-      0 0 20px #6366f1,
-      0 0 30px #6366f1,
-      0 0 40px #818cf8;
-  }
-  20%, 24%, 55% { text-shadow: none; }
+.btn-success.success {
+  background: #10b981;
+  animation: success-pulse 0.6s ease;
+}
+
+@keyframes success-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }`,
-                    js: `// No JavaScript needed!`,
-                    controls: ['duration', 'primaryColor']
+                    js: `const btn = document.getElementById('saveBtn');
+
+btn.addEventListener('click', () => {
+  btn.classList.add('success');
+  btn.textContent = 'Saved!';
+  
+  setTimeout(() => {
+    btn.classList.remove('success');
+    btn.textContent = 'Save';
+  }, 2000);
+});`,
+                    controls: ['primaryColor'],
+                    needsJS: true
                 }
             ],
-            layout: [
+            cards: [
                 {
-                    id: 'glass',
-                    icon: '🪟',
-                    class: 'effect-glass',
-                    nameKey: 'glassEffect',
-                    descKey: 'glassDesc',
-                    fullDescKey: 'glassDescription',
+                    id: 'card-tilt',
+                    nameKey: 'cardTilt',
+                    descKey: 'cardTiltDesc',
+                    fullDescKey: 'cardTiltDesc_full',
+                    demoHTML: '<div class="demo-card card-tilt" id="demo"><h3>Card Title</h3><p>Hover to see 3D tilt effect</p></div>',
                     properties: [
-                        { name: 'background:', value: ' rgba(255, 255, 255, 0.1)' },
-                        { name: 'backdrop-filter:', value: ' blur(10px)' },
-                        { name: 'border:', value: ' 1px solid rgba(255, 255, 255, 0.2)' }
+                        { name: 'transform-style:', value: ' preserve-3d' },
+                        { name: 'transform:', value: ' perspective(1000px) rotate' }
                     ],
-                    html: `<div class="glass-effect">
-  Hover Me
+                    html: `<div class="card-tilt">
+  <h3>Card Title</h3>
+  <p>Hover to see 3D tilt effect</p>
 </div>`,
-                    css: `.glass-effect {
+                    css: `.card-tilt {
+  width: 280px;
+  height: 200px;
+  background: #141b3d;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+
+.card-tilt:hover {
+  transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+}`,
+                    js: `// Enhanced version with mouse tracking (optional)
+const card = document.querySelector('.card-tilt');
+
+card.addEventListener('mousemove', (e) => {
+  const rect = card.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width - 0.5;
+  const y = (e.clientY - rect.top) / rect.height - 0.5;
+  
+  card.style.transform = \`perspective(1000px) rotateX(\${y * 10}deg) rotateY(\${x * 10}deg)\`;
+});
+
+card.addEventListener('mouseleave', () => {
+  card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+});`,
+                    controls: ['duration'],
+                    needsJS: false
+                },
+                {
+                    id: 'card-glass',
+                    nameKey: 'cardGlass',
+                    descKey: 'cardGlassDesc',
+                    fullDescKey: 'cardGlassDesc_full',
+                    demoHTML: '<div class="demo-card card-glass" id="demo"><h3>Glass Card</h3><p>Frosted glass effect</p></div>',
+                    properties: [
+                        { name: 'backdrop-filter:', value: ' blur(10px)' },
+                        { name: 'background:', value: ' rgba(255, 255, 255, 0.1)' }
+                    ],
+                    html: `<div class="card-glass">
+  <h3>Glass Card</h3>
+  <p>Frosted glass effect</p>
+</div>`,
+                    css: `.card-glass {
+  width: 280px;
+  height: 200px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 20px;
 }`,
-                    js: `// Works automatically with CSS!`,
-                    controls: ['blur', 'opacity']
+                    js: `// No JavaScript required!
+// Pure CSS effect`,
+                    controls: ['blur', 'opacity'],
+                    needsJS: false
                 },
                 {
-                    id: 'glass-advanced',
-                    icon: '🪟',
-                    class: 'effect-glass-advanced',
-                    nameKey: 'glassAdvancedEffect',
-                    descKey: 'glassAdvancedDesc',
-                    fullDescKey: 'glassAdvancedDescription',
+                    id: 'card-gradient-border',
+                    nameKey: 'cardGradientBorder',
+                    descKey: 'cardGradientBorderDesc',
+                    fullDescKey: 'cardGradientBorderDesc_full',
+                    demoHTML: '<div class="demo-card card-gradient-border" id="demo"><h3>Card Title</h3><p>Hover for gradient border</p></div>',
                     properties: [
-                        { name: 'backdrop-filter:', value: ' blur(12px) saturate(180%)' },
-                        { name: '::before:', value: ' SVG noise texture overlay' },
-                        { name: 'background:', value: ' rgba with reduced opacity' }
+                        { name: '::before:', value: ' gradient border effect' },
+                        { name: 'mask-composite:', value: ' exclude' }
                     ],
-                    html: `<div class="glass-advanced-effect">
-  Hover Me
+                    html: `<div class="card-gradient-border">
+  <h3>Card Title</h3>
+  <p>Hover for gradient border</p>
 </div>`,
-                    css: `.glass-advanced-effect {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+                    css: `.card-gradient-border {
+  width: 280px;
+  height: 200px;
+  position: relative;
+  background: #141b3d;
+  border: none;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.card-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(45deg, #6366f1, #818cf8);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-gradient-border:hover::before {
+  opacity: 1;
+}`,
+                    js: `// Pure CSS effect!`,
+                    controls: ['duration', 'primaryColor', 'secondaryColor'],
+                    needsJS: false
+                },
+                {
+                    id: 'card-reveal',
+                    nameKey: 'cardReveal',
+                    descKey: 'cardRevealDesc',
+                    fullDescKey: 'cardRevealDesc_full',
+                    demoHTML: '<div class="demo-card card-reveal" id="demo"><h3>Card Title</h3><p>Hover to reveal overlay</p></div>',
+                    properties: [
+                        { name: '::after:', value: ' overlay content' },
+                        { name: 'transform:', value: ' translateY(100%) to 0' }
+                    ],
+                    html: `<div class="card-reveal">
+  <h3>Card Title</h3>
+  <p>Hover to reveal overlay</p>
+</div>`,
+                    css: `.card-reveal {
+  width: 280px;
+  height: 200px;
+  background: #141b3d;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
   position: relative;
   overflow: hidden;
 }
 
-.glass-advanced-effect::before {
-  content: '';
+.card-reveal::after {
+  content: 'Hover Content';
   position: absolute;
   inset: 0;
-  background: url('data:image/svg+xml,...'); /* SVG noise */
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.card-reveal:hover::after {
+  opacity: 1;
+  transform: translateY(0);
 }`,
-                    js: `// Pure CSS effect!`,
-                    controls: ['blur', 'opacity']
+                    js: `// No JavaScript needed!`,
+                    controls: ['duration', 'primaryColor', 'secondaryColor'],
+                    needsJS: false
                 },
                 {
-                    id: 'gradient-border',
-                    icon: '🌈',
-                    class: 'effect-gradient-border',
-                    nameKey: 'gradientBorderEffect',
-                    descKey: 'gradientBorderDesc',
-                    fullDescKey: 'gradientBorderDescription',
+                    id: 'card-float',
+                    nameKey: 'cardFloat',
+                    descKey: 'cardFloatDesc',
+                    fullDescKey: 'cardFloatDesc_full',
+                    demoHTML: '<div class="demo-card card-float" id="demo"><h3>Floating Card</h3><p>Gentle floating animation</p></div>',
                     properties: [
-                        { name: '::before:', value: ' absolute positioned pseudo-element' },
-                        { name: 'background:', value: ' linear-gradient with multiple colors' },
-                        { name: 'mask-composite:', value: ' exclude for border-only effect' }
+                        { name: 'animation:', value: ' float 3s ease-in-out infinite' },
+                        { name: 'transform:', value: ' translateY animated' }
                     ],
-                    html: `<div class="gradient-border-effect">
-  Hover Me
+                    html: `<div class="card-float">
+  <h3>Floating Card</h3>
+  <p>Gentle floating animation</p>
 </div>`,
-                    css: `.gradient-border-effect {
-  position: relative;
-  background: var(--bg-secondary);
+                    css: `.card-float {
+  width: 280px;
+  height: 200px;
+  background: #141b3d;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  animation: float 3s ease-in-out infinite;
 }
 
-.gradient-border-effect::before {
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}`,
+                    js: `// Pure CSS animation!`,
+                    controls: ['duration'],
+                    needsJS: false
+                },
+                {
+                    id: 'card-flip',
+                    nameKey: 'cardFlip',
+                    descKey: 'cardFlipDesc',
+                    fullDescKey: 'cardFlipDesc_full',
+                    demoHTML: '<div class="card-flip-container" id="demo"><div class="card-flip"><div class="card-flip-front"><h3>Front</h3></div><div class="card-flip-back"><h3>Back</h3></div></div></div>',
+                    properties: [
+                        { name: 'transform-style:', value: ' preserve-3d' },
+                        { name: 'backface-visibility:', value: ' hidden' },
+                        { name: 'transform:', value: ' rotateY(180deg)' }
+                    ],
+                    html: `<div class="card-flip-container">
+  <div class="card-flip">
+    <div class="card-flip-front">
+      <h3>Front</h3>
+    </div>
+    <div class="card-flip-back">
+      <h3>Back</h3>
+    </div>
+  </div>
+</div>`,
+                    css: `.card-flip-container {
+  perspective: 1000px;
+  width: 280px;
+  height: 200px;
+}
+
+.card-flip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.card-flip:hover {
+  transform: rotateY(180deg);
+}
+
+.card-flip-front,
+.card-flip-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.card-flip-front {
+  background: #141b3d;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.card-flip-back {
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  color: white;
+  transform: rotateY(180deg);
+}`,
+                    js: `// Click to flip (optional)
+const card = document.querySelector('.card-flip');
+card.addEventListener('click', () => {
+  card.style.transform = card.style.transform === 'rotateY(180deg)' 
+    ? 'rotateY(0deg)' 
+    : 'rotateY(180deg)';
+});`,
+                    controls: ['duration', 'primaryColor', 'secondaryColor'],
+                    needsJS: false
+                },
+                {
+                    id: 'card-parallax',
+                    nameKey: 'cardParallax',
+                    descKey: 'cardParallaxDesc',
+                    fullDescKey: 'cardParallaxDesc_full',
+                    demoHTML: '<div class="demo-card card-parallax" id="demo"><h3>Parallax Card</h3><p>Background shifts on hover</p></div>',
+                    properties: [
+                        { name: '::before:', value: ' background layer' },
+                        { name: 'transform:', value: ' translate and scale on hover' }
+                    ],
+                    html: `<div class="card-parallax">
+  <h3>Parallax Card</h3>
+  <p>Background shifts on hover</p>
+</div>`,
+                    css: `.card-parallax {
+  width: 280px;
+  height: 200px;
+  background: #141b3d;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-parallax::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  padding: 3px;
-  background: linear-gradient(45deg, #6366f1, #818cf8, #ec4899, #f59e0b);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: gradient-rotate 3s linear infinite;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  opacity: 0.1;
+  transition: transform 0.3s ease;
 }
 
-@keyframes gradient-rotate {
-  to { transform: rotate(360deg); }
+.card-parallax:hover::before {
+  transform: translate(10px, 10px) scale(1.1);
 }`,
-                    js: `// Pure CSS magic!`,
-                    controls: ['duration']
+                    js: `// No JavaScript required!`,
+                    controls: ['duration', 'primaryColor', 'secondaryColor'],
+                    needsJS: false
+                },
+                {
+                    id: 'card-select',
+                    nameKey: 'cardSelect',
+                    descKey: 'cardSelectDesc',
+                    fullDescKey: 'cardSelectDesc_full',
+                    demoHTML: '<div class="demo-card card-select" id="demo" onclick="App.toggleCardSelect()"><h3>Selectable Card</h3><p>Click to select</p></div>',
+                    properties: [
+                        { name: 'border:', value: ' changes on selection' },
+                        { name: 'box-shadow:', value: ' enhanced on hover' },
+                        { name: 'background:', value: ' gradient on selected' }
+                    ],
+                    html: `<div class="card-select">
+  <h3>Selectable Card</h3>
+  <p>Click to select</p>
+</div>`,
+                    css: `.card-select {
+  width: 280px;
+  height: 200px;
+  background: #141b3d;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.card-select:hover {
+  border-color: #6366f1;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+  transform: translateY(-4px);
+}
+
+.card-select.selected {
+  border-color: #6366f1;
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.1), 
+    rgba(129, 140, 248, 0.05));
+}`,
+                    js: `const card = document.querySelector('.card-select');
+
+card.addEventListener('click', () => {
+  card.classList.toggle('selected');
+});`,
+                    controls: ['primaryColor'],
+                    needsJS: true
+                },
+                {
+                    id: 'card-expand',
+                    nameKey: 'cardExpand',
+                    descKey: 'cardExpandDesc',
+                    fullDescKey: 'cardExpandDesc_full',
+                    demoHTML: '<div class="demo-card card-expand" id="demo"><h3>Expandable Card</h3><p>Hover to see more content</p></div>',
+                    properties: [
+                        { name: 'height:', value: ' animated on hover' },
+                        { name: 'overflow:', value: ' hidden' },
+                        { name: 'transition:', value: ' cubic-bezier easing' }
+                    ],
+                    html: `<div class="card-expand">
+  <h3>Expandable Card</h3>
+  <p>Hover to see more content</p>
+  <p style="margin-top: 20px;">Extra content appears when expanded</p>
+</div>`,
+                    css: `.card-expand {
+  width: 280px;
+  height: 200px;
+  background: #141b3d;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  overflow: hidden;
+}
+
+.card-expand:hover {
+  height: 250px;
+}`,
+                    js: `// Pure CSS hover effect!`,
+                    controls: ['duration'],
+                    needsJS: false
+                }
+            ],
+            micro: [
+                {
+                    id: 'micro-toggle',
+                    nameKey: 'microToggle',
+                    descKey: 'microToggleDesc',
+                    fullDescKey: 'microToggleDesc_full',
+                    demoHTML: '<div class="toggle-switch" id="demo" onclick="App.toggleSwitch()"></div>',
+                    properties: [
+                        { name: '::after:', value: ' slider element' },
+                        { name: 'transform:', value: ' translateX on active' }
+                    ],
+                    html: `<div class="toggle-switch" id="toggle"></div>`,
+                    css: `.toggle-switch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: #1e2749;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toggle-switch.active {
+  background: #6366f1;
+}
+
+.toggle-switch.active::after {
+  transform: translateX(30px);
+}`,
+                    js: `const toggle = document.getElementById('toggle');
+
+toggle.addEventListener('click', () => {
+  toggle.classList.toggle('active');
+});`,
+                    controls: ['duration', 'primaryColor'],
+                    needsJS: true
+                },
+                {
+                    id: 'micro-checkbox',
+                    nameKey: 'microCheckbox',
+                    descKey: 'microCheckboxDesc',
+                    fullDescKey: 'microCheckboxDesc_full',
+                    demoHTML: '<div class="checkbox-animated" id="demo" onclick="App.toggleCheckbox()"></div>',
+                    properties: [
+                        { name: '::after:', value: ' checkmark' },
+                        { name: 'animation:', value: ' checkmark draw effect' }
+                    ],
+                    html: `<div class="checkbox-animated" id="checkbox"></div>`,
+                    css: `.checkbox-animated {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.checkbox-animated.checked {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+
+.checkbox-animated.checked::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  animation: checkmark 0.3s ease;
+}
+
+@keyframes checkmark {
+  0% { height: 0; }
+  100% { height: 12px; }
+}`,
+                    js: `const checkbox = document.getElementById('checkbox');
+
+checkbox.addEventListener('click', () => {
+  checkbox.classList.toggle('checked');
+});`,
+                    controls: ['duration', 'primaryColor'],
+                    needsJS: true
+                },
+                {
+                    id: 'micro-tabs',
+                    nameKey: 'microTabs',
+                    descKey: 'microTabsDesc',
+                    fullDescKey: 'microTabsDesc_full',
+                    demoHTML: '<div class="tabs-container" id="demo"><div class="tab-item active" onclick="App.setTab(0, event)">Tab 1</div><div class="tab-item" onclick="App.setTab(1, event)">Tab 2</div><div class="tab-item" onclick="App.setTab(2, event)">Tab 3</div><div class="tab-indicator" style="width: 60px; left: 0;"></div></div>',
+                    properties: [
+                        { name: 'position:', value: ' absolute indicator' },
+                        { name: 'transition:', value: ' left and width with cubic-bezier' }
+                    ],
+                    html: `<div class="tabs-container">
+  <div class="tab-item active">Tab 1</div>
+  <div class="tab-item">Tab 2</div>
+  <div class="tab-item">Tab 3</div>
+  <div class="tab-indicator"></div>
+</div>`,
+                    css: `.tabs-container {
+  display: flex;
+  gap: 20px;
+  position: relative;
+  border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+}
+
+.tab-item {
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #9da5b8;
+  transition: color 0.3s ease;
+}
+
+.tab-item.active {
+  color: #e4e8f0;
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: -2px;
+  height: 2px;
+  background: #6366f1;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}`,
+                    js: `const tabs = document.querySelectorAll('.tab-item');
+const indicator = document.querySelector('.tab-indicator');
+
+tabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    indicator.style.left = tab.offsetLeft + 'px';
+    indicator.style.width = tab.offsetWidth + 'px';
+  });
+});
+
+// Initialize
+indicator.style.left = tabs[0].offsetLeft + 'px';
+indicator.style.width = tabs[0].offsetWidth + 'px';`,
+                    controls: ['duration', 'primaryColor'],
+                    needsJS: true
+                },
+                {
+                    id: 'micro-badge',
+                    nameKey: 'microBadge',
+                    descKey: 'microBadgeDesc',
+                    fullDescKey: 'microBadgeDesc_full',
+                    demoHTML: '<div class="notification-badge" id="demo">🔔</div>',
+                    properties: [
+                        { name: '::after:', value: ' notification count' },
+                        { name: 'animation:', value: ' badge-pulse' }
+                    ],
+                    html: `<div class="notification-badge">
+  🔔
+</div>`,
+                    css: `.notification-badge {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background: #1e2749;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-badge::after {
+  content: '3';
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  background: #ef4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: white;
+  font-weight: 600;
+  animation: badge-pulse 2s infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}`,
+                    js: `// Pure CSS animation!`,
+                    controls: ['duration'],
+                    needsJS: false
+                },
+                {
+                    id: 'micro-progress',
+                    nameKey: 'microProgress',
+                    descKey: 'microProgressDesc',
+                    fullDescKey: 'microProgressDesc_full',
+                    demoHTML: '<div class="progress-bar" id="demo"><div class="progress-fill" style="width: 60%;"></div></div>',
+                    properties: [
+                        { name: 'width:', value: ' animated percentage' },
+                        { name: 'background:', value: ' gradient with shimmer' }
+                    ],
+                    html: `<div class="progress-bar">
+  <div class="progress-fill" style="width: 60%;"></div>
+</div>`,
+                    css: `.progress-bar {
+  width: 200px;
+  height: 8px;
+  background: #1e2749;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #818cf8);
+  width: 0%;
+  transition: width 0.3s ease;
+  animation: progress-shimmer 2s infinite;
+  background-size: 200% 100%;
+}
+
+@keyframes progress-shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}`,
+                    js: `const progress = document.querySelector('.progress-fill');
+
+// Animate to 60%
+setTimeout(() => {
+  progress.style.width = '60%';
+}, 100);`,
+                    controls: ['duration', 'primaryColor', 'secondaryColor'],
+                    needsJS: false
                 }
             ]
         };
@@ -1591,21 +2653,13 @@ el.addEventListener('mousemove', (e) => {
         // ==================== MAIN APP ====================
         const App = {
             currentEffect: null,
-            currentCategory: 'hover',
-            animationPaused: false,
             currentCodeTab: 'html',
 
             init() {
-                // Initialize language
                 LanguageManager.updateUI();
-                
-                // Render all effects
                 this.renderEffects();
+                this.selectEffect('btn-magnetic');
                 
-                // Select first effect
-                this.selectEffect('glow');
-                
-                // Close dropdown when clicking outside
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('.lang-selector')) {
                         document.getElementById('lang-dropdown').classList.remove('active');
@@ -1619,7 +2673,7 @@ el.addEventListener('mousemove', (e) => {
                     if (container) {
                         container.innerHTML = EffectsLibrary[category].map(effect => `
                             <div class="effect-card" data-effect-id="${effect.id}" onclick="App.selectEffect('${effect.id}', event)">
-                                <h3>${effect.icon} ${LanguageManager.t(effect.nameKey)}</h3>
+                                <h3>${LanguageManager.t(effect.nameKey)}</h3>
                                 <p>${LanguageManager.t(effect.descKey)}</p>
                             </div>
                         `).join('');
@@ -1630,42 +2684,37 @@ el.addEventListener('mousemove', (e) => {
             selectEffect(effectId, evt) {
                 this.currentEffect = effectId;
                 
-                // Find effect in library
                 let effect = null;
-                let category = null;
-                for (const [cat, effects] of Object.entries(EffectsLibrary)) {
+                for (const effects of Object.values(EffectsLibrary)) {
                     const found = effects.find(e => e.id === effectId);
                     if (found) {
                         effect = found;
-                        category = cat;
                         break;
                     }
                 }
                 
                 if (!effect) return;
                 
-                // Update active card
                 document.querySelectorAll('.effect-card').forEach(card => card.classList.remove('active'));
                 if (evt) {
-                    evt.target.closest('.effect-card').classList.add('active');
+                    const card = evt.target.closest('.effect-card');
+                    if (card) card.classList.add('active');
                 } else {
-                    // If no event, find by data attribute
                     const card = document.querySelector(`[data-effect-id="${effectId}"]`);
                     if (card) card.classList.add('active');
                 }
                 
-                // Update demo element
+                const previewArea = document.getElementById('preview-area');
+                previewArea.innerHTML = effect.demoHTML;
+                
                 const demo = document.getElementById('demo');
-                demo.className = 'demo-element ' + effect.class;
-                demo.setAttribute('data-text', LanguageManager.t('hoverMe'));
+                if (effect.needsJS && demo) {
+                    this.setupEffectInteraction(effectId, demo);
+                }
                 
-                // Update title
                 document.getElementById('effect-title').textContent = LanguageManager.t(effect.nameKey);
-                
-                // Update description
                 document.getElementById('effect-description').textContent = LanguageManager.t(effect.fullDescKey);
                 
-                // Update properties
                 const propsContainer = document.getElementById('key-properties');
                 propsContainer.innerHTML = effect.properties.map(prop => 
                     `<div class="property-item">
@@ -1674,22 +2723,25 @@ el.addEventListener('mousemove', (e) => {
                     </div>`
                 ).join('');
                 
-                // Update code blocks
                 document.getElementById('code-html').textContent = effect.html;
                 document.getElementById('code-css').textContent = effect.css;
                 document.getElementById('code-js').textContent = effect.js;
                 
-                // Update controls
-                this.renderControls(effect.controls || ['duration', 'primaryColor', 'secondaryColor']);
-                
-                // Reset animation state
-                this.animationPaused = false;
-                document.getElementById('animation-toggle').setAttribute('data-i18n', 'pause');
-                document.getElementById('animation-toggle').textContent = LanguageManager.t('pause');
-                
-                // Enable magnetic effect if needed
-                if (effectId === 'magnetic') {
-                    this.enableMagneticEffect(demo);
+                this.renderControls(effect.controls || ['duration', 'primaryColor']);
+            },
+
+            setupEffectInteraction(effectId, demo) {
+                if (effectId === 'btn-magnetic') {
+                    const strength = 0.3;
+                    demo.addEventListener('mousemove', (e) => {
+                        const rect = demo.getBoundingClientRect();
+                        const x = (e.clientX - rect.left - rect.width / 2) * strength;
+                        const y = (e.clientY - rect.top - rect.height / 2) * strength;
+                        demo.style.transform = `translate(${x}px, ${y}px)`;
+                    });
+                    demo.addEventListener('mouseleave', () => {
+                        demo.style.transform = 'translate(0, 0)';
+                    });
                 }
             },
 
@@ -1698,8 +2750,8 @@ el.addEventListener('mousemove', (e) => {
                 const controlTemplates = {
                     duration: `
                         <div class="control-group">
-                            <label><span data-i18n="duration">${LanguageManager.t('duration')}</span> <span class="control-value" id="duration-value">2s</span></label>
-                            <input type="range" min="0.5" max="5" step="0.1" value="2" oninput="App.updateDuration(this.value)">
+                            <label><span data-i18n="duration">${LanguageManager.t('duration')}</span> <span class="control-value" id="duration-value">0.3s</span></label>
+                            <input type="range" min="0.1" max="2" step="0.1" value="0.3" oninput="App.updateDuration(this.value)">
                         </div>
                     `,
                     primaryColor: `
@@ -1725,6 +2777,12 @@ el.addEventListener('mousemove', (e) => {
                             <label><span data-i18n="opacity">${LanguageManager.t('opacity')}</span> <span class="control-value" id="opacity-value">0.1</span></label>
                             <input type="range" min="0" max="1" step="0.05" value="0.1" oninput="App.updateOpacity(this.value)">
                         </div>
+                    `,
+                    intensity: `
+                        <div class="control-group">
+                            <label><span data-i18n="intensity">${LanguageManager.t('intensity')}</span> <span class="control-value" id="intensity-value">1</span></label>
+                            <input type="range" min="0.1" max="2" step="0.1" value="1" oninput="App.updateIntensity(this.value)">
+                        </div>
                     `
                 };
                 
@@ -1748,16 +2806,6 @@ el.addEventListener('mousemove', (e) => {
                 document.getElementById('lang-dropdown').classList.remove('active');
             },
 
-            toggleAnimation() {
-                const demo = document.getElementById('demo');
-                this.animationPaused = !this.animationPaused;
-                demo.style.animationPlayState = this.animationPaused ? 'paused' : 'running';
-                
-                const toggleBtn = document.getElementById('animation-toggle');
-                toggleBtn.setAttribute('data-i18n', this.animationPaused ? 'play' : 'pause');
-                toggleBtn.textContent = LanguageManager.t(this.animationPaused ? 'play' : 'pause');
-            },
-
             switchCodeTab(tab) {
                 this.currentCodeTab = tab;
                 document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
@@ -1772,10 +2820,8 @@ el.addEventListener('mousemove', (e) => {
                 const text = activeBlock.textContent;
                 navigator.clipboard.writeText(text).then(() => {
                     const btn = event.target;
-                    const originalText = btn.textContent;
                     btn.textContent = LanguageManager.t('copied');
                     setTimeout(() => {
-                        btn.setAttribute('data-i18n', 'copy');
                         btn.textContent = LanguageManager.t('copy');
                     }, 2000);
                 });
@@ -1783,50 +2829,86 @@ el.addEventListener('mousemove', (e) => {
 
             updateDuration(value) {
                 document.getElementById('duration-value').textContent = value + 's';
-                document.getElementById('demo').style.animationDuration = value + 's';
+                document.documentElement.style.setProperty('--effect-duration', value + 's');
+                const demo = document.getElementById('demo');
+                if (demo) {
+                    demo.style.transitionDuration = value + 's';
+                    demo.style.animationDuration = value + 's';
+                }
             },
 
             updatePrimaryColor(color) {
+                document.documentElement.style.setProperty('--effect-color-1', color);
                 document.documentElement.style.setProperty('--accent', color);
-                const demo = document.getElementById('demo');
-                const secondary = getComputedStyle(document.documentElement).getPropertyValue('--accent-light');
-                demo.style.background = `linear-gradient(135deg, ${color}, ${secondary})`;
             },
 
             updateSecondaryColor(color) {
+                document.documentElement.style.setProperty('--effect-color-2', color);
                 document.documentElement.style.setProperty('--accent-light', color);
-                const demo = document.getElementById('demo');
-                const primary = getComputedStyle(document.documentElement).getPropertyValue('--accent');
-                demo.style.background = `linear-gradient(135deg, ${primary}, ${color})`;
             },
 
             updateBlur(value) {
                 document.getElementById('blur-value').textContent = value + 'px';
-                document.getElementById('demo').style.backdropFilter = `blur(${value}px)`;
+                document.documentElement.style.setProperty('--effect-blur', value + 'px');
             },
 
             updateOpacity(value) {
                 document.getElementById('opacity-value').textContent = value;
-                document.getElementById('demo').style.background = `rgba(255, 255, 255, ${value})`;
+                document.documentElement.style.setProperty('--effect-opacity', value);
             },
 
-            enableMagneticEffect(el) {
-                const strength = 0.3;
+            updateIntensity(value) {
+                document.getElementById('intensity-value').textContent = value;
+                document.documentElement.style.setProperty('--effect-intensity', value);
+            },
+
+            toggleLoading() {
+                const btn = document.getElementById('demo');
+                btn.classList.toggle('loading');
+                if (btn.classList.contains('loading')) {
+                    setTimeout(() => btn.classList.remove('loading'), 2000);
+                }
+            },
+
+            toggleSuccess() {
+                const btn = document.getElementById('demo');
+                const originalText = btn.textContent;
+                btn.classList.add('success');
+                btn.textContent = 'Saved!';
+                setTimeout(() => {
+                    btn.classList.remove('success');
+                    btn.textContent = originalText;
+                }, 2000);
+            },
+
+            toggleCardSelect() {
+                const card = document.getElementById('demo');
+                card.classList.toggle('selected');
+            },
+
+            toggleSwitch() {
+                const toggle = document.getElementById('demo');
+                toggle.classList.toggle('active');
+            },
+
+            toggleCheckbox() {
+                const checkbox = document.getElementById('demo');
+                checkbox.classList.toggle('checked');
+            },
+
+            setTab(index, evt) {
+                const container = evt.target.closest('.tabs-container');
+                const tabs = container.querySelectorAll('.tab-item');
+                const indicator = container.querySelector('.tab-indicator');
                 
-                el.addEventListener('mousemove', (e) => {
-                    const rect = el.getBoundingClientRect();
-                    const x = (e.clientX - rect.left - rect.width / 2) * strength;
-                    const y = (e.clientY - rect.top - rect.height / 2) * strength;
-                    el.style.transform = `translate(${x}px, ${y}px)`;
-                });
+                tabs.forEach(t => t.classList.remove('active'));
+                evt.target.classList.add('active');
                 
-                el.addEventListener('mouseleave', () => {
-                    el.style.transform = 'translate(0, 0)';
-                });
+                indicator.style.left = evt.target.offsetLeft + 'px';
+                indicator.style.width = evt.target.offsetWidth + 'px';
             },
 
             exportEffect() {
-                // Find current effect
                 let effect = null;
                 for (const effects of Object.values(EffectsLibrary)) {
                     const found = effects.find(e => e.id === this.currentEffect);
@@ -1853,13 +2935,12 @@ ${effect.js}`;
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `${this.currentEffect}-effect.txt`;
+                a.download = `${this.currentEffect}.txt`;
                 a.click();
                 URL.revokeObjectURL(url);
             }
         };
 
-        // Initialize app when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             App.init();
         });
