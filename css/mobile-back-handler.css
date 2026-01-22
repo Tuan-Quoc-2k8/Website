@@ -86,20 +86,8 @@
 /* ============================================
    ACCESSIBILITY: FOCUS MANAGEMENT (FIXED)
    ============================================ */
-
-/* ❌ BUG WAS HERE - REMOVED THIS RULE:
-.settings-modal:not(.active),
-.premium-modal:not(.active),
-nav:not(.active) {
-    pointer-events: none;
-}
-*/
-
-/* ✅ FIXED VERSION - Only applies to modals, NOT nav */
-/* Only disable pointer events on INACTIVE modals on MOBILE */
 @media (max-width: 768px) {
-    .settings-modal:not(.active),
-    .premium-modal:not(.active) {
+    .settings-modal:not(.active) {
         pointer-events: none;
     }
     
