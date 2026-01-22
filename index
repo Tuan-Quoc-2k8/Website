@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TQ - Web Developer</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="./favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/logo-1.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./css/core.css">
+    <link rel="stylesheet" href="./css/themes.css">
+    <link rel="stylesheet" href="./css/mobile-back-handler.css">
+</head>
+<body data-theme="blue">
+
+    <!-- In-App Browser Detection Banner -->
+    <div id="inapp-browser-banner" style="display:none;">
+        <div class="banner-content">
+            <button class="banner-close" onclick="closeInAppBanner()">×</button>
+            <div class="banner-title">
+                <span class="banner-icon">⚠️</span>
+                <span id="banner-title-text">Đang xem trong ứng dụng</span>
+            </div>
+            <div class="banner-text" id="banner-description">
+                Để có trải nghiệm tốt nhất, vui lòng mở trang web này trong trình duyệt Chrome hoặc Safari
+            </div>
+            <div class="banner-instructions" id="banner-steps">
+                <strong>📱 Cách mở:</strong><br>
+                1. Nhấn vào <strong>3 chấm</strong> (⋮) ở góc trên<br>
+                2. Chọn <strong>"Mở bằng Chrome"</strong> hoặc <strong>"Mở bằng Safari"</strong>
+            </div>
+            <div style="font-size:0.75rem; opacity:0.9;" id="banner-app-name"></div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="loading-particles" id="particles"></div>
+        <div class="loading-content">
+            <div class="loading-logo">TQ</div>
+            <div class="loading-text">
+                <span>Loading</span>
+                <div class="loading-dots">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+                <div class="loading-progress">
+                    <div class="loading-progress-bar"></div>
+                </div>
+                <div class="loading-percentage">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Overlay -->
+    <div class="nav-overlay"></div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settings-modal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2 data-lang="settings-title">⚙️ Cài đặt</h2>
+                <button class="settings-close" onclick="closeTopmostPanel()">×</button>
+            </div>
+
+            <!-- Theme Section -->
+            <div class="settings-section">
+                <h3 data-lang="theme-section">🎨 Giao diện</h3>
+                <div class="theme-grid" id="theme-grid">
+                    <!-- Themes will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Dark Mode Section -->
+            <div class="settings-section">
+                <h3 data-lang="mode-section">🌓 Chế độ hiển thị</h3>
+                <div class="settings-option">
+                    <div class="option-label">
+                        <span class="option-icon">🌙</span>
+                        <span data-lang="dark-mode">Chế độ tối</span>
+                    </div>
+                    <div class="toggle-switch" id="dark-mode-toggle" onclick="toggleDarkMode()"></div>
+                </div>
+            </div>
+
+            <!-- Language Section -->
+            <div class="settings-section">
+                <h3 data-lang="lang-section">🌍 Ngôn ngữ</h3>
+                <div class="lang-grid">
+                    <div class="lang-card active" data-lang-code="vi">
+                        <div class="lang-flag">VN</div>
+                        <div class="lang-name">Tiếng Việt</div>
+                    </div>
+                    <div class="lang-card" data-lang-code="en">
+                        <div class="lang-flag">EN</div>
+                        <div class="lang-name">English</div>
+                    </div>
+                    <div class="lang-card" data-lang-code="ko">
+                        <div class="lang-flag">KR</div>
+                        <div class="lang-name">한국어</div>
+                    </div>
+                    <div class="lang-card" data-lang-code="ja">
+                        <div class="lang-flag">JP</div>
+                        <div class="lang-name">日本語</div>
+                    </div>
+                    <div class="lang-card" data-lang-code="zh">
+                        <div class="lang-flag">CN</div>
+                        <div class="lang-name">中文（简体）</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo" onclick="event.preventDefault();scrollToTop()">
+                    <div class="logo-img">TQ</div>
+                    <span class="logo-text" data-lang="site-title">Tuấn Quốc</span>
+                </a>
+                <button class="menu-toggle">☰</button>
+                <nav>
+                    <a href="#about" onclick="event.preventDefault();scrollToSection('about')" data-lang="nav-about">Giới thiệu</a>
+                    <a href="#skills" onclick="event.preventDefault();scrollToSection('skills')" data-lang="nav-skills">Kỹ năng</a>
+                    <a href="#projects" onclick="event.preventDefault();scrollToSection('projects')" data-lang="nav-projects">Dự án</a>
+                    <a href="#contact" onclick="event.preventDefault();scrollToSection('contact')" data-lang="nav-contact">Liên hệ</a>
+                    <a onclick="openSettings()" data-lang="nav-settings">⚙️ Cài đặt</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge" data-lang="hero-badge">💻 Web Developer</div>
+                <h1 data-lang="hero-title">Xin chào, tôi là Tuấn Quốc</h1>
+                <p data-lang="hero-subtitle">Tôi đang học thiết kế & lập trình web, xây dựng các dự án sáng tạo và chuyên nghiệp</p>
+                <div class="hero-cta">
+                    <a href="#projects" class="btn btn-primary" onclick="event.preventDefault();scrollToSection('projects')" data-lang="hero-cta1">Xem dự án</a>
+                    <a href="#contact" class="btn btn-secondary" onclick="event.preventDefault();scrollToSection('contact')" data-lang="hero-cta2">Liên hệ</a>
+                </div>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" data-count="9">0</div>
+                        <div class="stat-label" data-lang="stat-projects">Dự án</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-count="1">0</div>
+                        <div class="stat-label" data-lang="stat-years">Năm kinh nghiệm</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="visit-count">0</div>
+                        <div class="stat-label" data-lang="stat-visits">Lượt truy cập</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-lang="about-title">Giới thiệu</h2>
+                <p class="section-subtitle" data-lang="about-subtitle">Tìm hiểu thêm về tôi và hành trình phát triển web của tôi</p>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3 data-lang="about-heading">Chào mừng đến với Portfolio của tôi</h3>
+                    <p data-lang="about-p1">Tôi là một web developer đam mê, hiện đang xây dựng các dự án để học hỏi và chia sẻ kiến thức về phát triển web.</p>
+                    <p data-lang="about-p2">Tôi tin vào việc học tập liên tục và luôn tìm kiếm những thử thách mới để cải thiện kỹ năng của mình. Mỗi dự án là một cơ hội để khám phá công nghệ mới.</p>
+                    <p data-lang="about-p3">Mục tiêu của tôi là tạo ra những website hiện đại, thân thiện với người dùng và mang lại giá trị thực tế.</p>
+                </div>
+                <div class="about-image" id="about-img"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-lang="skills-title">Kỹ năng & Công nghệ</h2>
+                <p class="section-subtitle" data-lang="skills-subtitle">Các công nghệ tôi sử dụng để xây dựng dự án</p>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-header">
+                        <div class="skill-icon">📱</div>
+                        <div style="flex:1">
+                            <div class="skill-title">HTML & CSS</div>
+                            <div class="skill-progress">
+                                <div class="progress-bar"><div class="progress-fill" style="width:0" data-width="85"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="skill-desc" data-lang="skill-html">Xây dựng cấu trúc website với HTML semantic và tạo giao diện đẹp, responsive với CSS3, Flexbox, Grid và animations.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-header">
+                        <div class="skill-icon">⚡</div>
+                        <div style="flex:1">
+                            <div class="skill-title">JavaScript</div>
+                            <div class="skill-progress">
+                                <div class="progress-bar"><div class="progress-fill" style="width:0" data-width="75"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="skill-desc" data-lang="skill-js">Thao tác DOM, xử lý sự kiện, tạo tương tác động và xây dựng các tính năng phức tạp với vanilla JavaScript.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-header">
+                        <div class="skill-icon">🎨</div>
+                        <div style="flex:1">
+                            <div class="skill-title" data-lang="skill-design-title">Responsive Design</div>
+                            <div class="skill-progress">
+                                <div class="progress-bar"><div class="progress-fill" style="width:0" data-width="80"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="skill-desc" data-lang="skill-design">Thiết kế website hoạt động tốt trên mọi thiết bị, từ mobile đến desktop với mobile-first approach.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-header">
+                        <div class="skill-icon">🚀</div>
+                        <div style="flex:1">
+                            <div class="skill-title" data-lang="skill-optimization-title">Tối ưu hiệu suất</div>
+                            <div class="skill-progress">
+                                <div class="progress-bar"><div class="progress-fill" style="width:0" data-width="70"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="skill-desc" data-lang="skill-optimization">Tối ưu code, giảm thời gian tải trang và cải thiện trải nghiệm người dùng thông qua các kỹ thuật optimization.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-lang="projects-title">Dự án của tôi</h2>
+                <p class="section-subtitle" data-lang="projects-subtitle">Các dự án tôi đã xây dựng và đang phát triển</p>
+            </div>
+
+            <!-- Main Category Filters -->
+            <div class="project-filters" id="main-filters">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Sub Filters (Tags) -->
+            <div class="sub-filters" id="sub-filters">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="projects-grid" id="projects-grid">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-lang="contact-title">Liên hệ với tôi</h2>
+                <p class="section-subtitle" data-lang="contact-subtitle">Hãy liên hệ nếu bạn muốn làm việc cùng hoặc có câu hỏi</p>
+            </div>
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-details">
+                            <h4 data-lang="contact-text">Email</h4>
+                            <p><a href="mailto:tuanquoc.2008.developer@gmail.com">tuanquoc.2008.developer@gmail.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div class="contact-details">
+                            <h4 data-lang="phone-label">Điện thoại</h4>
+                            <p data-lang="phone-text">Liên hệ qua email</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-details">
+                            <h4 data-lang="location-label">Địa chỉ</h4>
+                            <p data-lang="location-text">Tỉnh Đồng Nai, Việt Nam</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="contact-form">
+                    <div class="form-group">
+                        <label class="form-label" data-lang="form-name">Tên của bạn</label>
+                        <input type="text" class="form-input" required data-placeholder="placeholder-name" placeholder="Nguyễn Văn A">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-lang="contact-text">Email</label>
+                        <input type="email" class="form-input" required data-placeholder="placeholder-email" placeholder="example@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-lang="form-message">Tin nhắn</label>
+                        <textarea class="form-textarea" required data-placeholder="placeholder-message" placeholder="Nhập tin nhắn của bạn..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%" data-lang="form-submit">Gửi tin nhắn</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p data-lang="footer-text">© 2025 Tuấn Quốc. Made with ❤️ using HTML, CSS & JavaScript</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="./js/languages.js"></script>
+    <script src="./js/projects.js"></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/mobile-back-handler.js"></script>
+
+    <!-- In-App Browser Detection -->
+    <script>
+    (function() {
+        'use strict';
+        
+        function detectInAppBrowser() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            if (window.innerWidth > 768) return false;
+            
+            if (ua.indexOf('Zalo') > -1) return { name: 'zalo', displayName: 'Zalo' };
+            if (ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1) return { name: 'facebook', displayName: 'Facebook' };
+            if (ua.indexOf('Instagram') > -1) return { name: 'instagram', displayName: 'Instagram' };
+            if (ua.indexOf('Line') > -1) return { name: 'line', displayName: 'Line' };
+            if (ua.indexOf('MicroMessenger') > -1) return { name: 'wechat', displayName: 'WeChat' };
+            
+            return false;
+        }
+        
+        const inAppInfo = detectInAppBrowser();
+        
+        if (inAppInfo) {
+            const banner = document.getElementById('inapp-browser-banner');
+            banner.style.display = 'block';
+            document.body.style.paddingTop = banner.offsetHeight + 'px';
+            
+            setTimeout(function() {
+                if (window.closeInAppBanner) window.closeInAppBanner();
+            }, 10000);
+        }
+        
+        window.closeInAppBanner = function() {
+            const banner = document.getElementById('inapp-browser-banner');
+            if (banner) {
+                banner.style.animation = 'slideDown 0.3s ease reverse';
+                setTimeout(function() {
+                    banner.style.display = 'none';
+                    document.body.style.paddingTop = '0';
+                }, 300);
+            }
+        };
+    })();
+    </script>
+</body>
+</html>
