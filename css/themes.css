@@ -1,0 +1,532 @@
+/**
+ * ============================================
+ * THEMES.CSS - Advanced Gradient System
+ * ============================================
+ * Supports 3-7 color gradients with backward compatibility
+ * Old 3-color themes still work perfectly
+ * New themes can use 4-7 colors
+ */
+
+/* ============================================
+   BASE COLOR SYSTEM (Light Mode Default)
+   ============================================ */
+:root {
+    /* Background colors */
+    --bg: #fff;
+    --card: #f8fafc;
+    
+    /* Text colors */
+    --text: #0f172a;
+    --text-sec: #475569;
+    
+    /* UI colors */
+    --border: #e2e8f0;
+    --shadow: rgba(15, 23, 42, 0.08);
+    --tap: #000;
+    
+    /* Gradient color slots (1-7) */
+    --theme-color-1: #1e3a8a;
+    --theme-color-2: #3b82f6;
+    --theme-color-3: #06b6d4;
+    --theme-color-4: transparent;
+    --theme-color-5: transparent;
+    --theme-color-6: transparent;
+    --theme-color-7: transparent;
+    
+    /* Backward compatible aliases */
+    --primary: var(--theme-color-1);
+    --primary-light: var(--theme-color-2);
+    --accent: var(--theme-color-3);
+    
+    /* Smart gradient generator - auto-detects number of colors */
+    --gradient-primary: linear-gradient(135deg, 
+        var(--theme-color-1), 
+        var(--theme-color-2), 
+        var(--theme-color-3)
+    );
+    
+    /* Individual gradient variants for specific use cases */
+    --gradient-2: linear-gradient(135deg, 
+        var(--theme-color-1), 
+        var(--theme-color-2)
+    );
+    
+    --gradient-3: linear-gradient(135deg, 
+        var(--theme-color-1), 
+        var(--theme-color-2), 
+        var(--theme-color-3)
+    );
+    
+    --gradient-4: linear-gradient(135deg, 
+        var(--theme-color-1), 
+        var(--theme-color-2), 
+        var(--theme-color-3),
+        var(--theme-color-4)
+    );
+    
+    --gradient-5: linear-gradient(135deg, 
+        var(--theme-color-1), 
+        var(--theme-color-2), 
+        var(--theme-color-3),
+        var(--theme-color-4),
+        var(--theme-color-5)
+    );
+    
+    --gradient-6: linear-gradient(135deg, 
+        var(--theme-color-1), 
+        var(--theme-color-2), 
+        var(--theme-color-3),
+        var(--theme-color-4),
+        var(--theme-color-5),
+        var(--theme-color-6)
+    );
+    
+    --gradient-7: linear-gradient(135deg, 
+        var(--theme-color-1), 
+        var(--theme-color-2), 
+        var(--theme-color-3),
+        var(--theme-color-4),
+        var(--theme-color-5),
+        var(--theme-color-6),
+        var(--theme-color-7)
+    );
+}
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+body.dark {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f1f5f9;
+    --text-sec: #cbd5e1;
+    --border: #334155;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --tap: #fff;
+}
+
+/* ============================================
+   ORIGINAL 3-COLOR THEMES (Backward Compatible)
+   ============================================ */
+
+/* Blue Theme (Default) */
+body[data-theme="blue"] {
+    --theme-color-1: #1e3a8a;
+    --theme-color-2: #3b82f6;
+    --theme-color-3: #06b6d4;
+    
+    --primary: #1e3a8a;
+    --primary-light: #3b82f6;
+    --accent: #06b6d4;
+    
+    --gradient-primary: linear-gradient(135deg, #1e3a8a, #3b82f6, #06b6d4);
+}
+
+/* Purple Theme */
+body[data-theme="purple"] {
+    --theme-color-1: #7c3aed;
+    --theme-color-2: #a78bfa;
+    --theme-color-3: #c084fc;
+    
+    --primary: #7c3aed;
+    --primary-light: #a78bfa;
+    --accent: #c084fc;
+    
+    --gradient-primary: linear-gradient(135deg, #7c3aed, #a78bfa, #c084fc);
+}
+
+/* Green Theme */
+body[data-theme="green"] {
+    --theme-color-1: #047857;
+    --theme-color-2: #10b981;
+    --theme-color-3: #34d399;
+    
+    --primary: #047857;
+    --primary-light: #10b981;
+    --accent: #34d399;
+    
+    --gradient-primary: linear-gradient(135deg, #047857, #10b981, #34d399);
+}
+
+/* Orange Theme */
+body[data-theme="orange"] {
+    --theme-color-1: #c2410c;
+    --theme-color-2: #f97316;
+    --theme-color-3: #fb923c;
+    
+    --primary: #c2410c;
+    --primary-light: #f97316;
+    --accent: #fb923c;
+    
+    --gradient-primary: linear-gradient(135deg, #c2410c, #f97316, #fb923c);
+}
+
+/* Pink Theme */
+body[data-theme="pink"] {
+    --theme-color-1: #be185d;
+    --theme-color-2: #ec4899;
+    --theme-color-3: #f9a8d4;
+    
+    --primary: #be185d;
+    --primary-light: #ec4899;
+    --accent: #f9a8d4;
+    
+    --gradient-primary: linear-gradient(135deg, #be185d, #ec4899, #f9a8d4);
+}
+
+/* Yellow Theme */
+body[data-theme="yellow"] {
+    --theme-color-1: #ca8a04;
+    --theme-color-2: #eab308;
+    --theme-color-3: #fbbf24;
+    
+    --primary: #ca8a04;
+    --primary-light: #eab308;
+    --accent: #fbbf24;
+    
+    --gradient-primary: linear-gradient(135deg, #ca8a04, #eab308, #fbbf24);
+}
+
+/* Red Theme */
+body[data-theme="red"] {
+    --theme-color-1: #b91c1c;
+    --theme-color-2: #ef4444;
+    --theme-color-3: #f87171;
+    
+    --primary: #b91c1c;
+    --primary-light: #ef4444;
+    --accent: #f87171;
+    
+    --gradient-primary: linear-gradient(135deg, #b91c1c, #ef4444, #f87171);
+}
+
+/* ============================================
+   NEW 4-7 COLOR THEMES (Advanced Gradients)
+   ============================================ */
+
+/* Rainbow Theme (7 colors - Full spectrum) */
+body[data-theme="rainbow"] {
+    --theme-color-1: #ff0000;
+    --theme-color-2: #ff7f00;
+    --theme-color-3: #ffff00;
+    --theme-color-4: #00ff00;
+    --theme-color-5: #0000ff;
+    --theme-color-6: #4b0082;
+    --theme-color-7: #9400d3;
+    
+    --primary: #ff0000;
+    --primary-light: #ff7f00;
+    --accent: #ffff00;
+    
+    --gradient-primary: linear-gradient(135deg, 
+        #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3
+    );
+}
+
+/* Sunset Theme (5 colors) */
+body[data-theme="sunset"] {
+    --theme-color-1: #FF6B6B;
+    --theme-color-2: #FF8E53;
+    --theme-color-3: #FFD93D;
+    --theme-color-4: #FFB74D;
+    --theme-color-5: #6BCB77;
+    
+    --primary: #FF6B6B;
+    --primary-light: #FF8E53;
+    --accent: #FFD93D;
+    
+    --gradient-primary: linear-gradient(135deg, 
+        #FF6B6B, #FF8E53, #FFD93D, #FFB74D, #6BCB77
+    );
+}
+
+/* Ocean Theme (5 colors) */
+body[data-theme="ocean"] {
+    --theme-color-1: #667eea;
+    --theme-color-2: #764ba2;
+    --theme-color-3: #f093fb;
+    --theme-color-4: #4facfe;
+    --theme-color-5: #00f2fe;
+    
+    --primary: #667eea;
+    --primary-light: #764ba2;
+    --accent: #f093fb;
+    
+    --gradient-primary: linear-gradient(135deg, 
+        #667eea, #764ba2, #f093fb, #4facfe, #00f2fe
+    );
+}
+
+/* Premium Gradient (3 colors) */
+body[data-theme="gradient-premium"] {
+    --theme-color-1: #0891b2;
+    --theme-color-2: #06b6d4;
+    --theme-color-3: #14b8a6;
+    
+    --primary: #0891b2;
+    --primary-light: #06b6d4;
+    --accent: #14b8a6;
+    
+    --gradient-primary: linear-gradient(135deg, #0891b2, #06b6d4, #14b8a6);
+}
+
+/* Exclusive Gradient (3 colors) */
+body[data-theme="gradient-exclusive"] {
+    --theme-color-1: #F1C9FD;
+    --theme-color-2: #FC0061;
+    --theme-color-3: #FF1493;
+    
+    --primary: #F1C9FD;
+    --primary-light: #FC0061;
+    --accent: #FF1493;
+    
+    --gradient-primary: linear-gradient(135deg, #F1C9FD, #FC0061);
+}
+
+/* Fire Theme (4 colors) */
+body[data-theme="fire"] {
+    --theme-color-1: #ff0000;
+    --theme-color-2: #ff4500;
+    --theme-color-3: #ff8c00;
+    --theme-color-4: #ffd700;
+    
+    --primary: #ff0000;
+    --primary-light: #ff4500;
+    --accent: #ff8c00;
+    
+    --gradient-primary: linear-gradient(135deg, 
+        #ff0000, #ff4500, #ff8c00, #ffd700
+    );
+}
+
+/* Aurora Theme (6 colors) */
+body[data-theme="aurora"] {
+    --theme-color-1: #4c1d95;
+    --theme-color-2: #7c3aed;
+    --theme-color-3: #a78bfa;
+    --theme-color-4: #06b6d4;
+    --theme-color-5: #34d399;
+    --theme-color-6: #fbbf24;
+    
+    --primary: #4c1d95;
+    --primary-light: #7c3aed;
+    --accent: #a78bfa;
+    
+    --gradient-primary: linear-gradient(135deg, 
+        #4c1d95, #7c3aed, #a78bfa, #06b6d4, #34d399, #fbbf24
+    );
+}
+
+/* Neon Theme (4 colors) */
+body[data-theme="neon"] {
+    --theme-color-1: #ff006e;
+    --theme-color-2: #fb5607;
+    --theme-color-3: #ffbe0b;
+    --theme-color-4: #8338ec;
+    
+    --primary: #ff006e;
+    --primary-light: #fb5607;
+    --accent: #ffbe0b;
+    
+    --gradient-primary: linear-gradient(135deg, 
+        #ff006e, #fb5607, #ffbe0b, #8338ec
+    );
+}
+
+/* ============================================
+   PREMIUM THEME INDICATORS
+   ============================================ */
+.theme-card[data-theme="gradient-premium"],
+.theme-card[data-theme="gradient-exclusive"],
+.theme-card[data-theme="rainbow"],
+.theme-card[data-theme="sunset"],
+.theme-card[data-theme="ocean"],
+.theme-card[data-theme="fire"],
+.theme-card[data-theme="aurora"],
+.theme-card[data-theme="neon"] {
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-card[data-theme="gradient-premium"]::before,
+.theme-card[data-theme="gradient-exclusive"]::before,
+.theme-card[data-theme="rainbow"]::before,
+.theme-card[data-theme="sunset"]::before,
+.theme-card[data-theme="ocean"]::before,
+.theme-card[data-theme="fire"]::before,
+.theme-card[data-theme="aurora"]::before,
+.theme-card[data-theme="neon"]::before {
+    content: '🔒';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    z-index: 2;
+}
+
+.theme-card.unlocked::before {
+    content: '✓';
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+
+/* ============================================
+   PREMIUM MODAL STYLING
+   ============================================ */
+.premium-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+    cursor: pointer;
+}
+
+.premium-modal-content {
+    background: var(--card);
+    border-radius: 20px;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 20px 60px var(--shadow);
+    animation: slideUp 0.3s ease;
+    cursor: default;
+}
+
+.premium-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 2px solid var(--border);
+}
+
+.premium-modal-header h3 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--text);
+}
+
+.premium-modal-close {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: none;
+    color: var(--text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.premium-modal-close:hover {
+    background: var(--border);
+    transform: rotate(90deg);
+}
+
+.premium-modal-body {
+    padding: 2rem;
+}
+
+.premium-modal-body p {
+    color: var(--text-sec);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.premium-input {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.premium-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.premium-error {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    min-height: 20px;
+}
+
+.premium-modal-footer {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 2px solid var(--border);
+}
+
+.premium-modal-footer .btn {
+    flex: 1;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 768px) {
+    .premium-modal-content {
+        max-width: 90%;
+    }
+    
+    .premium-modal-header,
+    .premium-modal-body,
+    .premium-modal-footer {
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .premium-modal-footer {
+        flex-direction: column;
+    }
+}
+
+/* ============================================
+   NOTES FOR FUTURE EXPANSION
+   ============================================ */
+/*
+ * To add a new theme:
+ * 
+ * 1. Define color slots (--theme-color-1 through --theme-color-7)
+ * 2. Set primary, primary-light, and accent for backward compatibility
+ * 3. Set --gradient-primary with appropriate number of colors
+ * 
+ * Example 4-color theme:
+ * 
+ * body[data-theme="mytheme"] {
+ *     --theme-color-1: #color1;
+ *     --theme-color-2: #color2;
+ *     --theme-color-3: #color3;
+ *     --theme-color-4: #color4;
+ *     
+ *     --primary: #color1;
+ *     --primary-light: #color2;
+ *     --accent: #color3;
+ *     
+ *     --gradient-primary: linear-gradient(135deg, 
+ *         #color1, #color2, #color3, #color4
+ *     );
+ * }
+ * 
+ * The system automatically uses the correct number of colors!
+ */
