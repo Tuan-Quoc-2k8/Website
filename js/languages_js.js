@@ -396,6 +396,3 @@ const translations = {
  * Export for use in app.js
  * Usage: translations[lang]['key-name']
  */
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = translations;
-}
