@@ -778,36 +778,98 @@
             user-select: none;
         }
 
-        /* Lightning container */
-        .btn-lightning .lightning {
-            position: absolute;
-            inset: -10%;
-            pointer-events: none;
-        }
 
-        /* SVG */
-        .btn-lightning .lightning svg {
-            width: 100%;
-            height: 100%;
-        }
+.btn-tree-lightning {
+  position: relative;
+  overflow: visible;
+  padding: 14px 34px;
+  border-radius: 10px;
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+  width: 150px;
+}
 
-        /* Lightning path */
-        .btn-lightning .lightning path {
-            stroke: var(--effect-color-1, #ffffff);
-            stroke-width: 2;
-            fill: none;
-            opacity: 0;
-            filter: drop-shadow(0 0 6px var(--effect-color-1, #ffffff));
-            animation: lightning-flash var(--effect-duration, 0.6s) ease-out;
-        }
+/* Inner lightning */
+.btn-tree-lightning .lightning-inner {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 
-        /* Flash animation */
-        @keyframes lightning-flash {
-            0%   { opacity: 0; }
-            10%  { opacity: 1; }
-            50%  { opacity: 1; }
-            100% { opacity: 0; }
-        }
+.btn-tree-lightning .lightning-inner path {
+  stroke: var(--effect-color-1);
+  stroke-width: 2;
+  fill: none;
+  filter: drop-shadow(0 0 4px var(--effect-color-1));
+  animation: lightning-flash var(--effect-duration) ease-out;
+}
+
+/* Outer tree lightning */
+.btn-tree-lightning .lightning-outer {
+  position: absolute;
+  inset: -140%;
+  pointer-events: none;
+}
+
+.btn-tree-lightning .lightning-outer path {
+  stroke: var(--effect-color-2);
+  stroke-linecap: round;
+  fill: none;
+  filter: drop-shadow(0 0 8px var(--effect-color-2));
+  animation: lightning-flash var(--effect-duration) ease-out;
+}
+
+@keyframes lightning-flash {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+
+.btn-glow-pulse {
+  position: relative;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  background: #1f2933;
+  color: #ffffff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.btn-glow-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  opacity: 0;
+  box-shadow: 0 0 0 0 var(--effect-color-1);
+  transition: opacity 0.3s ease;
+}
+
+.btn-glow-pulse:hover::after {
+  opacity: 1;
+  animation: glow-pulse var(--effect-duration) ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--effect-color-1);
+  }
+  50% {
+    box-shadow: 0 0 16px 6px var(--effect-color-1);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--effect-color-1);
+  }
+}
+
 
     </style>
 </head>
@@ -1290,218 +1352,233 @@ toggle.addEventListener('click', () => {
         });
 
 EffectRegistry.register({
-  id: 'btn-click-ripple',
+  id: 'btn-tree-lightning',
   category: 'buttons',
   name: {
-    en: '💧 Click Ripple',
-    vi: '💧 Gợn Sóng Click',
-    ja: '💧 クリック波紋'
+    en: '⚡ Tree Lightning Button',
+    vi: '⚡ Nút Tia Sét Nhánh',
+    ja: '⚡ ツリー稲妻ボタン'
   },
   description: {
-    en: 'Ripple effect appears exactly at click position',
-    vi: 'Gợn sóng xuất hiện đúng vị trí click',
-    ja: 'クリック位置に波紋が表示されます'
+    en: 'Tree-like lightning effect on click',
+    vi: 'Hiệu ứng tia sét dạng nhánh cây khi click',
+    ja: 'クリック時に樹状の稲妻'
   },
-  tags: ['click'],
+  tags: ['click', 'active'],
   performance: 'low',
-
-  previewHTML: `
-<button class="btn-ripple" onclick="btnRippleClick(event)">
-  Click Me
-</button>
-`,
-
+  previewHTML: '<button class="btn-tree-lightning" onclick="treeLightningClick(event)">Click Me</button>',
   controls: [
-    { type: 'range', id: 'duration', label: 'Duration', min: 0.2, max: 1.2, step: 0.1, default: 0.6, unit: 's' },
-    { type: 'color', id: 'color1', label: 'Ripple Color', default: 'rgba(255,255,255,0.6)' }
+    { type: 'range', id: 'duration', label: 'Duration', min: 0.3, max: 1.5, step: 0.1, default: 0.8, unit: 's' },
+    { type: 'color', id: 'color1', label: 'Inner Lightning', default: '#ffffff' },
+    { type: 'color', id: 'color2', label: 'Outer Lightning', default: '#4f46e5' }
   ],
-
   presets: {
-    minimal: { duration: 0.4, color1: 'rgba(255,255,255,0.4)' },
-    soft: { duration: 0.6, color1: 'rgba(255,255,255,0.6)' },
-    strong: { duration: 0.9, color1: 'rgba(255,255,255,0.85)' }
+    minimal: { duration: 0.5, color1: '#ffffff', color2: '#c7d2fe' },
+    soft: { duration: 0.8, color1: '#e0e7ff', color2: '#60a5fa' },
+    strong: { duration: 1.2, color1: '#ffffff', color2: '#38bdf8' }
   },
-
   code: {
-    html: `<button class="btn-ripple">Click Me</button>`,
-
-    css: `.btn-ripple {
+    html: `<button class="btn-tree-lightning">Click Me</button>`,
+    css: `
+.btn-tree-lightning {
   position: relative;
-  overflow: hidden;
-  padding: 14px 32px;
-  border-radius: 12px;
+  overflow: visible;
+  padding: 12px 28px;
+  border-radius: 10px;
   border: none;
   background: #4f46e5;
   color: #fff;
   cursor: pointer;
-  font-size: 15px;
 }
 
-.btn-ripple span {
+/* Inner lightning */
+.btn-tree-lightning .lightning-inner {
   position: absolute;
-  border-radius: 50%;
-  transform: scale(0);
-  animation: ripple var(--effect-duration) ease-out;
-  background: var(--effect-color-1);
+  inset: 0;
+  overflow: hidden;
   pointer-events: none;
 }
 
-@keyframes ripple {
-  to {
-    transform: scale(4);
-    opacity: 0;
+.btn-tree-lightning .lightning-inner path {
+  stroke: var(--effect-color-1);
+  stroke-width: 2;
+  fill: none;
+  filter: drop-shadow(0 0 4px var(--effect-color-1));
+  animation: lightning-flash var(--effect-duration) ease-out;
+}
+
+/* Outer tree lightning */
+.btn-tree-lightning .lightning-outer {
+  position: absolute;
+  inset: -140%;
+  pointer-events: none;
+}
+
+.btn-tree-lightning .lightning-outer path {
+  stroke: var(--effect-color-2);
+  stroke-linecap: round;
+  fill: none;
+  filter: drop-shadow(0 0 8px var(--effect-color-2));
+  animation: lightning-flash var(--effect-duration) ease-out;
+}
+
+@keyframes lightning-flash {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+`,
+    js: `
+function treeLightningClick(event) {
+  const btn = event.currentTarget;
+  btn.querySelectorAll('.lightning-inner, .lightning-outer').forEach(e => e.remove());
+
+  /* Inner zigzag */
+  const inner = document.createElement('div');
+  inner.className = 'lightning-inner';
+
+  const pts = [];
+  const seg = 6 + Math.floor(Math.random() * 2);
+  for (let i = 0; i <= seg; i++) {
+    pts.push(\`\${(i / seg) * 120},\${10 + Math.random() * 40}\`);
   }
-}`,
 
-    js: `function btnRippleClick(e) {
-  const btn = e.currentTarget;
-  const ripple = document.createElement('span');
+  inner.innerHTML = \`
+<svg viewBox="0 0 120 60" preserveAspectRatio="none">
+  <path d="M \${pts.join(' L ')}" />
+</svg>\`;
 
-  const rect = btn.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height);
+  /* Outer tree lightning */
+  const outer = document.createElement('div');
+  outer.className = 'lightning-outer';
 
-  ripple.style.width = ripple.style.height = size + 'px';
-  ripple.style.left = e.offsetX - size / 2 + 'px';
-  ripple.style.top = e.offsetY - size / 2 + 'px';
+  const paths = [];
 
-  btn.appendChild(ripple);
+  function branch(x, y, len, angle, depth, width) {
+    if (depth <= 0) return;
+    const nx = x + Math.cos(angle) * len;
+    const ny = y + Math.sin(angle) * len;
+    paths.push({ d: \`M \${x} \${y} L \${nx} \${ny}\`, w: width });
 
-  ripple.addEventListener('animationend', () => ripple.remove());
-}`
+    const count = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < count; i++) {
+      branch(
+        nx,
+        ny,
+        len * (0.6 + Math.random() * 0.2),
+        angle + (Math.random() - 0.5),
+        depth - 1,
+        width * 0.6
+      );
+    }
+  }
+
+  branch(100, 100, 70 + Math.random() * 30, Math.random() * Math.PI * 2, 4, 2.5);
+
+  outer.innerHTML = \`
+<svg viewBox="0 0 200 200" preserveAspectRatio="none">
+  \${paths.map(p => \`<path d="\${p.d}" stroke-width="\${p.w}" />\`).join('')}
+</svg>\`;
+
+  btn.appendChild(outer);
+  btn.appendChild(inner);
+
+  inner.addEventListener('animationend', () => {
+    inner.remove();
+    outer.remove();
+  });
+}
+`
   },
-
   explanation: {
-    en: 'Uses inline click handler so the effect works in preview sandbox.',
-    vi: 'Dùng onclick inline để hiệu ứng chạy đúng trong preview.',
-    ja: 'プレビュー環境対応のためonclickを使用します。'
+    en: 'Uses SVG paths to generate inner zigzag lightning and outer tree-like branches.',
+    vi: 'Dùng SVG để tạo tia sét zigzag bên trong và nhánh cây bên ngoài.',
+    ja: 'SVGパスで内部と外部の稲妻を生成します。'
   },
-
   keyProperties: [
-    { name: 'onclick', value: ' inline handler' },
-    { name: 'overflow', value: ' hidden' },
-    { name: 'animation', value: ' scale + fade' }
+    { name: 'SVG path', value: ' dynamic branching lightning' },
+    { name: 'stroke-width', value: ' decreases per branch' },
+    { name: 'onclick', value: ' inline click handler' }
   ]
 });
 
 EffectRegistry.register({
-  id: 'btn-click-lightning',
+  id: 'btn-glow-pulse',
   category: 'buttons',
   name: {
-    en: '⚡ Click Lightning',
-    vi: '⚡ Click Tia Sét',
-    ja: '⚡ クリック稲妻'
+    en: '✨ Glow Pulse Button',
+    vi: '✨ Nút Phát Sáng Nhịp',
+    ja: '✨ グローパルスボタン'
   },
   description: {
-    en: 'Random lightning flashes across the button on click',
-    vi: 'Tia sét ngẫu nhiên chạy qua nút khi click',
-    ja: 'クリック時にランダムな稲妻が走ります'
+    en: 'Soft glowing pulse effect on hover',
+    vi: 'Hiệu ứng phát sáng nhịp nhẹ khi hover',
+    ja: 'ホバー時に柔らかい発光パルス'
   },
-  tags: ['click'],
+  tags: ['hover'],
   performance: 'low',
-
-  previewHTML: `
-<button class="btn-lightning" onclick="btnLightningClick(event)">
-  Click Me
-</button>
-`,
-
+  previewHTML: '<button class="btn-glow-pulse">Hover Me</button>',
   controls: [
-    { type: 'range', id: 'duration', label: 'Duration', min: 0.3, max: 1.2, step: 0.1, default: 0.6, unit: 's' },
-    { type: 'color', id: 'color1', label: 'Lightning Color', default: '#ffffff' }
+    { type: 'range', id: 'duration', label: 'Speed', min: 0.6, max: 3, step: 0.1, default: 1.5, unit: 's' },
+    { type: 'color', id: 'color1', label: 'Glow Color', default: '#6366f1' }
   ],
-
   presets: {
-    minimal: { duration: 0.4, color1: '#e0e7ff' },
-    soft: { duration: 0.6, color1: '#ffffff' },
-    strong: { duration: 0.9, color1: '#fde68a' }
+    minimal: { duration: 1, color1: '#6366f1' },
+    soft: { duration: 1.5, color1: '#818cf8' },
+    strong: { duration: 2.2, color1: '#4f46e5' }
   },
-
   code: {
-    html: `<button class="btn-lightning">Click Me</button>`,
-
-    css: `.btn-lightning {
+    html: `<button class="btn-glow-pulse">Hover Me</button>`,
+    css: `
+.btn-glow-pulse {
   position: relative;
-  overflow: hidden;
-  padding: 14px 34px;
-  border-radius: 14px;
+  padding: 12px 28px;
+  border-radius: 10px;
   border: none;
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: #fff;
-  font-size: 15px;
+  background: #1f2933;
+  color: #ffffff;
   cursor: pointer;
-  user-select: none;
+  transition: color 0.3s ease;
 }
 
-/* Lightning bolt */
-.btn-lightning .lightning {
+.btn-glow-pulse::after {
+  content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 120%;
-  height: 120%;
-  pointer-events: none;
+  inset: -4px;
+  border-radius: inherit;
+  opacity: 0;
+  box-shadow: 0 0 0 0 var(--effect-color-1);
+  transition: opacity 0.3s ease;
 }
 
-.btn-lightning .lightning svg {
-  width: 100%;
-  height: 100%;
+.btn-glow-pulse:hover::after {
+  opacity: 1;
+  animation: glow-pulse var(--effect-duration) ease-in-out infinite;
 }
 
-.btn-lightning .lightning path {
-  stroke: var(--effect-color-1, #ffffff);
-  stroke-width: 2;
-  fill: none;
-  filter: drop-shadow(0 0 6px var(--effect-color-1, #ffffff));
-  animation: lightning-flash var(--effect-duration, 0.6s) ease-out;
-}
-
-@keyframes lightning-flash {
-  0%   { opacity: 0; }
-  10%  { opacity: 1; }
-  40%  { opacity: 1; }
-  100% { opacity: 0; }
-}`,
-
-    js: `function btnLightningClick(event) {
-  const btn = event.currentTarget;
-
-  // remove old lightning
-  const old = btn.querySelector('.lightning');
-  if (old) old.remove();
-
-  const bolt = document.createElement('div');
-  bolt.className = 'lightning';
-
-  // generate random zigzag path
-  const points = [];
-  const segments = 6 + Math.floor(Math.random() * 4);
-  for (let i = 0; i <= segments; i++) {
-    const x = (i / segments) * 120;
-    const y = Math.random() * 120;
-    points.push(\`\${x},\${y}\`);
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--effect-color-1);
   }
-
-  bolt.innerHTML = \`
-<svg viewBox="0 0 120 120" preserveAspectRatio="none">
-  <path d="M \${points.join(' L ')}" />
-</svg>\`;
-
-  btn.appendChild(bolt);
-
-  bolt.addEventListener('animationend', () => bolt.remove());
-}`
+  50% {
+    box-shadow: 0 0 16px 6px var(--effect-color-1);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--effect-color-1);
+  }
+}
+`,
+    js: `// No JavaScript needed`
   },
-
   explanation: {
-    en: 'Generates a random SVG lightning path on each click.',
-    vi: 'Tạo đường tia sét SVG ngẫu nhiên mỗi lần click.',
-    ja: 'クリックごとにランダムなSVG稲妻を生成します。'
+    en: 'Uses pseudo-element and box-shadow animation to create a pulsing glow.',
+    vi: 'Dùng pseudo-element và animation box-shadow để tạo hiệu ứng phát sáng nhịp.',
+    ja: '疑似要素とbox-shadowアニメーションを使用します。'
   },
-
   keyProperties: [
-    { name: 'SVG path', value: ' random zigzag' },
-    { name: 'stroke', value: ' lightning beam' },
-    { name: 'onclick', value: ' inline handler' }
+    { name: '::after', value: ' glow layer' },
+    { name: 'box-shadow', value: ' pulse animation' }
   ]
 });
 
@@ -1959,40 +2036,66 @@ ${effect.code.js}`;
                 ripple.remove();
             });
             }
-function btnLightningClick(event) {
-  const btn = event.currentTarget;
+            
+            function treeLightningClick(event) {
+            const btn = event.currentTarget;
+            btn.querySelectorAll('.lightning-inner, .lightning-outer').forEach(e => e.remove());
 
-  // Remove old lightning
-  const old = btn.querySelector('.lightning');
-  if (old) old.remove();
+            /* Inner zigzag */
+            const inner = document.createElement('div');
+            inner.className = 'lightning-inner';
 
-  const lightning = document.createElement('div');
-  lightning.className = 'lightning';
+            const pts = [];
+            const seg = 6 + Math.floor(Math.random() * 2);
+            for (let i = 0; i <= seg; i++) {
+                pts.push(`${(i / seg) * 120},${10 + Math.random() * 40}`);
+            }
 
-  // Generate random zigzag lightning path
-  const points = [];
-  const segments = 6 + Math.floor(Math.random() * 4);
+            inner.innerHTML = `
+            <svg viewBox="0 0 120 60" preserveAspectRatio="none">
+            <path d="M ${pts.join(' L ')}" />
+            </svg>`;
 
-  for (let i = 0; i <= segments; i++) {
-    const x = (i / segments) * 120;
-    const y = Math.random() * 120;
-    points.push(`${x},${y}`);
-  }
+            /* Outer tree lightning */
+            const outer = document.createElement('div');
+            outer.className = 'lightning-outer';
 
-  lightning.innerHTML = `
-<svg viewBox="0 0 120 120" preserveAspectRatio="none">
-  <path d="M ${points.join(' L ')}"></path>
-</svg>
-`;
+            const paths = [];
 
-  btn.appendChild(lightning);
+            function branch(x, y, len, angle, depth, width) {
+                if (depth <= 0) return;
+                const nx = x + Math.cos(angle) * len;
+                const ny = y + Math.sin(angle) * len;
+                paths.push({ d: `M ${x} ${y} L ${nx} ${ny}`, w: width });
 
-  // Cleanup after animation
-  lightning.addEventListener('animationend', () => {
-    lightning.remove();
-  });
-}
+                const count = 1 + Math.floor(Math.random() * 2);
+                for (let i = 0; i < count; i++) {
+                branch(
+                    nx,
+                    ny,
+                    len * (0.6 + Math.random() * 0.2),
+                    angle + (Math.random() - 0.5),
+                    depth - 1,
+                    width * 0.6
+                );
+                }
+            }
 
+            branch(100, 100, 70 + Math.random() * 30, Math.random() * Math.PI * 2, 4, 2.5);
+
+            outer.innerHTML = `
+            <svg viewBox="0 0 200 200" preserveAspectRatio="none">
+            ${paths.map(p => `<path d="${p.d}" stroke-width="${p.w}" />`).join('')}
+            </svg>`;
+
+            btn.appendChild(outer);
+            btn.appendChild(inner);
+
+            inner.addEventListener('animationend', () => {
+                inner.remove();
+                outer.remove();
+            });
+            }
     </script>
 </body>
 </html>
