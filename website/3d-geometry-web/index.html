@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Geometry Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow: hidden;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        /* ===== LAYOUT ===== */
+        #app {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #canvas-container {
+            flex: 1;
+            position: relative;
+            background: #2a2a2a;
+        }
+
+        /* ===== SIDEBARS ===== */
+        .sidebar {
+            width: 320px;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .sidebar-section h3 {
+            margin-bottom: 15px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== BUTTONS ===== */
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: #374151;
+        }
+
+        button.secondary:hover {
+            background: #4b5563;
+        }
+
+        button.danger {
+            background: #ef4444;
+        }
+
+        button.danger:hover {
+            background: #dc2626;
+        }
+
+        button.small {
+            padding: 6px 12px;
+            font-size: 12px;
+            width: auto;
+            margin: 0 4px 0 0;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ===== INPUTS ===== */
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        input[type="color"],
+        input[type="range"] {
+            width: 100%;
+            height: 40px;
+            padding: 4px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+        input[type="range"] {
+            height: auto;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* ===== COORDINATE INPUTS ===== */
+        .coord-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .coord-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .coord-group label {
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .coord-group input {
+            margin-bottom: 0;
+        }
+
+        /* ===== TABLE ===== */
+        .table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #2a2a2a;
+            border-radius: 6px;
+            border: 1px solid #444;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #1e1e1e;
+            padding: 10px 8px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 8px;
+            font-size: 12px;
+            border-top: 1px solid #333;
+        }
+
+        td input[type="number"] {
+            width: 60px;
+            padding: 4px 6px;
+            margin: 0;
+            font-size: 11px;
+        }
+
+        tr:hover {
+            background: #252525;
+        }
+
+        /* ===== TOGGLES ===== */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 6px;
+        }
+
+        .toggle-group label {
+            margin: 0;
+            font-size: 14px;
+            color: #e0e0e0;
+        }
+
+        input[type="checkbox"] {
+            width: 40px;
+            height: 20px;
+            position: relative;
+            appearance: none;
+            background: #374151;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        input[type="checkbox"]:checked {
+            background: #3b82f6;
+        }
+
+        input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: left 0.2s;
+        }
+
+        input[type="checkbox"]:checked::before {
+            left: 22px;
+        }
+
+        /* ===== MULTI-SELECT ===== */
+        .multi-select {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+        }
+
+        .multi-select-item {
+            display: flex;
+            align-items: center;
+            padding: 6px;
+            margin-bottom: 4px;
+            background: #1e1e1e;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .multi-select-item:hover {
+            background: #252525;
+        }
+
+        .multi-select-item.selected {
+            background: #3b82f6;
+        }
+
+        .multi-select-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+
+        /* ===== PLANE & CONNECTION ITEMS ===== */
+        .connection-item,
+        .plane-item {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .connection-info,
+        .plane-info {
+            font-size: 12px;
+            flex: 1;
+        }
+
+        .plane-info .points-list {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        .alert-warning {
+            background: rgba(251, 191, 36, 0.2);
+            border: 1px solid #fbbf24;
+            color: #fde68a;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #86efac;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 280px;
+            }
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .language-selector button {
+            flex: 1;
+            background: #374151;
+            margin: 0;
+        }
+
+        .language-selector button.active {
+            background: #3b82f6;
+        }
+
+        .stat-display {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- LEFT SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3 id="lang-points-title">Points Manager</h3>
+                
+                <label id="lang-create-point">Create Point</label>
+                <div class="coord-inputs">
+                    <div class="coord-group">
+                        <label>X</label>
+                        <input type="number" id="point-x" value="0" step="0.1">
+                    </div>
+                    <div class="coord-group">
+                        <label>Y</label>
+                        <input type="number" id="point-y" value="0" step="0.1">
+                    </div>
+                    <div class="coord-group">
+                        <label>Z</label>
+                        <input type="number" id="point-z" value="0" step="0.1">
+                    </div>
+                </div>
+                
+                <label id="lang-point-color">Point Color</label>
+                <input type="color" id="point-color" value="#3b82f6">
+                
+                <button id="add-point-btn">➕ <span id="lang-add-point">Add Point</span></button>
+                
+                <p class="info-text" id="lang-click-hint">💡 Left-click in 3D space to add point</p>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th id="lang-name">Name</th>
+                                <th>X</th>
+                                <th>Y</th>
+                                <th>Z</th>
+                                <th id="lang-actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="points-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 id="lang-connections">Connections</h3>
+                
+                <label id="lang-connect-points">Connect Two Points</label>
+                <select id="point-from">
+                    <option id="lang-select-start">Select start point...</option>
+                </select>
+                <select id="point-to">
+                    <option id="lang-select-end">Select end point...</option>
+                </select>
+                
+                <label id="lang-line-color">Line Color</label>
+                <input type="color" id="line-color" value="#00ff00">
+                
+                <button id="connect-btn">🔗 <span id="lang-connect">Connect</span></button>
+                
+                <div id="connections-list"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 id="lang-planes">Planes</h3>
+                
+                <div id="plane-alert"></div>
+                
+                <label id="lang-select-points-plane">Select 3+ Points for Plane</label>
+                <div id="plane-point-selector" class="multi-select"></div>
+                
+                <label id="lang-plane-color">Plane Color</label>
+                <input type="color" id="plane-color" value="#ff6b6b">
+                
+                <label id="lang-plane-opacity">Opacity: <span id="opacity-value">0.4</span></label>
+                <input type="range" id="plane-opacity" min="0.1" max="0.9" step="0.1" value="0.4">
+                
+                <button id="create-plane-btn">➕ <span id="lang-create-plane">Create Plane</span></button>
+                
+                <div id="planes-list"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 id="lang-shapes">Preset Shapes</h3>
+                <button onclick="GeometryApp.shapes.createTriangle()">△ <span id="lang-triangle">Triangle</span></button>
+                <button onclick="GeometryApp.shapes.createTetrahedron()">◬ <span id="lang-tetrahedron">Tetrahedron</span></button>
+                <button onclick="GeometryApp.shapes.createCube()">◻ <span id="lang-cube">Cube</span></button>
+                <button onclick="GeometryApp.shapes.createPrism()">▭ <span id="lang-prism">Prism</span></button>
+                <button onclick="GeometryApp.shapes.createPyramid()">△ <span id="lang-pyramid">Pyramid</span></button>
+            </div>
+        </div>
+
+        <!-- CANVAS -->
+        <div id="canvas-container"></div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3 id="lang-language">Language</h3>
+                <div class="language-selector">
+                    <button onclick="GeometryApp.lang.setLanguage('en')" id="lang-btn-en">EN</button>
+                    <button onclick="GeometryApp.lang.setLanguage('vi')" id="lang-btn-vi">VI</button>
+                    <button onclick="GeometryApp.lang.setLanguage('jp')" id="lang-btn-jp">JP</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 id="lang-view-settings">View Settings</h3>
+                
+                <div class="toggle-group">
+                    <label id="lang-show-axes">Show Axes</label>
+                    <input type="checkbox" id="toggle-axes" checked onchange="GeometryApp.settings.toggleAxes(this.checked)">
+                </div>
+                
+                <div class="toggle-group">
+                    <label id="lang-show-grid">Show Grid</label>
+                    <input type="checkbox" id="toggle-grid" checked onchange="GeometryApp.settings.toggleGrid(this.checked)">
+                </div>
+                
+                <label id="lang-bg-color">Background Color</label>
+                <input type="color" id="bg-color" value="#2a2a2a" onchange="GeometryApp.settings.setBackgroundColor(this.value)">
+                
+                <label id="lang-default-point-color">Default Point Color</label>
+                <input type="color" id="default-point-color" value="#3b82f6" onchange="GeometryApp.settings.setDefaultPointColor(this.value)">
+                
+                <label id="lang-default-line-color">Default Line Color</label>
+                <input type="color" id="default-line-color" value="#00ff00" onchange="GeometryApp.settings.setDefaultLineColor(this.value)">
+                
+                <label id="lang-line-thickness">Line Thickness</label>
+                <input type="number" id="line-thickness" value="2" min="1" max="10" step="1" onchange="GeometryApp.settings.setLineThickness(this.value)">
+            </div>
+
+            <div class="sidebar-section">
+                <h3 id="lang-storage">Storage</h3>
+                <button onclick="GeometryApp.storage.save()">💾 <span id="lang-save">Save Model</span></button>
+                <button onclick="GeometryApp.storage.load()" class="secondary">📂 <span id="lang-load">Load Model</span></button>
+                <button onclick="GeometryApp.storage.exportJSON()" class="secondary">📥 <span id="lang-export">Export JSON</span></button>
+                <button onclick="GeometryApp.storage.clearAll()" class="danger">🗑️ <span id="lang-clear">Clear All</span></button>
+                
+                <div class="stat-display" id="stats-display"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== GLOBAL APP NAMESPACE =====
+        const GeometryApp = {
+            scene: null,
+            points: null,
+            lines: null,
+            planes: null,
+            shapes: null,
+            settings: null,
+            storage: null,
+            ui: null,
+            lang: null,
+            camera: null,
+            controls: null,
+            state: {
+                points: [],
+                lines: [],
+                planes: [],
+                availablePointIds: [],
+                settings: {},
+                language: 'en'
+            }
+        };
+
+        // ===== LANGUAGE MODULE =====
+        GeometryApp.lang = (() => {
+            const translations = {
+                en: {
+                    'lang-points-title': 'Points Manager',
+                    'lang-create-point': 'Create Point',
+                    'lang-point-color': 'Point Color',
+                    'lang-add-point': 'Add Point',
+                    'lang-click-hint': '💡 Left-click in 3D space to add point',
+                    'lang-name': 'Name',
+                    'lang-actions': 'Actions',
+                    'lang-connections': 'Connections',
+                    'lang-connect-points': 'Connect Two Points',
+                    'lang-select-start': 'Select start point...',
+                    'lang-select-end': 'Select end point...',
+                    'lang-line-color': 'Line Color',
+                    'lang-connect': 'Connect',
+                    'lang-planes': 'Planes',
+                    'lang-select-points-plane': 'Select 3+ Points for Plane',
+                    'lang-plane-color': 'Plane Color',
+                    'lang-plane-opacity': 'Opacity',
+                    'lang-create-plane': 'Create Plane',
+                    'lang-shapes': 'Preset Shapes',
+                    'lang-triangle': 'Triangle',
+                    'lang-tetrahedron': 'Tetrahedron',
+                    'lang-cube': 'Cube',
+                    'lang-prism': 'Prism',
+                    'lang-pyramid': 'Pyramid',
+                    'lang-language': 'Language',
+                    'lang-view-settings': 'View Settings',
+                    'lang-show-axes': 'Show Axes',
+                    'lang-show-grid': 'Show Grid',
+                    'lang-bg-color': 'Background Color',
+                    'lang-default-point-color': 'Default Point Color',
+                    'lang-default-line-color': 'Default Line Color',
+                    'lang-line-thickness': 'Line Thickness',
+                    'lang-storage': 'Storage',
+                    'lang-save': 'Save Model',
+                    'lang-load': 'Load Model',
+                    'lang-export': 'Export JSON',
+                    'lang-clear': 'Clear All'
+                },
+                vi: {
+                    'lang-points-title': 'Quản Lý Điểm',
+                    'lang-create-point': 'Tạo Điểm',
+                    'lang-point-color': 'Màu Điểm',
+                    'lang-add-point': 'Thêm Điểm',
+                    'lang-click-hint': '💡 Click trái vào không gian 3D để thêm điểm',
+                    'lang-name': 'Tên',
+                    'lang-actions': 'Hành Động',
+                    'lang-connections': 'Kết Nối',
+                    'lang-connect-points': 'Nối Hai Điểm',
+                    'lang-select-start': 'Chọn điểm bắt đầu...',
+                    'lang-select-end': 'Chọn điểm kết thúc...',
+                    'lang-line-color': 'Màu Đường',
+                    'lang-connect': 'Kết Nối',
+                    'lang-planes': 'Mặt Phẳng',
+                    'lang-select-points-plane': 'Chọn 3+ Điểm Cho Mặt Phẳng',
+                    'lang-plane-color': 'Màu Mặt Phẳng',
+                    'lang-plane-opacity': 'Độ Trong Suốt',
+                    'lang-create-plane': 'Tạo Mặt Phẳng',
+                    'lang-shapes': 'Hình Dạng Có Sẵn',
+                    'lang-triangle': 'Tam Giác',
+                    'lang-tetrahedron': 'Tứ Diện',
+                    'lang-cube': 'Hình Lập Phương',
+                    'lang-prism': 'Lăng Trụ',
+                    'lang-pyramid': 'Kim Tự Tháp',
+                    'lang-language': 'Ngôn Ngữ',
+                    'lang-view-settings': 'Cài Đặt Hiển Thị',
+                    'lang-show-axes': 'Hiện Trục Tọa Độ',
+                    'lang-show-grid': 'Hiện Lưới',
+                    'lang-bg-color': 'Màu Nền',
+                    'lang-default-point-color': 'Màu Điểm Mặc Định',
+                    'lang-default-line-color': 'Màu Đường Mặc Định',
+                    'lang-line-thickness': 'Độ Dày Đường',
+                    'lang-storage': 'Lưu Trữ',
+                    'lang-save': 'Lưu Mô Hình',
+                    'lang-load': 'Tải Mô Hình',
+                    'lang-export': 'Xuất JSON',
+                    'lang-clear': 'Xóa Tất Cả'
+                },
+                jp: {
+                    'lang-points-title': 'ポイント管理',
+                    'lang-create-point': 'ポイント作成',
+                    'lang-point-color': 'ポイントの色',
+                    'lang-add-point': 'ポイントを追加',
+                    'lang-click-hint': '💡 3D空間を左クリックしてポイントを追加',
+                    'lang-name': '名前',
+                    'lang-actions': 'アクション',
+                    'lang-connections': '接続',
+                    'lang-connect-points': '2点を接続',
+                    'lang-select-start': '開始点を選択...',
+                    'lang-select-end': '終了点を選択...',
+                    'lang-line-color': 'ラインの色',
+                    'lang-connect': '接続',
+                    'lang-planes': '平面',
+                    'lang-select-points-plane': '平面用に3点以上選択',
+                    'lang-plane-color': '平面の色',
+                    'lang-plane-opacity': '不透明度',
+                    'lang-create-plane': '平面を作成',
+                    'lang-shapes': 'プリセット形状',
+                    'lang-triangle': '三角形',
+                    'lang-tetrahedron': '四面体',
+                    'lang-cube': '立方体',
+                    'lang-prism': 'プリズム',
+                    'lang-pyramid': 'ピラミッド',
+                    'lang-language': '言語',
+                    'lang-view-settings': '表示設定',
+                    'lang-show-axes': '軸を表示',
+                    'lang-show-grid': 'グリッドを表示',
+                    'lang-bg-color': '背景色',
+                    'lang-default-point-color': 'デフォルトポイント色',
+                    'lang-default-line-color': 'デフォルトライン色',
+                    'lang-line-thickness': 'ライン太さ',
+                    'lang-storage': 'ストレージ',
+                    'lang-save': 'モデルを保存',
+                    'lang-load': 'モデルを読込',
+                    'lang-export': 'JSON出力',
+                    'lang-clear': '全てクリア'
+                }
+            };
+
+            let currentLang = 'en';
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                const trans = translations[lang];
+                
+                Object.keys(trans).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.textContent = trans[key];
+                    }
+                });
+
+                ['en', 'vi', 'jp'].forEach(l => {
+                    const btn = document.getElementById(`lang-btn-${l}`);
+                    if (btn) {
+                        btn.classList.toggle('active', l === lang);
+                    }
+                });
+            }
+
+            setLanguage('en');
+            return { setLanguage, currentLang: () => currentLang };
+        })();
+
+        // ===== SCENE MODULE =====
+        GeometryApp.scene = (() => {
+            let scene, camera, renderer;
+            let axes, grid;
+            const container = document.getElementById('canvas-container');
+
+            function init() {
+                scene = new THREE.Scene();
+                scene.background = new THREE.Color(0x2a2a2a);
+
+                camera = new THREE.PerspectiveCamera(
+                    75,
+                    container.clientWidth / container.clientHeight,
+                    0.1,
+                    1000
+                );
+                camera.position.set(8, 8, 8);
+                camera.lookAt(0, 0, 0);
+
+                renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                container.appendChild(renderer.domElement);
+
+                axes = new THREE.AxesHelper(10);
+                scene.add(axes);
+
+                grid = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
+                scene.add(grid);
+
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                scene.add(ambientLight);
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+                directionalLight.position.set(10, 10, 10);
+                scene.add(directionalLight);
+
+                window.addEventListener('resize', onWindowResize);
+
+                return { scene, camera, renderer };
+            }
+
+            function onWindowResize() {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                GeometryApp.controls.update();
+                renderer.render(scene, camera);
+            }
+
+            function getScene() { return scene; }
+            function getCamera() { return camera; }
+            function getRenderer() { return renderer; }
+            function getAxes() { return axes; }
+            function getGrid() { return grid; }
+
+            return {
+                init,
+                animate,
+                getScene,
+                getCamera,
+                getRenderer,
+                getAxes,
+                getGrid
+            };
+        })();
+
+        // ===== CAMERA CONTROLS MODULE =====
+        GeometryApp.controls = (() => {
+            let camera, renderer;
+            let isRightMouseDown = false;
+            let isMiddleMouseDown = false;
+            let lastMouseX = 0;
+            let lastMouseY = 0;
+            let spherical = { radius: 13.86, theta: Math.PI / 4, phi: Math.PI / 4 };
+            let target = new THREE.Vector3(0, 0, 0);
+            let keys = { w: false, a: false, s: false, d: false };
+
+            function init(cam, rend) {
+                camera = cam;
+                renderer = rend;
+
+                const canvas = renderer.domElement;
+
+                canvas.addEventListener('mousedown', onMouseDown);
+                canvas.addEventListener('mousemove', onMouseMove);
+                canvas.addEventListener('mouseup', onMouseUp);
+                canvas.addEventListener('wheel', onWheel);
+                canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+                window.addEventListener('keydown', onKeyDown);
+                window.addEventListener('keyup', onKeyUp);
+            }
+
+            function onMouseDown(e) {
+                if (e.button === 2) {
+                    isRightMouseDown = true;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                } else if (e.button === 1) {
+                    isMiddleMouseDown = true;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                    e.preventDefault();
+                }
+            }
+
+            function onMouseMove(e) {
+                if (isRightMouseDown) {
+                    const deltaX = e.clientX - lastMouseX;
+                    const deltaY = e.clientY - lastMouseY;
+
+                    spherical.theta -= deltaX * 0.01;
+                    spherical.phi -= deltaY * 0.01;
+                    spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                    updateCameraPosition();
+                } else if (isMiddleMouseDown) {
+                    const deltaX = e.clientX - lastMouseX;
+                    const deltaY = e.clientY - lastMouseY;
+
+                    const panSpeed = 0.01;
+                    const right = new THREE.Vector3();
+                    const up = new THREE.Vector3(0, 1, 0);
+                    camera.getWorldDirection(right);
+                    right.cross(up).normalize();
+
+                    target.addScaledVector(right, -deltaX * panSpeed);
+                    target.y += deltaY * panSpeed;
+
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                    updateCameraPosition();
+                }
+            }
+
+            function onMouseUp(e) {
+                if (e.button === 2) isRightMouseDown = false;
+                if (e.button === 1) isMiddleMouseDown = false;
+            }
+
+            function onWheel(e) {
+                e.preventDefault();
+                spherical.radius += e.deltaY * 0.01;
+                spherical.radius = Math.max(1, Math.min(50, spherical.radius));
+                updateCameraPosition();
+            }
+
+            function onKeyDown(e) {
+                const key = e.key.toLowerCase();
+                if (key === 'w') keys.w = true;
+                if (key === 'a') keys.a = true;
+                if (key === 's') keys.s = true;
+                if (key === 'd') keys.d = true;
+            }
+
+            function onKeyUp(e) {
+                const key = e.key.toLowerCase();
+                if (key === 'w') keys.w = false;
+                if (key === 'a') keys.a = false;
+                if (key === 's') keys.s = false;
+                if (key === 'd') keys.d = false;
+            }
+
+            function update() {
+                const panSpeed = 0.1;
+                if (keys.w || keys.a || keys.s || keys.d) {
+                    const forward = new THREE.Vector3();
+                    const right = new THREE.Vector3();
+                    camera.getWorldDirection(forward);
+                    forward.y = 0;
+                    forward.normalize();
+                    right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
+
+                    if (keys.w) target.addScaledVector(forward, panSpeed);
+                    if (keys.s) target.addScaledVector(forward, -panSpeed);
+                    if (keys.a) target.addScaledVector(right, -panSpeed);
+                    if (keys.d) target.addScaledVector(right, panSpeed);
+
+                    updateCameraPosition();
+                }
+            }
+
+            function updateCameraPosition() {
+                const x = spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+                const y = spherical.radius * Math.cos(spherical.phi);
+                const z = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+
+                camera.position.set(
+                    target.x + x,
+                    target.y + y,
+                    target.z + z
+                );
+                camera.lookAt(target);
+            }
+
+            return { init, update };
+        })();
+
+        // ===== POINTS MODULE =====
+        GeometryApp.points = (() => {
+            let scene;
+
+            function init(sceneRef) {
+                scene = sceneRef;
+                setupClickListener();
+            }
+
+            function setupClickListener() {
+                const canvas = GeometryApp.scene.getRenderer().domElement;
+                canvas.addEventListener('click', onClick);
+            }
+
+            function onClick(e) {
+                if (e.button !== 0) return;
+
+                const canvas = GeometryApp.scene.getRenderer().domElement;
+                const rect = canvas.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(new THREE.Vector2(x, y), GeometryApp.scene.getCamera());
+
+                const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+                const intersection = new THREE.Vector3();
+                raycaster.ray.intersectPlane(plane, intersection);
+
+                if (intersection) {
+                    const color = document.getElementById('point-color').value;
+                    addPoint(intersection.x, intersection.y, intersection.z, color);
+                }
+            }
+
+            function getNextAvailableId() {
+                const state = GeometryApp.state;
+                
+                // Reuse deleted IDs first
+                if (state.availablePointIds.length > 0) {
+                    state.availablePointIds.sort((a, b) => a - b);
+                    return state.availablePointIds.shift();
+                }
+                
+                // Otherwise find the next sequential ID
+                let maxId = 0;
+                state.points.forEach(p => {
+                    const num = parseInt(p.name.substring(1));
+                    if (num > maxId) maxId = num;
+                });
+                
+                return maxId + 1;
+            }
+
+            function addPoint(x, y, z, color = '#3b82f6', name = null) {
+                const pointId = name ? parseInt(name.substring(1)) : getNextAvailableId();
+                const pointName = `P${pointId}`;
+                
+                const geometry = new THREE.SphereGeometry(0.2, 16, 16);
+                const material = new THREE.MeshPhongMaterial({ color: color });
+                const sphere = new THREE.Mesh(geometry, material);
+                sphere.position.set(x, y, z);
+
+                scene.add(sphere);
+
+                const point = {
+                    name: pointName,
+                    id: pointId,
+                    x, y, z,
+                    color,
+                    mesh: sphere,
+                    visible: true
+                };
+
+                GeometryApp.state.points.push(point);
+                GeometryApp.ui.updatePointsTable();
+                GeometryApp.ui.updatePointSelectors();
+                GeometryApp.ui.updatePlanePointSelector();
+                GeometryApp.ui.updateStats();
+
+                return point;
+            }
+
+            function updatePoint(name, x, y, z) {
+                const point = GeometryApp.state.points.find(p => p.name === name);
+                if (point) {
+                    point.x = x;
+                    point.y = y;
+                    point.z = z;
+                    point.mesh.position.set(x, y, z);
+                    GeometryApp.lines.updateConnections();
+                    GeometryApp.planes.updatePlanes();
+                }
+            }
+
+            function deletePoint(name) {
+                const state = GeometryApp.state;
+                const index = state.points.findIndex(p => p.name === name);
+                
+                if (index !== -1) {
+                    const point = state.points[index];
+                    
+                    // Check if point is used by any plane
+                    const usedByPlanes = state.planes.filter(plane => 
+                        plane.pointNames.includes(name)
+                    );
+                    
+                    if (usedByPlanes.length > 0) {
+                        const planeNames = usedByPlanes.map(p => p.name).join(', ');
+                        if (!confirm(`Point ${name} is used by plane(s): ${planeNames}.\nDeleting this point will also delete these planes.\n\nContinue?`)) {
+                            return;
+                        }
+                        
+                        // Delete dependent planes
+                        usedByPlanes.forEach(plane => {
+                            GeometryApp.planes.deletePlane(plane.name);
+                        });
+                    }
+                    
+                    // Dispose geometry and material
+                    point.mesh.geometry.dispose();
+                    point.mesh.material.dispose();
+                    scene.remove(point.mesh);
+                    
+                    // Add ID back to available pool
+                    state.availablePointIds.push(point.id);
+                    
+                    state.points.splice(index, 1);
+                    GeometryApp.ui.updatePointsTable();
+                    GeometryApp.ui.updatePointSelectors();
+                    GeometryApp.ui.updatePlanePointSelector();
+                    GeometryApp.lines.removeConnectionsByPoint(name);
+                    GeometryApp.ui.updateStats();
+                }
+            }
+
+            function togglePointVisibility(name, visible) {
+                const point = GeometryApp.state.points.find(p => p.name === name);
+                if (point) {
+                    point.visible = visible;
+                    point.mesh.visible = visible;
+                }
+            }
+
+            function getPoints() { 
+                return GeometryApp.state.points; 
+            }
+
+            function clearAll() {
+                GeometryApp.state.points.forEach(p => {
+                    p.mesh.geometry.dispose();
+                    p.mesh.material.dispose();
+                    scene.remove(p.mesh);
+                });
+                GeometryApp.state.points = [];
+                GeometryApp.state.availablePointIds = [];
+                GeometryApp.ui.updatePointsTable();
+                GeometryApp.ui.updatePointSelectors();
+                GeometryApp.ui.updatePlanePointSelector();
+                GeometryApp.ui.updateStats();
+            }
+
+            return {
+                init,
+                addPoint,
+                updatePoint,
+                deletePoint,
+                togglePointVisibility,
+                getPoints,
+                clearAll
+            };
+        })();
+
+        // ===== LINES MODULE =====
+        GeometryApp.lines = (() => {
+            let scene;
+
+            function init(sceneRef) {
+                scene = sceneRef;
+            }
+
+            function connectPoints(fromName, toName, color = '#00ff00', thickness = 2) {
+                const points = GeometryApp.state.points;
+                const from = points.find(p => p.name === fromName);
+                const to = points.find(p => p.name === toName);
+
+                if (!from || !to) return;
+
+                const geometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(from.x, from.y, from.z),
+                    new THREE.Vector3(to.x, to.y, to.z)
+                ]);
+
+                const material = new THREE.LineBasicMaterial({ 
+                    color: color,
+                    linewidth: thickness
+                });
+
+                const line = new THREE.Line(geometry, material);
+                scene.add(line);
+
+                const connection = {
+                    from: fromName,
+                    to: toName,
+                    color,
+                    thickness,
+                    line,
+                    visible: true
+                };
+
+                GeometryApp.state.lines.push(connection);
+                GeometryApp.ui.updateConnectionsList();
+                GeometryApp.ui.updateStats();
+
+                return connection;
+            }
+
+            function updateConnections() {
+                const points = GeometryApp.state.points;
+                GeometryApp.state.lines.forEach(conn => {
+                    const from = points.find(p => p.name === conn.from);
+                    const to = points.find(p => p.name === conn.to);
+
+                    if (from && to) {
+                        const positions = conn.line.geometry.attributes.position.array;
+                        positions[0] = from.x;
+                        positions[1] = from.y;
+                        positions[2] = from.z;
+                        positions[3] = to.x;
+                        positions[4] = to.y;
+                        positions[5] = to.z;
+                        conn.line.geometry.attributes.position.needsUpdate = true;
+                    }
+                });
+            }
+
+            function removeConnectionsByPoint(pointName) {
+                const toRemove = GeometryApp.state.lines.filter(c => 
+                    c.from === pointName || c.to === pointName
+                );
+                toRemove.forEach(conn => {
+                    conn.line.geometry.dispose();
+                    conn.line.material.dispose();
+                    scene.remove(conn.line);
+                    const index = GeometryApp.state.lines.indexOf(conn);
+                    if (index !== -1) GeometryApp.state.lines.splice(index, 1);
+                });
+                GeometryApp.ui.updateConnectionsList();
+                GeometryApp.ui.updateStats();
+            }
+
+            function deleteConnection(index) {
+                if (index >= 0 && index < GeometryApp.state.lines.length) {
+                    const conn = GeometryApp.state.lines[index];
+                    conn.line.geometry.dispose();
+                    conn.line.material.dispose();
+                    scene.remove(conn.line);
+                    GeometryApp.state.lines.splice(index, 1);
+                    GeometryApp.ui.updateConnectionsList();
+                    GeometryApp.ui.updateStats();
+                }
+            }
+
+            function toggleConnectionVisibility(index, visible) {
+                if (index >= 0 && index < GeometryApp.state.lines.length) {
+                    GeometryApp.state.lines[index].visible = visible;
+                    GeometryApp.state.lines[index].line.visible = visible;
+                }
+            }
+
+            function getConnections() { 
+                return GeometryApp.state.lines; 
+            }
+
+            function clearAll() {
+                GeometryApp.state.lines.forEach(c => {
+                    c.line.geometry.dispose();
+                    c.line.material.dispose();
+                    scene.remove(c.line);
+                });
+                GeometryApp.state.lines = [];
+                GeometryApp.ui.updateConnectionsList();
+                GeometryApp.ui.updateStats();
+            }
+
+            return {
+                init,
+                connectPoints,
+                updateConnections,
+                removeConnectionsByPoint,
+                deleteConnection,
+                toggleConnectionVisibility,
+                getConnections,
+                clearAll
+            };
+        })();
+
+        // ===== PLANES MODULE (NEW) =====
+        GeometryApp.planes = (() => {
+            let scene;
+            let planeCounter = 1;
+
+            function init(sceneRef) {
+                scene = sceneRef;
+            }
+
+            function arePointsCollinear(p1, p2, p3) {
+                const v1 = { 
+                    x: p2.x - p1.x, 
+                    y: p2.y - p1.y, 
+                    z: p2.z - p1.z 
+                };
+                const v2 = { 
+                    x: p3.x - p1.x, 
+                    y: p3.y - p1.y, 
+                    z: p3.z - p1.z 
+                };
+                
+                const cross = {
+                    x: v1.y * v2.z - v1.z * v2.y,
+                    y: v1.z * v2.x - v1.x * v2.z,
+                    z: v1.x * v2.y - v1.y * v2.x
+                };
+                
+                const magnitude = Math.sqrt(
+                    cross.x * cross.x + 
+                    cross.y * cross.y + 
+                    cross.z * cross.z
+                );
+                
+                return magnitude < 0.0001;
+            }
+
+            function createPlane(pointNames, color = '#ff6b6b', opacity = 0.4) {
+                if (pointNames.length < 3) {
+                    return { success: false, error: 'Need at least 3 points to create a plane' };
+                }
+
+                const points = GeometryApp.state.points;
+                const selectedPoints = pointNames.map(name => 
+                    points.find(p => p.name === name)
+                ).filter(p => p);
+
+                if (selectedPoints.length < 3) {
+                    return { success: false, error: 'Invalid point selection' };
+                }
+
+                // Check if first 3 points are collinear
+                if (arePointsCollinear(selectedPoints[0], selectedPoints[1], selectedPoints[2])) {
+                    return { success: false, error: 'First 3 points are collinear. Cannot create plane.' };
+                }
+
+                // Calculate plane normal from first 3 points
+                const p1 = new THREE.Vector3(selectedPoints[0].x, selectedPoints[0].y, selectedPoints[0].z);
+                const p2 = new THREE.Vector3(selectedPoints[1].x, selectedPoints[1].y, selectedPoints[1].z);
+                const p3 = new THREE.Vector3(selectedPoints[2].x, selectedPoints[2].y, selectedPoints[2].z);
+
+                const v1 = new THREE.Vector3().subVectors(p2, p1);
+                const v2 = new THREE.Vector3().subVectors(p3, p1);
+                const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
+
+                // Create shape from projected points
+                const shape = new THREE.Shape();
+                
+                // Project all points onto the plane
+                const projectedPoints = selectedPoints.map(sp => {
+                    const p = new THREE.Vector3(sp.x, sp.y, sp.z);
+                    return p;
+                });
+
+                // Create a local 2D coordinate system on the plane
+                const localX = v1.normalize();
+                const localY = new THREE.Vector3().crossVectors(normal, localX).normalize();
+
+                const points2D = projectedPoints.map(p => {
+                    const relative = new THREE.Vector3().subVectors(p, p1);
+                    return {
+                        x: relative.dot(localX),
+                        y: relative.dot(localY)
+                    };
+                });
+
+                // Sort points to form a convex hull (simple approach)
+                const center = { x: 0, y: 0 };
+                points2D.forEach(p => {
+                    center.x += p.x;
+                    center.y += p.y;
+                });
+                center.x /= points2D.length;
+                center.y /= points2D.length;
+
+                points2D.sort((a, b) => {
+                    const angleA = Math.atan2(a.y - center.y, a.x - center.x);
+                    const angleB = Math.atan2(b.y - center.y, b.x - center.x);
+                    return angleA - angleB;
+                });
+
+                // Create shape
+                shape.moveTo(points2D[0].x, points2D[0].y);
+                for (let i = 1; i < points2D.length; i++) {
+                    shape.lineTo(points2D[i].x, points2D[i].y);
+                }
+                shape.closePath();
+
+                const geometry = new THREE.ShapeGeometry(shape);
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: color,
+                    transparent: true,
+                    opacity: opacity,
+                    side: THREE.DoubleSide,
+                    depthWrite: false
+                });
+
+                const mesh = new THREE.Mesh(geometry, material);
+
+                // Position and orient the mesh
+                mesh.position.copy(p1);
+                mesh.lookAt(p1.clone().add(normal));
+                mesh.up.copy(localY);
+
+                scene.add(mesh);
+
+                const plane = {
+                    name: `Plane${planeCounter++}`,
+                    pointNames: pointNames,
+                    color,
+                    opacity,
+                    normal: { x: normal.x, y: normal.y, z: normal.z },
+                    mesh,
+                    visible: true
+                };
+
+                GeometryApp.state.planes.push(plane);
+                GeometryApp.ui.updatePlanesList();
+                GeometryApp.ui.updateStats();
+
+                return { success: true, plane };
+            }
+
+            function updatePlanes() {
+                GeometryApp.state.planes.forEach(plane => {
+                    // Remove old mesh
+                    plane.mesh.geometry.dispose();
+                    plane.mesh.material.dispose();
+                    scene.remove(plane.mesh);
+
+                    // Recreate plane with updated point positions
+                    const points = GeometryApp.state.points;
+                    const selectedPoints = plane.pointNames.map(name => 
+                        points.find(p => p.name === name)
+                    ).filter(p => p);
+
+                    if (selectedPoints.length < 3) return;
+
+                    const p1 = new THREE.Vector3(selectedPoints[0].x, selectedPoints[0].y, selectedPoints[0].z);
+                    const p2 = new THREE.Vector3(selectedPoints[1].x, selectedPoints[1].y, selectedPoints[1].z);
+                    const p3 = new THREE.Vector3(selectedPoints[2].x, selectedPoints[2].y, selectedPoints[2].z);
+
+                    const v1 = new THREE.Vector3().subVectors(p2, p1);
+                    const v2 = new THREE.Vector3().subVectors(p3, p1);
+                    const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
+
+                    const shape = new THREE.Shape();
+                    const projectedPoints = selectedPoints.map(sp => 
+                        new THREE.Vector3(sp.x, sp.y, sp.z)
+                    );
+
+                    const localX = v1.normalize();
+                    const localY = new THREE.Vector3().crossVectors(normal, localX).normalize();
+
+                    const points2D = projectedPoints.map(p => {
+                        const relative = new THREE.Vector3().subVectors(p, p1);
+                        return {
+                            x: relative.dot(localX),
+                            y: relative.dot(localY)
+                        };
+                    });
+
+                    const center = { x: 0, y: 0 };
+                    points2D.forEach(p => {
+                        center.x += p.x;
+                        center.y += p.y;
+                    });
+                    center.x /= points2D.length;
+                    center.y /= points2D.length;
+
+                    points2D.sort((a, b) => {
+                        const angleA = Math.atan2(a.y - center.y, a.x - center.x);
+                        const angleB = Math.atan2(b.y - center.y, b.x - center.x);
+                        return angleA - angleB;
+                    });
+
+                    shape.moveTo(points2D[0].x, points2D[0].y);
+                    for (let i = 1; i < points2D.length; i++) {
+                        shape.lineTo(points2D[i].x, points2D[i].y);
+                    }
+                    shape.closePath();
+
+                    const geometry = new THREE.ShapeGeometry(shape);
+                    const material = new THREE.MeshPhongMaterial({ 
+                        color: plane.color,
+                        transparent: true,
+                        opacity: plane.opacity,
+                        side: THREE.DoubleSide,
+                        depthWrite: false
+                    });
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.copy(p1);
+                    mesh.lookAt(p1.clone().add(normal));
+                    mesh.up.copy(localY);
+                    mesh.visible = plane.visible;
+
+                    scene.add(mesh);
+                    plane.mesh = mesh;
+                });
+            }
+
+            function deletePlane(name) {
+                const index = GeometryApp.state.planes.findIndex(p => p.name === name);
+                if (index !== -1) {
+                    const plane = GeometryApp.state.planes[index];
+                    plane.mesh.geometry.dispose();
+                    plane.mesh.material.dispose();
+                    scene.remove(plane.mesh);
+                    GeometryApp.state.planes.splice(index, 1);
+                    GeometryApp.ui.updatePlanesList();
+                    GeometryApp.ui.updateStats();
+                }
+            }
+
+            function togglePlaneVisibility(name, visible) {
+                const plane = GeometryApp.state.planes.find(p => p.name === name);
+                if (plane) {
+                    plane.visible = visible;
+                    plane.mesh.visible = visible;
+                }
+            }
+
+            function getPlanes() {
+                return GeometryApp.state.planes;
+            }
+
+            function clearAll() {
+                GeometryApp.state.planes.forEach(p => {
+                    p.mesh.geometry.dispose();
+                    p.mesh.material.dispose();
+                    scene.remove(p.mesh);
+                });
+                GeometryApp.state.planes = [];
+                planeCounter = 1;
+                GeometryApp.ui.updatePlanesList();
+                GeometryApp.ui.updateStats();
+            }
+
+            return {
+                init,
+                createPlane,
+                updatePlanes,
+                deletePlane,
+                togglePlaneVisibility,
+                getPlanes,
+                clearAll
+            };
+        })();
+
+        // ===== SHAPES MODULE =====
+        GeometryApp.shapes = (() => {
+            function createTriangle() {
+                const p1 = GeometryApp.points.addPoint(-2, 0, 0, '#3b82f6');
+                const p2 = GeometryApp.points.addPoint(2, 0, 0, '#3b82f6');
+                const p3 = GeometryApp.points.addPoint(0, 0, 3, '#3b82f6');
+
+                GeometryApp.lines.connectPoints(p1.name, p2.name);
+                GeometryApp.lines.connectPoints(p2.name, p3.name);
+                GeometryApp.lines.connectPoints(p3.name, p1.name);
+            }
+
+            function createTetrahedron() {
+                const h = Math.sqrt(2/3) * 2;
+                const p1 = GeometryApp.points.addPoint(0, h, 0, '#3b82f6');
+                const p2 = GeometryApp.points.addPoint(-1, 0, -1/Math.sqrt(3), '#3b82f6');
+                const p3 = GeometryApp.points.addPoint(1, 0, -1/Math.sqrt(3), '#3b82f6');
+                const p4 = GeometryApp.points.addPoint(0, 0, 2/Math.sqrt(3), '#3b82f6');
+
+                GeometryApp.lines.connectPoints(p1.name, p2.name);
+                GeometryApp.lines.connectPoints(p1.name, p3.name);
+                GeometryApp.lines.connectPoints(p1.name, p4.name);
+                GeometryApp.lines.connectPoints(p2.name, p3.name);
+                GeometryApp.lines.connectPoints(p3.name, p4.name);
+                GeometryApp.lines.connectPoints(p4.name, p2.name);
+            }
+
+            function createCube() {
+                const s = 2;
+                const p1 = GeometryApp.points.addPoint(-s, -s, -s, '#3b82f6');
+                const p2 = GeometryApp.points.addPoint(s, -s, -s, '#3b82f6');
+                const p3 = GeometryApp.points.addPoint(s, -s, s, '#3b82f6');
+                const p4 = GeometryApp.points.addPoint(-s, -s, s, '#3b82f6');
+                const p5 = GeometryApp.points.addPoint(-s, s, -s, '#3b82f6');
+                const p6 = GeometryApp.points.addPoint(s, s, -s, '#3b82f6');
+                const p7 = GeometryApp.points.addPoint(s, s, s, '#3b82f6');
+                const p8 = GeometryApp.points.addPoint(-s, s, s, '#3b82f6');
+
+                GeometryApp.lines.connectPoints(p1.name, p2.name);
+                GeometryApp.lines.connectPoints(p2.name, p3.name);
+                GeometryApp.lines.connectPoints(p3.name, p4.name);
+                GeometryApp.lines.connectPoints(p4.name, p1.name);
+
+                GeometryApp.lines.connectPoints(p5.name, p6.name);
+                GeometryApp.lines.connectPoints(p6.name, p7.name);
+                GeometryApp.lines.connectPoints(p7.name, p8.name);
+                GeometryApp.lines.connectPoints(p8.name, p5.name);
+
+                GeometryApp.lines.connectPoints(p1.name, p5.name);
+                GeometryApp.lines.connectPoints(p2.name, p6.name);
+                GeometryApp.lines.connectPoints(p3.name, p7.name);
+                GeometryApp.lines.connectPoints(p4.name, p8.name);
+            }
+
+            function createPrism() {
+                const p1 = GeometryApp.points.addPoint(-2, -2, 0, '#3b82f6');
+                const p2 = GeometryApp.points.addPoint(2, -2, 0, '#3b82f6');
+                const p3 = GeometryApp.points.addPoint(0, -2, 3, '#3b82f6');
+                const p4 = GeometryApp.points.addPoint(-2, 2, 0, '#3b82f6');
+                const p5 = GeometryApp.points.addPoint(2, 2, 0, '#3b82f6');
+                const p6 = GeometryApp.points.addPoint(0, 2, 3, '#3b82f6');
+
+                GeometryApp.lines.connectPoints(p1.name, p2.name);
+                GeometryApp.lines.connectPoints(p2.name, p3.name);
+                GeometryApp.lines.connectPoints(p3.name, p1.name);
+
+                GeometryApp.lines.connectPoints(p4.name, p5.name);
+                GeometryApp.lines.connectPoints(p5.name, p6.name);
+                GeometryApp.lines.connectPoints(p6.name, p4.name);
+
+                GeometryApp.lines.connectPoints(p1.name, p4.name);
+                GeometryApp.lines.connectPoints(p2.name, p5.name);
+                GeometryApp.lines.connectPoints(p3.name, p6.name);
+            }
+
+            function createPyramid() {
+                const s = 2;
+                const h = 3;
+                const p1 = GeometryApp.points.addPoint(-s, 0, -s, '#3b82f6');
+                const p2 = GeometryApp.points.addPoint(s, 0, -s, '#3b82f6');
+                const p3 = GeometryApp.points.addPoint(s, 0, s, '#3b82f6');
+                const p4 = GeometryApp.points.addPoint(-s, 0, s, '#3b82f6');
+                const p5 = GeometryApp.points.addPoint(0, h, 0, '#3b82f6');
+
+                GeometryApp.lines.connectPoints(p1.name, p2.name);
+                GeometryApp.lines.connectPoints(p2.name, p3.name);
+                GeometryApp.lines.connectPoints(p3.name, p4.name);
+                GeometryApp.lines.connectPoints(p4.name, p1.name);
+
+                GeometryApp.lines.connectPoints(p1.name, p5.name);
+                GeometryApp.lines.connectPoints(p2.name, p5.name);
+                GeometryApp.lines.connectPoints(p3.name, p5.name);
+                GeometryApp.lines.connectPoints(p4.name, p5.name);
+            }
+
+            return {
+                createTriangle,
+                createTetrahedron,
+                createCube,
+                createPrism,
+                createPyramid
+            };
+        })();
+
+        // ===== SETTINGS MODULE =====
+        GeometryApp.settings = (() => {
+            function toggleAxes(visible) {
+                const axes = GeometryApp.scene.getAxes();
+                axes.visible = visible;
+            }
+
+            function toggleGrid(visible) {
+                const grid = GeometryApp.scene.getGrid();
+                grid.visible = visible;
+            }
+
+            function setBackgroundColor(color) {
+                GeometryApp.scene.getScene().background = new THREE.Color(color);
+            }
+
+            function setDefaultPointColor(color) {
+                document.getElementById('point-color').value = color;
+            }
+
+            function setDefaultLineColor(color) {
+                document.getElementById('line-color').value = color;
+            }
+
+            function setLineThickness(thickness) {
+                console.log('Line thickness set to:', thickness);
+            }
+
+            return {
+                toggleAxes,
+                toggleGrid,
+                setBackgroundColor,
+                setDefaultPointColor,
+                setDefaultLineColor,
+                setLineThickness
+            };
+        })();
+
+        // ===== STORAGE MODULE =====
+        GeometryApp.storage = (() => {
+            async function save() {
+                const data = {
+                    points: GeometryApp.state.points.map(p => ({
+                        name: p.name,
+                        id: p.id,
+                        x: p.x,
+                        y: p.y,
+                        z: p.z,
+                        color: p.color,
+                        visible: p.visible
+                    })),
+                    lines: GeometryApp.state.lines.map(c => ({
+                        from: c.from,
+                        to: c.to,
+                        color: c.color,
+                        thickness: c.thickness,
+                        visible: c.visible
+                    })),
+                    planes: GeometryApp.state.planes.map(p => ({
+                        name: p.name,
+                        pointNames: p.pointNames,
+                        color: p.color,
+                        opacity: p.opacity,
+                        visible: p.visible
+                    })),
+                    availablePointIds: GeometryApp.state.availablePointIds,
+                    settings: {
+                        bgColor: document.getElementById('bg-color').value,
+                        showAxes: document.getElementById('toggle-axes').checked,
+                        showGrid: document.getElementById('toggle-grid').checked
+                    }
+                };
+
+                try {
+                    await window.storage.set('geometry-model', JSON.stringify(data));
+                    alert('Model saved successfully!');
+                } catch (error) {
+                    console.error('Save failed:', error);
+                    alert('Failed to save model');
+                }
+            }
+
+            async function load() {
+                try {
+                    const result = await window.storage.get('geometry-model');
+                    if (!result) {
+                        alert('No saved model found');
+                        return;
+                    }
+
+                    const data = JSON.parse(result.value);
+                    
+                    clearAll();
+
+                    // Restore available IDs
+                    GeometryApp.state.availablePointIds = data.availablePointIds || [];
+
+                    // Load points
+                    data.points.forEach(p => {
+                        GeometryApp.points.addPoint(p.x, p.y, p.z, p.color, p.name);
+                    });
+
+                    // Load lines
+                    data.lines.forEach(c => {
+                        GeometryApp.lines.connectPoints(c.from, c.to, c.color, c.thickness);
+                    });
+
+                    // Load planes
+                    if (data.planes) {
+                        data.planes.forEach(p => {
+                            GeometryApp.planes.createPlane(p.pointNames, p.color, p.opacity);
+                        });
+                    }
+
+                    // Load settings
+                    if (data.settings) {
+                        document.getElementById('bg-color').value = data.settings.bgColor;
+                        GeometryApp.settings.setBackgroundColor(data.settings.bgColor);
+                        document.getElementById('toggle-axes').checked = data.settings.showAxes;
+                        GeometryApp.settings.toggleAxes(data.settings.showAxes);
+                        document.getElementById('toggle-grid').checked = data.settings.showGrid;
+                        GeometryApp.settings.toggleGrid(data.settings.showGrid);
+                    }
+
+                    alert('Model loaded successfully!');
+                } catch (error) {
+                    console.error('Load failed:', error);
+                    alert('Failed to load model');
+                }
+            }
+
+            function exportJSON() {
+                const data = {
+                    points: GeometryApp.state.points.map(p => ({
+                        name: p.name,
+                        x: p.x,
+                        y: p.y,
+                        z: p.z,
+                        color: p.color
+                    })),
+                    lines: GeometryApp.state.lines.map(c => ({
+                        from: c.from,
+                        to: c.to,
+                        color: c.color
+                    })),
+                    planes: GeometryApp.state.planes.map(p => ({
+                        name: p.name,
+                        pointNames: p.pointNames,
+                        color: p.color,
+                        opacity: p.opacity
+                    }))
+                };
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'geometry-model.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            function clearAll() {
+                if (confirm('Are you sure you want to clear all points, lines, and planes?')) {
+                    GeometryApp.planes.clearAll();
+                    GeometryApp.lines.clearAll();
+                    GeometryApp.points.clearAll();
+                    try {
+                        window.storage.delete('geometry-model');
+                    } catch (error) {
+                        console.error('Failed to clear storage:', error);
+                    }
+                }
+            }
+
+            return { save, load, exportJSON, clearAll };
+        })();
+
+        // ===== UI MODULE =====
+        GeometryApp.ui = (() => {
+            function init() {
+                document.getElementById('add-point-btn').addEventListener('click', () => {
+                    const x = parseFloat(document.getElementById('point-x').value);
+                    const y = parseFloat(document.getElementById('point-y').value);
+                    const z = parseFloat(document.getElementById('point-z').value);
+                    const color = document.getElementById('point-color').value;
+                    GeometryApp.points.addPoint(x, y, z, color);
+                });
+
+                document.getElementById('connect-btn').addEventListener('click', () => {
+                    const from = document.getElementById('point-from').value;
+                    const to = document.getElementById('point-to').value;
+                    const color = document.getElementById('line-color').value;
+                    
+                    if (from && to && from !== to) {
+                        GeometryApp.lines.connectPoints(from, to, color);
+                    }
+                });
+
+                document.getElementById('create-plane-btn').addEventListener('click', () => {
+                    const selector = document.getElementById('plane-point-selector');
+                    const checkboxes = selector.querySelectorAll('input[type="checkbox"]:checked');
+                    const selectedPoints = Array.from(checkboxes).map(cb => cb.value);
+                    
+                    const color = document.getElementById('plane-color').value;
+                    const opacity = parseFloat(document.getElementById('plane-opacity').value);
+                    
+                    const result = GeometryApp.planes.createPlane(selectedPoints, color, opacity);
+                    
+                    const alert = document.getElementById('plane-alert');
+                    if (!result.success) {
+                        alert.innerHTML = `<div class="alert alert-error">${result.error}</div>`;
+                        setTimeout(() => alert.innerHTML = '', 5000);
+                    } else {
+                        alert.innerHTML = `<div class="alert alert-success">Plane created successfully!</div>`;
+                        setTimeout(() => alert.innerHTML = '', 3000);
+                        // Uncheck all
+                        checkboxes.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                document.getElementById('plane-opacity').addEventListener('input', (e) => {
+                    document.getElementById('opacity-value').textContent = e.target.value;
+                });
+            }
+
+            function updatePointsTable() {
+                const tbody = document.getElementById('points-table');
+                tbody.innerHTML = '';
+
+                GeometryApp.state.points.forEach(point => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${point.name}</td>
+                        <td><input type="number" value="${point.x.toFixed(2)}" step="0.1" 
+                            onchange="GeometryApp.points.updatePoint('${point.name}', parseFloat(this.value), ${point.y}, ${point.z})"></td>
+                        <td><input type="number" value="${point.y.toFixed(2)}" step="0.1" 
+                            onchange="GeometryApp.points.updatePoint('${point.name}', ${point.x}, parseFloat(this.value), ${point.z})"></td>
+                        <td><input type="number" value="${point.z.toFixed(2)}" step="0.1" 
+                            onchange="GeometryApp.points.updatePoint('${point.name}', ${point.x}, ${point.y}, parseFloat(this.value))"></td>
+                        <td>
+                            <button class="small danger" onclick="GeometryApp.points.deletePoint('${point.name}')">✕</button>
+                        </td>
+                    `;
+                });
+            }
+
+            function updatePointSelectors() {
+                const fromSelect = document.getElementById('point-from');
+                const toSelect = document.getElementById('point-to');
+                
+                const points = GeometryApp.state.points;
+                
+                fromSelect.innerHTML = '<option>Select start point...</option>';
+                toSelect.innerHTML = '<option>Select end point...</option>';
+                
+                points.forEach(point => {
+                    fromSelect.innerHTML += `<option value="${point.name}">${point.name}</option>`;
+                    toSelect.innerHTML += `<option value="${point.name}">${point.name}</option>`;
+                });
+            }
+
+            function updatePlanePointSelector() {
+                const selector = document.getElementById('plane-point-selector');
+                selector.innerHTML = '';
+
+                GeometryApp.state.points.forEach(point => {
+                    const div = document.createElement('div');
+                    div.className = 'multi-select-item';
+                    div.innerHTML = `
+                        <input type="checkbox" value="${point.name}" id="plane-pt-${point.name}">
+                        <label for="plane-pt-${point.name}">${point.name} (${point.x.toFixed(1)}, ${point.y.toFixed(1)}, ${point.z.toFixed(1)})</label>
+                    `;
+                    
+                    div.addEventListener('click', (e) => {
+                        if (e.target.tagName !== 'INPUT') {
+                            const checkbox = div.querySelector('input');
+                            checkbox.checked = !checkbox.checked;
+                        }
+                        div.classList.toggle('selected', div.querySelector('input').checked);
+                    });
+                    
+                    selector.appendChild(div);
+                });
+            }
+
+            function updateConnectionsList() {
+                const list = document.getElementById('connections-list');
+                list.innerHTML = '';
+
+                GeometryApp.state.lines.forEach((conn, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'connection-item';
+                    div.innerHTML = `
+                        <div class="connection-info">
+                            ${conn.from} ↔ ${conn.to}
+                        </div>
+                        <button class="small danger" onclick="GeometryApp.lines.deleteConnection(${index})">✕</button>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+
+            function updatePlanesList() {
+                const list = document.getElementById('planes-list');
+                list.innerHTML = '';
+
+                GeometryApp.state.planes.forEach((plane) => {
+                    const div = document.createElement('div');
+                    div.className = 'plane-item';
+                    div.innerHTML = `
+                        <div class="plane-info">
+                            <strong>${plane.name}</strong>
+                            <div class="points-list">Points: ${plane.pointNames.join(', ')}</div>
+                        </div>
+                        <div>
+                            <button class="small secondary" onclick="GeometryApp.planes.togglePlaneVisibility('${plane.name}', ${!plane.visible})">
+                                ${plane.visible ? '👁️' : '🚫'}
+                            </button>
+                            <button class="small danger" onclick="GeometryApp.planes.deletePlane('${plane.name}')">✕</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+
+            function updateStats() {
+                const stats = document.getElementById('stats-display');
+                stats.innerHTML = `
+                    Points: ${GeometryApp.state.points.length} | 
+                    Lines: ${GeometryApp.state.lines.length} | 
+                    Planes: ${GeometryApp.state.planes.length}
+                `;
+            }
+
+            return {
+                init,
+                updatePointsTable,
+                updatePointSelectors,
+                updatePlanePointSelector,
+                updateConnectionsList,
+                updatePlanesList,
+                updateStats
+            };
+        })();
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            const { scene, camera, renderer } = GeometryApp.scene.init();
+            
+            GeometryApp.controls.init(camera, renderer);
+            
+            GeometryApp.points.init(scene);
+            GeometryApp.lines.init(scene);
+            GeometryApp.planes.init(scene);
+            GeometryApp.ui.init();
+            
+            GeometryApp.scene.animate();
+
+            document.getElementById('lang-btn-en').classList.add('active');
+            GeometryApp.ui.updateStats();
+        });
+    </script>
+</body>
+</html>
