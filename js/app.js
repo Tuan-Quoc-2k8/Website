@@ -77,6 +77,16 @@ let currentMainFilter = 'all';
 let currentSubFilters = [];
 let filteredProjects = [];
 
+// ============================================
+// DATA VALIDATION - Ensure data is loaded
+// ============================================
+if (typeof projectsData === 'undefined') {
+    console.error('❌ projectsData not found! Check if projects.js is loaded correctly.');
+}
+if (typeof translations === 'undefined') {
+    console.error('❌ translations not found! Check if languages.js is loaded correctly.');
+}
+
 /* ============================================
    UTILITY FUNCTIONS
    ============================================ */
