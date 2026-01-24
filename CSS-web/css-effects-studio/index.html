@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Effects Studio</title>
+    
+    <!-- 
+    ═══════════════════════════════════════════════════════════════
+    PROJECT STRUCTURE - 6 SEPARATE FILES
+    ═══════════════════════════════════════════════════════════════
+    
+    To use as separate files:
+    1. Create style.css - Copy everything from STYLE.CSS section below
+    2. Create projects.css - Copy everything from PROJECTS.CSS section
+    3. Create language.js - Copy everything from LANGUAGE.JS section
+    4. Create projects.js - Copy everything from PROJECTS.JS section
+    5. Create logic.js - Copy everything from LOGIC.JS section
+    6. Create index.html - Copy the HTML structure
+    
+    Then update index.html to link:
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="projects.css">
+    <script src="language.js"></script>
+    <script src="projects.js"></script>
+    <script src="logic.js"></script>
+    ═══════════════════════════════════════════════════════════════
+    -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="projects.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="logo" data-i18n="appTitle">⚡ CSS Effects Studio</div>
+        <div class="header-actions">
+            <div class="lang-dropdown">
+                <button class="icon-btn" onclick="Studio.ui.toggleLangMenu()">🌐</button>
+                <div class="lang-menu" id="langMenu">
+                    <div class="lang-option" onclick="Studio.i18n.setLanguage('en')">🇬🇧 English</div>
+                    <div class="lang-option" onclick="Studio.i18n.setLanguage('vi')">🇻🇳 Tiếng Việt</div>
+                    <div class="lang-option" onclick="Studio.i18n.setLanguage('ja')">🇯🇵 日本語</div>
+                </div>
+            </div>
+            <button class="icon-btn" onclick="Studio.ui.toggleTheme()" data-i18n-title="toggleTheme">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <button class="icon-btn" onclick="Studio.performance.toggle()" data-i18n-title="performanceMode">⚡</button>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    data-i18n-placeholder="searchPlaceholder"
+                    placeholder="Search effects..." 
+                    oninput="Studio.ui.handleSearch(this.value)"
+                >
+            </div>
+
+            <div class="filter-tags">
+                <span class="tag active" data-tag="all" onclick="Studio.ui.filterByTag('all')" data-i18n="tagAll">All</span>
+                <span class="tag" data-tag="hover" onclick="Studio.ui.filterByTag('hover')" data-i18n="tagHover">Hover</span>
+                <span class="tag" data-tag="click" onclick="Studio.ui.filterByTag('click')" data-i18n="tagClick">Click</span>
+                <span class="tag" data-tag="animation" onclick="Studio.ui.filterByTag('animation')" data-i18n="tagAnimation">Animated</span>
+            </div>
+
+            <div class="effects-list" id="effectsList"></div>
+        </aside>
+
+        <main class="workspace">
+            <div class="workspace-tabs">
+                <button class="workspace-tab active" data-tab="preview" onclick="Studio.ui.switchTab('preview')" data-i18n="tabPreview">Preview</button>
+                <button class="workspace-tab" data-tab="customize" onclick="Studio.ui.switchTab('customize')" data-i18n="tabCustomize">Customize</button>
+                <button class="workspace-tab" data-tab="learn" onclick="Studio.ui.switchTab('learn')" data-i18n="tabLearn">How it Works</button>
+                <button class="workspace-tab" data-tab="code" onclick="Studio.ui.switchTab('code')" data-i18n="tabCode">Code</button>
+            </div>
+
+            <div class="workspace-content">
+                <div class="tab-panel active" data-panel="preview">
+                    <div class="preview-section">
+                        <div class="preview-header">
+                            <div>
+                                <h2 class="preview-title" id="effectTitle" data-i18n="selectEffect">Select an Effect</h2>
+                                <span class="perf-badge perf-low" id="perfBadge">
+                                    <span>⚡</span> <span data-i18n="perfLow">Low Impact</span>
+                                </span>
+                            </div>
+                            <div class="preview-actions">
+                                <button class="btn btn-secondary" onclick="Studio.ui.resetEffect()"><span data-i18n="btnReset">Reset</span></button>
+                                <button class="btn" onclick="Studio.export.download()"><span data-i18n="btnExport">📤 Export</span></button>
+                            </div>
+                        </div>
+                        <div class="preview-area" id="previewArea">
+                            <div id="effect-preview"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" data-panel="customize">
+                    <div class="preview-section">
+                        <h3 style="margin-bottom: 16px;" data-i18n="presetsTitle">Presets</h3>
+                        <div class="preset-buttons" id="presetButtons"></div>
+
+                        <h3 style="margin-bottom: 16px; margin-top: 24px;" data-i18n="controlsTitle">Controls</h3>
+                        <div class="controls-grid" id="controlsGrid"></div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" data-panel="learn">
+                    <div class="preview-section learn-section">
+                        <h3 data-i18n="learnTitle">📚 How It Works</h3>
+                        <p id="effectDescription" data-i18n="selectEffectLearn">Select an effect to learn how it works.</p>
+                        
+                        <div class="properties-list" id="keyProperties"></div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" data-panel="code">
+                    <div class="code-section">
+                        <div class="code-tabs">
+                            <button class="code-tab active" onclick="Studio.ui.switchCodeTab('html')">HTML</button>
+                            <button class="code-tab" onclick="Studio.ui.switchCodeTab('css')">CSS</button>
+                            <button class="code-tab" onclick="Studio.ui.switchCodeTab('js')">JavaScript</button>
+                        </div>
+                        <div class="code-block active" id="codeHtml">
+                            <button class="copy-btn" onclick="Studio.export.copyCode('html')"><span data-i18n="btnCopy">📋 Copy</span></button>
+                            <pre id="htmlCode">// Select an effect to view code</pre>
+                        </div>
+                        <div class="code-block" id="codeCss">
+                            <button class="copy-btn" onclick="Studio.export.copyCode('css')"><span data-i18n="btnCopy">📋 Copy</span></button>
+                            <pre id="cssCode">// Select an effect to view code</pre>
+                        </div>
+                        <div class="code-block" id="codeJs">
+                            <button class="copy-btn" onclick="Studio.export.copyCode('js')"><span data-i18n="btnCopy">📋 Copy</span></button>
+                            <pre id="jsCode">// Select an effect to view code</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="./language.js"></script>
+    <script src="./projects.js"></script>
+    <script src="./logic.js"></script>
+</body>
+</html>
