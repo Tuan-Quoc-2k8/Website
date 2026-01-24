@@ -27,7 +27,7 @@ const GeometryApp = {
     }
 };
 
-// ===== CSS2D RENDERER (for labels) =====
+// ===== CSS2D RENDERER =====
 class CSS2DObject extends THREE.Object3D {
     constructor(element) {
         super();
@@ -73,78 +73,11 @@ class CSS2DRenderer {
     }
 }
 
-// ===== MODAL SYSTEM =====
-GeometryApp.modal = (() => {
-    let overlay, title, message, confirmBtn, cancelBtn, closeBtn;
-    let resolveCallback = null;
-
-    function init() {
-        overlay = document.getElementById('modal-overlay');
-        title = document.getElementById('modal-title');
-        message = document.getElementById('modal-message');
-        confirmBtn = document.getElementById('modal-confirm');
-        cancelBtn = document.getElementById('modal-cancel');
-        closeBtn = document.getElementById('modal-close');
-
-        if (!overlay) return;
-
-        confirmBtn.addEventListener('click', () => {
-            hide();
-            if (resolveCallback) resolveCallback(true);
-        });
-
-        cancelBtn.addEventListener('click', () => {
-            hide();
-            if (resolveCallback) resolveCallback(false);
-        });
-
-        closeBtn.addEventListener('click', () => {
-            hide();
-            if (resolveCallback) resolveCallback(false);
-        });
-
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) {
-                hide();
-                if (resolveCallback) resolveCallback(false);
-            }
-        });
-    }
-
-    function show(titleText, messageText, showCancel = true) {
-        if (!overlay) return Promise.resolve(false);
-
-        title.textContent = titleText;
-        message.textContent = messageText;
-        cancelBtn.style.display = showCancel ? 'block' : 'none';
-        overlay.classList.add('active');
-
-        return new Promise((resolve) => {
-            resolveCallback = resolve;
-        });
-    }
-
-    function hide() {
-        if (overlay) {
-            overlay.classList.remove('active');
-        }
-    }
-
-    function alert(titleText, messageText) {
-        return show(titleText, messageText, false);
-    }
-
-    function confirm(titleText, messageText) {
-        return show(titleText, messageText, true);
-    }
-
-    return { init, show, hide, alert, confirm };
-})();
-
-// ===== LANGUAGE MODULE =====
+// ===== LANGUAGE MODULE (EXPANDED WITH MODAL TRANSLATIONS) =====
 GeometryApp.lang = (() => {
     const translations = {
         en: {
+            // UI translations
             'lang-points-title': 'Points Manager',
             'lang-create-point': 'Create Point',
             'lang-point-color': 'Point Color',
@@ -182,9 +115,31 @@ GeometryApp.lang = (() => {
             'lang-save': 'Save Model',
             'lang-load': 'Load Model',
             'lang-export': 'Export JSON',
-            'lang-clear': 'Clear All'
+            'lang-clear': 'Clear All',
+            
+            // Modal translations
+            'modal-confirm': 'Confirm',
+            'modal-cancel': 'Cancel',
+            'modal-ok': 'OK',
+            'modal-delete-point-title': 'Delete Point',
+            'modal-delete-point-message': 'Point {name} is used by plane(s): {planes}.\nDeleting this point will also delete these planes.\n\nContinue?',
+            'modal-clear-all-title': 'Clear All',
+            'modal-clear-all-message': 'Are you sure you want to clear all points, lines, and planes?',
+            'modal-success-title': 'Success',
+            'modal-save-success': 'Model saved successfully!',
+            'modal-save-local': 'Model saved to browser storage!',
+            'modal-load-success': 'Model loaded successfully!',
+            'modal-error-title': 'Error',
+            'modal-save-error': 'Failed to save model. See console for details.',
+            'modal-load-error': 'Failed to load model. See console for details.',
+            'modal-no-data-title': 'No Data',
+            'modal-no-data-message': 'No saved model found',
+            'modal-invalid-name-title': 'Invalid Name',
+            'modal-invalid-name-message': 'Name must be 1-5 chars (a-z, 0-9, -)',
+            'modal-name-exists': 'Name already exists'
         },
         vi: {
+            // UI translations
             'lang-points-title': 'Quản Lý Điểm',
             'lang-create-point': 'Tạo Điểm',
             'lang-point-color': 'Màu Điểm',
@@ -222,9 +177,31 @@ GeometryApp.lang = (() => {
             'lang-save': 'Lưu Mô Hình',
             'lang-load': 'Tải Mô Hình',
             'lang-export': 'Xuất JSON',
-            'lang-clear': 'Xóa Tất Cả'
+            'lang-clear': 'Xóa Tất Cả',
+            
+            // Modal translations
+            'modal-confirm': 'Xác nhận',
+            'modal-cancel': 'Hủy',
+            'modal-ok': 'OK',
+            'modal-delete-point-title': 'Xóa Điểm',
+            'modal-delete-point-message': 'Điểm {name} đang được sử dụng bởi mặt phẳng: {planes}.\nXóa điểm này cũng sẽ xóa các mặt phẳng đó.\n\nTiếp tục?',
+            'modal-clear-all-title': 'Xóa Tất Cả',
+            'modal-clear-all-message': 'Bạn có chắc chắn muốn xóa tất cả điểm, đường và mặt phẳng?',
+            'modal-success-title': 'Thành Công',
+            'modal-save-success': 'Mô hình đã được lưu thành công!',
+            'modal-save-local': 'Mô hình đã được lưu vào bộ nhớ trình duyệt!',
+            'modal-load-success': 'Mô hình đã được tải thành công!',
+            'modal-error-title': 'Lỗi',
+            'modal-save-error': 'Không thể lưu mô hình. Xem console để biết chi tiết.',
+            'modal-load-error': 'Không thể tải mô hình. Xem console để biết chi tiết.',
+            'modal-no-data-title': 'Không Có Dữ Liệu',
+            'modal-no-data-message': 'Không tìm thấy mô hình đã lưu',
+            'modal-invalid-name-title': 'Tên Không Hợp Lệ',
+            'modal-invalid-name-message': 'Tên phải có 1-5 ký tự (a-z, 0-9, -)',
+            'modal-name-exists': 'Tên đã tồn tại'
         },
         jp: {
+            // UI translations
             'lang-points-title': 'ポイント管理',
             'lang-create-point': 'ポイント作成',
             'lang-point-color': 'ポイントの色',
@@ -262,9 +239,42 @@ GeometryApp.lang = (() => {
             'lang-save': 'モデルを保存',
             'lang-load': 'モデルを読込',
             'lang-export': 'JSON出力',
-            'lang-clear': '全てクリア'
+            'lang-clear': '全てクリア',
+            
+            // Modal translations
+            'modal-confirm': '確認',
+            'modal-cancel': 'キャンセル',
+            'modal-ok': 'OK',
+            'modal-delete-point-title': 'ポイントを削除',
+            'modal-delete-point-message': 'ポイント {name} は平面 {planes} で使用されています。\nこのポイントを削除すると、これらの平面も削除されます。\n\n続行しますか？',
+            'modal-clear-all-title': '全てクリア',
+            'modal-clear-all-message': '全てのポイント、ライン、平面をクリアしてもよろしいですか？',
+            'modal-success-title': '成功',
+            'modal-save-success': 'モデルが正常に保存されました！',
+            'modal-save-local': 'モデルがブラウザストレージに保存されました！',
+            'modal-load-success': 'モデルが正常に読み込まれました！',
+            'modal-error-title': 'エラー',
+            'modal-save-error': 'モデルの保存に失敗しました。詳細はコンソールをご確認ください。',
+            'modal-load-error': 'モデルの読み込みに失敗しました。詳細はコンソールをご確認ください。',
+            'modal-no-data-title': 'データなし',
+            'modal-no-data-message': '保存されたモデルが見つかりません',
+            'modal-invalid-name-title': '無効な名前',
+            'modal-invalid-name-message': '名前は1〜5文字（a-z、0-9、-）である必要があります',
+            'modal-name-exists': '名前は既に存在します'
         }
     };
+
+    function t(key, params = {}) {
+        const lang = GeometryApp.state.language;
+        let text = translations[lang]?.[key] || translations['en'][key] || key;
+        
+        // Replace parameters
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    }
 
     function setLanguage(lang) {
         const trans = translations[lang] || translations['en'];
@@ -283,7 +293,92 @@ GeometryApp.lang = (() => {
         GeometryApp.state.language = lang;
     }
 
-    return { setLanguage };
+    return { setLanguage, t };
+})();
+
+// ===== MODAL SYSTEM (FULLY MULTILINGUAL) =====
+GeometryApp.modal = (() => {
+    let overlay, title, message, confirmBtn, cancelBtn, closeBtn;
+    let confirmText, cancelText;
+    let resolveCallback = null;
+
+    function init() {
+        overlay = document.getElementById('modal-overlay');
+        title = document.getElementById('modal-title');
+        message = document.getElementById('modal-message');
+        confirmBtn = document.getElementById('modal-confirm');
+        cancelBtn = document.getElementById('modal-cancel');
+        closeBtn = document.getElementById('modal-close');
+        confirmText = document.getElementById('modal-confirm-text');
+        cancelText = document.getElementById('modal-cancel-text');
+
+        if (!overlay) return;
+
+        confirmBtn.addEventListener('click', () => {
+            hide();
+            if (resolveCallback) resolveCallback(true);
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            hide();
+            if (resolveCallback) resolveCallback(false);
+        });
+
+        closeBtn.addEventListener('click', () => {
+            hide();
+            if (resolveCallback) resolveCallback(false);
+        });
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                hide();
+                if (resolveCallback) resolveCallback(false);
+            }
+        });
+    }
+
+    function updateTexts(showCancel) {
+        if (confirmText) {
+            confirmText.textContent = showCancel ? GeometryApp.lang.t('modal-confirm') : GeometryApp.lang.t('modal-ok');
+        }
+        if (cancelText) {
+            cancelText.textContent = GeometryApp.lang.t('modal-cancel');
+        }
+    }
+
+    function show(titleText, messageText, showCancel = true) {
+        if (!overlay) return Promise.resolve(false);
+
+        title.textContent = titleText;
+        message.textContent = messageText;
+        cancelBtn.style.display = showCancel ? 'block' : 'none';
+        updateTexts(showCancel);
+        overlay.classList.add('active');
+
+        return new Promise((resolve) => {
+            resolveCallback = resolve;
+        });
+    }
+
+    function hide() {
+        if (overlay) {
+            overlay.classList.remove('active');
+        }
+    }
+
+    function alert(titleKey, messageKey, params = {}) {
+        const titleText = GeometryApp.lang.t(titleKey, params);
+        const messageText = GeometryApp.lang.t(messageKey, params);
+        return show(titleText, messageText, false);
+    }
+
+    function confirm(titleKey, messageKey, params = {}) {
+        const titleText = GeometryApp.lang.t(titleKey, params);
+        const messageText = GeometryApp.lang.t(messageKey, params);
+        return show(titleText, messageText, true);
+    }
+
+    return { init, show, hide, alert, confirm };
 })();
 
 // ===== SCENE MODULE =====
@@ -294,7 +389,7 @@ GeometryApp.scene = (() => {
 
     function init() {
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x2a2a2a);
+        scene.background = new THREE.Color(0x0f172a);
 
         camera = new THREE.PerspectiveCamera(
             75,
@@ -302,7 +397,7 @@ GeometryApp.scene = (() => {
             0.1,
             1000
         );
-        camera.position.set(8, 8, 8);
+        camera.position.set(10, 10, 10);
         camera.lookAt(0, 0, 0);
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -314,19 +409,17 @@ GeometryApp.scene = (() => {
         labelRenderer.setSize(container.clientWidth, container.clientHeight);
         container.appendChild(labelRenderer.domElement);
 
-        // Axes: X=red, Y=green, Z=blue (Z is vertical/height)
         axes = new THREE.AxesHelper(10);
         scene.add(axes);
 
-        // Grid on XY plane (horizontal)
-        grid = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
-        grid.rotation.x = Math.PI / 2; // Rotate to XY plane
+        grid = new THREE.GridHelper(20, 20, 0x667eea, 0x334488);
+        grid.rotation.x = Math.PI / 2;
         scene.add(grid);
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
         directionalLight.position.set(10, 10, 10);
         scene.add(directionalLight);
 
@@ -348,8 +441,32 @@ GeometryApp.scene = (() => {
         if (GeometryApp.controls) {
             GeometryApp.controls.update();
         }
+        
+        // Update point labels to orbit around spheres
+        if (GeometryApp.points) {
+            updatePointLabels();
+        }
+        
         renderer.render(scene, camera);
         labelRenderer.render(scene, camera);
+    }
+
+    function updatePointLabels() {
+        const camera = GeometryApp.scene.getCamera();
+        if (!camera) return;
+        
+        GeometryApp.state.points.forEach(point => {
+            if (point.label && point.mesh) {
+                // Get direction from point to camera
+                const cameraDirection = new THREE.Vector3();
+                cameraDirection.subVectors(camera.position, point.mesh.position);
+                cameraDirection.normalize();
+                
+                // Position label on sphere surface (radius 0.2) plus offset
+                const labelDistance = 0.35; // Sphere radius (0.2) + offset (0.15)
+                point.label.position.copy(cameraDirection.multiplyScalar(labelDistance));
+            }
+        });
     }
 
     return {
@@ -359,20 +476,23 @@ GeometryApp.scene = (() => {
         getCamera: () => camera,
         getRenderer: () => renderer,
         getAxes: () => axes,
-        getGrid: () => grid,
-        getLabelRenderer: () => labelRenderer
+        getGrid: () => grid
     };
 })();
 
-// ===== CAMERA CONTROLS MODULE =====
+// ===== CAMERA CONTROLS =====
 GeometryApp.controls = (() => {
     let camera, renderer;
     let isRightMouseDown = false;
     let isMiddleMouseDown = false;
     let lastMouseX = 0;
     let lastMouseY = 0;
-    let spherical = { radius: 13.86, theta: Math.PI / 4, phi: Math.PI / 4 };
+    
+    let distance = 17.32;
+    let theta = Math.PI / 4;
+    let phi = Math.PI / 4;
     let target = new THREE.Vector3(0, 0, 0);
+    
     let keys = { w: false, a: false, s: false, d: false };
 
     function init(cam, rend) {
@@ -380,13 +500,11 @@ GeometryApp.controls = (() => {
         renderer = rend;
 
         const canvas = renderer.domElement;
-
         canvas.addEventListener('mousedown', onMouseDown);
         canvas.addEventListener('mousemove', onMouseMove);
         canvas.addEventListener('mouseup', onMouseUp);
         canvas.addEventListener('wheel', onWheel);
         canvas.addEventListener('contextmenu', e => e.preventDefault());
-
         window.addEventListener('keydown', onKeyDown);
         window.addEventListener('keyup', onKeyUp);
     }
@@ -409,9 +527,10 @@ GeometryApp.controls = (() => {
             const deltaX = e.clientX - lastMouseX;
             const deltaY = e.clientY - lastMouseY;
 
-            spherical.theta -= deltaX * 0.01;
-            spherical.phi -= deltaY * 0.01;
-            spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+            theta -= deltaX * 0.01;
+            phi -= deltaY * 0.01;
+            
+            phi = Math.max(0.1, Math.min(Math.PI - 0.1, phi));
 
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
@@ -420,14 +539,17 @@ GeometryApp.controls = (() => {
             const deltaX = e.clientX - lastMouseX;
             const deltaY = e.clientY - lastMouseY;
 
-            const panSpeed = 0.01;
-            const right = new THREE.Vector3();
-            const up = new THREE.Vector3(0, 1, 0);
-            camera.getWorldDirection(right);
-            right.cross(up).normalize();
-
-            target.addScaledVector(right, -deltaX * panSpeed);
-            target.y += deltaY * panSpeed;
+            const panSpeed = 0.02;
+            
+            const cameraRight = new THREE.Vector3();
+            const cameraUp = new THREE.Vector3(0, 0, 1);
+            camera.getWorldDirection(cameraRight);
+            cameraRight.cross(cameraUp).normalize();
+            
+            const up = new THREE.Vector3(0, 0, 1);
+            
+            target.addScaledVector(cameraRight, -deltaX * panSpeed);
+            target.addScaledVector(up, deltaY * panSpeed);
 
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
@@ -442,8 +564,8 @@ GeometryApp.controls = (() => {
 
     function onWheel(e) {
         e.preventDefault();
-        spherical.radius += e.deltaY * 0.01;
-        spherical.radius = Math.max(1, Math.min(50, spherical.radius));
+        distance += e.deltaY * 0.02;
+        distance = Math.max(2, Math.min(100, distance));
         updateCameraPosition();
     }
 
@@ -464,14 +586,16 @@ GeometryApp.controls = (() => {
     }
 
     function update() {
-        const panSpeed = 0.1;
+        const panSpeed = 0.2;
         if (keys.w || keys.a || keys.s || keys.d) {
             const forward = new THREE.Vector3();
             const right = new THREE.Vector3();
             camera.getWorldDirection(forward);
-            forward.y = 0;
+            forward.z = 0;
             forward.normalize();
-            right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
+            
+            const up = new THREE.Vector3(0, 0, 1);
+            right.crossVectors(forward, up).normalize();
 
             if (keys.w) target.addScaledVector(forward, panSpeed);
             if (keys.s) target.addScaledVector(forward, -panSpeed);
@@ -483,9 +607,9 @@ GeometryApp.controls = (() => {
     }
 
     function updateCameraPosition() {
-        const x = spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
-        const y = spherical.radius * Math.cos(spherical.phi);
-        const z = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+        const x = distance * Math.sin(phi) * Math.cos(theta);
+        const y = distance * Math.sin(phi) * Math.sin(theta);
+        const z = distance * Math.cos(phi);
 
         camera.position.set(
             target.x + x,
@@ -493,12 +617,13 @@ GeometryApp.controls = (() => {
             target.z + z
         );
         camera.lookAt(target);
+        camera.up.set(0, 0, 1);
     }
 
     return { init, update };
 })();
 
-// ===== POINTS MODULE (Z = HEIGHT) =====
+// ===== POINTS MODULE (LABELS ORBIT AROUND SPHERE) =====
 GeometryApp.points = (() => {
     let scene;
 
@@ -523,20 +648,18 @@ GeometryApp.points = (() => {
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(new THREE.Vector2(x, y), GeometryApp.scene.getCamera());
 
-        // Click on XY plane (Z=0)
         const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
         const intersection = new THREE.Vector3();
         raycaster.ray.intersectPlane(plane, intersection);
 
         if (intersection) {
-            const color = document.getElementById('point-color')?.value || '#3b82f6';
+            const color = document.getElementById('point-color')?.value || '#6366f1';
             addPoint(intersection.x, intersection.y, intersection.z, color);
         }
     }
 
     function getNextAvailableId() {
         const state = GeometryApp.state;
-        
         if (state.availablePointIds.length > 0) {
             state.availablePointIds.sort((a, b) => a - b);
             return state.availablePointIds.shift();
@@ -556,11 +679,12 @@ GeometryApp.points = (() => {
         div.className = 'point-label';
         div.textContent = text;
         const label = new CSS2DObject(div);
-        label.position.set(0, 0, 0.5); // Offset above point
+        // Position will be updated in animation loop based on camera
+        label.position.set(0, 0, 0.35);
         return label;
     }
 
-    function addPoint(x, y, z, color = '#3b82f6', name = null) {
+    function addPoint(x, y, z, color = '#6366f1', name = null) {
         const pointId = name ? parseInt(name.substring(1)) : getNextAvailableId();
         const pointName = `P${pointId}`;
         
@@ -602,16 +726,17 @@ GeometryApp.points = (() => {
             point.mesh.position.set(x, y, z);
             GeometryApp.lines.updateConnections();
             GeometryApp.planes.updatePlanes();
+            GeometryApp.ui.updatePlanePointSelector();
         }
     }
 
     function renamePoint(oldName, newName) {
         if (!/^[a-z0-9-]{1,5}$/i.test(newName)) {
-            return { success: false, error: 'Name must be 1-5 chars (a-z, 0-9, -)' };
+            return { success: false, error: 'modal-invalid-name-message' };
         }
 
         if (GeometryApp.state.points.some(p => p.name === newName && p.name !== oldName)) {
-            return { success: false, error: 'Name already exists' };
+            return { success: false, error: 'modal-name-exists' };
         }
 
         const point = GeometryApp.state.points.find(p => p.name === oldName);
@@ -657,8 +782,9 @@ GeometryApp.points = (() => {
             if (usedByPlanes.length > 0) {
                 const planeNames = usedByPlanes.map(p => p.name).join(', ');
                 const confirmed = await GeometryApp.modal.confirm(
-                    'Delete Point',
-                    `Point ${name} is used by plane(s): ${planeNames}.\nDeleting this point will also delete these planes.\n\nContinue?`
+                    'modal-delete-point-title',
+                    'modal-delete-point-message',
+                    { name: name, planes: planeNames }
                 );
                 
                 if (!confirmed) return;
@@ -707,7 +833,7 @@ GeometryApp.points = (() => {
     };
 })();
 
-// ===== LINES MODULE (FIXED: Thinner lines, reversible visibility) =====
+// ===== LINES MODULE =====
 GeometryApp.lines = (() => {
     let scene;
 
@@ -746,7 +872,7 @@ GeometryApp.lines = (() => {
         return cylinder;
     }
 
-    function connectPoints(fromName, toName, color = '#00ff00', thickness = 0.05) {
+    function connectPoints(fromName, toName, color = '#10b981', thickness = 0.05) {
         if (connectionExists(fromName, toName)) {
             return { success: false, error: 'Connection already exists between these points' };
         }
@@ -853,7 +979,7 @@ GeometryApp.lines = (() => {
     };
 })();
 
-// ===== PLANES MODULE (FIXED: Correct positioning using centroid) =====
+// ===== PLANES MODULE =====
 GeometryApp.planes = (() => {
     let scene;
     let planeCounter = 1;
@@ -863,33 +989,13 @@ GeometryApp.planes = (() => {
     }
 
     function arePointsCollinear(p1, p2, p3) {
-        const v1 = { 
-            x: p2.x - p1.x, 
-            y: p2.y - p1.y, 
-            z: p2.z - p1.z 
-        };
-        const v2 = { 
-            x: p3.x - p1.x, 
-            y: p3.y - p1.y, 
-            z: p3.z - p1.z 
-        };
-        
-        const cross = {
-            x: v1.y * v2.z - v1.z * v2.y,
-            y: v1.z * v2.x - v1.x * v2.z,
-            z: v1.x * v2.y - v1.y * v2.x
-        };
-        
-        const magnitude = Math.sqrt(
-            cross.x * cross.x + 
-            cross.y * cross.y + 
-            cross.z * cross.z
-        );
-        
-        return magnitude < 0.0001;
+        const v1 = new THREE.Vector3(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+        const v2 = new THREE.Vector3(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
+        const cross = new THREE.Vector3().crossVectors(v1, v2);
+        return cross.length() < 0.0001;
     }
 
-    function createPlane(pointNames, color = '#ff6b6b', opacity = 0.4) {
+    function createPlane(pointNames, color = '#f472b6', opacity = 0.4) {
         if (pointNames.length < 3) {
             return { success: false, error: 'Need at least 3 points to create a plane' };
         }
@@ -907,14 +1013,12 @@ GeometryApp.planes = (() => {
             return { success: false, error: 'First 3 points are collinear. Cannot create plane.' };
         }
 
-        // Calculate centroid
         const centroid = new THREE.Vector3();
         selectedPoints.forEach(p => {
             centroid.add(new THREE.Vector3(p.x, p.y, p.z));
         });
         centroid.divideScalar(selectedPoints.length);
 
-        // Calculate plane normal
         const p1 = new THREE.Vector3(selectedPoints[0].x, selectedPoints[0].y, selectedPoints[0].z);
         const p2 = new THREE.Vector3(selectedPoints[1].x, selectedPoints[1].y, selectedPoints[1].z);
         const p3 = new THREE.Vector3(selectedPoints[2].x, selectedPoints[2].y, selectedPoints[2].z);
@@ -923,11 +1027,9 @@ GeometryApp.planes = (() => {
         const v2 = new THREE.Vector3().subVectors(p3, p1);
         const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
 
-        // Create local coordinate system
-        const localX = v1.normalize();
+        const localX = v1.clone().normalize();
         const localY = new THREE.Vector3().crossVectors(normal, localX).normalize();
 
-        // Project points onto plane's local 2D space
         const points2D = selectedPoints.map(sp => {
             const p = new THREE.Vector3(sp.x, sp.y, sp.z);
             const relative = new THREE.Vector3().subVectors(p, centroid);
@@ -937,14 +1039,12 @@ GeometryApp.planes = (() => {
             };
         });
 
-        // Sort points by angle for convex hull
         points2D.sort((a, b) => {
             const angleA = Math.atan2(a.y, a.x);
             const angleB = Math.atan2(b.y, b.x);
             return angleA - angleB;
         });
 
-        // Create shape
         const shape = new THREE.Shape();
         shape.moveTo(points2D[0].x, points2D[0].y);
         for (let i = 1; i < points2D.length; i++) {
@@ -962,23 +1062,11 @@ GeometryApp.planes = (() => {
         });
 
         const mesh = new THREE.Mesh(geometry, material);
-        
-        // Position at centroid
         mesh.position.copy(centroid);
         
-        // Orient the mesh
-        const up = new THREE.Vector3(0, 1, 0);
-        const quaternion = new THREE.Quaternion();
-        
-        if (Math.abs(normal.dot(up)) < 0.999) {
-            const rotationAxis = new THREE.Vector3().crossVectors(up, normal).normalize();
-            const rotationAngle = Math.acos(up.dot(normal));
-            quaternion.setFromAxisAngle(rotationAxis, rotationAngle);
-        } else if (normal.dot(up) < 0) {
-            quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
-        }
-        
-        mesh.setRotationFromQuaternion(quaternion);
+        const matrix = new THREE.Matrix4();
+        matrix.makeBasis(localX, localY, normal);
+        mesh.rotation.setFromRotationMatrix(matrix);
 
         scene.add(mesh);
 
@@ -987,7 +1075,6 @@ GeometryApp.planes = (() => {
             pointNames: pointNames,
             color,
             opacity,
-            normal: { x: normal.x, y: normal.y, z: normal.z },
             mesh,
             visible: true
         };
@@ -1026,7 +1113,7 @@ GeometryApp.planes = (() => {
             const v2 = new THREE.Vector3().subVectors(p3, p1);
             const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
 
-            const localX = v1.normalize();
+            const localX = v1.clone().normalize();
             const localY = new THREE.Vector3().crossVectors(normal, localX).normalize();
 
             const points2D = selectedPoints.map(sp => {
@@ -1063,18 +1150,9 @@ GeometryApp.planes = (() => {
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.copy(centroid);
             
-            const up = new THREE.Vector3(0, 1, 0);
-            const quaternion = new THREE.Quaternion();
-            
-            if (Math.abs(normal.dot(up)) < 0.999) {
-                const rotationAxis = new THREE.Vector3().crossVectors(up, normal).normalize();
-                const rotationAngle = Math.acos(up.dot(normal));
-                quaternion.setFromAxisAngle(rotationAxis, rotationAngle);
-            } else if (normal.dot(up) < 0) {
-                quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
-            }
-            
-            mesh.setRotationFromQuaternion(quaternion);
+            const matrix = new THREE.Matrix4();
+            matrix.makeBasis(localX, localY, normal);
+            mesh.rotation.setFromRotationMatrix(matrix);
             mesh.visible = plane.visible;
 
             scene.add(mesh);
@@ -1126,12 +1204,12 @@ GeometryApp.planes = (() => {
     };
 })();
 
-// ===== SHAPES MODULE (Z = HEIGHT) =====
+// ===== SHAPES MODULE =====
 GeometryApp.shapes = (() => {
     function createTriangle() {
-        const p1 = GeometryApp.points.addPoint(-2, 0, 0, '#3b82f6');
-        const p2 = GeometryApp.points.addPoint(2, 0, 0, '#3b82f6');
-        const p3 = GeometryApp.points.addPoint(0, 3, 0, '#3b82f6');
+        const p1 = GeometryApp.points.addPoint(-2, 0, 0, '#6366f1');
+        const p2 = GeometryApp.points.addPoint(2, 0, 0, '#6366f1');
+        const p3 = GeometryApp.points.addPoint(0, 3, 0, '#6366f1');
 
         GeometryApp.lines.connectPoints(p1.name, p2.name);
         GeometryApp.lines.connectPoints(p2.name, p3.name);
@@ -1140,10 +1218,10 @@ GeometryApp.shapes = (() => {
 
     function createTetrahedron() {
         const h = Math.sqrt(2/3) * 2;
-        const p1 = GeometryApp.points.addPoint(0, 0, h, '#3b82f6');
-        const p2 = GeometryApp.points.addPoint(-1, -1/Math.sqrt(3), 0, '#3b82f6');
-        const p3 = GeometryApp.points.addPoint(1, -1/Math.sqrt(3), 0, '#3b82f6');
-        const p4 = GeometryApp.points.addPoint(0, 2/Math.sqrt(3), 0, '#3b82f6');
+        const p1 = GeometryApp.points.addPoint(0, 0, h, '#6366f1');
+        const p2 = GeometryApp.points.addPoint(-1, -1/Math.sqrt(3), 0, '#6366f1');
+        const p3 = GeometryApp.points.addPoint(1, -1/Math.sqrt(3), 0, '#6366f1');
+        const p4 = GeometryApp.points.addPoint(0, 2/Math.sqrt(3), 0, '#6366f1');
 
         GeometryApp.lines.connectPoints(p1.name, p2.name);
         GeometryApp.lines.connectPoints(p1.name, p3.name);
@@ -1155,14 +1233,14 @@ GeometryApp.shapes = (() => {
 
     function createCube() {
         const s = 2;
-        const p1 = GeometryApp.points.addPoint(-s, -s, -s, '#3b82f6');
-        const p2 = GeometryApp.points.addPoint(s, -s, -s, '#3b82f6');
-        const p3 = GeometryApp.points.addPoint(s, s, -s, '#3b82f6');
-        const p4 = GeometryApp.points.addPoint(-s, s, -s, '#3b82f6');
-        const p5 = GeometryApp.points.addPoint(-s, -s, s, '#3b82f6');
-        const p6 = GeometryApp.points.addPoint(s, -s, s, '#3b82f6');
-        const p7 = GeometryApp.points.addPoint(s, s, s, '#3b82f6');
-        const p8 = GeometryApp.points.addPoint(-s, s, s, '#3b82f6');
+        const p1 = GeometryApp.points.addPoint(-s, -s, -s, '#6366f1');
+        const p2 = GeometryApp.points.addPoint(s, -s, -s, '#6366f1');
+        const p3 = GeometryApp.points.addPoint(s, s, -s, '#6366f1');
+        const p4 = GeometryApp.points.addPoint(-s, s, -s, '#6366f1');
+        const p5 = GeometryApp.points.addPoint(-s, -s, s, '#6366f1');
+        const p6 = GeometryApp.points.addPoint(s, -s, s, '#6366f1');
+        const p7 = GeometryApp.points.addPoint(s, s, s, '#6366f1');
+        const p8 = GeometryApp.points.addPoint(-s, s, s, '#6366f1');
 
         GeometryApp.lines.connectPoints(p1.name, p2.name);
         GeometryApp.lines.connectPoints(p2.name, p3.name);
@@ -1181,12 +1259,12 @@ GeometryApp.shapes = (() => {
     }
 
     function createPrism() {
-        const p1 = GeometryApp.points.addPoint(-2, 0, -2, '#3b82f6');
-        const p2 = GeometryApp.points.addPoint(2, 0, -2, '#3b82f6');
-        const p3 = GeometryApp.points.addPoint(0, 3, -2, '#3b82f6');
-        const p4 = GeometryApp.points.addPoint(-2, 0, 2, '#3b82f6');
-        const p5 = GeometryApp.points.addPoint(2, 0, 2, '#3b82f6');
-        const p6 = GeometryApp.points.addPoint(0, 3, 2, '#3b82f6');
+        const p1 = GeometryApp.points.addPoint(-2, 0, -2, '#6366f1');
+        const p2 = GeometryApp.points.addPoint(2, 0, -2, '#6366f1');
+        const p3 = GeometryApp.points.addPoint(0, 3, -2, '#6366f1');
+        const p4 = GeometryApp.points.addPoint(-2, 0, 2, '#6366f1');
+        const p5 = GeometryApp.points.addPoint(2, 0, 2, '#6366f1');
+        const p6 = GeometryApp.points.addPoint(0, 3, 2, '#6366f1');
 
         GeometryApp.lines.connectPoints(p1.name, p2.name);
         GeometryApp.lines.connectPoints(p2.name, p3.name);
@@ -1204,11 +1282,11 @@ GeometryApp.shapes = (() => {
     function createPyramid() {
         const s = 2;
         const h = 3;
-        const p1 = GeometryApp.points.addPoint(-s, -s, 0, '#3b82f6');
-        const p2 = GeometryApp.points.addPoint(s, -s, 0, '#3b82f6');
-        const p3 = GeometryApp.points.addPoint(s, s, 0, '#3b82f6');
-        const p4 = GeometryApp.points.addPoint(-s, s, 0, '#3b82f6');
-        const p5 = GeometryApp.points.addPoint(0, 0, h, '#3b82f6');
+        const p1 = GeometryApp.points.addPoint(-s, -s, 0, '#6366f1');
+        const p2 = GeometryApp.points.addPoint(s, -s, 0, '#6366f1');
+        const p3 = GeometryApp.points.addPoint(s, s, 0, '#6366f1');
+        const p4 = GeometryApp.points.addPoint(-s, s, 0, '#6366f1');
+        const p5 = GeometryApp.points.addPoint(0, 0, h, '#6366f1');
 
         GeometryApp.lines.connectPoints(p1.name, p2.name);
         GeometryApp.lines.connectPoints(p2.name, p3.name);
@@ -1266,7 +1344,7 @@ GeometryApp.settings = (() => {
     };
 })();
 
-// ===== STORAGE MODULE =====
+// ===== STORAGE MODULE (MULTILINGUAL) =====
 GeometryApp.storage = (() => {
     async function save() {
         const data = {
@@ -1295,7 +1373,7 @@ GeometryApp.storage = (() => {
             })),
             availablePointIds: GeometryApp.state.availablePointIds,
             settings: {
-                bgColor: document.getElementById('bg-color')?.value || '#2a2a2a',
+                bgColor: document.getElementById('bg-color')?.value || '#0f172a',
                 showAxes: document.getElementById('toggle-axes')?.checked || true,
                 showGrid: document.getElementById('toggle-grid')?.checked || true,
                 showLabels: document.getElementById('toggle-labels')?.checked || true
@@ -1305,14 +1383,14 @@ GeometryApp.storage = (() => {
         try {
             if (window.storage && typeof window.storage.set === 'function') {
                 await window.storage.set('geometry-model', JSON.stringify(data));
-                await GeometryApp.modal.alert('Success', 'Model saved successfully!');
+                await GeometryApp.modal.alert('modal-success-title', 'modal-save-success');
             } else {
                 localStorage.setItem('geometry-model', JSON.stringify(data));
-                await GeometryApp.modal.alert('Success', 'Model saved to browser storage!');
+                await GeometryApp.modal.alert('modal-success-title', 'modal-save-local');
             }
         } catch (error) {
             console.error('Save failed:', error);
-            await GeometryApp.modal.alert('Error', 'Failed to save model. See console for details.');
+            await GeometryApp.modal.alert('modal-error-title', 'modal-save-error');
         }
     }
 
@@ -1328,7 +1406,7 @@ GeometryApp.storage = (() => {
             }
 
             if (!dataStr) {
-                await GeometryApp.modal.alert('No Data', 'No saved model found');
+                await GeometryApp.modal.alert('modal-no-data-title', 'modal-no-data-message');
                 return;
             }
 
@@ -1372,10 +1450,10 @@ GeometryApp.storage = (() => {
                 }
             }
 
-            await GeometryApp.modal.alert('Success', 'Model loaded successfully!');
+            await GeometryApp.modal.alert('modal-success-title', 'modal-load-success');
         } catch (error) {
             console.error('Load failed:', error);
-            await GeometryApp.modal.alert('Error', 'Failed to load model. See console for details.');
+            await GeometryApp.modal.alert('modal-error-title', 'modal-load-error');
         }
     }
 
@@ -1413,8 +1491,8 @@ GeometryApp.storage = (() => {
     async function clearAll(askConfirmation = true) {
         if (askConfirmation) {
             const confirmed = await GeometryApp.modal.confirm(
-                'Clear All',
-                'Are you sure you want to clear all points, lines, and planes?'
+                'modal-clear-all-title',
+                'modal-clear-all-message'
             );
             if (!confirmed) return;
         }
@@ -1437,8 +1515,10 @@ GeometryApp.storage = (() => {
     return { save, load, exportJSON, clearAll };
 })();
 
-// ===== UI MODULE (DOM-SAFE) =====
+// ===== UI MODULE =====
 GeometryApp.ui = (() => {
+    let selectedPlanePoints = new Set();
+
     function init() {
         const addPointBtn = document.getElementById('add-point-btn');
         if (addPointBtn) {
@@ -1446,7 +1526,7 @@ GeometryApp.ui = (() => {
                 const x = parseFloat(document.getElementById('point-x')?.value || 0);
                 const y = parseFloat(document.getElementById('point-y')?.value || 0);
                 const z = parseFloat(document.getElementById('point-z')?.value || 0);
-                const color = document.getElementById('point-color')?.value || '#3b82f6';
+                const color = document.getElementById('point-color')?.value || '#6366f1';
                 GeometryApp.points.addPoint(x, y, z, color);
             });
         }
@@ -1456,7 +1536,7 @@ GeometryApp.ui = (() => {
             connectBtn.addEventListener('click', () => {
                 const from = document.getElementById('point-from')?.value;
                 const to = document.getElementById('point-to')?.value;
-                const color = document.getElementById('line-color')?.value || '#00ff00';
+                const color = document.getElementById('line-color')?.value || '#10b981';
                 const thickness = parseFloat(document.getElementById('line-thickness-input')?.value || 0.05);
                 
                 if (from && to && from !== to) {
@@ -1478,13 +1558,8 @@ GeometryApp.ui = (() => {
         const createPlaneBtn = document.getElementById('create-plane-btn');
         if (createPlaneBtn) {
             createPlaneBtn.addEventListener('click', () => {
-                const selector = document.getElementById('plane-point-selector');
-                if (!selector) return;
-                
-                const checkboxes = selector.querySelectorAll('input[type="checkbox"]:checked');
-                const selectedPoints = Array.from(checkboxes).map(cb => cb.value);
-                
-                const color = document.getElementById('plane-color')?.value || '#ff6b6b';
+                const selectedPoints = Array.from(selectedPlanePoints);
+                const color = document.getElementById('plane-color')?.value || '#f472b6';
                 const opacity = parseFloat(document.getElementById('plane-opacity')?.value || 0.4);
                 
                 const result = GeometryApp.planes.createPlane(selectedPoints, color, opacity);
@@ -1497,17 +1572,13 @@ GeometryApp.ui = (() => {
                     } else {
                         alert.innerHTML = `<div class="alert alert-success">Plane created successfully!</div>`;
                         setTimeout(() => alert.innerHTML = '', 3000);
-                        checkboxes.forEach(cb => {
-                            cb.checked = false;
-                            const item = cb.closest('.multi-select-item');
-                            if (item) item.classList.remove('selected');
-                        });
+                        selectedPlanePoints.clear();
+                        updatePlanePointSelector();
                     }
                 }
             });
         }
 
-        // Event listeners
         const thicknessInput = document.getElementById('line-thickness-input');
         const thicknessValue = document.getElementById('thickness-value');
         if (thicknessInput && thicknessValue) {
@@ -1524,7 +1595,6 @@ GeometryApp.ui = (() => {
             });
         }
 
-        // Settings
         const toggleAxes = document.getElementById('toggle-axes');
         if (toggleAxes) {
             toggleAxes.addEventListener('change', (e) => {
@@ -1569,28 +1639,18 @@ GeometryApp.ui = (() => {
             });
         }
 
-        // Storage buttons
         const saveBtn = document.getElementById('save-btn');
-        if (saveBtn) {
-            saveBtn.addEventListener('click', () => GeometryApp.storage.save());
-        }
+        if (saveBtn) saveBtn.addEventListener('click', () => GeometryApp.storage.save());
 
         const loadBtn = document.getElementById('load-btn');
-        if (loadBtn) {
-            loadBtn.addEventListener('click', () => GeometryApp.storage.load());
-        }
+        if (loadBtn) loadBtn.addEventListener('click', () => GeometryApp.storage.load());
 
         const exportBtn = document.getElementById('export-btn');
-        if (exportBtn) {
-            exportBtn.addEventListener('click', () => GeometryApp.storage.exportJSON());
-        }
+        if (exportBtn) exportBtn.addEventListener('click', () => GeometryApp.storage.exportJSON());
 
         const clearBtn = document.getElementById('clear-btn');
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => GeometryApp.storage.clearAll());
-        }
+        if (clearBtn) clearBtn.addEventListener('click', () => GeometryApp.storage.clearAll());
 
-        // Language buttons
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const lang = btn.dataset.lang;
@@ -1598,7 +1658,6 @@ GeometryApp.ui = (() => {
             });
         });
 
-        // Shape buttons
         document.querySelectorAll('[data-shape]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const shape = btn.dataset.shape;
@@ -1641,7 +1700,7 @@ GeometryApp.ui = (() => {
         
         const result = GeometryApp.points.renamePoint(oldName, newName);
         if (!result.success) {
-            await GeometryApp.modal.alert('Invalid Name', result.error);
+            await GeometryApp.modal.alert('modal-invalid-name-title', result.error);
             inputElement.value = oldName;
             inputElement.classList.add('error');
             setTimeout(() => inputElement.classList.remove('error'), 2000);
@@ -1676,23 +1735,28 @@ GeometryApp.ui = (() => {
         }
 
         GeometryApp.state.points.forEach(point => {
-            const div = document.createElement('div');
-            div.className = 'multi-select-item';
-            div.innerHTML = `
-                <input type="checkbox" value="${point.name}" id="plane-pt-${point.name}">
-                <label for="plane-pt-${point.name}">${point.name} (${point.x.toFixed(1)}, ${point.y.toFixed(1)}, ${point.z.toFixed(1)})</label>
+            const card = document.createElement('div');
+            card.className = 'point-card';
+            if (selectedPlanePoints.has(point.name)) {
+                card.classList.add('selected');
+            }
+            
+            card.innerHTML = `
+                <div class="point-card-name">${point.name}</div>
+                <div class="point-card-coords">(${point.x.toFixed(1)}, ${point.y.toFixed(1)}, ${point.z.toFixed(1)})</div>
             `;
             
-            div.addEventListener('click', (e) => {
-                if (e.target.tagName !== 'INPUT') {
-                    const checkbox = div.querySelector('input');
-                    if (checkbox) checkbox.checked = !checkbox.checked;
+            card.addEventListener('click', () => {
+                if (selectedPlanePoints.has(point.name)) {
+                    selectedPlanePoints.delete(point.name);
+                    card.classList.remove('selected');
+                } else {
+                    selectedPlanePoints.add(point.name);
+                    card.classList.add('selected');
                 }
-                const checkbox = div.querySelector('input');
-                div.classList.toggle('selected', checkbox?.checked || false);
             });
             
-            selector.appendChild(div);
+            selector.appendChild(card);
         });
     }
 
@@ -1760,7 +1824,7 @@ GeometryApp.ui = (() => {
         if (!stats) return;
         
         stats.innerHTML = `
-            <strong>Current Model:</strong><br>
+            <strong>📊 Current Model:</strong><br>
             Points: ${GeometryApp.state.points.length} | 
             Lines: ${GeometryApp.state.lines.length} | 
             Planes: ${GeometryApp.state.planes.length}
@@ -1781,27 +1845,20 @@ GeometryApp.ui = (() => {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize modal system
     GeometryApp.modal.init();
     
-    // Initialize scene
     const { scene, camera, renderer } = GeometryApp.scene.init();
     
-    // Initialize controls
     GeometryApp.controls.init(camera, renderer);
     
-    // Initialize modules
     GeometryApp.points.init(scene);
     GeometryApp.lines.init(scene);
     GeometryApp.planes.init(scene);
     GeometryApp.ui.init();
     
-    // Set initial language
     GeometryApp.lang.setLanguage('en');
     
-    // Start animation loop
     GeometryApp.scene.animate();
     
-    // Initial UI update
     GeometryApp.ui.updateStats();
 });
