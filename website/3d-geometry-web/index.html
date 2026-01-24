@@ -12,6 +12,10 @@
     <div id="app">
         <!-- LEFT SIDEBAR -->
         <div class="sidebar sidebar-left">
+            <div class="sidebar-header">
+                <h2>🎯 3D Geometry</h2>
+            </div>
+
             <div class="sidebar-section">
                 <h3><span class="icon">📍</span> <span id="lang-points-title">Points Manager</span></h3>
                 
@@ -32,9 +36,12 @@
                 </div>
                 
                 <label id="lang-point-color">Point Color</label>
-                <input type="color" id="point-color" value="#3b82f6">
+                <input type="color" id="point-color" value="#6366f1">
                 
-                <button id="add-point-btn" class="btn-primary">➕ <span id="lang-add-point">Add Point</span></button>
+                <button id="add-point-btn" class="btn-primary">
+                    <span class="btn-icon">➕</span>
+                    <span id="lang-add-point">Add Point</span>
+                </button>
                 
                 <p class="info-text" id="lang-click-hint">💡 Click in 3D space to add point</p>
                 
@@ -68,7 +75,7 @@
                 </select>
                 
                 <label id="lang-line-color">Line Color</label>
-                <input type="color" id="line-color" value="#00ff00">
+                <input type="color" id="line-color" value="#10b981">
                 
                 <label>
                     <span id="lang-line-thickness">Line Thickness</span>: 
@@ -76,7 +83,10 @@
                 </label>
                 <input type="range" id="line-thickness-input" min="0.01" max="0.3" step="0.01" value="0.05">
                 
-                <button id="connect-btn" class="btn-primary">🔗 <span id="lang-connect">Connect</span></button>
+                <button id="connect-btn" class="btn-primary">
+                    <span class="btn-icon">🔗</span>
+                    <span id="lang-connect">Connect</span>
+                </button>
                 
                 <div id="connections-list"></div>
             </div>
@@ -87,26 +97,44 @@
                 <div id="plane-alert" class="alert-container"></div>
                 
                 <label id="lang-select-points-plane">Select 3+ Points for Plane</label>
-                <div id="plane-point-selector" class="multi-select"></div>
+                <div id="plane-point-selector" class="point-cards"></div>
                 
                 <label id="lang-plane-color">Plane Color</label>
-                <input type="color" id="plane-color" value="#ff6b6b">
+                <input type="color" id="plane-color" value="#f472b6">
                 
                 <label><span id="lang-plane-opacity">Opacity</span>: <span id="opacity-value">0.4</span></label>
                 <input type="range" id="plane-opacity" min="0.1" max="0.9" step="0.1" value="0.4">
                 
-                <button id="create-plane-btn" class="btn-primary">➕ <span id="lang-create-plane">Create Plane</span></button>
+                <button id="create-plane-btn" class="btn-primary">
+                    <span class="btn-icon">➕</span>
+                    <span id="lang-create-plane">Create Plane</span>
+                </button>
                 
                 <div id="planes-list"></div>
             </div>
 
             <div class="sidebar-section">
                 <h3><span class="icon">🔺</span> <span id="lang-shapes">Preset Shapes</span></h3>
-                <button class="btn-secondary" data-shape="triangle">△ <span id="lang-triangle">Triangle</span></button>
-                <button class="btn-secondary" data-shape="tetrahedron">◬ <span id="lang-tetrahedron">Tetrahedron</span></button>
-                <button class="btn-secondary" data-shape="cube">◻ <span id="lang-cube">Cube</span></button>
-                <button class="btn-secondary" data-shape="prism">▭ <span id="lang-prism">Prism</span></button>
-                <button class="btn-secondary" data-shape="pyramid">△ <span id="lang-pyramid">Pyramid</span></button>
+                <button class="btn-shape" data-shape="triangle">
+                    <span class="shape-icon">△</span>
+                    <span id="lang-triangle">Triangle</span>
+                </button>
+                <button class="btn-shape" data-shape="tetrahedron">
+                    <span class="shape-icon">◬</span>
+                    <span id="lang-tetrahedron">Tetrahedron</span>
+                </button>
+                <button class="btn-shape" data-shape="cube">
+                    <span class="shape-icon">◻</span>
+                    <span id="lang-cube">Cube</span>
+                </button>
+                <button class="btn-shape" data-shape="prism">
+                    <span class="shape-icon">▭</span>
+                    <span id="lang-prism">Prism</span>
+                </button>
+                <button class="btn-shape" data-shape="pyramid">
+                    <span class="shape-icon">△</span>
+                    <span id="lang-pyramid">Pyramid</span>
+                </button>
             </div>
         </div>
 
@@ -118,9 +146,9 @@
             <div class="sidebar-section">
                 <h3><span class="icon">🌐</span> <span id="lang-language">Language</span></h3>
                 <div class="language-selector">
-                    <button class="lang-btn active" data-lang="en">EN</button>
-                    <button class="lang-btn" data-lang="vi">VI</button>
-                    <button class="lang-btn" data-lang="jp">JP</button>
+                    <button class="lang-btn active" data-lang="en">🇬🇧 EN</button>
+                    <button class="lang-btn" data-lang="vi">🇻🇳 VI</button>
+                    <button class="lang-btn" data-lang="jp">🇯🇵 JP</button>
                 </div>
             </div>
 
@@ -143,21 +171,33 @@
                 </div>
                 
                 <label id="lang-bg-color">Background Color</label>
-                <input type="color" id="bg-color" value="#2a2a2a">
+                <input type="color" id="bg-color" value="#0f172a">
                 
                 <label id="lang-default-point-color">Default Point Color</label>
-                <input type="color" id="default-point-color" value="#3b82f6">
+                <input type="color" id="default-point-color" value="#6366f1">
                 
                 <label id="lang-default-line-color">Default Line Color</label>
-                <input type="color" id="default-line-color" value="#00ff00">
+                <input type="color" id="default-line-color" value="#10b981">
             </div>
 
             <div class="sidebar-section">
                 <h3><span class="icon">💾</span> <span id="lang-storage">Storage</span></h3>
-                <button id="save-btn" class="btn-primary">💾 <span id="lang-save">Save Model</span></button>
-                <button id="load-btn" class="btn-secondary">📂 <span id="lang-load">Load Model</span></button>
-                <button id="export-btn" class="btn-secondary">📥 <span id="lang-export">Export JSON</span></button>
-                <button id="clear-btn" class="btn-danger">🗑️ <span id="lang-clear">Clear All</span></button>
+                <button id="save-btn" class="btn-primary">
+                    <span class="btn-icon">💾</span>
+                    <span id="lang-save">Save Model</span>
+                </button>
+                <button id="load-btn" class="btn-secondary">
+                    <span class="btn-icon">📂</span>
+                    <span id="lang-load">Load Model</span>
+                </button>
+                <button id="export-btn" class="btn-secondary">
+                    <span class="btn-icon">📥</span>
+                    <span id="lang-export">Export JSON</span>
+                </button>
+                <button id="clear-btn" class="btn-danger">
+                    <span class="btn-icon">🗑️</span>
+                    <span id="lang-clear">Clear All</span>
+                </button>
                 
                 <div class="stat-display" id="stats-display"></div>
             </div>
@@ -175,8 +215,8 @@
                 <p id="modal-message">Are you sure?</p>
             </div>
             <div class="modal-footer">
-                <button id="modal-cancel" class="btn-secondary">Cancel</button>
-                <button id="modal-confirm" class="btn-primary">Confirm</button>
+                <button id="modal-cancel" class="btn-secondary"><span id="modal-cancel-text">Cancel</span></button>
+                <button id="modal-confirm" class="btn-primary"><span id="modal-confirm-text">Confirm</span></button>
             </div>
         </div>
     </div>
