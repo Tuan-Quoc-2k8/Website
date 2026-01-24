@@ -1,0 +1,626 @@
+/* Base Demo Elements */
+.demo-card {
+    width: 280px;
+    height: 200px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border);
+}
+
+/* ========== BUTTON EFFECTS ========== */
+
+/* Magnetic Button */
+.btn-magnetic {
+    background: var(--effect-color-1);
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform var(--effect-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Liquid Fill */
+.btn-liquid {
+    background: transparent;
+    color: var(--effect-color-1);
+    padding: 12px 32px;
+    border: 2px solid var(--effect-color-1);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-liquid::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: var(--effect-color-1);
+    transition: height var(--effect-duration) cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: -1;
+}
+
+.btn-liquid:hover { color: white; }
+.btn-liquid:hover::before { height: 100%; }
+
+/* Shimmer Button */
+.btn-shimmer {
+    background: var(--effect-color-1);
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left var(--effect-duration);
+}
+
+.btn-shimmer:hover::before {
+    left: 100%;
+}
+
+/* Slide Text Button */
+.btn-slide-text {
+    background: var(--effect-color-1);
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-slide-text span {
+    display: inline-block;
+    transition: transform var(--effect-duration);
+}
+
+.btn-slide-text:hover span {
+    transform: translateY(-100%);
+}
+
+.btn-slide-text::after {
+    content: 'Clicked!';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    transition: top var(--effect-duration);
+}
+
+.btn-slide-text:hover::after {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Rainbow Button */
+.btn-rainbow {
+    background: linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0, #ff0080);
+    background-size: 300% 100%;
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    animation: rainbow-flow 3s linear infinite;
+}
+
+@keyframes rainbow-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+/* Morphing Button */
+.btn-morphing {
+    background: var(--effect-color-1);
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-radius var(--effect-duration) ease;
+}
+
+.btn-morphing:hover {
+    border-radius: 30px;
+}
+
+/* Split Button */
+.btn-split {
+    background: var(--effect-color-1);
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-split::before,
+.btn-split::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: var(--effect-color-2);
+    transition: transform var(--effect-duration);
+}
+
+.btn-split::before {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.btn-split::after {
+    right: 0;
+    transform: translateX(100%);
+}
+
+.btn-split:hover::before,
+.btn-split:hover::after {
+    transform: translateX(0);
+}
+
+/* ========== CARD EFFECTS ========== */
+
+/* 3D Tilt */
+.card-tilt {
+    transform-style: preserve-3d;
+    transition: transform var(--effect-duration);
+}
+
+.card-tilt:hover {
+    transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+}
+
+/* Magnetic Tilt (Advanced) */
+.card-magnetic-tilt {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease;
+}
+
+/* Glow Card */
+.card-glow {
+    box-shadow: 0 0 0 var(--effect-color-1);
+    transition: box-shadow var(--effect-duration);
+}
+
+.card-glow:hover {
+    box-shadow: 0 0 30px var(--effect-color-1), 0 0 60px var(--effect-color-2);
+}
+
+/* Stack Card */
+.card-stack {
+    position: relative;
+}
+
+.card-stack::before,
+.card-stack::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    transition: transform var(--effect-duration);
+}
+
+.card-stack::before {
+    top: -8px;
+    left: -8px;
+    z-index: -1;
+}
+
+.card-stack::after {
+    top: -16px;
+    left: -16px;
+    z-index: -2;
+}
+
+.card-stack:hover::before {
+    transform: translate(4px, 4px);
+}
+
+.card-stack:hover::after {
+    transform: translate(8px, 8px);
+}
+
+/* Zoom Card */
+.card-zoom {
+    transition: transform var(--effect-duration);
+    overflow: hidden;
+}
+
+.card-zoom:hover {
+    transform: scale(1.05);
+}
+
+/* Slide Card */
+.card-slide {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left var(--effect-duration);
+}
+
+.card-slide:hover::before {
+    left: 100%;
+}
+
+/* ========== MICRO-INTERACTIONS ========== */
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: var(--bg-tertiary);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background var(--effect-duration);
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    transition: transform var(--effect-duration) cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toggle-switch.active { background: var(--effect-color-1); }
+.toggle-switch.active::after { transform: translateX(30px); }
+
+/* Animated Checkbox */
+.checkbox-animated {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all var(--effect-duration);
+}
+
+.checkbox-animated.checked {
+    background: var(--effect-color-1);
+    border-color: var(--effect-color-1);
+}
+
+.checkbox-animated.checked::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 3px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    animation: checkmark 0.3s ease;
+}
+
+@keyframes checkmark {
+    0% { height: 0; }
+    100% { height: 12px; }
+}
+
+/* Radio Button */
+.radio-animated {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: all var(--effect-duration);
+}
+
+.radio-animated.checked {
+    border-color: var(--effect-color-1);
+}
+
+.radio-animated.checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: var(--effect-color-1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: radio-pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes radio-pop {
+    to { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Progress Circle */
+.progress-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(var(--effect-color-1) 0deg, var(--bg-tertiary) 0deg);
+    position: relative;
+    transition: background 0.3s ease;
+}
+
+.progress-circle::after {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    background: var(--bg-secondary);
+    border-radius: 50%;
+}
+
+/* Skeleton Loader */
+.skeleton {
+    background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border) 50%, var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 8px;
+    height: 20px;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Tooltip */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    border: 1px solid var(--border);
+    transition: opacity var(--effect-duration);
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Ripple Effect */
+.ripple-container {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    animation: ripple-animation 0.6s ease-out;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+
+/* LIGHTNING */
+.btn-tree-lightning {
+    position: relative;
+    overflow: visible;
+    padding: 12px 28px;
+    border-radius: 10px;
+    border: none;
+    background: #4f46e5;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Inner lightning */
+.btn-tree-lightning .lightning-inner {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.btn-tree-lightning .lightning-inner path {
+    stroke: var(--effect-color-1);
+    stroke-width: 2;
+    fill: none;
+    filter: drop-shadow(0 0 4px var(--effect-color-1));
+    animation: lightning-flash var(--effect-duration) ease-out;
+}
+
+/* Outer tree lightning */
+.btn-tree-lightning .lightning-outer {
+    position: absolute;
+    inset: -140%;
+    pointer-events: none;
+}
+
+.btn-tree-lightning .lightning-outer path {
+    stroke: var(--effect-color-2);
+    stroke-linecap: round;
+    fill: none;
+    filter: drop-shadow(0 0 8px var(--effect-color-2));
+    animation: lightning-flash var(--effect-duration) ease-out;
+}
+
+@keyframes lightning-flash {
+    0% { opacity: 0; }
+    15% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* card-lift-glow */
+.card-lift-glow {
+    position: relative;
+    padding: 16px;
+    border-radius: 12px;
+    background: #4f46e5;
+    color: #ffffff;
+    transition:
+        transform var(--effect-duration) ease,
+        box-shadow var(--effect-duration) ease;
+    cursor: pointer;
+}
+
+/* Hover → lift */
+.card-lift-glow:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+}
+
+/* Active → glow */
+.card-lift-glow:active {
+    box-shadow:
+        0 0 0 2px var(--effect-color-1),
+        0 12px 28px rgba(0,0,0,0.35);
+}
+.btn-glow-pulse {
+    position: relative;
+    padding: 12px 28px;
+    border-radius: 10px;
+    border: none;
+    background: #4f46e5;
+    color: #ffffff;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.btn-glow-pulse::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    opacity: 0;
+    box-shadow: 0 0 0 0 var(--effect-color-1);
+    transition: opacity 0.3s ease;
+}
+
+.btn-glow-pulse:hover::after {
+    opacity: 1;
+    animation: glow-pulse var(--effect-duration) ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+    0% {
+        box-shadow: 0 0 0 0 var(--effect-color-1);
+    }
+    50% {
+        box-shadow: 0 0 16px 6px var(--effect-color-1);
+    }
+    100% {
+        box-shadow: 0 0 0 0 var(--effect-color-1);
+    }
+}
+/* CARD CAROUSEL */
+
+.effect-card-focus-stack {
+    position: relative;
+    display: flex;
+    gap: 16px;
+    perspective: 1200px;
+}
+
+.effect-card-focus-stack__item {
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    width: 160px;
+    border-radius: 12px;
+    background: #4f46e5;
+    color: #fff;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition:
+        transform var(--effect-duration) ease,
+        opacity var(--effect-duration) ease,
+        filter var(--effect-duration) ease;
+}
+
+/* Hover hint */
+.effect-card-focus-stack__item:hover {
+    transform: translateZ(20px);
+}
+
+/* Active */
+.effect-card-focus-stack__item.is-active {
+    transform: translateZ(120px) scale(1.05);
+    opacity: 1;
+    z-index: 10;
+}
+
+/* Dimmed */
+.effect-card-focus-stack__item.is-dim {
+    transform: translateZ(-60px) scale(0.94);
+    opacity: 0.35;
+    filter: blur(1.2px);
+    z-index: 0;
+}
