@@ -24,6 +24,8 @@ body {
     position: relative;
     background: #0f172a;
     box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    overflow: hidden;
 }
 
 /* ===== SIDEBARS ===== */
@@ -36,6 +38,8 @@ body {
     display: flex;
     flex-direction: column;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;  
 }
 
 .sidebar-header {
@@ -700,4 +704,86 @@ input[type="checkbox"]:checked::before {
     .point-cards {
         grid-template-columns: 1fr;
     }
+}
+
+/* ===== SIDEBAR TOGGLES ===== */
+.sidebar {
+    width: 360px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    min-width: 360px;
+}
+
+.sidebar.collapsed {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    border: none;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    max-width: 0 !important;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-toggle {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 0 12px 12px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.4;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-toggle:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.5);
+    width: 40px;
+}
+
+.sidebar-toggle-left {
+    left: 360px;
+}
+
+.sidebar-toggle-left.collapsed {
+    left: 0;
+}
+
+.sidebar-toggle-right {
+    right: 360px;
+    border-radius: 12px 0 0 12px;
+}
+
+.sidebar-toggle-right.collapsed {
+    right: 0;
+}
+
+.toggle-arrow {
+    font-size: 20px;
+    font-weight: bold;
+    color: #667eea;
 }
