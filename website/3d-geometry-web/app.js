@@ -91,7 +91,8 @@ class CSS2DRenderer {
                     const y = -(vector.y * heightHalf) + heightHalf;
 
                     object.element.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px) scale(${scale})`;
-                    object.element.style.display = (vector.z < 1) ? '' : 'none';
+                    const shouldShow = (vector.z < 1) && GeometryApp.state.settings.showLabels;
+                    object.element.style.display = shouldShow ? '' : 'none';
                 }
             });
         }
