@@ -41,7 +41,9 @@ class CSS2DRenderer {
         this.domElement = document.createElement('div');
         this.domElement.style.position = 'absolute';
         this.domElement.style.top = '0';
+        this.domElement.style.left = '0';
         this.domElement.style.pointerEvents = 'none';
+        this.domElement.style.zIndex = '1';
     }
 
     setSize(width, height) {
@@ -50,27 +52,49 @@ class CSS2DRenderer {
     }
 
     render(scene, camera) {
-        const vector = new THREE.Vector3();
-        const viewMatrix = camera.matrixWorldInverse;
-        const projectionMatrix = camera.projectionMatrix;
+            const vector = new THREE.Vector3();
+            const viewMatrix = camera.matrixWorldInverse;
+            const projectionMatrix = camera.projectionMatrix;
 
-        scene.traverse((object) => {
-            if (object instanceof CSS2DObject) {
-                vector.setFromMatrixPosition(object.matrixWorld);
-                vector.applyMatrix4(viewMatrix);
-                vector.applyMatrix4(projectionMatrix);
+            scene.traverse((object) => {
+                if (object instanceof CSS2DObject) {
+                    // Ensure element is in the DOM
+                    if (!object.element.parentNode) {
+                        this.domElement.appendChild(object.element);
+                    }
+                    
+                    // Get world position
+                    const worldPosition = new THREE.Vector3();
+                    worldPosition.setFromMatrixPosition(object.matrixWorld);
+                    
+                    // Calculate distance from camera for scaling
+                    const distanceToCamera = camera.position.distanceTo(worldPosition);
+                    
+                    // Scale based on distance with min/max bounds
+                    // Using inverse relationship: closer = larger, farther = smaller
+                    const referenceDistance = 15; // Distance where scale = 1.0
+                    let scale = referenceDistance / distanceToCamera;
+                    
+                    // Apply strict min and max bounds
+                    const minScale = 0.3;  // Minimum size when zoomed out far
+                    const maxScale = 0.8;  // Maximum size when zoomed in close
+                    scale = Math.max(minScale, Math.min(maxScale, scale));
+                    
+                    vector.copy(worldPosition);
+                    vector.applyMatrix4(viewMatrix);
+                    vector.applyMatrix4(projectionMatrix);
 
-                const widthHalf = this.domElement.clientWidth / 2;
-                const heightHalf = this.domElement.clientHeight / 2;
+                    const widthHalf = this.domElement.clientWidth / 2;
+                    const heightHalf = this.domElement.clientHeight / 2;
 
-                const x = (vector.x * widthHalf) + widthHalf;
-                const y = -(vector.y * heightHalf) + heightHalf;
+                    const x = (vector.x * widthHalf) + widthHalf;
+                    const y = -(vector.y * heightHalf) + heightHalf;
 
-                object.element.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
-                object.element.style.display = (vector.z < 1) ? '' : 'none';
-            }
-        });
-    }
+                    object.element.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px) scale(${scale})`;
+                    object.element.style.display = (vector.z < 1) ? '' : 'none';
+                }
+            });
+        }
 }
 
 // ===== LANGUAGE MODULE (EXPANDED WITH MODAL TRANSLATIONS) =====
@@ -136,7 +160,15 @@ GeometryApp.lang = (() => {
             'modal-no-data-message': 'No saved model found',
             'modal-invalid-name-title': 'Invalid Name',
             'modal-invalid-name-message': 'Name must be 1-5 chars (a-z, 0-9, -)',
-            'modal-name-exists': 'Name already exists'
+            'modal-name-exists': 'Name already exists',
+
+            'error-invalid-points': 'The points used to create the plane are invalid',
+            'error-need-3-points': 'Need at least 3 points to create a plane',
+            'error-collinear-points': 'First 3 points are collinear. Cannot create plane.',
+            'error-not-coplanar': 'Selected points are not coplanar. Cannot create plane.',
+            'success-plane-created': 'Plane created successfully!',
+            'error-plane-exists': 'A plane with these points already exists',
+            'error-connection-exists': 'Connection already exists between these points',
         },
         vi: {
             // UI translations
@@ -198,7 +230,15 @@ GeometryApp.lang = (() => {
             'modal-no-data-message': 'Không tìm thấy mô hình đã lưu',
             'modal-invalid-name-title': 'Tên Không Hợp Lệ',
             'modal-invalid-name-message': 'Tên phải có 1-5 ký tự (a-z, 0-9, -)',
-            'modal-name-exists': 'Tên đã tồn tại'
+            'modal-name-exists': 'Tên đã tồn tại',
+
+            'error-invalid-points': 'Các điểm được sử dụng để tạo mặt phẳng không hợp lệ',
+            'error-need-3-points': 'Cần ít nhất 3 điểm để tạo mặt phẳng',
+            'error-collinear-points': 'Ba điểm đầu tiên thẳng hàng. Không thể tạo mặt phẳng.',
+            'error-not-coplanar': 'Các điểm đã chọn không cùng nằm trên một mặt phẳng. Không thể tạo mặt phẳng.',
+            'success-plane-created': 'Mặt phẳng đã được tạo thành công!',
+            'error-plane-exists': 'Mặt phẳng với các điểm này đã tồn tại',
+            'error-connection-exists': 'Kết nối giữa các điểm này đã tồn tại',
         },
         jp: {
             // UI translations
@@ -260,7 +300,14 @@ GeometryApp.lang = (() => {
             'modal-no-data-message': '保存されたモデルが見つかりません',
             'modal-invalid-name-title': '無効な名前',
             'modal-invalid-name-message': '名前は1〜5文字（a-z、0-9、-）である必要があります',
-            'modal-name-exists': '名前は既に存在します'
+            'modal-name-exists': '名前は既に存在します',
+            'error-invalid-points': '平面の作成に使用されたポイントが無効です',
+            'error-need-3-points': '平面を作成するには少なくとも3つのポイントが必要です',
+            'error-collinear-points': '最初の3点が一直線上にあります。平面を作成できません。',
+            'error-not-coplanar': '選択されたポイントは同一平面上にありません。平面を作成できません。',
+            'success-plane-created': '平面が正常に作成されました！',
+            'error-plane-exists': 'これらのポイントを持つ平面は既に存在します',
+            'error-connection-exists': 'これらのポイント間の接続は既に存在します',
         }
     };
 
@@ -397,6 +444,7 @@ GeometryApp.scene = (() => {
             0.1,
             1000
         );
+        camera.up.set(0, 0, 1);
         camera.position.set(10, 10, 10);
         camera.lookAt(0, 0, 0);
 
@@ -430,6 +478,9 @@ GeometryApp.scene = (() => {
     }
 
     function onWindowResize() {
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
@@ -488,9 +539,10 @@ GeometryApp.controls = (() => {
     let lastMouseX = 0;
     let lastMouseY = 0;
     
-    let distance = 17.32;
-    let theta = Math.PI / 4;
-    let phi = Math.PI / 4;
+    // Initialize to match initial camera position (10, 10, 10)
+    let distance = Math.sqrt(10*10 + 10*10 + 10*10); // ~17.32
+    let theta = Math.atan2(10, 10); // Math.PI/4
+    let phi = Math.acos(10 / distance); // Correct vertical angle
     let target = new THREE.Vector3(0, 0, 0);
     
     let keys = { w: false, a: false, s: false, d: false };
@@ -507,6 +559,8 @@ GeometryApp.controls = (() => {
         canvas.addEventListener('contextmenu', e => e.preventDefault());
         window.addEventListener('keydown', onKeyDown);
         window.addEventListener('keyup', onKeyUp);
+
+        updateCameraPosition()
     }
 
     function onMouseDown(e) {
@@ -619,7 +673,7 @@ GeometryApp.controls = (() => {
         camera.lookAt(target);
         camera.up.set(0, 0, 1);
     }
-
+    
     return { init, update };
 })();
 
@@ -678,9 +732,10 @@ GeometryApp.points = (() => {
         const div = document.createElement('div');
         div.className = 'point-label';
         div.textContent = text;
+        div.style.pointerEvents = 'none';
+        div.style.userSelect = 'none';
         const label = new CSS2DObject(div);
-        // Position will be updated in animation loop based on camera
-        label.position.set(0, 0, 0.35);
+        label.position.set(0, 0, 0); // Will be updated in animation loop
         return label;
     }
 
@@ -794,6 +849,11 @@ GeometryApp.points = (() => {
                 });
             }
             
+            // Remove label from DOM - THIS IS THE NEW CODE
+            if (point.label && point.label.element && point.label.element.parentNode) {
+                point.label.element.parentNode.removeChild(point.label.element);
+            }
+            
             point.mesh.geometry.dispose();
             point.mesh.material.dispose();
             scene.remove(point.mesh);
@@ -811,6 +871,10 @@ GeometryApp.points = (() => {
 
     function clearAll() {
         GeometryApp.state.points.forEach(p => {
+            // Remove label from DOM - THIS IS THE NEW CODE
+            if (p.label && p.label.element && p.label.element.parentNode) {
+                p.label.element.parentNode.removeChild(p.label.element);
+            }
             p.mesh.geometry.dispose();
             p.mesh.material.dispose();
             scene.remove(p.mesh);
@@ -874,7 +938,7 @@ GeometryApp.lines = (() => {
 
     function connectPoints(fromName, toName, color = '#10b981', thickness = 0.05) {
         if (connectionExists(fromName, toName)) {
-            return { success: false, error: 'Connection already exists between these points' };
+            return { success: false, error: 'error-connection-exists' };
         }
 
         const points = GeometryApp.state.points;
@@ -994,23 +1058,58 @@ GeometryApp.planes = (() => {
         const cross = new THREE.Vector3().crossVectors(v1, v2);
         return cross.length() < 0.0001;
     }
+    function arePointsCoplanar(points) {
+        if (points.length <= 3) return true;
+        
+        // Use first 3 points to define the plane
+        const p1 = new THREE.Vector3(points[0].x, points[0].y, points[0].z);
+        const p2 = new THREE.Vector3(points[1].x, points[1].y, points[1].z);
+        const p3 = new THREE.Vector3(points[2].x, points[2].y, points[2].z);
+        
+        // Calculate plane normal
+        const v1 = new THREE.Vector3().subVectors(p2, p1);
+        const v2 = new THREE.Vector3().subVectors(p3, p1);
+        const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
+        
+        // Check if all other points lie on this plane
+        for (let i = 3; i < points.length; i++) {
+            const p = new THREE.Vector3(points[i].x, points[i].y, points[i].z);
+            const toPoint = new THREE.Vector3().subVectors(p, p1);
+            const distance = Math.abs(toPoint.dot(normal));
+            
+            // If distance to plane > threshold, points are not coplanar
+            if (distance > 0.0001) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
 
     function createPlane(pointNames, color = '#f472b6', opacity = 0.4) {
         if (pointNames.length < 3) {
-            return { success: false, error: 'Need at least 3 points to create a plane' };
+            return { success: false, error: 'error-need-3-points' };
         }
 
+        if (planeExists(pointNames)) {
+            return { success: false, error: 'error-plane-exists' };
+        }
         const points = GeometryApp.state.points;
         const selectedPoints = pointNames.map(name => 
             points.find(p => p.name === name)
-        ).filter(p => p);
+        );
 
-        if (selectedPoints.length < 3) {
-            return { success: false, error: 'Invalid point selection' };
+        // Check if any points are invalid (don't exist)
+        if (selectedPoints.some(p => !p)) {
+            return { success: false, error: 'error-invalid-points' };
         }
 
         if (arePointsCollinear(selectedPoints[0], selectedPoints[1], selectedPoints[2])) {
-            return { success: false, error: 'First 3 points are collinear. Cannot create plane.' };
+            return { success: false, error: 'error-collinear-points' };
+        }
+
+        if (!arePointsCoplanar(selectedPoints)) {
+            return { success: false, error: 'error-not-coplanar' };
         }
 
         const centroid = new THREE.Vector3();
@@ -1086,6 +1185,15 @@ GeometryApp.planes = (() => {
         return { success: true, plane };
     }
 
+    function planeExists(pointNames) {
+        const sortedNew = [...pointNames].sort();
+        
+        return GeometryApp.state.planes.some(plane => {
+            const sortedExisting = [...plane.pointNames].sort();
+            return sortedNew.length === sortedExisting.length &&
+                sortedNew.every((name, i) => name === sortedExisting[i]);
+        });
+    }
     function updatePlanes() {
         GeometryApp.state.planes.forEach(plane => {
             const points = GeometryApp.state.points;
@@ -1541,11 +1649,12 @@ GeometryApp.ui = (() => {
                 
                 if (from && to && from !== to) {
                     const result = GeometryApp.lines.connectPoints(from, to, color, thickness);
-                    
+
                     const alert = document.getElementById('line-alert');
                     if (alert) {
                         if (!result.success) {
-                            alert.innerHTML = `<div class="alert alert-warning">${result.error}</div>`;
+                            const translatedError = GeometryApp.lang.t(result.error);
+                            alert.innerHTML = `<div class="alert alert-warning">${translatedError}</div>`;
                             setTimeout(() => alert.innerHTML = '', 5000);
                         } else {
                             alert.innerHTML = '';
@@ -1567,10 +1676,12 @@ GeometryApp.ui = (() => {
                 const alert = document.getElementById('plane-alert');
                 if (alert) {
                     if (!result.success) {
-                        alert.innerHTML = `<div class="alert alert-error">${result.error}</div>`;
+                        const translatedError = GeometryApp.lang.t(result.error);
+                        alert.innerHTML = `<div class="alert alert-error">${translatedError}</div>`;
                         setTimeout(() => alert.innerHTML = '', 5000);
                     } else {
-                        alert.innerHTML = `<div class="alert alert-success">Plane created successfully!</div>`;
+                        const successMsg = GeometryApp.lang.t('success-plane-created');
+                        alert.innerHTML = `<div class="alert alert-success">${successMsg}</div>`;
                         setTimeout(() => alert.innerHTML = '', 3000);
                         selectedPlanePoints.clear();
                         updatePlanePointSelector();
@@ -1666,7 +1777,67 @@ GeometryApp.ui = (() => {
                 }
             });
         });
-    }
+        // NEW: Sidebar toggle functionality
+        const toggleLeft = document.getElementById('toggle-left');
+        const toggleRight = document.getElementById('toggle-right');
+        const sidebarLeft = document.querySelector('.sidebar-left');
+        const sidebarRight = document.querySelector('.sidebar-right');
+
+        if (toggleLeft && sidebarLeft) {
+            toggleLeft.addEventListener('click', () => {
+                sidebarLeft.classList.toggle('collapsed');
+                toggleLeft.classList.toggle('collapsed');
+                const arrow = toggleLeft.querySelector('.toggle-arrow');
+                arrow.textContent = sidebarLeft.classList.contains('collapsed') ? '→' : '←';
+                setTimeout(() => {
+                    if (GeometryApp.scene) {
+                        const sceneModule = GeometryApp.scene;
+                        const camera = sceneModule.getCamera();
+                        const renderer = sceneModule.getRenderer();
+                        const container = document.getElementById('canvas-container');
+                        
+                        if (camera && renderer && container) {
+                            const width = container.clientWidth;
+                            const height = container.clientHeight;
+                            
+                            camera.aspect = width / height;
+                            camera.updateProjectionMatrix();
+                            renderer.setSize(width, height);
+                            GeometryApp.labelRenderer.setSize(width, height);
+                        }
+                    }
+                }, 350);
+            });
+        }
+
+        if (toggleRight && sidebarRight) {
+            toggleRight.addEventListener('click', () => {
+                sidebarRight.classList.toggle('collapsed');
+                toggleRight.classList.toggle('collapsed');
+                const arrow = toggleRight.querySelector('.toggle-arrow');
+                arrow.textContent = sidebarRight.classList.contains('collapsed') ? '←' : '→';
+                setTimeout(() => {
+                    if (GeometryApp.scene) {
+                        const sceneModule = GeometryApp.scene;
+                        const camera = sceneModule.getCamera();
+                        const renderer = sceneModule.getRenderer();
+                        const container = document.getElementById('canvas-container');
+                        
+                        if (camera && renderer && container) {
+                            const width = container.clientWidth;
+                            const height = container.clientHeight;
+                            
+                            camera.aspect = width / height;
+                            camera.updateProjectionMatrix();
+                            renderer.setSize(width, height);
+                            GeometryApp.labelRenderer.setSize(width, height);
+                        }
+                    }
+                }, 350);
+            });
+        }
+    
+}
 
     function updatePointsTable() {
         const tbody = document.getElementById('points-table');
