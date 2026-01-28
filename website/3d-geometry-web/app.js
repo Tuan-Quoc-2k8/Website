@@ -553,15 +553,22 @@ GeometryApp.controls = (() => {
         renderer = rend;
 
         const canvas = renderer.domElement;
+        
+        // Mouse events
         canvas.addEventListener('mousedown', onMouseDown);
         canvas.addEventListener('mousemove', onMouseMove);
         canvas.addEventListener('mouseup', onMouseUp);
         canvas.addEventListener('wheel', onWheel);
         canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+        canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+        canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+        canvas.addEventListener('touchend', onTouchEnd);
+        
         window.addEventListener('keydown', onKeyDown);
         window.addEventListener('keyup', onKeyUp);
 
-        updateCameraPosition()
+        updateCameraPosition();
     }
 
     function onMouseDown(e) {
@@ -615,6 +622,98 @@ GeometryApp.controls = (() => {
     function onMouseUp(e) {
         if (e.button === 2) isRightMouseDown = false;
         if (e.button === 1) isMiddleMouseDown = false;
+    }
+
+    // Touch controls
+    let touches = [];
+    let lastTouchDistance = 0;
+
+    function onTouchStart(e) {
+        e.preventDefault();
+        touches = Array.from(e.touches);
+        
+        if (touches.length === 1) {
+            // Single touch - rotate
+            lastMouseX = touches[0].clientX;
+            lastMouseY = touches[0].clientY;
+        } else if (touches.length === 2) {
+            // Two finger - zoom and pan
+            const dx = touches[1].clientX - touches[0].clientX;
+            const dy = touches[1].clientY - touches[0].clientY;
+            lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+        }
+    }
+
+    function onTouchMove(e) {
+        e.preventDefault();
+        touches = Array.from(e.touches);
+        
+        if (touches.length === 1) {
+            // Single touch - rotate camera
+            const deltaX = touches[0].clientX - lastMouseX;
+            const deltaY = touches[0].clientY - lastMouseY;
+            
+            theta -= deltaX * 0.01;
+            phi -= deltaY * 0.01;
+            phi = Math.max(0.1, Math.min(Math.PI - 0.1, phi));
+            
+            lastMouseX = touches[0].clientX;
+            lastMouseY = touches[0].clientY;
+            updateCameraPosition();
+            
+        } else if (touches.length === 2) {
+            // Two finger pinch - zoom
+            const dx = touches[1].clientX - touches[0].clientX;
+            const dy = touches[1].clientY - touches[0].clientY;
+            const touchDistance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (lastTouchDistance > 0) {
+                const delta = lastTouchDistance - touchDistance;
+                distance += delta * 0.05;
+                distance = Math.max(2, Math.min(100, distance));
+                updateCameraPosition();
+            }
+            
+            lastTouchDistance = touchDistance;
+            
+            // Two finger drag - pan
+            const centerX = (touches[0].clientX + touches[1].clientX) / 2;
+            const centerY = (touches[0].clientY + touches[1].clientY) / 2;
+            
+            if (lastMouseX && lastMouseY) {
+                const deltaX = centerX - lastMouseX;
+                const deltaY = centerY - lastMouseY;
+                
+                const panSpeed = 0.02;
+                const cameraRight = new THREE.Vector3();
+                const cameraUp = new THREE.Vector3(0, 0, 1);
+                camera.getWorldDirection(cameraRight);
+                cameraRight.cross(cameraUp).normalize();
+                const up = new THREE.Vector3(0, 0, 1);
+                
+                target.addScaledVector(cameraRight, -deltaX * panSpeed);
+                target.addScaledVector(up, deltaY * panSpeed);
+                updateCameraPosition();
+            }
+            
+            lastMouseX = centerX;
+            lastMouseY = centerY;
+        }
+    }
+
+    function onTouchEnd(e) {
+        e.preventDefault();
+        touches = Array.from(e.touches);
+        
+        if (touches.length === 0) {
+            lastTouchDistance = 0;
+            lastMouseX = 0;
+            lastMouseY = 0;
+        } else if (touches.length === 1) {
+            lastMouseX = touches[0].clientX;
+            lastMouseY = touches[0].clientY;
+            lastTouchDistance = 0;
+        }
     }
 
     function onWheel(e) {
@@ -1778,18 +1877,30 @@ GeometryApp.ui = (() => {
                 }
             });
         });
-        // NEW: Sidebar toggle functionality
+        
+        // Sidebar toggle functionality (mobile-aware)
         const toggleLeft = document.getElementById('toggle-left');
         const toggleRight = document.getElementById('toggle-right');
         const sidebarLeft = document.querySelector('.sidebar-left');
         const sidebarRight = document.querySelector('.sidebar-right');
 
+        // Detect if mobile
+        const isMobile = window.innerWidth <= 768;
+
         if (toggleLeft && sidebarLeft) {
             toggleLeft.addEventListener('click', () => {
-                sidebarLeft.classList.toggle('collapsed');
-                toggleLeft.classList.toggle('collapsed');
-                const arrow = toggleLeft.querySelector('.toggle-arrow');
-                arrow.textContent = sidebarLeft.classList.contains('collapsed') ? '→' : '←';
+                if (isMobile) {
+                    // Mobile: toggle active class
+                    sidebarLeft.classList.toggle('active');
+                    document.body.classList.toggle('sidebar-open', sidebarLeft.classList.contains('active'));
+                } else {
+                    // Desktop: existing behavior
+                    sidebarLeft.classList.toggle('collapsed');
+                    toggleLeft.classList.toggle('collapsed');
+                    const arrow = toggleLeft.querySelector('.toggle-arrow');
+                    arrow.textContent = sidebarLeft.classList.contains('collapsed') ? '→' : '←';
+                }
+                
                 setTimeout(() => {
                     if (GeometryApp.scene) {
                         const sceneModule = GeometryApp.scene;
@@ -1813,10 +1924,18 @@ GeometryApp.ui = (() => {
 
         if (toggleRight && sidebarRight) {
             toggleRight.addEventListener('click', () => {
-                sidebarRight.classList.toggle('collapsed');
-                toggleRight.classList.toggle('collapsed');
-                const arrow = toggleRight.querySelector('.toggle-arrow');
-                arrow.textContent = sidebarRight.classList.contains('collapsed') ? '←' : '→';
+                if (isMobile) {
+                    // Mobile: toggle active class
+                    sidebarRight.classList.toggle('active');
+                    document.body.classList.toggle('sidebar-open', sidebarRight.classList.contains('active'));
+                } else {
+                    // Desktop: existing behavior
+                    sidebarRight.classList.toggle('collapsed');
+                    toggleRight.classList.toggle('collapsed');
+                    const arrow = toggleRight.querySelector('.toggle-arrow');
+                    arrow.textContent = sidebarRight.classList.contains('collapsed') ? '←' : '→';
+                }
+                
                 setTimeout(() => {
                     if (GeometryApp.scene) {
                         const sceneModule = GeometryApp.scene;
@@ -1835,6 +1954,17 @@ GeometryApp.ui = (() => {
                         }
                     }
                 }, 350);
+            });
+        }
+
+        // Close sidebar when clicking overlay on mobile
+        if (isMobile) {
+            document.body.addEventListener('click', (e) => {
+                if (e.target === document.body && document.body.classList.contains('sidebar-open')) {
+                    sidebarLeft?.classList.remove('active');
+                    sidebarRight?.classList.remove('active');
+                    document.body.classList.remove('sidebar-open');
+                }
             });
         }
     
