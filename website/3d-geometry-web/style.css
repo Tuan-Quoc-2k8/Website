@@ -787,3 +787,155 @@ input[type="checkbox"]:checked::before {
     font-weight: bold;
     color: #667eea;
 }
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+    /* Sidebars become full overlays on mobile */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: 85vw;
+        max-width: 360px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .sidebar-left {
+        left: 0;
+    }
+    
+    .sidebar-right {
+        right: 0;
+        left: auto;
+        transform: translateX(100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar-right.collapsed {
+        transform: translateX(100%);
+    }
+    
+    /* Sidebar toggles become hamburger menu buttons */
+    .sidebar-toggle {
+        position: fixed;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        top: auto;
+        bottom: 20px;
+        transform: none;
+    }
+    
+    .sidebar-toggle-left {
+        left: 20px;
+    }
+    
+    .sidebar-toggle-left.collapsed {
+        left: 20px;
+    }
+    
+    .sidebar-toggle-right {
+        right: 20px;
+    }
+    
+    .sidebar-toggle-right.collapsed {
+        right: 20px;
+    }
+    
+    /* Overlay background when sidebar is open */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+        z-index: 999;
+    }
+    
+    body.sidebar-open::before {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    /* Larger touch targets */
+    button {
+        min-height: 44px;
+        padding: 14px 20px;
+    }
+    
+    .btn-small {
+        min-height: 38px;
+        padding: 10px 16px;
+    }
+    
+    /* Adjust inputs for touch */
+    input[type="number"],
+    input[type="text"],
+    select {
+        min-height: 44px;
+        padding: 12px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+    
+    /* Single column for point cards */
+    .point-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Adjust table for mobile */
+    .table-container {
+        max-height: 200px;
+    }
+    
+    th, td {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+    
+    /* Make modal full width on small screens */
+    .modal {
+        min-width: 90vw;
+        max-width: 90vw;
+        margin: 20px;
+    }
+}
+
+/* Portrait orientation specific */
+@media (max-width: 768px) and (orientation: portrait) {
+    .sidebar {
+        width: 90vw;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .sidebar-header h2 {
+        font-size: 16px;
+    }
+    
+    .coord-inputs {
+        grid-template-columns: 1fr;
+    }
+    
+    .language-selector {
+        flex-direction: column;
+    }
+    
+    .lang-btn {
+        width: 100%;
+    }
+}
