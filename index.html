@@ -1242,6 +1242,7 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
     }
 
 </style>
+<link rel="stylesheet" href="./css/zoom.css">
 </head>
 <body data-theme="blue">
     <!-- In-App Browser Detection Banner -->
@@ -1764,7 +1765,16 @@ footer{background:var(--card);padding:2rem 0;text-align:center;color:var(--text-
    ============================================ */
 const CONFIG = {
     aboutImageUrl: './img/minimal-tech-banner.png',
-    projectsPerPage: window.innerWidth <= 768 ? 3 : 6,
+    projectsPerPage: (function() {
+        const width = window.innerWidth;
+        if (width >= 5120) return 18;      // Super Ultra-Wide
+        if (width >= 3440) return 15;      // Extreme Ultra-Wide
+        if (width >= 2560) return 12;      // Ultra-Wide
+        if (width >= 1920) return 9;       // Extra Large
+        if (width >= 1440) return 8;       // Large Desktop
+        if (width >= 768) return 6;        // Desktop
+        return 3;                          // Mobile
+    })(),
     manualVisitCount: 'none',
     
     // NEW: Auto-sort projects alphabetically
@@ -1788,6 +1798,30 @@ const CONFIG = {
         ocean: 'gradient-ocean'
     }
 };
+
+// Update projectsPerPage dynamically on window resize
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const width = window.innerWidth;
+        let newPerPage;
+        if (width >= 5120) newPerPage = 18;
+        else if (width >= 3440) newPerPage = 15;
+        else if (width >= 2560) newPerPage = 12;
+        else if (width >= 1920) newPerPage = 9;
+        else if (width >= 1440) newPerPage = 8;
+        else if (width >= 768) newPerPage = 6;
+        else newPerPage = 3;
+        
+        if (newPerPage !== CONFIG.projectsPerPage) {
+            CONFIG.projectsPerPage = newPerPage;
+            currentPage = 1;
+            renderProjects();
+            renderPagination();
+        }
+    }, 300);
+});
 // Configuration
 const FILTER_CONFIG = {
     maxVisibleTags: 8,        // Max tags to show before "Show More"
