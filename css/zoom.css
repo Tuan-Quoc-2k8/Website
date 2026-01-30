@@ -1,0 +1,255 @@
+/* ============================================
+   ULTRA-WIDE SCREEN OPTIMIZATION
+   Fill entire width when zoomed out
+   ============================================ */
+
+/* Large Desktop - Start expanding (1440px+) */
+@media (min-width: 1440px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+}
+
+/* Extra Large Desktop (1920px+) */
+@media (min-width: 1920px) {
+    .container {
+        max-width: 1800px;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 2.5rem;
+    }
+    
+    .about-content {
+        gap: 3rem;
+    }
+    
+    .skills-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2.5rem;
+    }
+}
+
+/* Ultra-Wide (2560px+) - 25% zoom equivalent */
+@media (min-width: 2560px) {
+    .container {
+        max-width: 90%;
+        padding: 0 3rem;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 3rem;
+    }
+    
+    .hero {
+        padding: 10rem 0 6rem;
+    }
+    
+    .about-content {
+        gap: 4rem;
+    }
+    
+    .skills-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 3rem;
+    }
+    
+    .contact-wrapper {
+        max-width: 1600px;
+    }
+}
+
+/* Extreme Ultra-Wide (3440px+) */
+@media (min-width: 3440px) {
+    .container {
+        max-width: 95%;
+        padding: 0 4rem;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 3.5rem;
+    }
+    
+    body {
+        font-size: 18px;
+    }
+    
+    .hero h1 {
+        font-size: 4.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 3rem;
+    }
+    
+    .skills-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 3.5rem;
+    }
+}
+
+/* Super Ultra-Wide (5120px+) - For extreme zoom out scenarios */
+@media (min-width: 5120px) {
+    .container {
+        max-width: 96%;
+        padding: 0 5rem;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 4rem;
+    }
+    
+    body {
+        font-size: 20px;
+    }
+    
+    .hero {
+        padding: 12rem 0 8rem;
+    }
+    
+    .hero h1 {
+        font-size: 6rem;
+    }
+    
+    .hero p {
+        font-size: 1.8rem;
+    }
+    
+    .section-title {
+        font-size: 4rem;
+    }
+    
+    .about-content {
+        gap: 5rem;
+    }
+    
+    .skills-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 4rem;
+    }
+    
+    .contact-wrapper {
+        max-width: 2000px;
+    }
+    
+    /* Scale header elements */
+    .logo-img {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    nav {
+        gap: 3rem;
+    }
+    
+    nav a {
+        font-size: 1.2rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.75rem;
+        font-size: 1.1rem;
+    }
+}
+
+/* Remove max-width entirely for extreme cases */
+@media (min-width: 7680px) {
+    .container {
+        max-width: 98%;
+        padding: 0 6rem;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+        gap: 5rem;
+    }
+}
+
+/* ============================================
+   ULTRA-WIDE SCREEN - INCREASE VISIBLE CARDS
+   ============================================ */
+
+/* Default: 6 cards (already in your code) */
+
+/* Large Desktop (1440px+) - Show 8 cards */
+@media (min-width: 1440px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+}
+
+/* Extra Large (1920px+) - Show 9 cards */
+@media (min-width: 1920px) {
+    .container {
+        max-width: 1800px;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 2.5rem;
+    }
+}
+
+/* Ultra-Wide (2560px+) - Show 12 cards */
+@media (min-width: 2560px) {
+    .container {
+        max-width: 90%;
+        padding: 0 3rem;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 3rem;
+    }
+}
+
+/* Extreme Ultra-Wide (3440px+) - Show 15 cards */
+@media (min-width: 3440px) {
+    .container {
+        max-width: 95%;
+        padding: 0 4rem;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 3.5rem;
+    }
+    
+    body {
+        font-size: 18px;
+    }
+}
+
+/* Super Ultra-Wide (5120px+) - Show 18 cards */
+@media (min-width: 5120px) {
+    .container {
+        max-width: 96%;
+        padding: 0 5rem;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 4rem;
+    }
+    
+    body {
+        font-size: 20px;
+    }
+}
