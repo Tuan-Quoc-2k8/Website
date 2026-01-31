@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Meteor Smash</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -19,15 +20,25 @@
             align-items: center;
             min-height: 100vh;
             overflow: hidden;
+            touch-action: none;
         }
 
         #gameContainer {
             position: relative;
-            width: 720px;
-            height: 1280px;
+            width: 100vw;
+            max-width: 720px;
+            height: 100vh;
+            max-height: 1280px;
             background: #000;
             overflow: hidden;
             box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+        }
+
+        @media (min-width: 721px) {
+            #gameContainer {
+                width: 720px;
+                height: 1280px;
+            }
         }
 
         #gameCanvas {
@@ -145,7 +156,7 @@
             pointer-events: auto;
         }
 
-        .game-button:hover {
+        .game-button:hover, .game-button:active {
             transform: scale(1.1);
             filter: drop-shadow(0 0 30px #00ff00);
         }
@@ -207,7 +218,7 @@
             transition: all 0.2s;
         }
 
-        .pause-menu-button:hover {
+        .pause-menu-button:hover, .pause-menu-button:active {
             transform: scale(1.1);
         }
 
@@ -235,6 +246,7 @@
             text-shadow: 0 0 40px #00ffff;
             margin-bottom: 60px;
             animation: float 3s ease-in-out infinite;
+            text-align: center;
         }
 
         @keyframes float {
@@ -244,6 +256,7 @@
 
         .loading-bar {
             width: 400px;
+            max-width: 80%;
             height: 25px;
             background: rgba(0, 0, 0, 0.5);
             border: 3px solid #00ff00;
@@ -282,29 +295,44 @@
         }
 
         .menu-title {
-            font-size: 80px;
+            font-size: min(80px, 15vw);
             color: #00ffff;
             text-shadow: 0 0 50px #00ffff;
             margin-bottom: 80px;
             animation: float 3s ease-in-out infinite;
+            text-align: center;
+            line-height: 1.2;
         }
 
         .menu-button {
-            padding: 20px 60px;
+            width: 280px;
+            padding: 20px 40px;
             margin: 15px;
             background: linear-gradient(135deg, #00ff00, #00cc00);
-            border: 3px solid #00ff00;
+            border: 4px solid #00ff00;
             border-radius: 50px;
             color: #000;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
-            filter: drop-shadow(0 0 25px #00ff00);
-            transition: all 0.2s;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+            text-align: center;
         }
 
-        .menu-button:hover {
+        .menu-button:hover, .menu-button:active {
             transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(0, 255, 0, 1), inset 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        .menu-button.secondary {
+            background: linear-gradient(135deg, #00ffff, #00cccc);
+            border-color: #00ffff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .menu-button.secondary:hover, .menu-button.secondary:active {
+            box-shadow: 0 0 50px rgba(0, 255, 255, 1), inset 0 0 30px rgba(255, 255, 255, 0.5);
         }
 
         #skillScreen {
@@ -319,7 +347,8 @@
             align-items: center;
             justify-content: center;
             z-index: 100;
-            padding: 40px;
+            padding: 40px 20px;
+            overflow-y: auto;
         }
 
         #skillScreen.active {
@@ -327,22 +356,23 @@
         }
 
         .skill-title {
-            font-size: 48px;
+            font-size: clamp(24px, 6vw, 48px);
             color: #00ff00;
             text-shadow: 0 0 30px #00ff00;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
         #skillsContainer {
             display: flex;
-            gap: 30px;
+            gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .skill-card {
-            width: 200px;
+            width: min(200px, 30vw);
             background: linear-gradient(135deg, #1a1a3e 0%, #2a2a4e 100%);
             border: 3px solid #00ffff;
             border-radius: 15px;
@@ -355,7 +385,7 @@
             text-align: center;
         }
 
-        .skill-card:hover {
+        .skill-card:hover, .skill-card:active {
             transform: translateY(-10px);
             box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
         }
@@ -372,14 +402,14 @@
         }
 
         .skill-name {
-            font-size: 20px;
+            font-size: 18px;
             color: #00ffff;
             font-weight: bold;
             margin-bottom: 10px;
         }
 
         .skill-description {
-            font-size: 14px;
+            font-size: 13px;
             color: #aaa;
             line-height: 1.4;
         }
@@ -420,7 +450,7 @@
         }
 
         .game-over-title {
-            font-size: 72px;
+            font-size: clamp(48px, 10vw, 72px);
             color: #ff0066;
             text-shadow: 0 0 40px #ff0066;
             margin-bottom: 40px;
@@ -433,7 +463,7 @@
         }
 
         .final-score {
-            font-size: 36px;
+            font-size: clamp(24px, 5vw, 36px);
             color: #00ffff;
             margin-bottom: 60px;
         }
@@ -450,7 +480,7 @@
             cursor: pointer;
         }
 
-        .game-over-button:hover {
+        .game-over-button:hover, .game-over-button:active {
             transform: scale(1.1);
         }
 
@@ -473,11 +503,11 @@
         .help-container {
             max-width: 600px;
             margin: 40px auto;
-            padding: 30px;
+            padding: 30px 20px;
         }
 
         .help-header {
-            font-size: 48px;
+            font-size: clamp(32px, 8vw, 48px);
             color: #00ff00;
             text-align: center;
             margin-bottom: 40px;
@@ -492,7 +522,7 @@
         }
 
         .help-section-title {
-            font-size: 28px;
+            font-size: clamp(20px, 5vw, 28px);
             color: #00ffff;
             margin-bottom: 20px;
         }
@@ -516,6 +546,29 @@
             font-weight: bold;
             cursor: pointer;
         }
+
+        #bossWarning {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 64px;
+            color: #ff0000;
+            text-shadow: 0 0 50px #ff0000;
+            z-index: 90;
+            display: none;
+            animation: bossWarningPulse 1s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bossWarningPulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        #bossWarning.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -537,6 +590,15 @@
             <div class="currency-display">💰 <span id="coinDisplay">0</span></div>
         </div>
         
+        <div id="bossWarning">⚠️ BOSS APPROACHING ⚠️</div>
+        
+        <div id="bossTimer" class="hud-element" style="top: 100px; left: 50%; transform: translateX(-50%); display: none;">
+            <div style="background: rgba(0,0,0,0.8); border: 2px solid #ff0000; border-radius: 10px; padding: 10px 20px; text-align: center;">
+                <div style="color: #ff0000; font-size: 14px; margin-bottom: 5px;">👹 NEXT BOSS</div>
+                <div id="bossTimerText" style="color: #fff; font-size: 20px; font-weight: bold;">3:00</div>
+            </div>
+        </div>
+        
         <button id="pauseBtn" class="game-button" onclick="game.togglePause()">⏸</button>
         
         <div id="loadingScreen">
@@ -547,9 +609,9 @@
         </div>
         
         <div id="mainMenu">
-            <div class="menu-title">METEOR SMASH</div>
+            <div class="menu-title">METEOR<br>SMASH</div>
             <button class="menu-button" onclick="game.startGame()">▶ PLAY</button>
-            <button class="menu-button" onclick="game.showHelp()">❓ HOW TO PLAY</button>
+            <button class="menu-button secondary" onclick="game.showHelp()">❓ HOW TO PLAY</button>
         </div>
         
         <div id="pauseMenu">
@@ -580,6 +642,13 @@
                     <p class="help-text">Desktop: Use WASD or Arrow Keys to move</p>
                     <p class="help-text">Mobile: Touch and drag to move</p>
                     <p class="help-text">Your ship fires automatically!</p>
+                </div>
+
+                <div class="help-section">
+                    <div class="help-section-title">👾 Bosses</div>
+                    <p class="help-text">Powerful bosses appear every 3 minutes!</p>
+                    <p class="help-text">Each boss has unique attack patterns</p>
+                    <p class="help-text">Defeat them for massive rewards!</p>
                 </div>
 
                 <div class="help-section">
@@ -657,6 +726,238 @@
             }
         };
 
+        // BOSS DEFINITIONS
+        const BOSSES = {
+            // Boss 1: Flame Demon - Fire-based attacks
+            flame_demon: {
+                id: 'flame_demon',
+                name: 'Flame Demon',
+                hp: 1000,
+                size: 150,
+                color: '#ff3300',
+                skills: [
+                    {
+                        name: 'Fire Circle',
+                        cooldown: 3000,
+                        execute: function(boss, game) {
+                            // Spawns 8 fire projectiles in a circle
+                            for (let i = 0; i < 8; i++) {
+                                const angle = (i / 8) * Math.PI * 2;
+                                game.bossProjectiles.push({
+                                    x: boss.x,
+                                    y: boss.y,
+                                    vx: Math.cos(angle) * 4,
+                                    vy: Math.sin(angle) * 4,
+                                    size: 15,
+                                    color: '#ff6600',
+                                    damage: 1
+                                });
+                            }
+                        }
+                    },
+                    {
+                        name: 'Flame Breath',
+                        cooldown: 5000,
+                        execute: function(boss, game) {
+                            // Shoots a stream of fire towards player
+                            for (let i = 0; i < 20; i++) {
+                                setTimeout(() => {
+                                    const dx = game.player.x - boss.x;
+                                    const dy = game.player.y - boss.y;
+                                    const dist = Math.sqrt(dx * dx + dy * dy);
+                                    const spread = (Math.random() - 0.5) * 0.5;
+                                    
+                                    game.bossProjectiles.push({
+                                        x: boss.x,
+                                        y: boss.y,
+                                        vx: (dx / dist) * 6 + spread,
+                                        vy: (dy / dist) * 6 + spread,
+                                        size: 12,
+                                        color: '#ff9900',
+                                        damage: 1
+                                    });
+                                }, i * 50);
+                            }
+                        }
+                    },
+                    {
+                        name: 'Meteor Shower',
+                        cooldown: 8000,
+                        execute: function(boss, game) {
+                            // Rains fire from above
+                            for (let i = 0; i < 15; i++) {
+                                setTimeout(() => {
+                                    game.bossProjectiles.push({
+                                        x: Math.random() * 720,
+                                        y: -50,
+                                        vx: 0,
+                                        vy: 8,
+                                        size: 20,
+                                        color: '#ff0000',
+                                        damage: 1
+                                    });
+                                }, i * 200);
+                            }
+                        }
+                    }
+                ],
+                movement: function(boss, game, time) {
+                    // Sinusoidal horizontal movement
+                    boss.x = 360 + Math.sin(time / 1000) * 250;
+                    boss.y = 200 + Math.sin(time / 2000) * 50;
+                }
+            },
+            
+            // Boss 2: Void Kraken - Dark energy attacks
+            void_kraken: {
+                id: 'void_kraken',
+                name: 'Void Kraken',
+                hp: 1200,
+                size: 160,
+                color: '#9900ff',
+                skills: [
+                    {
+                        name: 'Tentacle Slam',
+                        cooldown: 4000,
+                        execute: function(boss, game) {
+                            // Creates shockwave lines
+                            const targetX = game.player.x;
+                            const targetY = game.player.y;
+                            
+                            for (let i = -2; i <= 2; i++) {
+                                setTimeout(() => {
+                                    game.bossProjectiles.push({
+                                        x: boss.x + i * 80,
+                                        y: boss.y,
+                                        vx: 0,
+                                        vy: 10,
+                                        size: 40,
+                                        color: '#cc00ff',
+                                        damage: 1
+                                    });
+                                }, Math.abs(i) * 100);
+                            }
+                        }
+                    },
+                    {
+                        name: 'Void Spiral',
+                        cooldown: 6000,
+                        execute: function(boss, game) {
+                            // Spiral pattern of dark energy
+                            let angle = 0;
+                            for (let i = 0; i < 30; i++) {
+                                setTimeout(() => {
+                                    angle += 0.3;
+                                    game.bossProjectiles.push({
+                                        x: boss.x,
+                                        y: boss.y,
+                                        vx: Math.cos(angle) * 5,
+                                        vy: Math.sin(angle) * 5,
+                                        size: 12,
+                                        color: '#ff00ff',
+                                        damage: 1
+                                    });
+                                }, i * 80);
+                            }
+                        }
+                    },
+                    {
+                        name: 'Dark Sphere',
+                        cooldown: 7000,
+                        execute: function(boss, game) {
+                            // Homing dark orb
+                            game.bossProjectiles.push({
+                                x: boss.x,
+                                y: boss.y,
+                                vx: 0,
+                                vy: 2,
+                                size: 30,
+                                color: '#6600cc',
+                                damage: 2,
+                                homing: true,
+                                speed: 3
+                            });
+                        }
+                    }
+                ],
+                movement: function(boss, game, time) {
+                    // Figure-8 movement
+                    const t = time / 2000;
+                    boss.x = 360 + Math.sin(t) * 200;
+                    boss.y = 250 + Math.sin(t * 2) * 100;
+                }
+            },
+            
+            // Boss 3: Cyber Skull - Laser and tech attacks
+            cyber_skull: {
+                id: 'cyber_skull',
+                name: 'Cyber Skull',
+                hp: 1500,
+                size: 140,
+                color: '#00ffff',
+                skills: [
+                    {
+                        name: 'Laser Sweep',
+                        cooldown: 5000,
+                        execute: function(boss, game) {
+                            // Rotating laser beam
+                            boss.laserSweep = {
+                                active: true,
+                                angle: 0,
+                                duration: 3000,
+                                startTime: Date.now()
+                            };
+                        }
+                    },
+                    {
+                        name: 'EMP Pulse',
+                        cooldown: 6000,
+                        execute: function(boss, game) {
+                            // Expanding ring that slows player
+                            game.bossProjectiles.push({
+                                x: boss.x,
+                                y: boss.y,
+                                radius: 0,
+                                maxRadius: 300,
+                                expandSpeed: 5,
+                                size: 5,
+                                color: '#00ffff',
+                                damage: 1,
+                                ring: true
+                            });
+                        }
+                    },
+                    {
+                        name: 'Missile Barrage',
+                        cooldown: 7000,
+                        execute: function(boss, game) {
+                            // Rapid fire missiles
+                            for (let i = 0; i < 12; i++) {
+                                setTimeout(() => {
+                                    const angle = (i / 12) * Math.PI * 2;
+                                    game.bossProjectiles.push({
+                                        x: boss.x,
+                                        y: boss.y,
+                                        vx: Math.cos(angle) * 6,
+                                        vy: Math.sin(angle) * 6,
+                                        size: 10,
+                                        color: '#00ff00',
+                                        damage: 1
+                                    });
+                                }, i * 100);
+                            }
+                        }
+                    }
+                ],
+                movement: function(boss, game, time) {
+                    // Circular orbit movement
+                    const t = time / 3000;
+                    boss.x = 360 + Math.cos(t) * 220;
+                    boss.y = 300 + Math.sin(t) * 150;
+                }
+            }
+        };
+
         const game = {
             canvas: null,
             ctx: null,
@@ -668,7 +969,8 @@
                 score: 0,
                 coins: 0,
                 selectedSkill: null,
-                gameTime: 0
+                gameTime: 0,
+                lastBossSpawn: 0
             },
 
             player: {
@@ -689,6 +991,8 @@
 
             bullets: [],
             asteroids: [],
+            boss: null,
+            bossProjectiles: [],
             keys: {},
             supportFighters: [],
             explosions: [],
@@ -702,9 +1006,25 @@
             init() {
                 this.canvas = document.getElementById('gameCanvas');
                 this.ctx = this.canvas.getContext('2d');
+                
+                // Make canvas responsive
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                
                 this.initStarLayers();
                 this.setupEventListeners();
                 this.simulateLoading();
+            },
+
+            resizeCanvas() {
+                const container = document.getElementById('gameContainer');
+                const rect = container.getBoundingClientRect();
+                this.canvas.width = rect.width;
+                this.canvas.height = rect.height;
+                
+                // Store scale for calculations
+                this.scaleX = this.canvas.width / 720;
+                this.scaleY = this.canvas.height / 1280;
             },
 
             initStarLayers() {
@@ -725,6 +1045,7 @@
             },
 
             setupEventListeners() {
+                // Keyboard controls
                 window.addEventListener('keydown', (e) => {
                     this.keys[e.key] = true;
                 });
@@ -733,24 +1054,49 @@
                     this.keys[e.key] = false;
                 });
 
+                // Touch controls
                 const touchLayer = document.getElementById('touchLayer');
                 touchLayer.width = 720;
                 touchLayer.height = 1280;
 
+                let touching = false;
+
+                const getTouchPos = (e) => {
+                    const rect = touchLayer.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    return {
+                        x: ((touch.clientX - rect.left) / rect.width) * 720,
+                        y: ((touch.clientY - rect.top) / rect.height) * 1280
+                    };
+                };
+
                 touchLayer.addEventListener('touchstart', (e) => {
                     e.preventDefault();
+                    touching = true;
+                    if (this.state.running && !this.state.paused) {
+                        const pos = getTouchPos(e);
+                        this.player.x = Math.max(30, Math.min(690, pos.x));
+                        this.player.y = Math.max(30, Math.min(1250, pos.y));
+                    }
                 });
 
                 touchLayer.addEventListener('touchmove', (e) => {
                     e.preventDefault();
-                    if (this.state.running && !this.state.paused) {
-                        const rect = touchLayer.getBoundingClientRect();
-                        const touchX = e.touches[0].clientX - rect.left;
-                        const touchY = e.touches[0].clientY - rect.top;
-                        
-                        this.player.x = Math.max(30, Math.min(690, (touchX / rect.width) * 720));
-                        this.player.y = Math.max(30, Math.min(1250, (touchY / rect.height) * 1280));
+                    if (touching && this.state.running && !this.state.paused) {
+                        const pos = getTouchPos(e);
+                        this.player.x = Math.max(30, Math.min(690, pos.x));
+                        this.player.y = Math.max(30, Math.min(1250, pos.y));
                     }
+                });
+
+                touchLayer.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    touching = false;
+                });
+
+                touchLayer.addEventListener('touchcancel', (e) => {
+                    e.preventDefault();
+                    touching = false;
                 });
             },
 
@@ -774,7 +1120,8 @@
                     score: 0,
                     coins: 0,
                     selectedSkill: null,
-                    gameTime: 0
+                    gameTime: 0,
+                    lastBossSpawn: 0
                 };
 
                 this.player = {
@@ -795,6 +1142,8 @@
 
                 this.bullets = [];
                 this.asteroids = [];
+                this.boss = null;
+                this.bossProjectiles = [];
                 this.supportFighters = [];
                 this.explosions = [];
                 this.lightningBolts = [];
@@ -928,7 +1277,6 @@
                 const { id, tier } = this.state.selectedSkill;
                 this.player.skills[id] = tier;
 
-                // Initialize skill effects
                 if (id === 'support_fighters') {
                     this.initSupportFighters(tier);
                 }
@@ -958,6 +1306,7 @@
             initLaserShips(tier) {
                 this.laserShips = [];
                 if (tier === 1) {
+                    // Level 1: 1 turret on left edge
                     this.laserShips.push({
                         x: 30,
                         y: 400,
@@ -965,6 +1314,7 @@
                         activationTime: 0
                     });
                 } else {
+                    // Level 2: 2 turrets on right edge, remove left turret
                     this.laserShips.push({
                         x: 690,
                         y: 300,
@@ -980,6 +1330,35 @@
                 }
             },
 
+            spawnBoss() {
+                const bossTypes = Object.values(BOSSES);
+                const selectedBoss = bossTypes[Math.floor(Math.random() * bossTypes.length)];
+                
+                // Boss HP scales moderately with time (every 180 seconds = 1 boss cycle adds 20% HP)
+                const bossCount = Math.floor(this.state.gameTime / 180);
+                const hpScaling = 1 + (bossCount * 0.2); // 20% increase per boss cycle
+                
+                this.boss = {
+                    ...selectedBoss,
+                    x: 360,
+                    y: 200,
+                    currentHp: Math.floor(selectedBoss.hp * hpScaling),
+                    maxHp: Math.floor(selectedBoss.hp * hpScaling),
+                    skillCooldowns: selectedBoss.skills.map(() => 0),
+                    laserSweep: null,
+                    spawnTime: Date.now()
+                };
+
+                // Show boss warning
+                const warning = document.getElementById('bossWarning');
+                warning.classList.add('active');
+                setTimeout(() => {
+                    warning.classList.remove('active');
+                }, 3000);
+
+                this.state.lastBossSpawn = this.state.gameTime;
+            },
+
             gameLoop() {
                 if (!this.state.running) return;
                 
@@ -993,7 +1372,7 @@
             },
 
             update() {
-                // Movement
+                // Keyboard movement
                 if (this.keys['ArrowLeft'] || this.keys['a']) this.player.x -= this.player.speed;
                 if (this.keys['ArrowRight'] || this.keys['d']) this.player.x += this.player.speed;
                 if (this.keys['ArrowUp'] || this.keys['w']) this.player.y -= this.player.speed;
@@ -1001,6 +1380,28 @@
                 
                 this.player.x = Math.max(30, Math.min(690, this.player.x));
                 this.player.y = Math.max(30, Math.min(1250, this.player.y));
+
+                // Boss spawning (every 3 minutes = 180 seconds)
+                if (!this.boss && this.state.gameTime - this.state.lastBossSpawn >= 180) {
+                    this.spawnBoss();
+                }
+
+                // Update boss countdown timer
+                const bossTimerEl = document.getElementById('bossTimer');
+                const bossTimerText = document.getElementById('bossTimerText');
+                if (!this.boss) {
+                    const timeUntilBoss = 180 - (this.state.gameTime - this.state.lastBossSpawn);
+                    if (timeUntilBoss > 0) {
+                        bossTimerEl.style.display = 'block';
+                        const minutes = Math.floor(timeUntilBoss / 60);
+                        const seconds = Math.floor(timeUntilBoss % 60);
+                        bossTimerText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    } else {
+                        bossTimerEl.style.display = 'none';
+                    }
+                } else {
+                    bossTimerEl.style.display = 'none';
+                }
 
                 // Shooting
                 const now = Date.now();
@@ -1012,10 +1413,11 @@
                     this.player.lastShot = now;
                 }
 
-                // Support fighters shoot
+                // Support fighters
                 if (tier > 0) {
                     this.supportFighters.forEach(fighter => {
-                        if (now - fighter.lastShot > 1000 / 8) {
+                        // Support fighters now fire at same rate as main ship
+                        if (now - fighter.lastShot > 1000 / this.player.attackSpeed) {
                             const dmg = tier === 2 ? this.player.damage * 1.5 : this.player.damage;
                             this.bullets.push({
                                 x: this.player.x + fighter.offsetX,
@@ -1072,7 +1474,77 @@
                     });
                 }
 
-                // Spawn asteroids
+                // Update boss
+                if (this.boss) {
+                    const bossTime = now - this.boss.spawnTime;
+                    this.boss.movement(this.boss, this, bossTime);
+
+                    // Boss skills
+                    this.boss.skills.forEach((skill, idx) => {
+                        if (now - this.boss.skillCooldowns[idx] > skill.cooldown) {
+                            skill.execute(this.boss, this);
+                            this.boss.skillCooldowns[idx] = now;
+                        }
+                    });
+
+                    // Laser sweep for Cyber Skull
+                    if (this.boss.laserSweep && this.boss.laserSweep.active) {
+                        const elapsed = now - this.boss.laserSweep.startTime;
+                        if (elapsed > this.boss.laserSweep.duration) {
+                            this.boss.laserSweep.active = false;
+                        } else {
+                            this.boss.laserSweep.angle += 0.05;
+                        }
+                    }
+                }
+
+                // Update boss projectiles
+                this.bossProjectiles.forEach((proj, idx) => {
+                    if (proj.homing) {
+                        const dx = this.player.x - proj.x;
+                        const dy = this.player.y - proj.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        proj.vx += (dx / dist) * 0.2;
+                        proj.vy += (dy / dist) * 0.2;
+                        const speed = Math.sqrt(proj.vx * proj.vx + proj.vy * proj.vy);
+                        if (speed > proj.speed) {
+                            proj.vx = (proj.vx / speed) * proj.speed;
+                            proj.vy = (proj.vy / speed) * proj.speed;
+                        }
+                    }
+
+                    if (proj.ring) {
+                        proj.radius += proj.expandSpeed;
+                        if (proj.radius > proj.maxRadius) {
+                            this.bossProjectiles.splice(idx, 1);
+                            return;
+                        }
+                    } else {
+                        proj.x += proj.vx;
+                        proj.y += proj.vy;
+                    }
+
+                    // Check collision with player
+                    if (proj.ring) {
+                        const dist = Math.sqrt((this.player.x - proj.x) ** 2 + (this.player.y - proj.y) ** 2);
+                        if (Math.abs(dist - proj.radius) < 20) {
+                            this.player.hearts -= proj.damage;
+                            this.updateHUD();
+                            if (this.player.hearts <= 0) this.gameOver();
+                        }
+                    } else if (this.checkCollision(this.player, proj)) {
+                        this.player.hearts -= proj.damage;
+                        this.updateHUD();
+                        this.bossProjectiles.splice(idx, 1);
+                        if (this.player.hearts <= 0) this.gameOver();
+                    }
+
+                    if (proj.x < -50 || proj.x > 770 || proj.y < -50 || proj.y > 1330) {
+                        this.bossProjectiles.splice(idx, 1);
+                    }
+                });
+
+                // Spawn asteroids (INCREASED SIZE)
                 const baseSpawnRate = 0.008;
                 const maxSpawnRate = 0.025;
                 const spawnRateIncrease = Math.min(this.state.gameTime / 120, 1);
@@ -1096,18 +1568,25 @@
 
                 // Update missiles
                 this.missiles.forEach(missile => {
-                    if (missile.target && this.asteroids.includes(missile.target)) {
-                        const dx = missile.target.x - missile.x;
-                        const dy = missile.target.y - missile.y;
+                    let target = missile.target;
+                    if (this.boss && (!target || !this.asteroids.includes(target))) {
+                        target = this.boss;
+                    }
+                    
+                    if (target && (this.asteroids.includes(target) || target === this.boss)) {
+                        const dx = target.x - missile.x;
+                        const dy = target.y - missile.y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         
-                        missile.vx += (dx / dist) * 0.3;
-                        missile.vy += (dy / dist) * 0.3;
+                        // Increased tracking strength from 0.3 to 0.5
+                        missile.vx += (dx / dist) * 0.5;
+                        missile.vy += (dy / dist) * 0.5;
                         
                         const speed = Math.sqrt(missile.vx * missile.vx + missile.vy * missile.vy);
-                        if (speed > 6) {
-                            missile.vx = (missile.vx / speed) * 6;
-                            missile.vy = (missile.vy / speed) * 6;
+                        // Increased max speed from 6 to 9
+                        if (speed > 9) {
+                            missile.vx = (missile.vx / speed) * 9;
+                            missile.vy = (missile.vy / speed) * 9;
                         }
                     }
                     
@@ -1146,12 +1625,39 @@
                     if (a.y > 1300) this.asteroids.splice(i, 1);
                 });
 
-                // Bullet-asteroid collisions
+                // Bullet-asteroid/boss collisions
                 this.bullets.forEach((b, bi) => {
                     let hitCount = 0;
                     const pierceTier = this.player.skills.piercing_bullets || 0;
                     const maxPierce = pierceTier === 1 ? 2 : (pierceTier === 2 ? 4 : 1);
                     
+                    // Check boss collision
+                    if (this.boss && this.checkCollision(b, this.boss) && hitCount < maxPierce) {
+                        const dmg = b.damage || this.player.damage;
+                        const finalDmg = pierceTier === 2 && hitCount === 0 ? dmg * 2 : dmg;
+                        
+                        this.boss.currentHp -= finalDmg;
+                        hitCount++;
+                        
+                        const explosiveTier = this.player.skills.explosive_bullets || 0;
+                        if (explosiveTier > 0) {
+                            this.createExplosion(b.x, b.y, explosiveTier);
+                        }
+                        
+                        if (this.boss.currentHp <= 0) {
+                            this.gainXP(500);
+                            this.state.score += 1000;
+                            this.state.coins += 50;
+                            this.boss = null;
+                            this.updateHUD();
+                        }
+                        
+                        if (pierceTier === 0) {
+                            this.bullets.splice(bi, 1);
+                        }
+                    }
+                    
+                    // Check asteroid collisions
                     this.asteroids.forEach((a, ai) => {
                         if (this.checkCollision(b, a) && hitCount < maxPierce) {
                             const dmg = b.damage || this.player.damage;
@@ -1160,13 +1666,11 @@
                             a.hp -= finalDmg;
                             hitCount++;
                             
-                            // Explosive bullets
                             const explosiveTier = this.player.skills.explosive_bullets || 0;
                             if (explosiveTier > 0) {
                                 this.createExplosion(b.x, b.y, explosiveTier);
                             }
                             
-                            // Ricochet bullets
                             const ricochetTier = this.player.skills.ricochet_bullets || 0;
                             if (ricochetTier > 0 && !b.bounced) {
                                 if (ricochetTier === 1) {
@@ -1194,10 +1698,11 @@
                             }
                             
                             if (a.hp <= 0) {
+                                const rewards = this.getRewardsForAsteroid(a.tier);
                                 this.destroyAsteroid(a, ai);
                                 this.gainXP(10);
-                                this.state.score += 10;
-                                this.state.coins += 1;
+                                this.state.score += rewards.stars;
+                                this.state.coins += rewards.coins;
                                 this.updateHUD();
                             }
                             
@@ -1208,17 +1713,33 @@
                     });
                 });
 
-                // Missile-asteroid collisions
+                // Missile collisions
                 this.missiles.forEach((m, mi) => {
+                    if (this.boss && this.checkCollision(m, this.boss)) {
+                        this.boss.currentHp -= this.player.damage * 1.5;
+                        
+                        if (this.boss.currentHp <= 0) {
+                            this.gainXP(500);
+                            this.state.score += 1000;
+                            this.state.coins += 50;
+                            this.boss = null;
+                            this.updateHUD();
+                        }
+                        
+                        this.missiles.splice(mi, 1);
+                        return;
+                    }
+                    
                     this.asteroids.forEach((a, ai) => {
                         if (this.checkCollision(m, a)) {
                             a.hp -= this.player.damage * 1.5;
                             
                             if (a.hp <= 0) {
+                                const rewards = this.getRewardsForAsteroid(a.tier);
                                 this.destroyAsteroid(a, ai);
                                 this.gainXP(10);
-                                this.state.score += 10;
-                                this.state.coins += 1;
+                                this.state.score += rewards.stars;
+                                this.state.coins += rewards.coins;
                                 this.updateHUD();
                             }
                             
@@ -1233,7 +1754,7 @@
                     return exp.time < exp.duration;
                 });
 
-                // Update lightning bolts
+                // Update lightning
                 this.lightningBolts = this.lightningBolts.filter(bolt => {
                     bolt.time += 16;
                     return bolt.time < bolt.duration;
@@ -1245,7 +1766,10 @@
                 const damage = tier === 1 ? this.player.damage * 1.5 : this.player.damage * 1.75;
                 const color = tier === 1 ? '#00ffff' : '#ff0066';
                 
-                let targets = [...this.asteroids].sort((a, b) => {
+                let targets = [...this.asteroids];
+                if (this.boss) targets.push(this.boss);
+                
+                targets = targets.sort((a, b) => {
                     const distA = Math.sqrt((a.x - this.player.x) ** 2 + (a.y - this.player.y) ** 2);
                     const distB = Math.sqrt((b.x - this.player.x) ** 2 + (b.y - this.player.y) ** 2);
                     return distA - distB;
@@ -1263,15 +1787,27 @@
                         duration: 500
                     });
                     
-                    target.hp -= damage;
-                    if (target.hp <= 0) {
-                        const idx = this.asteroids.indexOf(target);
-                        if (idx !== -1) {
-                            this.destroyAsteroid(target, idx);
-                            this.gainXP(10);
-                            this.state.score += 10;
-                            this.state.coins += 1;
+                    if (target === this.boss) {
+                        this.boss.currentHp -= damage;
+                        if (this.boss.currentHp <= 0) {
+                            this.gainXP(500);
+                            this.state.score += 1000;
+                            this.state.coins += 50;
+                            this.boss = null;
                             this.updateHUD();
+                        }
+                    } else {
+                        target.hp -= damage;
+                        if (target.hp <= 0) {
+                            const idx = this.asteroids.indexOf(target);
+                            if (idx !== -1) {
+                                const rewards = this.getRewardsForAsteroid(target.tier);
+                                this.destroyAsteroid(target, idx);
+                                this.gainXP(10);
+                                this.state.score += rewards.stars;
+                                this.state.coins += rewards.coins;
+                                this.updateHUD();
+                            }
                         }
                     }
                     
@@ -1281,7 +1817,10 @@
 
             launchMissiles(tier) {
                 const count = tier === 1 ? 1 : 3;
-                const targets = [...this.asteroids].sort((a, b) => {
+                let targets = [...this.asteroids];
+                if (this.boss) targets = [this.boss, ...targets];
+                
+                targets = targets.sort((a, b) => {
                     const distA = Math.sqrt((a.x - this.player.x) ** 2 + (a.y - this.player.y) ** 2);
                     const distB = Math.sqrt((b.x - this.player.x) ** 2 + (b.y - this.player.y) ** 2);
                     return distA - distB;
@@ -1302,36 +1841,54 @@
             applyLaserDamage(ship, tier) {
                 const damage = tier === 1 ? 5 : 7.5;
                 
-                this.asteroids.forEach((a, idx) => {
-                    const dx = a.x - ship.x;
-                    const dy = a.y - ship.y;
+                let targets = [...this.asteroids];
+                if (this.boss) targets.push(this.boss);
+                
+                targets.forEach((target, idx) => {
+                    const dx = target.x - ship.x;
+                    const dy = target.y - ship.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     
                     if (dist < 800) {
-                        const blocked = this.isLaserBlocked(ship.x, ship.y, a.x, a.y, a);
+                        const blocked = this.isLaserBlocked(ship.x, ship.y, target.x, target.y, target);
                         
                         if (!blocked && Math.random() < 0.05) {
-                            a.hp -= damage;
-                            
-                            if (a.hp <= 0) {
-                                this.destroyAsteroid(a, idx);
-                                this.gainXP(10);
-                                this.state.score += 10;
-                                this.state.coins += 1;
-                                this.updateHUD();
+                            if (target === this.boss) {
+                                this.boss.currentHp -= damage;
+                                if (this.boss.currentHp <= 0) {
+                                    this.gainXP(500);
+                                    this.state.score += 1000;
+                                    this.state.coins += 50;
+                                    this.boss = null;
+                                    this.updateHUD();
+                                }
+                            } else {
+                                target.hp -= damage;
+                                if (target.hp <= 0) {
+                                    const rewards = this.getRewardsForAsteroid(target.tier);
+                                    this.destroyAsteroid(target, idx);
+                                    this.gainXP(10);
+                                    this.state.score += rewards.stars;
+                                    this.state.coins += rewards.coins;
+                                    this.updateHUD();
+                                }
                             }
                         }
                     }
                 });
             },
 
-            isLaserBlocked(x1, y1, x2, y2, targetAsteroid) {
-                for (let asteroid of this.asteroids) {
-                    if (asteroid === targetAsteroid) continue;
+            isLaserBlocked(x1, y1, x2, y2, targetEntity) {
+                let entities = [...this.asteroids];
+                if (this.boss && this.boss !== targetEntity) entities.push(this.boss);
+                
+                for (let entity of entities) {
+                    if (entity === targetEntity) continue;
                     
-                    const dist = this.pointToLineDistance(asteroid.x, asteroid.y, x1, y1, x2, y2);
-                    if (dist < asteroid.size / 2) {
-                        const d1 = Math.sqrt((asteroid.x - x1) ** 2 + (asteroid.y - y1) ** 2);
+                    const dist = this.pointToLineDistance(entity.x, entity.y, x1, y1, x2, y2);
+                    const size = entity.size || entity.width || 50;
+                    if (dist < size / 2) {
+                        const d1 = Math.sqrt((entity.x - x1) ** 2 + (entity.y - y1) ** 2);
                         const d2 = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
                         if (d1 < d2) return true;
                     }
@@ -1378,17 +1935,31 @@
                     duration: tier === 1 ? 300 : 400
                 });
                 
-                this.asteroids.forEach((a, idx) => {
-                    const dist = Math.sqrt((a.x - x) ** 2 + (a.y - y) ** 2);
+                let targets = [...this.asteroids];
+                if (this.boss) targets.push(this.boss);
+                
+                targets.forEach((target, idx) => {
+                    const dist = Math.sqrt((target.x - x) ** 2 + (target.y - y) ** 2);
                     if (dist < radius) {
-                        a.hp -= damage;
-                        
-                        if (a.hp <= 0) {
-                            this.destroyAsteroid(a, idx);
-                            this.gainXP(10);
-                            this.state.score += 10;
-                            this.state.coins += 1;
-                            this.updateHUD();
+                        if (target === this.boss) {
+                            this.boss.currentHp -= damage;
+                            if (this.boss.currentHp <= 0) {
+                                this.gainXP(500);
+                                this.state.score += 1000;
+                                this.state.coins += 50;
+                                this.boss = null;
+                                this.updateHUD();
+                            }
+                        } else {
+                            target.hp -= damage;
+                            if (target.hp <= 0) {
+                                const rewards = this.getRewardsForAsteroid(target.tier);
+                                this.destroyAsteroid(target, idx);
+                                this.gainXP(10);
+                                this.state.score += rewards.stars;
+                                this.state.coins += rewards.coins;
+                                this.updateHUD();
+                            }
                         }
                     }
                 });
@@ -1436,23 +2007,37 @@
             },
 
             getSizeForTier(tier) {
+                // INCREASED SIZE (multiplied by 1.5)
                 const sizes = {
-                    'veryLarge': 120,
-                    'large': 85,
-                    'medium': 55,
-                    'small': 30
+                    'veryLarge': 180,
+                    'large': 127,
+                    'medium': 82,
+                    'small': 45
                 };
                 return sizes[tier];
             },
 
             getHPForTier(tier) {
-                const hps = {
+                const baseHPs = {
                     'veryLarge': 80,
                     'large': 40,
                     'medium': 20,
                     'small': 10
                 };
-                return hps[tier];
+                
+                // HP scales up gradually with game time (every 60 seconds increases HP by 10%)
+                const timeBonus = Math.floor(this.state.gameTime / 60) * 0.1;
+                const scalingFactor = 1 + timeBonus;
+                
+                return Math.floor(baseHPs[tier] * scalingFactor);
+            },
+
+            getRewardsForAsteroid(tier) {
+                const maxHP = this.getHPForTier(tier);
+                return {
+                    coins: Math.floor(maxHP * 0.1), // 10% of HP
+                    stars: Math.floor(maxHP * 0.01) || 1 // 1% of HP, minimum 1
+                };
             },
 
             shoot() {
@@ -1520,43 +2105,184 @@
 
             checkCollision(a, b) {
                 const r1 = a.width ? Math.max(a.width, a.height) / 2 : (a.size || 5);
-                const r2 = b.width ? Math.max(b.width, b.height) / 2 : b.size / 2;
+                const r2 = b.width ? Math.max(b.width, b.height) / 2 : (b.size ? b.size / 2 : 5);
                 const dist = Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
                 return dist < r1 + r2;
             },
 
             render() {
                 this.ctx.fillStyle = '#000';
-                this.ctx.fillRect(0, 0, 720, 1280);
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 this.renderParallaxStars();
 
                 // Render laser beams
                 this.laserShips.forEach(ship => {
                     if (ship.active) {
-                        this.ctx.strokeStyle = '#ff0000';
-                        this.ctx.lineWidth = 15;
-                        this.ctx.globalAlpha = 0.6;
-                        this.ctx.shadowBlur = 20;
-                        this.ctx.shadowColor = '#ff0000';
+                        let targets = [...this.asteroids];
+                        if (this.boss) targets.push(this.boss);
                         
-                        this.asteroids.forEach(a => {
-                            const blocked = this.isLaserBlocked(ship.x, ship.y, a.x, a.y, a);
+                        targets.forEach(target => {
+                            const blocked = this.isLaserBlocked(ship.x, ship.y, target.x, target.y, target);
                             if (!blocked) {
+                                // Draw white border
+                                this.ctx.strokeStyle = '#ffffff';
+                                this.ctx.lineWidth = 19;
+                                this.ctx.globalAlpha = 0.8;
                                 this.ctx.beginPath();
                                 this.ctx.moveTo(ship.x, ship.y);
-                                this.ctx.lineTo(a.x, a.y);
+                                this.ctx.lineTo(target.x, target.y);
                                 this.ctx.stroke();
+                                
+                                // Draw red core
+                                this.ctx.strokeStyle = '#ff0000';
+                                this.ctx.lineWidth = 15;
+                                this.ctx.globalAlpha = 0.9;
+                                this.ctx.shadowBlur = 20;
+                                this.ctx.shadowColor = '#ff0000';
+                                this.ctx.beginPath();
+                                this.ctx.moveTo(ship.x, ship.y);
+                                this.ctx.lineTo(target.x, target.y);
+                                this.ctx.stroke();
+                                this.ctx.shadowBlur = 0;
                             }
                         });
                         
                         this.ctx.globalAlpha = 1;
-                        this.ctx.shadowBlur = 0;
                         
-                        // Draw laser ship
                         this.ctx.fillStyle = '#666';
                         this.ctx.fillRect(ship.x - 20, ship.y - 20, 40, 40);
                     }
                 });
+
+                // Render boss laser sweep
+                if (this.boss && this.boss.laserSweep && this.boss.laserSweep.active) {
+                    const angle = this.boss.laserSweep.angle;
+                    this.ctx.strokeStyle = '#00ffff';
+                    this.ctx.lineWidth = 10;
+                    this.ctx.shadowBlur = 20;
+                    this.ctx.shadowColor = '#00ffff';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.boss.x, this.boss.y);
+                    this.ctx.lineTo(
+                        this.boss.x + Math.cos(angle) * 1000,
+                        this.boss.y + Math.sin(angle) * 1000
+                    );
+                    this.ctx.stroke();
+                    this.ctx.shadowBlur = 0;
+                }
+
+                // Render boss projectiles
+                this.bossProjectiles.forEach(proj => {
+                    if (proj.ring) {
+                        this.ctx.strokeStyle = proj.color;
+                        this.ctx.lineWidth = 5;
+                        this.ctx.shadowBlur = 15;
+                        this.ctx.shadowColor = proj.color;
+                        this.ctx.beginPath();
+                        this.ctx.arc(proj.x, proj.y, proj.radius, 0, Math.PI * 2);
+                        this.ctx.stroke();
+                        this.ctx.shadowBlur = 0;
+                    } else {
+                        this.ctx.fillStyle = proj.color;
+                        this.ctx.shadowBlur = 15;
+                        this.ctx.shadowColor = proj.color;
+                        this.ctx.beginPath();
+                        this.ctx.arc(proj.x, proj.y, proj.size, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        this.ctx.shadowBlur = 0;
+                    }
+                });
+
+                // Render boss
+                if (this.boss) {
+                    this.ctx.save();
+                    this.ctx.translate(this.boss.x, this.boss.y);
+                    
+                    // Draw boss based on type
+                    if (this.boss.id === 'flame_demon') {
+                        // Flame demon - skull shape
+                        this.ctx.fillStyle = this.boss.color;
+                        this.ctx.shadowBlur = 30;
+                        this.ctx.shadowColor = this.boss.color;
+                        this.ctx.beginPath();
+                        this.ctx.arc(0, -20, 50, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        this.ctx.fillRect(-30, 10, 60, 40);
+                        
+                        // Eyes
+                        this.ctx.fillStyle = '#000';
+                        this.ctx.beginPath();
+                        this.ctx.arc(-20, -20, 10, 0, Math.PI * 2);
+                        this.ctx.arc(20, -20, 10, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    } else if (this.boss.id === 'void_kraken') {
+                        // Void kraken - tentacle creature
+                        this.ctx.fillStyle = this.boss.color;
+                        this.ctx.shadowBlur = 30;
+                        this.ctx.shadowColor = this.boss.color;
+                        this.ctx.beginPath();
+                        this.ctx.arc(0, 0, 60, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        
+                        // Tentacles
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (i / 6) * Math.PI * 2;
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(0, 0);
+                            this.ctx.lineTo(Math.cos(angle) * 80, Math.sin(angle) * 80);
+                            this.ctx.lineWidth = 15;
+                            this.ctx.strokeStyle = this.boss.color;
+                            this.ctx.stroke();
+                        }
+                    } else if (this.boss.id === 'cyber_skull') {
+                        // Cyber skull - geometric
+                        this.ctx.strokeStyle = this.boss.color;
+                        this.ctx.fillStyle = this.boss.color + '44';
+                        this.ctx.lineWidth = 4;
+                        this.ctx.shadowBlur = 30;
+                        this.ctx.shadowColor = this.boss.color;
+                        
+                        // Hexagon
+                        this.ctx.beginPath();
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (i / 6) * Math.PI * 2;
+                            const x = Math.cos(angle) * 60;
+                            const y = Math.sin(angle) * 60;
+                            if (i === 0) this.ctx.moveTo(x, y);
+                            else this.ctx.lineTo(x, y);
+                        }
+                        this.ctx.closePath();
+                        this.ctx.fill();
+                        this.ctx.stroke();
+                        
+                        // Inner circle
+                        this.ctx.beginPath();
+                        this.ctx.arc(0, 0, 30, 0, Math.PI * 2);
+                        this.ctx.stroke();
+                    }
+                    
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.restore();
+                    
+                    // HP bar
+                    const barWidth = 150;
+                    const barHeight = 10;
+                    const hpPercent = this.boss.currentHp / this.boss.maxHp;
+                    
+                    this.ctx.fillStyle = '#333';
+                    this.ctx.fillRect(this.boss.x - barWidth/2, this.boss.y - this.boss.size - 20, barWidth, barHeight);
+                    this.ctx.fillStyle = '#ff0000';
+                    this.ctx.fillRect(this.boss.x - barWidth/2, this.boss.y - this.boss.size - 20, barWidth * hpPercent, barHeight);
+                    this.ctx.strokeStyle = '#fff';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(this.boss.x - barWidth/2, this.boss.y - this.boss.size - 20, barWidth, barHeight);
+                    
+                    // Boss name
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 16px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(this.boss.name, this.boss.x, this.boss.y - this.boss.size - 35);
+                }
 
                 // Render asteroids
                 this.asteroids.forEach(a => {
@@ -1632,13 +2358,47 @@
 
                 // Render missiles
                 this.missiles.forEach(m => {
-                    this.ctx.fillStyle = '#ff9900';
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.shadowColor = '#ff9900';
+                    this.ctx.save();
+                    this.ctx.translate(m.x, m.y);
+                    
+                    // Calculate angle based on velocity
+                    const angle = Math.atan2(m.vy, m.vx) + Math.PI / 2;
+                    this.ctx.rotate(angle);
+                    
+                    // Red bottom triangle
+                    this.ctx.fillStyle = '#ff0000';
+                    this.ctx.shadowBlur = 10;
+                    this.ctx.shadowColor = '#ff0000';
                     this.ctx.beginPath();
-                    this.ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+                    this.ctx.moveTo(0, -12);
+                    this.ctx.lineTo(-8, 8);
+                    this.ctx.lineTo(8, 8);
+                    this.ctx.closePath();
                     this.ctx.fill();
+                    
+                    // White top triangle (smaller)
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowColor = '#ffffff';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, -10);
+                    this.ctx.lineTo(-5, 5);
+                    this.ctx.lineTo(5, 5);
+                    this.ctx.closePath();
+                    this.ctx.fill();
+                    
                     this.ctx.shadowBlur = 0;
+                    this.ctx.restore();
+                    
+                    // Spark effects trail
+                    if (Math.random() < 0.5) {
+                        this.ctx.fillStyle = '#ffff00';
+                        this.ctx.globalAlpha = 0.7;
+                        const sparkX = m.x - m.vx * 0.5 + (Math.random() - 0.5) * 5;
+                        const sparkY = m.y - m.vy * 0.5 + (Math.random() - 0.5) * 5;
+                        this.ctx.fillRect(sparkX, sparkY, 2, 2);
+                        this.ctx.globalAlpha = 1;
+                    }
                 });
 
                 // Render explosions
