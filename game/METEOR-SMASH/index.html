@@ -228,30 +228,63 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 50%, #0a0a1f 100%);
+            background: linear-gradient(135deg, #0a0a2e 0%, #16213e 30%, #1a1a3e 70%, #0a0a2e 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            overflow: hidden;
+        }
+
+        #loadingScreen::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         #loadingScreen.hidden {
-            display: none;
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
 
         .loading-title {
             font-size: 72px;
-            color: #00ffff;
-            text-shadow: 0 0 40px #00ffff;
-            margin-bottom: 60px;
-            animation: float 3s ease-in-out infinite;
+            background: linear-gradient(45deg, #00ffff, #00ff00, #00ffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: float 3s ease-in-out infinite, gradientShift 3s ease-in-out infinite;
             text-align: center;
+            margin-bottom: 60px;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
+            position: relative;
+            z-index: 1;
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
+            0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .loading-bar {
@@ -259,21 +292,47 @@
             max-width: 80%;
             height: 25px;
             background: rgba(0, 0, 0, 0.5);
-            border: 3px solid #00ff00;
+            border: 3px solid rgba(0, 255, 255, 0.3);
             border-radius: 15px;
             overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .loading-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            to { left: 100%; }
         }
 
         .loading-fill {
             height: 100%;
             background: linear-gradient(90deg, #00ff00, #00ffff, #00ff00);
+            background-size: 200% 100%;
             width: 0%;
-            animation: loadProgress 3s ease-in-out forwards;
+            animation: loadProgress 3s ease-in-out forwards, waveEffect 1.5s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            position: relative;
         }
 
         @keyframes loadProgress {
             0% { width: 0%; }
             100% { width: 100%; }
+        }
+
+        @keyframes waveEffect {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         #mainMenu {
@@ -550,20 +609,21 @@
         #bossWarning {
             position: absolute;
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 64px;
+            left: 50px;
+            transform: translateY(-50%);
+            font-size: 48px;
             color: #ff0000;
             text-shadow: 0 0 50px #ff0000;
             z-index: 90;
             display: none;
             animation: bossWarningPulse 1s infinite;
             pointer-events: none;
+            text-align: left;
         }
 
         @keyframes bossWarningPulse {
-            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.2); }
+            0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+            50% { opacity: 0.5; transform: translateY(-50%) scale(1.1); }
         }
 
         #bossWarning.active {
@@ -958,10 +1018,23 @@
             }
         };
 
+        // IMAGE OVERRIDE CONFIGURATION
+        // Set image URLs here to use custom sprites, or leave as null to use default visuals
+        const IMAGE_OVERRIDES = {
+            playerShip: './img/spacecraft.png',       // Main player ship
+            supportShip: './img/support-fighter.png',      // Support fighter ships
+            laserFortressL1: null,  // Laser fortress level 1 turret
+            laserFortressL2: null,  // Laser fortress level 2 turrets
+            boss1: null,            // First boss type
+            boss2: null,            // Second boss type
+            boss3: null             // Third boss type
+        };
+
         const game = {
             canvas: null,
             ctx: null,
             starLayers: [],
+            loadedImages: {},  // Store loaded images
 
             state: {
                 running: false,
@@ -1013,7 +1086,25 @@
                 
                 this.initStarLayers();
                 this.setupEventListeners();
+                this.preloadImages();
                 this.simulateLoading();
+            },
+
+            preloadImages() {
+                // Preload all image overrides
+                Object.keys(IMAGE_OVERRIDES).forEach(key => {
+                    if (IMAGE_OVERRIDES[key]) {
+                        const img = new Image();
+                        img.onload = () => {
+                            this.loadedImages[key] = img;
+                        };
+                        img.onerror = () => {
+                            console.warn(`Failed to load image for ${key}, using default`);
+                            this.loadedImages[key] = null;
+                        };
+                        img.src = IMAGE_OVERRIDES[key];
+                    }
+                });
             },
 
             resizeCanvas() {
@@ -1840,37 +1931,52 @@
 
             applyLaserDamage(ship, tier) {
                 const damage = tier === 1 ? 5 : 7.5;
-                
+                const laserY = ship.y;
+                const laserThickness = 15;
+
                 let targets = [...this.asteroids];
                 if (this.boss) targets.push(this.boss);
                 
                 targets.forEach((target, idx) => {
-                    const dx = target.x - ship.x;
-                    const dy = target.y - ship.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    // Check if target is within the horizontal beam's vertical range
+                    const targetSize = target.size || target.width || 50;
+                    const verticalDist = Math.abs(target.y - laserY);
                     
-                    if (dist < 800) {
-                        const blocked = this.isLaserBlocked(ship.x, ship.y, target.x, target.y, target);
-                        
-                        if (!blocked && Math.random() < 0.05) {
-                            if (target === this.boss) {
-                                this.boss.currentHp -= damage;
-                                if (this.boss.currentHp <= 0) {
-                                    this.gainXP(500);
-                                    this.state.score += 1000;
-                                    this.state.coins += 50;
-                                    this.boss = null;
-                                    this.updateHUD();
-                                }
-                            } else {
-                                target.hp -= damage;
-                                if (target.hp <= 0) {
-                                    const rewards = this.getRewardsForAsteroid(target.tier);
-                                    this.destroyAsteroid(target, idx);
-                                    this.gainXP(10);
-                                    this.state.score += rewards.stars;
-                                    this.state.coins += rewards.coins;
-                                    this.updateHUD();
+                    if (verticalDist < laserThickness / 2 + targetSize / 2) {
+                        // Check if target is in the beam's horizontal path
+                        let inBeamPath = false;
+                        if (tier === 1) {
+                            // Left turret fires to the right
+                            inBeamPath = target.x >= ship.x;
+                        } else {
+                            // Right turret fires to the left
+                            inBeamPath = target.x <= ship.x;
+                        }
+
+                        if (inBeamPath) {
+                            // Check if blocked by another entity
+                            const blocked = this.isHorizontalLaserBlocked(ship, target, tier);
+                            
+                            if (!blocked && Math.random() < 0.05) {
+                                if (target === this.boss) {
+                                    this.boss.currentHp -= damage;
+                                    if (this.boss.currentHp <= 0) {
+                                        this.gainXP(500);
+                                        this.state.score += 1000;
+                                        this.state.coins += 50;
+                                        this.boss = null;
+                                        this.updateHUD();
+                                    }
+                                } else {
+                                    target.hp -= damage;
+                                    if (target.hp <= 0) {
+                                        const rewards = this.getRewardsForAsteroid(target.tier);
+                                        this.destroyAsteroid(target, idx);
+                                        this.gainXP(10);
+                                        this.state.score += rewards.stars;
+                                        this.state.coins += rewards.coins;
+                                        this.updateHUD();
+                                    }
                                 }
                             }
                         }
@@ -1878,19 +1984,34 @@
                 });
             },
 
-            isLaserBlocked(x1, y1, x2, y2, targetEntity) {
+            isHorizontalLaserBlocked(ship, targetEntity, tier) {
+                // Check if any entity blocks the horizontal laser path
                 let entities = [...this.asteroids];
                 if (this.boss && this.boss !== targetEntity) entities.push(this.boss);
+                
+                const laserY = ship.y;
+                const laserThickness = 15;
                 
                 for (let entity of entities) {
                     if (entity === targetEntity) continue;
                     
-                    const dist = this.pointToLineDistance(entity.x, entity.y, x1, y1, x2, y2);
-                    const size = entity.size || entity.width || 50;
-                    if (dist < size / 2) {
-                        const d1 = Math.sqrt((entity.x - x1) ** 2 + (entity.y - y1) ** 2);
-                        const d2 = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-                        if (d1 < d2) return true;
+                    const entitySize = entity.size || entity.width || 50;
+                    const verticalDist = Math.abs(entity.y - laserY);
+                    
+                    // Check if blocking entity is in the vertical range of the beam
+                    if (verticalDist < laserThickness / 2 + entitySize / 2) {
+                        // Check if blocking entity is between turret and target
+                        if (tier === 1) {
+                            // Left turret: blocker must be between turret and target
+                            if (entity.x > ship.x && entity.x < targetEntity.x) {
+                                return true;
+                            }
+                        } else {
+                            // Right turret: blocker must be between target and turret
+                            if (entity.x < ship.x && entity.x > targetEntity.x) {
+                                return true;
+                            }
+                        }
                     }
                 }
                 return false;
@@ -2115,42 +2236,71 @@
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 this.renderParallaxStars();
 
-                // Render laser beams
+                // Render horizontal laser beams (FIXED - no auto-targeting)
                 this.laserShips.forEach(ship => {
                     if (ship.active) {
-                        let targets = [...this.asteroids];
-                        if (this.boss) targets.push(this.boss);
+                        const laserY = ship.y;
+                        const beamThickness = 15;
+                        const tier = this.player.skills.laser_fortress || 0;
                         
-                        targets.forEach(target => {
-                            const blocked = this.isLaserBlocked(ship.x, ship.y, target.x, target.y, target);
-                            if (!blocked) {
-                                // Draw white border
-                                this.ctx.strokeStyle = '#ffffff';
-                                this.ctx.lineWidth = 19;
-                                this.ctx.globalAlpha = 0.8;
-                                this.ctx.beginPath();
-                                this.ctx.moveTo(ship.x, ship.y);
-                                this.ctx.lineTo(target.x, target.y);
-                                this.ctx.stroke();
-                                
-                                // Draw red core
-                                this.ctx.strokeStyle = '#ff0000';
-                                this.ctx.lineWidth = 15;
-                                this.ctx.globalAlpha = 0.9;
-                                this.ctx.shadowBlur = 20;
-                                this.ctx.shadowColor = '#ff0000';
-                                this.ctx.beginPath();
-                                this.ctx.moveTo(ship.x, ship.y);
-                                this.ctx.lineTo(target.x, target.y);
-                                this.ctx.stroke();
-                                this.ctx.shadowBlur = 0;
-                            }
-                        });
+                        if (tier === 2) {
+                            // Level 2: Red beam with white borders, fires to the left
+                            // White borders
+                            this.ctx.strokeStyle = '#ffffff';
+                            this.ctx.lineWidth = beamThickness + 6;
+                            this.ctx.globalAlpha = 0.6;
+                            this.ctx.shadowBlur = 15;
+                            this.ctx.shadowColor = '#ffffff';
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(0, laserY);
+                            this.ctx.lineTo(ship.x, laserY);
+                            this.ctx.stroke();
+                            
+                            // Red main beam
+                            this.ctx.strokeStyle = '#ff0000';
+                            this.ctx.lineWidth = beamThickness;
+                            this.ctx.shadowColor = '#ff0000';
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(0, laserY);
+                            this.ctx.lineTo(ship.x, laserY);
+                            this.ctx.stroke();
+                        } else {
+                            // Level 1: Standard red beam, fires to the right
+                            this.ctx.strokeStyle = '#ff0000';
+                            this.ctx.lineWidth = beamThickness;
+                            this.ctx.globalAlpha = 0.6;
+                            this.ctx.shadowBlur = 20;
+                            this.ctx.shadowColor = '#ff0000';
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(ship.x, laserY);
+                            this.ctx.lineTo(this.canvas.width, laserY);
+                            this.ctx.stroke();
+                        }
                         
                         this.ctx.globalAlpha = 1;
-                        
-                        this.ctx.fillStyle = '#666';
+                        this.ctx.shadowBlur = 0;
+                    }
+                });
+
+                // Render laser turrets with image override support
+                this.laserShips.forEach(ship => {
+                    const tier = this.player.skills.laser_fortress || 0;
+                    const imageKey = tier === 1 ? 'laserFortressL1' : 'laserFortressL2';
+                    const img = this.loadedImages[imageKey];
+                    
+                    if (img) {
+                        // Use custom image
+                        this.ctx.save();
+                        this.ctx.translate(ship.x, ship.y);
+                        this.ctx.drawImage(img, -20, -20, 40, 40);
+                        this.ctx.restore();
+                    } else {
+                        // Default visual
+                        this.ctx.fillStyle = ship.active ? '#ff0000' : '#666';
+                        this.ctx.shadowBlur = ship.active ? 15 : 0;
+                        this.ctx.shadowColor = '#ff0000';
                         this.ctx.fillRect(ship.x - 20, ship.y - 20, 40, 40);
+                        this.ctx.shadowBlur = 0;
                     }
                 });
 
@@ -2193,72 +2343,82 @@
                     }
                 });
 
-                // Render boss
+                // Render boss with image override support
                 if (this.boss) {
+                    // Check for custom boss image
+                    const bossImageKey = `boss${['flame_demon', 'void_kraken', 'cyber_skull'].indexOf(this.boss.id) + 1}`;
+                    const bossImg = this.loadedImages[bossImageKey];
+                    
                     this.ctx.save();
                     this.ctx.translate(this.boss.x, this.boss.y);
                     
-                    // Draw boss based on type
-                    if (this.boss.id === 'flame_demon') {
-                        // Flame demon - skull shape
-                        this.ctx.fillStyle = this.boss.color;
-                        this.ctx.shadowBlur = 30;
-                        this.ctx.shadowColor = this.boss.color;
-                        this.ctx.beginPath();
-                        this.ctx.arc(0, -20, 50, 0, Math.PI * 2);
-                        this.ctx.fill();
-                        this.ctx.fillRect(-30, 10, 60, 40);
-                        
-                        // Eyes
-                        this.ctx.fillStyle = '#000';
-                        this.ctx.beginPath();
-                        this.ctx.arc(-20, -20, 10, 0, Math.PI * 2);
-                        this.ctx.arc(20, -20, 10, 0, Math.PI * 2);
-                        this.ctx.fill();
-                    } else if (this.boss.id === 'void_kraken') {
-                        // Void kraken - tentacle creature
-                        this.ctx.fillStyle = this.boss.color;
-                        this.ctx.shadowBlur = 30;
-                        this.ctx.shadowColor = this.boss.color;
-                        this.ctx.beginPath();
-                        this.ctx.arc(0, 0, 60, 0, Math.PI * 2);
-                        this.ctx.fill();
-                        
-                        // Tentacles
-                        for (let i = 0; i < 6; i++) {
-                            const angle = (i / 6) * Math.PI * 2;
+                    if (bossImg) {
+                        // Use custom image for boss
+                        const size = this.boss.size * 2;
+                        this.ctx.drawImage(bossImg, -size/2, -size/2, size, size);
+                    } else {
+                        // Draw boss based on type (default visuals)
+                        if (this.boss.id === 'flame_demon') {
+                            // Flame demon - skull shape
+                            this.ctx.fillStyle = this.boss.color;
+                            this.ctx.shadowBlur = 30;
+                            this.ctx.shadowColor = this.boss.color;
                             this.ctx.beginPath();
-                            this.ctx.moveTo(0, 0);
-                            this.ctx.lineTo(Math.cos(angle) * 80, Math.sin(angle) * 80);
-                            this.ctx.lineWidth = 15;
+                            this.ctx.arc(0, -20, 50, 0, Math.PI * 2);
+                            this.ctx.fill();
+                            this.ctx.fillRect(-30, 10, 60, 40);
+                            
+                            // Eyes
+                            this.ctx.fillStyle = '#000';
+                            this.ctx.beginPath();
+                            this.ctx.arc(-20, -20, 10, 0, Math.PI * 2);
+                            this.ctx.arc(20, -20, 10, 0, Math.PI * 2);
+                            this.ctx.fill();
+                        } else if (this.boss.id === 'void_kraken') {
+                            // Void kraken - tentacle creature
+                            this.ctx.fillStyle = this.boss.color;
+                            this.ctx.shadowBlur = 30;
+                            this.ctx.shadowColor = this.boss.color;
+                            this.ctx.beginPath();
+                            this.ctx.arc(0, 0, 60, 0, Math.PI * 2);
+                            this.ctx.fill();
+                            
+                            // Tentacles
+                            for (let i = 0; i < 6; i++) {
+                                const angle = (i / 6) * Math.PI * 2;
+                                this.ctx.beginPath();
+                                this.ctx.moveTo(0, 0);
+                                this.ctx.lineTo(Math.cos(angle) * 80, Math.sin(angle) * 80);
+                                this.ctx.lineWidth = 15;
+                                this.ctx.strokeStyle = this.boss.color;
+                                this.ctx.stroke();
+                            }
+                        } else if (this.boss.id === 'cyber_skull') {
+                            // Cyber skull - geometric
                             this.ctx.strokeStyle = this.boss.color;
+                            this.ctx.fillStyle = this.boss.color + '44';
+                            this.ctx.lineWidth = 4;
+                            this.ctx.shadowBlur = 30;
+                            this.ctx.shadowColor = this.boss.color;
+                            
+                            // Hexagon
+                            this.ctx.beginPath();
+                            for (let i = 0; i < 6; i++) {
+                                const angle = (i / 6) * Math.PI * 2;
+                                const x = Math.cos(angle) * 60;
+                                const y = Math.sin(angle) * 60;
+                                if (i === 0) this.ctx.moveTo(x, y);
+                                else this.ctx.lineTo(x, y);
+                            }
+                            this.ctx.closePath();
+                            this.ctx.fill();
+                            this.ctx.stroke();
+                            
+                            // Inner circle
+                            this.ctx.beginPath();
+                            this.ctx.arc(0, 0, 30, 0, Math.PI * 2);
                             this.ctx.stroke();
                         }
-                    } else if (this.boss.id === 'cyber_skull') {
-                        // Cyber skull - geometric
-                        this.ctx.strokeStyle = this.boss.color;
-                        this.ctx.fillStyle = this.boss.color + '44';
-                        this.ctx.lineWidth = 4;
-                        this.ctx.shadowBlur = 30;
-                        this.ctx.shadowColor = this.boss.color;
-                        
-                        // Hexagon
-                        this.ctx.beginPath();
-                        for (let i = 0; i < 6; i++) {
-                            const angle = (i / 6) * Math.PI * 2;
-                            const x = Math.cos(angle) * 60;
-                            const y = Math.sin(angle) * 60;
-                            if (i === 0) this.ctx.moveTo(x, y);
-                            else this.ctx.lineTo(x, y);
-                        }
-                        this.ctx.closePath();
-                        this.ctx.fill();
-                        this.ctx.stroke();
-                        
-                        // Inner circle
-                        this.ctx.beginPath();
-                        this.ctx.arc(0, 0, 30, 0, Math.PI * 2);
-                        this.ctx.stroke();
                     }
                     
                     this.ctx.shadowBlur = 0;
@@ -2311,39 +2471,55 @@
                     this.ctx.fillText(Math.ceil(a.hp), a.x, a.y);
                 });
 
-                // Render player
+                // Render player with image override support
+                const playerImg = this.loadedImages['playerShip'];
                 this.ctx.save();
                 this.ctx.translate(this.player.x, this.player.y);
-                this.ctx.fillStyle = '#fff';
-                this.ctx.shadowBlur = 15;
-                this.ctx.shadowColor = '#00ffff';
-                this.ctx.beginPath();
-                this.ctx.moveTo(0, -30);
-                this.ctx.lineTo(-20, 30);
-                this.ctx.lineTo(0, 20);
-                this.ctx.lineTo(20, 30);
-                this.ctx.closePath();
-                this.ctx.fill();
-                this.ctx.shadowBlur = 0;
+                
+                if (playerImg) {
+                    // Use custom image
+                    this.ctx.drawImage(playerImg, -30, -45, 60, 90);
+                } else {
+                    // Default visual
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowColor = '#00ffff';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, -30);
+                    this.ctx.lineTo(-20, 30);
+                    this.ctx.lineTo(0, 20);
+                    this.ctx.lineTo(20, 30);
+                    this.ctx.closePath();
+                    this.ctx.fill();
+                    this.ctx.shadowBlur = 0;
+                }
                 this.ctx.restore();
 
-                // Render support fighters
+                // Render support fighters with image override support
+                const supportImg = this.loadedImages['supportShip'];
                 this.supportFighters.forEach(fighter => {
                     const x = this.player.x + fighter.offsetX;
                     const y = this.player.y + fighter.offsetY;
                     this.ctx.save();
                     this.ctx.translate(x, y);
-                    this.ctx.fillStyle = '#00ffff';
-                    this.ctx.shadowBlur = 10;
-                    this.ctx.shadowColor = '#00ffff';
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(0, -15);
-                    this.ctx.lineTo(-10, 15);
-                    this.ctx.lineTo(0, 10);
-                    this.ctx.lineTo(10, 15);
-                    this.ctx.closePath();
-                    this.ctx.fill();
-                    this.ctx.shadowBlur = 0;
+                    
+                    if (supportImg) {
+                        // Use custom image
+                        this.ctx.drawImage(supportImg, -15, -22.5, 30, 45);
+                    } else {
+                        // Default visual
+                        this.ctx.fillStyle = '#00ffff';
+                        this.ctx.shadowBlur = 10;
+                        this.ctx.shadowColor = '#00ffff';
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(0, -15);
+                        this.ctx.lineTo(-10, 15);
+                        this.ctx.lineTo(0, 10);
+                        this.ctx.lineTo(10, 15);
+                        this.ctx.closePath();
+                        this.ctx.fill();
+                        this.ctx.shadowBlur = 0;
+                    }
                     this.ctx.restore();
                 });
 
