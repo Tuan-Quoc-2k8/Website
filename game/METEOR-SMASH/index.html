@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meteor Smash</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial Black', sans-serif;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 720px;
+            height: 1280px;
+            background: #000;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+        }
+
+        #gameCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #touchLayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            display: none;
+        }
+
+        #touchLayer.active {
+            display: block;
+        }
+
+        /* HUD Layer */
+        .hud-element {
+            position: absolute;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        #hearts {
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .heart {
+            width: 40px;
+            height: 40px;
+            background: #ff0066;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            filter: drop-shadow(0 0 10px #ff0066);
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        #levelHud {
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .level-text {
+            color: #00ffff;
+            font-size: 20px;
+            text-shadow: 0 0 10px #00ffff;
+            margin-bottom: 5px;
+        }
+
+        .xp-bar {
+            width: 250px;
+            height: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #7fff00);
+            width: 0%;
+            transition: width 0.3s;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        #currency {
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .currency-display {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff00;
+            border-radius: 20px;
+            padding: 8px 15px;
+            color: #fff;
+            font-size: 16px;
+            filter: drop-shadow(0 0 8px #00ff00);
+        }
+
+        .game-button {
+            position: absolute;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            border: 3px solid #00ff00;
+            border-radius: 50px;
+            color: #000;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            filter: drop-shadow(0 0 20px #00ff00);
+            transition: all 0.2s;
+            z-index: 20;
+            pointer-events: auto;
+        }
+
+        .game-button:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 30px #00ff00);
+        }
+
+        .game-button:active {
+            transform: scale(0.95);
+        }
+
+        #pauseBtn {
+            top: 130px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 28px;
+            display: none;
+        }
+
+        #pauseBtn.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============================================
+           FIXED: Pause Menu - Perfect Centering
+           ============================================ */
+        #pauseMenu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            z-index: 100;
+        }
+
+        #pauseMenu.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pause-title {
+            font-size: 64px;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00;
+            margin-bottom: 60px;
+            animation: pulse 2s infinite;
+            text-align: center;
+        }
+
+        .pause-menu-button {
+            padding: 20px 60px;
+            margin: 15px;
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            border: 3px solid #00ff00;
+            border-radius: 50px;
+            color: #000;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            filter: drop-shadow(0 0 20px #00ff00);
+            transition: all 0.2s;
+            pointer-events: auto;
+        }
+
+        .pause-menu-button:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 30px #00ff00);
+        }
+
+        .pause-menu-button:active {
+            transform: scale(0.95);
+        }
+
+        .pause-menu-button.secondary {
+            background: linear-gradient(135deg, #ff00ff, #cc00cc);
+            border-color: #ff00ff;
+            filter: drop-shadow(0 0 20px #ff00ff);
+        }
+
+        .pause-menu-button.secondary:hover {
+            filter: drop-shadow(0 0 30px #ff00ff);
+        }
+
+        /* Loading Screen */
+        #loadingScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 50%, #0a0a1f 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-animation {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin-bottom: 50px;
+        }
+
+        .orbit {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid transparent;
+            border-top-color: #00ff00;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+
+        .orbit:nth-child(2) {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border-top-color: #00ffff;
+            animation-duration: 1.5s;
+            animation-direction: reverse;
+        }
+
+        .orbit:nth-child(3) {
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            border-top-color: #ff00ff;
+            animation-duration: 1s;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+
+        .loading-title {
+            font-size: 56px;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .loading-subtitle {
+            font-size: 24px;
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff;
+        }
+
+        .progress-bar {
+            width: 400px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #00ff00;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 40px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #7fff00);
+            width: 0%;
+            transition: width 0.5s;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        /* ============================================
+           FIXED: Main Menu - Perfect Centering
+           ============================================ */
+        #mainMenu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 50%, #0a0a1f 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        #mainMenu.hidden {
+            display: none;
+        }
+
+        .game-title {
+            font-size: 72px;
+            color: #00ff00;
+            text-shadow: 0 0 40px #00ff00;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+            text-align: center;
+        }
+
+        .game-subtitle {
+            font-size: 24px;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .menu-button {
+            padding: 20px 60px;
+            margin: 15px;
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            border: 3px solid #00ff00;
+            border-radius: 50px;
+            color: #000;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            filter: drop-shadow(0 0 20px #00ff00);
+            transition: all 0.2s;
+        }
+
+        .menu-button:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 30px #00ff00);
+        }
+
+        .menu-button:active {
+            transform: scale(0.95);
+        }
+
+        .menu-button.secondary {
+            background: linear-gradient(135deg, #00ffff, #00cccc);
+            border-color: #00ffff;
+            filter: drop-shadow(0 0 20px #00ffff);
+        }
+
+        .menu-button.secondary:hover {
+            filter: drop-shadow(0 0 30px #00ffff);
+        }
+
+        /* Skill Selection Screen - IMPROVED HORIZONTAL CARD LAYOUT */
+        #skillScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        #skillScreen.active {
+            display: flex;
+        }
+
+        .skill-title {
+            font-size: 48px;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        /* NEW: Horizontal card layout */
+        .skills-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            justify-content: center;
+            align-items: stretch;
+            padding: 0 30px;
+        }
+
+        /* IMPROVED: Rectangular card design with image support */
+        .skill-card {
+            background: linear-gradient(135deg, rgba(10, 10, 31, 0.9), rgba(26, 26, 62, 0.9));
+            border: 4px solid #00ff00;
+            border-radius: 15px;
+            padding: 25px 20px;
+            width: 200px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 255, 0, 0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            border-color: #00ffff;
+            box-shadow: 0 10px 40px rgba(0, 255, 255, 0.6);
+        }
+
+        .skill-card.selected {
+            border-color: #ffff00;
+            box-shadow: 0 10px 50px rgba(255, 255, 0, 0.8);
+            transform: translateY(-15px) scale(1.05);
+        }
+
+        /* NEW: Image/Icon container with fallback support */
+        .skill-visual {
+            width: 100%;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+
+        .skill-image {
+            max-width: 100%;
+            max-height: 120px;
+            object-fit: contain;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.5));
+        }
+
+        .skill-image.error {
+            display: none;
+        }
+
+        .skill-icon {
+            font-size: 72px;
+            display: block;
+        }
+
+        .skill-icon.hidden {
+            display: none;
+        }
+
+        .skill-name {
+            font-size: 24px;
+            color: #00ff00;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .skill-description {
+            font-size: 14px;
+            color: #fff;
+            line-height: 1.5;
+        }
+
+        .confirm-btn {
+            margin-top: 50px;
+            padding: 20px 60px;
+            background: linear-gradient(135deg, #ffff00, #cccc00);
+            border: 3px solid #ffff00;
+            border-radius: 50px;
+            color: #000;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            filter: drop-shadow(0 0 30px #ffff00);
+            transition: all 0.2s;
+        }
+
+        .confirm-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .confirm-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ============================================
+           FIXED: Game Over Screen - Perfect Centering
+           ============================================ */
+        #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            z-index: 100;
+        }
+
+        #gameOverScreen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gameover-title {
+            font-size: 72px;
+            color: #ff0066;
+            text-shadow: 0 0 40px #ff0066;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+            text-align: center;
+        }
+
+        .final-score {
+            font-size: 48px;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .gameover-button {
+            padding: 20px 60px;
+            margin: 15px;
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            border: 3px solid #00ff00;
+            border-radius: 50px;
+            color: #000;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            filter: drop-shadow(0 0 20px #00ff00);
+            transition: all 0.2s;
+        }
+
+        .gameover-button:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 30px #00ff00);
+        }
+
+        .gameover-button.secondary {
+            background: linear-gradient(135deg, #00ffff, #00cccc);
+            border-color: #00ffff;
+            filter: drop-shadow(0 0 20px #00ffff);
+        }
+
+        .gameover-button.secondary:hover {
+            filter: drop-shadow(0 0 30px #00ffff);
+        }
+
+        /* NEW: Dedicated Help/Tutorial Screen */
+        #helpScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 50%, #0a0a1f 100%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            z-index: 200;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        #helpScreen.active {
+            display: flex;
+        }
+
+        .help-title {
+            font-size: 56px;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .help-content {
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #00ffff;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .help-section {
+            margin-bottom: 30px;
+        }
+
+        .help-section-title {
+            font-size: 28px;
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 10px;
+        }
+
+        .help-text {
+            font-size: 18px;
+            color: #fff;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .help-highlight {
+            color: #00ff00;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .close-help-btn {
+            padding: 20px 60px;
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            border: 3px solid #00ff00;
+            border-radius: 50px;
+            color: #000;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            filter: drop-shadow(0 0 20px #00ff00);
+            transition: all 0.2s;
+            margin-bottom: 40px;
+        }
+
+        .close-help-btn:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 30px #00ff00);
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="720" height="1280"></canvas>
+        <div id="touchLayer"></div>
+
+        <!-- HUD Elements -->
+        <div id="hearts" class="hud-element"></div>
+        <div id="levelHud" class="hud-element">
+            <div class="level-text">Level <span id="levelNum">1</span></div>
+            <div class="xp-bar">
+                <div class="xp-fill" id="xpFill"></div>
+            </div>
+        </div>
+        <div id="currency" class="hud-element">
+            <div class="currency-display">⭐ <span id="scoreDisplay">0</span></div>
+            <div class="currency-display">💰 <span id="coinDisplay">0</span></div>
+        </div>
+
+        <button id="pauseBtn" class="game-button">⏸️</button>
+
+        <!-- Pause Menu -->
+        <div id="pauseMenu">
+            <div class="pause-title">⏸️ PAUSED</div>
+            <button class="pause-menu-button" onclick="game.resumeGame()">▶️ Resume Game</button>
+            <button class="pause-menu-button secondary" onclick="game.returnToMainMenu()">🏠 Return to Menu</button>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loadingScreen">
+            <div class="loading-animation">
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="loading-core">🚀</div>
+            </div>
+            <div class="loading-title">METEOR SMASH</div>
+            <div class="loading-subtitle">Loading Epic Space Battle...</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="mainMenu">
+            <div class="game-title">🌟 METEOR SMASH 🌟</div>
+            <div class="game-subtitle">Survive the Asteroid Storm!</div>
+            <button class="menu-button" onclick="game.startGame()">🚀 START GAME</button>
+            <button class="menu-button secondary" onclick="game.showHelp()">❓ HOW TO PLAY</button>
+        </div>
+
+        <!-- Skill Selection Screen -->
+        <div id="skillScreen">
+            <div class="skill-title">⭐ LEVEL UP! ⭐</div>
+            <div class="skills-container" id="skillsContainer"></div>
+            <button class="confirm-btn" id="confirmSkill" onclick="game.confirmSkill()" disabled>
+                ✨ CONFIRM SELECTION ✨
+            </button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen">
+            <div class="gameover-title">💀 GAME OVER 💀</div>
+            <div class="final-score">Score: <span id="finalScore">0</span></div>
+            <button class="gameover-button" onclick="game.restart()">🔄 PLAY AGAIN</button>
+            <button class="gameover-button secondary" onclick="game.backToMenu()">🏠 MAIN MENU</button>
+        </div>
+
+        <!-- NEW: Help/Tutorial Screen -->
+        <div id="helpScreen">
+            <div class="help-title">🎮 HOW TO PLAY</div>
+            
+            <div class="help-content">
+                <div class="help-section">
+                    <div class="help-section-title">🕹️ Controls</div>
+                    <p class="help-text">
+                        <span class="help-highlight">Move:</span> Use WASD keys or Arrow keys on keyboard, or touch/drag on mobile devices
+                    </p>
+                    <p class="help-text">
+                        <span class="help-highlight">Shoot:</span> Your ship fires automatically - just focus on dodging!
+                    </p>
+                    <p class="help-text">
+                        <span class="help-highlight">Pause:</span> Press ESC key or tap the ⏸️ button
+                    </p>
+                </div>
+
+                <div class="help-section">
+                    <div class="help-section-title">💥 Asteroid Mechanics</div>
+                    <p class="help-text">
+                        Asteroids come in <span class="help-highlight">4 sizes:</span> Very Large, Large, Medium, and Small
+                    </p>
+                    <p class="help-text">
+                        When destroyed, larger asteroids <span class="help-highlight">split into 2 smaller ones</span> that fly apart!
+                    </p>
+                    <p class="help-text">
+                        The smallest asteroids are destroyed completely
+                    </p>
+                    <p class="help-text">
+                        Each asteroid shows its remaining <span class="help-highlight">HP</span> in the center
+                    </p>
+                </div>
+
+                <div class="help-section">
+                    <div class="help-section-title">⬆️ Progression System</div>
+                    <p class="help-text">
+                        Destroy asteroids to earn <span class="help-highlight">XP</span> and level up
+                    </p>
+                    <p class="help-text">
+                        Each level grants you a choice of <span class="help-highlight">powerful upgrades</span>
+                    </p>
+                    <p class="help-text">
+                        <span class="help-highlight">Multi-Shot:</span> Fire 2-3 bullets at once
+                    </p>
+                    <p class="help-text">
+                        <span class="help-highlight">Rapid Fire:</span> Shoot faster
+                    </p>
+                    <p class="help-text">
+                        <span class="help-highlight">Power Shot:</span> Deal more damage
+                    </p>
+                    <p class="help-text">
+                        <span class="help-highlight">Extra Life:</span> Gain an additional heart
+                    </p>
+                </div>
+
+                <div class="help-section">
+                    <div class="help-section-title">⚠️ Survival Tips</div>
+                    <p class="help-text">
+                        Avoid collisions with asteroids - each hit loses 1 heart ❤️
+                    </p>
+                    <p class="help-text">
+                        Difficulty increases over time as more asteroids spawn
+                    </p>
+                    <p class="help-text">
+                        Focus on destroying larger asteroids first to prevent chain splitting
+                    </p>
+                    <p class="help-text">
+                        Keep moving! A stationary target is an easy target
+                    </p>
+                </div>
+            </div>
+
+            <button class="close-help-btn" onclick="game.closeHelp()">✅ GOT IT!</button>
+        </div>
+    </div>
+
+    <!-- IMPORTANT: Load skills system first -->
+
+    <!-- Skills System - Inline -->
+    <script>
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * METEOR SMASH - ADVANCED SKILLS SYSTEM v2.0
+ * ═══════════════════════════════════════════════════════════════
+ * 
+ * A complete, modular, and extensible skills system for browser-based
+ * action games. Supports complex skill interactions, visual assets,
+ * cooldown management, and skill restrictions.
+ * 
+ * ARCHITECTURE:
+ * - Centralized skill registry with type-based organization
+ * - Modular effect system for easy expansion
+ * - Visual asset management with automatic fallbacks
+ * - Skill conflict/restriction system
+ * - Performance-optimized for 60fps gameplay
+ * 
+ * SKILL TYPES:
+ * - core: Base gameplay modifiers (multishot, support fighters)
+ * - bullet_enhancement: Modifies bullet behavior (pierce, ricochet, explosive)
+ * - summon: Spawns additional entities (support fighters, laser fortress)
+ * - passive: Continuous stat buffs (speed, damage)
+ * - active: Timed/cooldown abilities (chain lightning, homing missiles)
+ * 
+ * © 2025 Meteor Smash - All Rights Reserved
+ * ═══════════════════════════════════════════════════════════════
+ */
+
+// ═══════════════════════════════════════════════════════════════
+// SKILL TYPE CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+
+const SKILL_TYPES = {
+    CORE: 'core',
+    BULLET_ENHANCEMENT: 'bullet_enhancement',
+    SUMMON: 'summon',
+    PASSIVE: 'passive',
+    ACTIVE: 'active'
+};
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN SKILLS REGISTRY
+// ═══════════════════════════════════════════════════════════════
+
+const SKILLS_REGISTRY = {
+    
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // EXISTING SKILLS (Preserved from original system)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    multishot: {
+        id: 'multishot',
+        name: 'Multi-Shot',
+        type: SKILL_TYPES.CORE,
+        icon: '🔱',
+        image: null,
+        description: 'Fire multiple bullets at once',
+        maxTier: 2,
+        levels: [
+            {
+                tier: 1,
+                streams: 2,
+                description: 'Fire 2 bullets simultaneously',
+                stats: { bulletStreams: 2 }
+            },
+            {
+                tier: 2,
+                streams: 3,
+                description: 'Fire 3 bullets simultaneously',
+                stats: { bulletStreams: 3 }
+            }
+        ],
+        conflicts: [], // No conflicts
+        notes: 'Base firing pattern enhancement'
+    },
+    
+    rapid: {
+        id: 'rapid',
+        name: 'Rapid Fire',
+        type: SKILL_TYPES.PASSIVE,
+        icon: '⚡',
+        image: null,
+        description: 'Increase attack speed',
+        maxTier: 3,
+        levels: [
+            {
+                tier: 1,
+                speedBonus: 2,
+                description: '+2 attack speed',
+                stats: { attackSpeedBonus: 2 }
+            },
+            {
+                tier: 2,
+                speedBonus: 4,
+                description: '+4 attack speed',
+                stats: { attackSpeedBonus: 4 }
+            },
+            {
+                tier: 3,
+                speedBonus: 6,
+                description: '+6 attack speed',
+                stats: { attackSpeedBonus: 6 }
+            }
+        ],
+        conflicts: [],
+        notes: 'Reduces time between shots'
+    },
+    
+    power: {
+        id: 'power',
+        name: 'Power Shot',
+        type: SKILL_TYPES.PASSIVE,
+        icon: '💥',
+        image: null,
+        description: 'Increase damage',
+        maxTier: 3,
+        levels: [
+            {
+                tier: 1,
+                damageBonus: 10,
+                description: '+10 damage',
+                stats: { damageBonus: 10 }
+            },
+            {
+                tier: 2,
+                damageBonus: 20,
+                description: '+20 damage',
+                stats: { damageBonus: 20 }
+            },
+            {
+                tier: 3,
+                damageBonus: 30,
+                description: '+30 damage',
+                stats: { damageBonus: 30 }
+            }
+        ],
+        conflicts: [],
+        notes: 'Increases base bullet damage'
+    },
+    
+    shield: {
+        id: 'shield',
+        name: 'Extra Life',
+        type: SKILL_TYPES.PASSIVE,
+        icon: '❤️',
+        image: null,
+        description: 'Gain additional hearts',
+        maxTier: 2,
+        levels: [
+            {
+                tier: 1,
+                hearts: 1,
+                description: '+1 heart',
+                stats: { maxHearts: 1 }
+            },
+            {
+                tier: 2,
+                hearts: 1,
+                description: '+1 heart',
+                stats: { maxHearts: 1 }
+            }
+        ],
+        conflicts: [],
+        notes: 'Increases maximum health pool'
+    },
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // NEW SKILLS (Advanced Mechanics)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    // ═══════════════════════════════════════════════════════════════
+    // 1️⃣ SUPPORT FIGHTERS - Summon Type with Core Fire Modification
+    // ═══════════════════════════════════════════════════════════════
+    support_fighters: {
+        id: 'support_fighters',
+        name: 'Support Fighters',
+        type: SKILL_TYPES.SUMMON,
+        icon: '✈️',
+        image: null, // Set to 'assets/support_fighter.png' for custom sprite
+        description: 'Summon fighter ships to assist in battle',
+        maxTier: 2,
+        levels: [
+            {
+                tier: 1,
+                description: 'Main ship stops firing. 2 support fighters fire instead',
+                stats: {
+                    fighterCount: 2,
+                    mainShipFires: false,
+                    fighterDamageMultiplier: 1.0,
+                    fighterInheritsBulletSkills: false,
+                    fighterOffsetX: 60,
+                    fighterOffsetY: -20,
+                    fighterFireRate: 8 // frames between shots
+                },
+                notes: 'Fighters positioned on left and right of main ship'
+            },
+            {
+                tier: 2,
+                description: 'Main ship resumes firing. Fighters deal 150% damage',
+                stats: {
+                    fighterCount: 2,
+                    mainShipFires: true,
+                    fighterDamageMultiplier: 1.5,
+                    fighterInheritsBulletSkills: false,
+                    fighterOffsetX: 60,
+                    fighterOffsetY: -20,
+                    fighterFireRate: 8
+                },
+                notes: 'Main ship + fighters all firing simultaneously'
+            }
+        ],
+        conflicts: [],
+        notes: 'Support fighters follow main ship position. Do NOT inherit bullet-enhancing skills like piercing or ricochet.',
+        visual: {
+            fighterColor: '#00ffff',
+            fighterSize: 20,
+            trailEffect: true
+        }
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 2️⃣ EXPLOSIVE BULLETS - Bullet Enhancement
+    // ═══════════════════════════════════════════════════════════════
+    explosive_bullets: {
+        id: 'explosive_bullets',
+        name: 'Explosive Rounds',
+        type: SKILL_TYPES.BULLET_ENHANCEMENT,
+        icon: '💣',
+        image: null,
+        description: 'Bullets explode on impact with area damage',
+        maxTier: 2,
+        levels: [
+            {
+                tier: 1,
+                description: 'Small explosion radius with AoE damage',
+                stats: {
+                    explosionRadius: 50,
+                    explosionDamageMultiplier: 1.0,
+                    visualRadius: 60,
+                    explosionDuration: 300 // milliseconds
+                },
+                notes: 'Affects all enemies in radius'
+            },
+            {
+                tier: 2,
+                description: 'Larger explosion radius with 200% AoE damage',
+                stats: {
+                    explosionRadius: 80,
+                    explosionDamageMultiplier: 2.0,
+                    visualRadius: 100,
+                    explosionDuration: 400
+                },
+                notes: 'Significantly increased blast zone'
+            }
+        ],
+        conflicts: [],
+        notes: 'Explosion damage applies to ALL enemies in radius, including those not hit by bullet',
+        visual: {
+            explosionColor: '#ff6600',
+            particleCount: 12,
+            shockwaveEffect: true
+        }
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 3️⃣ CHAIN LIGHTNING - Active/Timed Damage
+    // ═══════════════════════════════════════════════════════════════
+    chain_lightning: {
+        id: 'chain_lightning',
+        name: 'Chain Lightning',
+        type: SKILL_TYPES.ACTIVE,
+        icon: '⚡',
+        image: null,
+        description: 'Periodically emit lightning that chains between enemies',
+        maxTier: 2,
+        levels: [
+            {
+                tier: 1,
+                description: 'Every 8 seconds, blue lightning chains to 3 targets',
+                stats: {
+                    cooldown: 8000, // milliseconds
+                    chainCount: 3,
+                    damageMultiplier: 1.5,
+                    lightningColor: '#00ffff',
+                    chainRange: 200,
+                    duration: 500
+                },
+                notes: 'Automatically seeks nearest enemies'
+            },
+            {
+                tier: 2,
+                description: 'Every 5 seconds, red lightning chains to 5 targets',
+                stats: {
+                    cooldown: 5000,
+                    chainCount: 5,
+                    damageMultiplier: 1.75,
+                    lightningColor: '#ff0066',
+                    chainRange: 250,
+                    duration: 600
+                },
+                notes: 'Faster cooldown and more chains'
+            }
+        ],
+        conflicts: [],
+        notes: 'Lightning damage scales with player base damage. Cannot chain to same enemy twice in one activation.',
+        visual: {
+            boltWidth: 3,
+            boltFlicker: true,
+            glowIntensity: 20
+        }
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 4️⃣ HOMING MISSILES - Active/Projectile
+    // ═══════════════════════════════════════════════════════════════
+    homing_missiles: {
+        id: 'homing_missiles',
+        name: 'Homing Missiles',
+        type: SKILL_TYPES.ACTIVE,
+        icon: '🚀',
+        image: null,
+        description: 'Launch heat-seeking missiles at enemies',
+        maxTier: 2,
+        levels: [
+            {
+                tier: 1,
+                description: 'Every 3 seconds, launch 1 homing missile (150% damage)',
+                stats: {
+                    cooldown: 3000,
+                    missileCount: 1,
+                    damageMultiplier: 1.5,
+                    missileSpeed: 6,
+                    turnRate: 0.1,
+                    lockRange: 400
+                },
+                notes: 'Missile targets nearest enemy'
+            },
+            {
+                tier: 2,
+                description: 'Every 3 seconds, launch 3 homing missiles (150% damage each)',
+                stats: {
+                    cooldown: 3000,
+                    missileCount: 3,
+                    damageMultiplier: 1.5,
+                    missileSpeed: 6,
+                    turnRate: 0.1,
+                    lockRange: 400,
+                    spreadAngle: 15 // degrees between missiles
+                },
+                notes: 'All 3 missiles target different enemies when possible'
+            }
+        ],
+        conflicts: [],
+        notes: 'Missiles explode on contact or after 5 seconds. Each missile locks onto nearest untargeted enemy.',
+        visual: {
+            missileColor: '#ff9900',
+            trailLength: 30,
+            exhaustEffect: true,
+            explosionRadius: 40
+        }
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 5️⃣ RICOCHET BULLETS - Bullet Enhancement (CONFLICTS WITH PIERCING)
+    // ═══════════════════════════════════════════════════════════════
+    ricochet_bullets: {
+        id: 'ricochet_bullets',
+        name: 'Ricochet Bullets',
+        type: SKILL_TYPES.BULLET_ENHANCEMENT,
+        icon: '🔄',
+        image: null,
+        description: 'Bullets bounce to hit additional targets',
+        maxTier: 2,
+        levels: [
+            {
+                tier: 1,
+                description: 'Bullets bounce once in random direction after hitting',
+                stats: {
+                    bounceCount: 1,
+                    bounceSpeedMultiplier: 0.8,
+                    bounceDamageMultiplier: 1.0,
+                    bounceAngleRange: 360 // degrees
+                },
+                notes: 'Bullet maintains 80% of original speed after bounce'
+            },
+            {
+                tier: 2,
+                description: 'On hit, bullet splits into 2 bullets that bounce',
+                stats: {
+                    bounceCount: 1,
+                    splitCount: 2,
+                    bounceSpeedMultiplier: 0.7,
+                    bounceDamageMultiplier: 1.0,
+                    bounceAngleRange: 360,
+                    splitAngle: 45 // degrees between split bullets
+                },
+                notes: 'Creates 2 independent bouncing bullets per hit'
+            }
+        ],
+        conflicts: ['piercing_bullets'],
+        notes: 'CANNOT be combined with Piercing Bullets. Bounced bullets can hit the same enemy again.',
+        visual: {
+            bounceFlash: true,
+            trailEffect: true,
+            bounceColor: '#ffff00'
+        }
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 6️⃣ PIERCING BULLETS - Bullet Enhancement (CONFLICTS WITH RICOCHET)
+    // ═══════════════════════════════════════════════════════════════
+    piercing_bullets: {
+        id: 'piercing_bullets',
+        name: 'Piercing Bullets',
+        type: SKILL_TYPES.BULLET_ENHANCEMENT,
+        icon: '🎯',
+        image: null,
+        description: 'Bullets penetrate through multiple enemies',
+        maxTier: 2,
+        levels: [
+            {
+                tier: 1,
+                description: 'Bullets pierce through 2 targets',
+                stats: {
+                    pierceCount: 2,
+                    firstTargetDamageMultiplier: 1.0,
+                    subsequentDamageMultiplier: 1.0
+                },
+                notes: 'Same damage to all pierced enemies'
+            },
+            {
+                tier: 2,
+                description: 'Pierce 4 targets. First target takes 200% damage',
+                stats: {
+                    pierceCount: 4,
+                    firstTargetDamageMultiplier: 2.0,
+                    subsequentDamageMultiplier: 1.0
+                },
+                notes: 'Massive bonus damage to initial target'
+            }
+        ],
+        conflicts: ['ricochet_bullets'],
+        notes: 'CANNOT be combined with Ricochet Bullets. Bullet maintains velocity through all pierces.',
+        visual: {
+            bulletTrail: true,
+            pierceEffect: true,
+            trailColor: '#00ffff'
+        }
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 7️⃣ LASER FORTRESS - Summon/Area Control
+    // ═══════════════════════════════════════════════════════════════
+    laser_fortress: {
+        id: 'laser_fortress',
+        name: 'Laser Fortress',
+        type: SKILL_TYPES.SUMMON,
+        icon: '🔴',
+        image: null,
+        description: 'Summon support ships with continuous lasers',
+        maxTier: 2,
+        levels: [
+            {
+                tier: 1,
+                description: '1 ship on left edge fires laser for 10s (15s cooldown)',
+                stats: {
+                    shipCount: 1,
+                    shipPosition: 'left',
+                    laserDuration: 10000, // milliseconds
+                    cooldown: 15000,
+                    damagePerTick: 5,
+                    tickRate: 1000, // damage every 1 second
+                    laserWidth: 15,
+                    canBeBlocked: true,
+                    spawnX: 30,
+                    spawnY: 400
+                },
+                notes: 'Laser can be blocked by asteroids (line-of-sight check)'
+            },
+            {
+                tier: 2,
+                description: '2 ships on right edge. 150% damage, 10s cooldown',
+                stats: {
+                    shipCount: 2,
+                    shipPosition: 'right',
+                    laserDuration: 10000,
+                    cooldown: 10000,
+                    damagePerTick: 7.5, // 150% of tier 1
+                    tickRate: 1000,
+                    laserWidth: 15,
+                    canBeBlocked: true,
+                    spawnX: 690,
+                    spawnYPositions: [300, 500], // Separated vertically
+                    verticalSeparation: 200
+                },
+                notes: '2 ships share cooldown. Activate/deactivate simultaneously.'
+            }
+        ],
+        conflicts: [],
+        notes: 'Laser performs line-of-sight check. Asteroids can block damage. Ships cannot be damaged.',
+        visual: {
+            laserColor: '#ff0000',
+            shipColor: '#666666',
+            chargeEffect: true,
+            pulseAnimation: true,
+            shipSize: 40
+        }
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SKILL CONFLICT MANAGEMENT SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Check if two skills conflict with each other
+ * @param {string} skillId1 - First skill ID
+ * @param {string} skillId2 - Second skill ID
+ * @returns {boolean} True if skills conflict
+ */
+function hasConflict(skillId1, skillId2) {
+    const skill1 = SKILLS_REGISTRY[skillId1];
+    const skill2 = SKILLS_REGISTRY[skillId2];
+    
+    if (!skill1 || !skill2) return false;
+    
+    return skill1.conflicts.includes(skillId2) || skill2.conflicts.includes(skillId1);
+}
+
+/**
+ * Get all conflicts for a skill
+ * @param {string} skillId - Skill ID to check
+ * @returns {Array<string>} Array of conflicting skill IDs
+ */
+function getConflicts(skillId) {
+    const skill = SKILLS_REGISTRY[skillId];
+    return skill ? skill.conflicts : [];
+}
+
+/**
+ * Check if a skill can be selected given current player skills
+ * @param {string} skillId - Skill to check
+ * @param {Object} currentSkills - Player's current skills {skillId: tier}
+ * @returns {boolean} True if skill can be selected
+ */
+function canSelectSkill(skillId, currentSkills) {
+    const skill = SKILLS_REGISTRY[skillId];
+    if (!skill) return false;
+    
+    // Check if already maxed
+    const currentTier = currentSkills[skillId] || 0;
+    if (currentTier >= skill.maxTier) return false;
+    
+    // Check for conflicts
+    for (const ownedSkillId in currentSkills) {
+        if (currentSkills[ownedSkillId] > 0 && hasConflict(skillId, ownedSkillId)) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SKILL QUERY FUNCTIONS
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Get all available skills
+ * @returns {Object} Complete skills registry
+ */
+function getAllSkills() {
+    return SKILLS_REGISTRY;
+}
+
+/**
+ * Get skills by type
+ * @param {string} type - Skill type (core, bullet_enhancement, summon, passive, active)
+ * @returns {Array<Object>} Array of skills matching type
+ */
+function getSkillsByType(type) {
+    return Object.values(SKILLS_REGISTRY).filter(skill => skill.type === type);
+}
+
+/**
+ * Get a specific skill by ID
+ * @param {string} skillId - The skill identifier
+ * @returns {Object|null} Skill data or null if not found
+ */
+function getSkill(skillId) {
+    return SKILLS_REGISTRY[skillId] || null;
+}
+
+/**
+ * Get skills available for upgrade (not maxed, no conflicts)
+ * @param {Object} currentSkills - Player's current skills {skillId: tier}
+ * @returns {Array<Object>} Array of available skills
+ */
+function getAvailableSkills(currentSkills = {}) {
+    return Object.values(SKILLS_REGISTRY).filter(skill => 
+        canSelectSkill(skill.id, currentSkills)
+    );
+}
+
+/**
+ * Get random skill choices for level up (respects conflicts)
+ * @param {Object} currentSkills - Player's current skills
+ * @param {number} count - Number of choices to return (default: 3)
+ * @returns {Array<Object>} Array of random skill choices
+ */
+function getRandomSkillChoices(currentSkills = {}, count = 3) {
+    const available = getAvailableSkills(currentSkills);
+    const choices = [];
+    
+    // Create a copy to avoid modifying original
+    const pool = [...available];
+    
+    while (choices.length < count && pool.length > 0) {
+        const randomIndex = Math.floor(Math.random() * pool.length);
+        choices.push(pool[randomIndex]);
+        pool.splice(randomIndex, 1);
+    }
+    
+    return choices;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SKILL LEVEL/TIER FUNCTIONS
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Get stats for a specific skill tier
+ * @param {string} skillId - The skill identifier
+ * @param {number} tier - The tier level (1-based)
+ * @returns {Object|null} Stats object or null
+ */
+function getSkillStats(skillId, tier) {
+    const skill = getSkill(skillId);
+    if (!skill || !skill.levels || tier < 1 || tier > skill.levels.length) {
+        return null;
+    }
+    return skill.levels[tier - 1].stats;
+}
+
+/**
+ * Get description for a specific tier
+ * @param {string} skillId - The skill identifier
+ * @param {number} tier - The tier level (1-based)
+ * @returns {string} Description or empty string
+ */
+function getSkillDescription(skillId, tier) {
+    const skill = getSkill(skillId);
+    if (!skill || !skill.levels || tier < 1 || tier > skill.levels.length) {
+        return '';
+    }
+    return skill.levels[tier - 1].description;
+}
+
+/**
+ * Get current tier of a skill
+ * @param {string} skillId - The skill identifier
+ * @param {Object} currentSkills - Player's current skills
+ * @returns {number} Current tier (0 if not owned)
+ */
+function getCurrentTier(skillId, currentSkills = {}) {
+    return currentSkills[skillId] || 0;
+}
+
+/**
+ * Check if skill is maxed out
+ * @param {string} skillId - The skill identifier
+ * @param {Object} currentSkills - Player's current skills
+ * @returns {boolean} True if skill is at max tier
+ */
+function isMaxTier(skillId, currentSkills = {}) {
+    const skill = getSkill(skillId);
+    if (!skill) return false;
+    
+    const currentTier = getCurrentTier(skillId, currentSkills);
+    return currentTier >= skill.maxTier;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VISUAL SYSTEM FUNCTIONS
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Check if an image should be used for a skill
+ * @param {Object} skill - The skill object
+ * @returns {boolean} True if image path is available
+ */
+function hasImage(skill) {
+    return skill.image !== null && skill.image !== undefined && skill.image !== '';
+}
+
+/**
+ * Get visual representation (image or icon)
+ * @param {Object} skill - The skill object
+ * @returns {Object} {type: 'image'|'icon', value: string}
+ */
+function getVisual(skill) {
+    if (hasImage(skill)) {
+        return { type: 'image', value: skill.image };
+    }
+    return { type: 'icon', value: skill.icon };
+}
+
+/**
+ * Get skill display name with tier
+ * @param {string} skillId - The skill identifier
+ * @param {number} tier - The tier level
+ * @returns {string} Formatted name
+ */
+function getDisplayName(skillId, tier) {
+    const skill = getSkill(skillId);
+    if (!skill) return 'Unknown Skill';
+    
+    if (tier > 1) {
+        return `${skill.name} ${tier}`;
+    }
+    return skill.name;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UPGRADE CARD GENERATION
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Generate upgrade card data for UI rendering
+ * @param {Object} skill - The skill object
+ * @param {number} nextTier - The tier being offered
+ * @returns {Object} Complete upgrade card data
+ */
+function generateUpgradeCard(skill, nextTier) {
+    const visual = getVisual(skill);
+    const description = getSkillDescription(skill.id, nextTier);
+    const stats = getSkillStats(skill.id, nextTier);
+    
+    return {
+        skillId: skill.id,
+        name: getDisplayName(skill.id, nextTier),
+        tier: nextTier,
+        type: skill.type,
+        visualType: visual.type,
+        visualValue: visual.value,
+        description: description,
+        stats: stats,
+        isUpgrade: nextTier > 1,
+        maxTier: skill.maxTier,
+        conflicts: skill.conflicts
+    };
+}
+
+/**
+ * Generate multiple upgrade cards for level-up screen
+ * @param {Object} currentSkills - Player's current skills
+ * @param {number} count - Number of cards (default: 3)
+ * @returns {Array<Object>} Array of upgrade card data
+ */
+function generateUpgradeCards(currentSkills = {}, count = 3) {
+    const choices = getRandomSkillChoices(currentSkills, count);
+    
+    return choices.map(skill => {
+        const nextTier = getCurrentTier(skill.id, currentSkills) + 1;
+        return generateUpgradeCard(skill, nextTier);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SKILL APPLICATION HELPERS
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Apply a skill upgrade to player stats
+ * @param {string} skillId - The skill identifier
+ * @param {number} tier - The tier being applied
+ * @param {Object} playerStats - Player stats object to modify
+ * @returns {Object} Modified player stats
+ */
+function applySkillToStats(skillId, tier, playerStats) {
+    const stats = getSkillStats(skillId, tier);
+    if (!stats) return playerStats;
+    
+    // Deep copy to avoid mutation
+    const newStats = JSON.parse(JSON.stringify(playerStats));
+    
+    // Apply stat modifications based on skill type
+    for (const [key, value] of Object.entries(stats)) {
+        if (key.endsWith('Bonus') || key.endsWith('Multiplier')) {
+            // Additive bonuses
+            if (newStats[key]) {
+                newStats[key] += value;
+            } else {
+                newStats[key] = value;
+            }
+        } else {
+            // Direct set (like maxHearts, bulletStreams)
+            newStats[key] = value;
+        }
+    }
+    
+    return newStats;
+}
+
+/**
+ * Calculate final damage after all multipliers
+ * @param {number} baseDamage - Base bullet damage
+ * @param {Object} currentSkills - Player's current skills
+ * @param {string} damageSource - Type of damage (bullet, explosion, etc)
+ * @returns {number} Final damage value
+ */
+function calculateDamage(baseDamage, currentSkills = {}, damageSource = 'bullet') {
+    let finalDamage = baseDamage;
+    
+    // Apply power shot bonus
+    if (currentSkills.power) {
+        const powerTier = currentSkills.power;
+        const stats = getSkillStats('power', powerTier);
+        if (stats && stats.damageBonus) {
+            finalDamage += stats.damageBonus;
+        }
+    }
+    
+    // Add other damage modifiers here as needed
+    
+    return finalDamage;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COOLDOWN MANAGEMENT SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Cooldown tracker for active skills
+ */
+class CooldownManager {
+    constructor() {
+        this.cooldowns = {}; // {skillId: lastActivationTime}
+    }
+    
+    /**
+     * Check if skill is ready to use
+     * @param {string} skillId - Skill identifier
+     * @param {number} tier - Current tier
+     * @returns {boolean} True if off cooldown
+     */
+    isReady(skillId, tier) {
+        const skill = getSkill(skillId);
+        if (!skill) return false;
+        
+        const stats = getSkillStats(skillId, tier);
+        if (!stats || !stats.cooldown) return true;
+        
+        const lastActivation = this.cooldowns[skillId] || 0;
+        const now = Date.now();
+        
+        return (now - lastActivation) >= stats.cooldown;
+    }
+    
+    /**
+     * Activate skill and start cooldown
+     * @param {string} skillId - Skill identifier
+     */
+    activate(skillId) {
+        this.cooldowns[skillId] = Date.now();
+    }
+    
+    /**
+     * Get remaining cooldown time in milliseconds
+     * @param {string} skillId - Skill identifier
+     * @param {number} tier - Current tier
+     * @returns {number} Milliseconds until ready (0 if ready)
+     */
+    getRemainingCooldown(skillId, tier) {
+        const skill = getSkill(skillId);
+        if (!skill) return 0;
+        
+        const stats = getSkillStats(skillId, tier);
+        if (!stats || !stats.cooldown) return 0;
+        
+        const lastActivation = this.cooldowns[skillId] || 0;
+        const now = Date.now();
+        const elapsed = now - lastActivation;
+        
+        return Math.max(0, stats.cooldown - elapsed);
+    }
+    
+    /**
+     * Reset all cooldowns (use for new game, debug)
+     */
+    reset() {
+        this.cooldowns = {};
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+// Browser environment - attach to window
+if (typeof window !== 'undefined') {
+    window.SkillsSystem = {
+        // Core data
+        SKILLS_REGISTRY,
+        SKILL_TYPES,
+        
+        // Query functions
+        getAllSkills,
+        getSkillsByType,
+        getSkill,
+        getAvailableSkills,
+        getRandomSkillChoices,
+        
+        // Tier/Level functions
+        getSkillStats,
+        getSkillDescription,
+        getCurrentTier,
+        isMaxTier,
+        
+        // Visual functions
+        hasImage,
+        getVisual,
+        getDisplayName,
+        
+        // Conflict management
+        hasConflict,
+        getConflicts,
+        canSelectSkill,
+        
+        // Upgrade cards
+        generateUpgradeCard,
+        generateUpgradeCards,
+        
+        // Stat application
+        applySkillToStats,
+        calculateDamage,
+        
+        // Cooldown manager
+        CooldownManager
+    };
+    
+    console.log('✅ Skills System v2.0 loaded successfully');
+    console.log(`📊 Total skills: ${Object.keys(SKILLS_REGISTRY).length}`);
+    console.log(`🔫 Bullet enhancements: ${getSkillsByType(SKILL_TYPES.BULLET_ENHANCEMENT).length}`);
+    console.log(`⚡ Active skills: ${getSkillsByType(SKILL_TYPES.ACTIVE).length}`);
+    console.log(`✈️ Summon skills: ${getSkillsByType(SKILL_TYPES.SUMMON).length}`);
+}
+
+// Node.js/module environment
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        SKILLS_REGISTRY,
+        SKILL_TYPES,
+        getAllSkills,
+        getSkillsByType,
+        getSkill,
+        getAvailableSkills,
+        getRandomSkillChoices,
+        getSkillStats,
+        getSkillDescription,
+        getCurrentTier,
+        isMaxTier,
+        hasImage,
+        getVisual,
+        getDisplayName,
+        hasConflict,
+        getConflicts,
+        canSelectSkill,
+        generateUpgradeCard,
+        generateUpgradeCards,
+        applySkillToStats,
+        calculateDamage,
+        CooldownManager
+    };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// USAGE EXAMPLES (Comment out in production)
+// ═══════════════════════════════════════════════════════════════
+
+/*
+// Example 1: Generate level-up choices
+const currentSkills = { multishot: 1, power: 2 };
+const upgradeCards = generateUpgradeCards(currentSkills, 3);
+console.log('Available upgrades:', upgradeCards);
+
+// Example 2: Check skill conflicts
+const canPickRicochet = canSelectSkill('ricochet_bullets', { piercing_bullets: 1 });
+console.log('Can pick ricochet with piercing?', canPickRicochet); // false
+
+// Example 3: Calculate damage
+const baseDamage = 10;
+const finalDamage = calculateDamage(baseDamage, { power: 3 });
+console.log('Final damage:', finalDamage); // 40
+
+// Example 4: Cooldown management
+const cooldownMgr = new CooldownManager();
+if (cooldownMgr.isReady('chain_lightning', 1)) {
+    // Activate chain lightning
+    cooldownMgr.activate('chain_lightning');
+}
+*/
+    </script>
+    
+    <script>
+        const game = {
+            canvas: null,
+            ctx: null,
+            starLayers: [],
+
+            state: {
+                running: false,
+                paused: false,
+                score: 0,
+                coins: 0,
+                selectedSkill: null,
+                gameTime: 0
+            },
+
+            player: {
+                x: 360,
+                y: 1100,
+                width: 40,
+                height: 60,
+                speed: 8,
+                hearts: 3,
+                level: 1,
+                xp: 0,
+                xpToNext: 100,
+                damage: 20,
+                attackSpeed: 3,
+                skills: {},
+                lastShot: 0
+            },
+
+            bullets: [],
+            asteroids: [],
+            keys: {},
+
+            // REMOVED: skillData is now in skills.js
+            // Use window.SkillsSystem instead
+
+            init() {
+                console.log('🎮 Initializing game...');
+                console.log('📦 Skills System loaded:', !!window.SkillsSystem);
+                
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+
+                this.initStarLayers();
+                this.setupEventListeners();
+                this.simulateLoading();
+            },
+
+            initStarLayers() {
+                this.starLayers = [
+                    { stars: [], speed: 0.2, size: 1, count: 50, opacity: 0.4 },
+                    { stars: [], speed: 0.5, size: 2, count: 80, opacity: 0.6 },
+                    { stars: [], speed: 1.0, size: 3, count: 100, opacity: 0.9 }
+                ];
+
+                this.starLayers.forEach(layer => {
+                    for (let i = 0; i < layer.count; i++) {
+                        layer.stars.push({
+                            x: Math.random() * 720,
+                            y: Math.random() * 1280
+                        });
+                    }
+                });
+            },
+
+            simulateLoading() {
+                const progressFill = document.getElementById('progressFill');
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress >= 100) {
+                        progress = 100;
+                        progressFill.style.width = '100%';
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            document.getElementById('loadingScreen').style.display = 'none';
+                        }, 500);
+                    } else {
+                        progressFill.style.width = progress + '%';
+                    }
+                }, 100);
+            },
+
+            setupEventListeners() {
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.key] = true;
+                    if (e.key === 'Escape' && this.state.running && !document.getElementById('skillScreen').classList.contains('active')) {
+                        this.togglePause();
+                    }
+                });
+                document.addEventListener('keyup', (e) => this.keys[e.key] = false);
+
+                const touchLayer = document.getElementById('touchLayer');
+                const handleMove = (e) => {
+                    if (!this.state.running || this.state.paused) return;
+                    const rect = this.canvas.getBoundingClientRect();
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    this.player.x = (clientX - rect.left) * (720 / rect.width);
+                    this.player.y = (clientY - rect.top) * (1280 / rect.height);
+                    this.player.x = Math.max(30, Math.min(690, this.player.x));
+                    this.player.y = Math.max(30, Math.min(1250, this.player.y));
+                };
+                touchLayer.addEventListener('touchmove', handleMove);
+                touchLayer.addEventListener('mousemove', handleMove);
+
+                document.getElementById('pauseBtn').addEventListener('click', () => this.togglePause());
+            },
+
+            showMainMenu() {
+                document.getElementById('mainMenu').classList.remove('hidden');
+            },
+
+            startGame() {
+                console.log('🚀 Starting game...');
+                document.getElementById('mainMenu').classList.add('hidden');
+                document.getElementById('helpScreen').classList.remove('active');
+                
+                this.state = {
+                    running: true,
+                    paused: false,
+                    score: 0,
+                    coins: 0,
+                    selectedSkill: null,
+                    gameTime: 0
+                };
+
+                this.player = {
+                    x: 360,
+                    y: 1100,
+                    width: 40,
+                    height: 60,
+                    speed: 8,
+                    hearts: 3,
+                    level: 1,
+                    xp: 0,
+                    xpToNext: 100,
+                    damage: 20,
+                    attackSpeed: 3,
+                    skills: {},
+                    lastShot: 0
+                };
+
+                this.bullets = [];
+                this.asteroids = [];
+                this.keys = {};
+
+                document.getElementById('touchLayer').classList.add('active');
+                document.getElementById('pauseBtn').classList.add('active');
+                
+                this.updateHUD();
+                this.gameLoop();
+            },
+
+            togglePause() {
+                this.state.paused = !this.state.paused;
+                const pauseMenu = document.getElementById('pauseMenu');
+                if (this.state.paused) {
+                    pauseMenu.classList.add('active');
+                } else {
+                    pauseMenu.classList.remove('active');
+                }
+            },
+
+            resumeGame() {
+                this.state.paused = false;
+                document.getElementById('pauseMenu').classList.remove('active');
+            },
+
+            returnToMainMenu() {
+                this.state.paused = false;
+                this.state.running = false;
+                document.getElementById('pauseMenu').classList.remove('active');
+                document.getElementById('touchLayer').classList.remove('active');
+                document.getElementById('pauseBtn').classList.remove('active');
+                this.showMainMenu();
+            },
+
+            showHelp() {
+                document.getElementById('helpScreen').classList.add('active');
+            },
+
+            closeHelp() {
+                document.getElementById('helpScreen').classList.remove('active');
+            },
+
+            updateHUD() {
+                const heartsContainer = document.getElementById('hearts');
+                heartsContainer.innerHTML = '';
+                for (let i = 0; i < this.player.hearts; i++) {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heartsContainer.appendChild(heart);
+                }
+
+                document.getElementById('levelNum').textContent = this.player.level;
+                const xpPercent = (this.player.xp / this.player.xpToNext) * 100;
+                document.getElementById('xpFill').style.width = xpPercent + '%';
+
+                document.getElementById('scoreDisplay').textContent = this.state.score;
+                document.getElementById('coinDisplay').textContent = this.state.coins;
+            },
+
+            gainXP(amount) {
+                this.player.xp += amount;
+                if (this.player.xp >= this.player.xpToNext) {
+                    this.levelUp();
+                }
+                this.updateHUD();
+            },
+
+            levelUp() {
+                this.player.level++;
+                this.player.xp = 0;
+                this.player.xpToNext = Math.floor(this.player.xpToNext * 1.5);
+                
+                console.log(`🎉 Level Up! Now level ${this.player.level}`);
+                
+                this.state.paused = true;
+                this.showSkillSelection();
+            },
+
+            // IMPROVED: Use skills.js system with image support
+            showSkillSelection() {
+                const container = document.getElementById('skillsContainer');
+                container.innerHTML = '';
+
+                // Use the new skills system
+                const selectedSkills = window.SkillsSystem.getRandomSkillChoices(this.player.skills, 3);
+
+                selectedSkills.forEach(skill => {
+                    const currentTier = this.player.skills[skill.id] || 0;
+                    const nextTier = currentTier + 1;
+
+                    const card = document.createElement('div');
+                    card.className = 'skill-card';
+                    
+                    // NEW: Create visual container with image/icon support
+                    const hasImage = window.SkillsSystem.hasImage(skill);
+                    
+                    card.innerHTML = `
+                        <div class="skill-visual">
+                            ${hasImage ? `
+                                <img 
+                                    src="${skill.image}" 
+                                    alt="${skill.name}" 
+                                    class="skill-image" 
+                                    onerror="this.classList.add('error'); this.nextElementSibling.classList.remove('hidden');"
+                                >
+                                <span class="skill-icon hidden">${skill.icon}</span>
+                            ` : `
+                                <span class="skill-icon">${skill.icon}</span>
+                            `}
+                        </div>
+                        <div class="skill-name">${skill.name}</div>
+                        <div class="skill-description">${skill.description}<br><br>Tier ${nextTier}/${skill.maxTier}</div>
+                    `;
+                    
+                    card.onclick = () => this.selectSkill(skill, nextTier, card);
+                    container.appendChild(card);
+                });
+
+                document.getElementById('skillScreen').classList.add('active');
+            },
+
+            selectSkill(skill, tier, cardElement) {
+                document.querySelectorAll('.skill-card').forEach(c => c.classList.remove('selected'));
+                cardElement.classList.add('selected');
+                this.state.selectedSkill = { id: skill.id, tier: tier };
+                document.getElementById('confirmSkill').disabled = false;
+            },
+
+            confirmSkill() {
+                if (!this.state.selectedSkill) return;
+
+                if (this.state.selectedSkill.id === 'shield') {
+                    this.player.hearts++;
+                }
+                this.player.skills[this.state.selectedSkill.id] = this.state.selectedSkill.tier;
+                
+                document.getElementById('skillScreen').classList.remove('active');
+                this.state.paused = false;
+                this.updateHUD();
+            },
+
+            gameLoop() {
+                if (!this.state.running) return;
+                
+                if (!this.state.paused) {
+                    this.update();
+                    this.state.gameTime += 1/60;
+                }
+                
+                this.render();
+                requestAnimationFrame(() => this.gameLoop());
+            },
+
+            update() {
+                if (this.keys['ArrowLeft'] || this.keys['a']) this.player.x -= this.player.speed;
+                if (this.keys['ArrowRight'] || this.keys['d']) this.player.x += this.player.speed;
+                if (this.keys['ArrowUp'] || this.keys['w']) this.player.y -= this.player.speed;
+                if (this.keys['ArrowDown'] || this.keys['s']) this.player.y += this.player.speed;
+                
+                this.player.x = Math.max(30, Math.min(690, this.player.x));
+                this.player.y = Math.max(30, Math.min(1250, this.player.y));
+
+                const now = Date.now();
+                const attackSpeed = this.player.attackSpeed + (this.player.skills.rapid || 0) * 2;
+                if (now - this.player.lastShot > 1000 / attackSpeed) {
+                    this.shoot();
+                    this.player.lastShot = now;
+                }
+
+                const baseSpawnRate = 0.008;
+                const maxSpawnRate = 0.025;
+                const spawnRateIncrease = Math.min(this.state.gameTime / 120, 1);
+                const currentSpawnRate = baseSpawnRate + (maxSpawnRate - baseSpawnRate) * spawnRateIncrease;
+                
+                if (Math.random() < currentSpawnRate) {
+                    this.spawnAsteroid();
+                }
+
+                this.bullets = this.bullets.filter(b => {
+                    b.y -= 15;
+                    return b.y > -20;
+                });
+
+                this.asteroids.forEach((a, i) => {
+                    if (a.knockbackTime !== undefined) {
+                        a.knockbackTime--;
+                        if (a.knockbackTime <= 0) {
+                            delete a.knockbackTime;
+                            delete a.knockbackVx;
+                            delete a.knockbackVy;
+                        } else {
+                            a.x += a.knockbackVx;
+                            a.y += a.knockbackVy;
+                        }
+                    } else {
+                        a.y += a.vy;
+                        a.x += a.vx;
+                    }
+                    
+                    a.rotation += a.rotSpeed;
+
+                    if (a.x <= a.size/2 || a.x >= 720 - a.size/2) a.vx *= -1;
+
+                    if (this.checkCollision(this.player, a)) {
+                        this.player.hearts--;
+                        this.updateHUD();
+                        this.asteroids.splice(i, 1);
+                        if (this.player.hearts <= 0) this.gameOver();
+                    }
+
+                    if (a.y > 1300) this.asteroids.splice(i, 1);
+                });
+
+                this.bullets.forEach((b, bi) => {
+                    this.asteroids.forEach((a, ai) => {
+                        if (this.checkCollision(b, a)) {
+                            a.hp -= this.player.damage;
+                            if (a.hp <= 0) {
+                                this.destroyAsteroid(a, ai);
+                                this.gainXP(10);
+                                this.state.score += 10;
+                                this.state.coins += 1;
+                                this.updateHUD();
+                            }
+                            this.bullets.splice(bi, 1);
+                        }
+                    });
+                });
+            },
+
+            destroyAsteroid(asteroid, index) {
+                this.asteroids.splice(index, 1);
+
+                if (asteroid.tier !== 'small') {
+                    const nextTier = this.getNextTier(asteroid.tier);
+                    const nextSize = this.getSizeForTier(nextTier);
+                    const nextHP = this.getHPForTier(nextTier);
+
+                    for (let i = 0; i < 2; i++) {
+                        const horizontalDirection = (i === 0 ? -1 : 1);
+                        const horizontalSpeed = 2 + Math.random() * 1.5;
+                        
+                        const baseDownwardVelocity = Math.max(asteroid.vy, 1.5);
+                        const downwardSpeed = baseDownwardVelocity + Math.random() * 0.5;
+
+                        const knockbackDistance = 15;
+                        const knockbackFrames = 5;
+                        
+                        const knockbackVx = horizontalDirection * (knockbackDistance / knockbackFrames);
+                        const knockbackVy = -2;
+
+                        const newAsteroid = {
+                            x: asteroid.x + horizontalDirection * 20,
+                            y: asteroid.y,
+                            size: nextSize,
+                            hp: nextHP,
+                            tier: nextTier,
+                            vx: horizontalDirection * horizontalSpeed,
+                            vy: downwardSpeed,
+                            rotation: Math.random() * Math.PI * 2,
+                            rotSpeed: (Math.random() - 0.5) * 0.08,
+                            color: asteroid.color,
+                            vertices: this.generatePolygon(nextSize),
+                            knockbackTime: knockbackFrames,
+                            knockbackVx: knockbackVx,
+                            knockbackVy: knockbackVy
+                        };
+
+                        this.asteroids.push(newAsteroid);
+                    }
+                }
+            },
+
+            getNextTier(currentTier) {
+                const tiers = {
+                    'veryLarge': 'large',
+                    'large': 'medium',
+                    'medium': 'small',
+                    'small': null
+                };
+                return tiers[currentTier];
+            },
+
+            getSizeForTier(tier) {
+                const sizes = {
+                    'veryLarge': 120,
+                    'large': 85,
+                    'medium': 55,
+                    'small': 30
+                };
+                return sizes[tier];
+            },
+
+            getHPForTier(tier) {
+                const hps = {
+                    'veryLarge': 80,
+                    'large': 40,
+                    'medium': 20,
+                    'small': 10
+                };
+                return hps[tier];
+            },
+
+            shoot() {
+                const streams = this.player.skills.multishot ? 
+                    (this.player.skills.multishot === 1 ? 2 : 3) : 1;
+                
+                const spread = 25;
+                for (let i = 0; i < streams; i++) {
+                    const offset = (i - (streams - 1) / 2) * spread;
+                    this.bullets.push({
+                        x: this.player.x + offset,
+                        y: this.player.y - 30,
+                        width: 8,
+                        height: 20
+                    });
+                }
+            },
+
+            spawnAsteroid() {
+                const tierWeights = [
+                    { tier: 'veryLarge', weight: 0.3 },
+                    { tier: 'large', weight: 0.35 },
+                    { tier: 'medium', weight: 0.25 },
+                    { tier: 'small', weight: 0.1 }
+                ];
+
+                let rand = Math.random();
+                let selectedTier = 'medium';
+                let cumulative = 0;
+                
+                for (const tw of tierWeights) {
+                    cumulative += tw.weight;
+                    if (rand <= cumulative) {
+                        selectedTier = tw.tier;
+                        break;
+                    }
+                }
+
+                const size = this.getSizeForTier(selectedTier);
+                const hp = this.getHPForTier(selectedTier);
+                
+                const colors = [
+                    '#00ffff', '#ff00ff', '#00ff00', '#ff8800',
+                    '#8800ff', '#ffff00', '#ff0088', '#00ff88'
+                ];
+
+                this.asteroids.push({
+                    x: Math.random() * 720,
+                    y: -100,
+                    size: size,
+                    hp: hp,
+                    tier: selectedTier,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: 1 + Math.random() * 2,
+                    rotation: 0,
+                    rotSpeed: (Math.random() - 0.5) * 0.05,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vertices: this.generatePolygon(size)
+                });
+            },
+
+            generatePolygon(size) {
+                const vertices = [];
+                const count = 6 + Math.floor(Math.random() * 3);
+                for (let i = 0; i < count; i++) {
+                    const angle = (i / count) * Math.PI * 2;
+                    const radius = size / 2 * (0.8 + Math.random() * 0.4);
+                    vertices.push({
+                        x: Math.cos(angle) * radius,
+                        y: Math.sin(angle) * radius
+                    });
+                }
+                return vertices;
+            },
+
+            checkCollision(a, b) {
+                const r1 = a.width ? Math.max(a.width, a.height) / 2 : a.size / 2;
+                const r2 = b.width ? Math.max(b.width, b.height) / 2 : b.size / 2;
+                const dist = Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+                return dist < r1 + r2;
+            },
+
+            render() {
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, 720, 1280);
+
+                this.renderParallaxStars();
+
+                this.asteroids.forEach(a => {
+                    this.ctx.save();
+                    this.ctx.translate(a.x, a.y);
+                    this.ctx.rotate(a.rotation);
+
+                    this.ctx.beginPath();
+                    a.vertices.forEach((v, i) => {
+                        if (i === 0) this.ctx.moveTo(v.x, v.y);
+                        else this.ctx.lineTo(v.x, v.y);
+                    });
+                    this.ctx.closePath();
+
+                    const fillColor = a.color + '33';
+                    this.ctx.fillStyle = fillColor;
+                    this.ctx.fill();
+
+                    this.ctx.strokeStyle = a.color;
+                    this.ctx.lineWidth = 4;
+                    this.ctx.shadowBlur = 20;
+                    this.ctx.shadowColor = a.color;
+                    this.ctx.stroke();
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.restore();
+
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = `bold ${a.size * 0.3}px Arial`;
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(Math.ceil(a.hp), a.x, a.y);
+                });
+
+                this.ctx.save();
+                this.ctx.translate(this.player.x, this.player.y);
+                this.ctx.fillStyle = '#fff';
+                this.ctx.shadowBlur = 15;
+                this.ctx.shadowColor = '#00ffff';
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, -30);
+                this.ctx.lineTo(-20, 30);
+                this.ctx.lineTo(0, 20);
+                this.ctx.lineTo(20, 30);
+                this.ctx.closePath();
+                this.ctx.fill();
+                this.ctx.shadowBlur = 0;
+                this.ctx.restore();
+
+                this.bullets.forEach(b => {
+                    this.ctx.fillStyle = '#00ff00';
+                    this.ctx.shadowBlur = 10;
+                    this.ctx.shadowColor = '#00ff00';
+                    this.ctx.fillRect(b.x - 4, b.y - 10, 8, 20);
+                    this.ctx.shadowBlur = 0;
+                });
+            },
+
+            renderParallaxStars() {
+                this.starLayers.forEach(layer => {
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${layer.opacity})`;
+                    
+                    layer.stars.forEach(star => {
+                        star.y += layer.speed;
+                        
+                        if (star.y > 1280) {
+                            star.y = 0;
+                            star.x = Math.random() * 720;
+                        }
+                        
+                        this.ctx.fillRect(star.x, star.y, layer.size, layer.size);
+                    });
+                });
+            },
+
+            gameOver() {
+                console.log('💀 Game Over');
+                this.state.running = false;
+                document.getElementById('touchLayer').classList.remove('active');
+                document.getElementById('pauseBtn').classList.remove('active');
+                document.getElementById('finalScore').textContent = this.state.score;
+                document.getElementById('gameOverScreen').classList.add('active');
+            },
+
+            restart() {
+                document.getElementById('gameOverScreen').classList.remove('active');
+                this.startGame();
+            },
+
+            backToMenu() {
+                document.getElementById('gameOverScreen').classList.remove('active');
+                this.showMainMenu();
+            }
+        };
+
+        console.log('🚀 Meteor Smash - Initializing...');
+        game.init();
+    </script>
+</body>
+</html>
