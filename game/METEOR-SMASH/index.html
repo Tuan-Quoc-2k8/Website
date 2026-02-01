@@ -20,6 +20,7 @@
             align-items: center;
             min-height: 100vh;
             overflow: hidden;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
             touch-action: none;
         }
 
@@ -31,6 +32,7 @@
             max-height: 1280px;
             background: #000;
             overflow: hidden;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
             box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
         }
 
@@ -125,6 +127,70 @@
             width: 0%;
             transition: width 0.3s;
             box-shadow: 0 0 15px #00ff00;
+        }
+
+        #bossHealthBar {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 3px solid #ff0000;
+            border-radius: 15px;
+            padding: 10px 20px;
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        #bossHealthBar.active {
+            display: flex;
+        }
+
+        .boss-icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px #ff0000);
+        }
+
+        .boss-hp-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .boss-hp-bar-wrapper {
+            width: 300px;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .boss-hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6600);
+            width: 100%;
+            transition: width 0.2s;
+            box-shadow: 0 0 15px #ff0000;
+        }
+
+        .boss-hp-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 8px #000, 0 0 4px #000, 1px 1px 2px #000, -1px -1px 2px #000;
+            pointer-events: none;
+            z-index: 1;
         }
 
         #currency {
@@ -233,7 +299,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0a0a2e 0%, #16213e 30%, #1a1a3e 70%, #0a0a2e 100%);
+            background: linear-gradient(135deg, #0a0035 0%, #1a0050 25%, #2a0070 50%, #1a0050 75%, #0a0035 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -245,15 +311,42 @@
         #loadingScreen::before {
             content: '';
             position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
+            width: 300%;
+            height: 300%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 0, 0.1) 0%, transparent 60%);
+            animation: rotate 25s linear infinite;
+        }
+        
+        #loadingScreen::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(1px 1px at 33% 50%, white, transparent),
+                radial-gradient(1px 1px at 70% 40%, white, transparent);
+            background-size: 200% 200%, 250% 250%, 300% 300%, 400% 400%, 350% 350%, 450% 450%, 500% 500%;
+            background-position: 0% 0%;
+            animation: starfield 120s linear infinite;
+            opacity: 0.6;
         }
 
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+        
+        @keyframes starfield {
+            from { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%; }
+            to { background-position: 100% 100%, 150% 150%, 200% 200%, 250% 250%, 200% 200%, 300% 300%, 350% 350%; }
         }
 
         #loadingScreen.hidden {
@@ -269,15 +362,15 @@
 
         .loading-title {
             font-size: 72px;
-            background: linear-gradient(45deg, #00ffff, #00ff00, #00ffff);
-            background-size: 200% 200%;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ff00, #00ffff);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: float 3s ease-in-out infinite, gradientShift 3s ease-in-out infinite;
+            animation: float 3s ease-in-out infinite, gradientShift 4s ease-in-out infinite, neonPulse 2s ease-in-out infinite;
             text-align: center;
             margin-bottom: 60px;
-            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
+            filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 60px rgba(255, 0, 255, 0.6));
             position: relative;
             z-index: 1;
         }
@@ -291,16 +384,24 @@
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
+        
+        @keyframes neonPulse {
+            0%, 100% { filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 60px rgba(255, 0, 255, 0.6)); }
+            50% { filter: drop-shadow(0 0 50px rgba(0, 255, 255, 1)) drop-shadow(0 0 80px rgba(255, 0, 255, 0.8)); }
+        }
 
         .loading-bar {
             width: 400px;
             max-width: 80%;
-            height: 25px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 3px solid rgba(0, 255, 255, 0.3);
-            border-radius: 15px;
+            height: 28px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid rgba(0, 255, 255, 0.5);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.4), 
+                inset 0 0 15px rgba(0, 0, 0, 0.8),
+                0 0 60px rgba(255, 0, 255, 0.3);
             position: relative;
             z-index: 1;
         }
@@ -312,7 +413,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             animation: shimmer 2s infinite;
         }
 
@@ -322,11 +423,13 @@
 
         .loading-fill {
             height: 100%;
-            background: linear-gradient(90deg, #00ff00, #00ffff, #00ff00);
-            background-size: 200% 100%;
+            background: linear-gradient(90deg, #00ffff, #ff00ff, #00ff00, #00ffff);
+            background-size: 300% 100%;
             width: 0%;
             animation: loadProgress 3s ease-in-out forwards, waveEffect 1.5s ease-in-out infinite;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            box-shadow: 
+                0 0 25px rgba(0, 255, 255, 0.9),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
             position: relative;
         }
 
@@ -366,12 +469,63 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 50%, #0a0a1f 100%);
+            background: linear-gradient(135deg, #0a0035 0%, #1a0050 50%, #0a0035 100%);
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 50;
+            overflow: hidden;
+        }
+        
+        #mainMenu::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 10% 20%, white, transparent),
+                radial-gradient(2px 2px at 90% 80%, white, transparent),
+                radial-gradient(1px 1px at 50% 10%, white, transparent),
+                radial-gradient(1px 1px at 80% 30%, white, transparent),
+                radial-gradient(2px 2px at 30% 70%, white, transparent),
+                radial-gradient(1px 1px at 60% 90%, white, transparent),
+                radial-gradient(1px 1px at 20% 50%, white, transparent),
+                radial-gradient(1px 1px at 70% 60%, white, transparent);
+            background-size: 200% 200%;
+            animation: floatingStars 60s linear infinite;
+            opacity: 0.7;
+        }
+        
+        #mainMenu::after {
+            content: '🌑';
+            position: absolute;
+            font-size: 80px;
+            opacity: 0.15;
+            animation: driftingAsteroid 40s linear infinite;
+        }
+        
+        @keyframes floatingStars {
+            from { background-position: 0% 0%; }
+            to { background-position: 100% 100%; }
+        }
+        
+        @keyframes driftingAsteroid {
+            0% { 
+                left: -100px; 
+                top: 20%; 
+                transform: rotate(0deg);
+            }
+            50% {
+                left: 50%;
+                top: 50%;
+                transform: rotate(180deg);
+            }
+            100% { 
+                left: calc(100% + 100px); 
+                top: 80%; 
+                transform: rotate(360deg);
+            }
         }
 
         #mainMenu.active {
@@ -380,43 +534,84 @@
 
         .menu-title {
             font-size: min(80px, 15vw);
-            color: #00ffff;
-            text-shadow: 0 0 50px #00ffff;
-            margin-bottom: 80px;
-            animation: float 3s ease-in-out infinite;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ff00, #00ffff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: float 3s ease-in-out infinite, gradientShift 4s ease-in-out infinite;
             text-align: center;
             line-height: 1.2;
+            margin-bottom: 80px;
+            filter: drop-shadow(0 0 40px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 80px rgba(255, 0, 255, 0.6));
         }
 
         .menu-button {
             width: 280px;
-            padding: 20px 40px;
+            height: 80px;
+            padding: 0;
             margin: 15px;
-            background: linear-gradient(135deg, #00ff00, #00cc00);
-            border: 4px solid #00ff00;
-            border-radius: 50px;
-            color: #000;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 255, 255, 0.4));
+            border: 4px solid #00ffff;
+            border-radius: 15px;
+            color: #fff;
             font-size: 24px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.6), 
+                inset 0 0 20px rgba(0, 255, 255, 0.2),
+                0 0 60px rgba(0, 255, 255, 0.4);
             transition: all 0.3s;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: buttonShine 3s linear infinite;
+        }
+        
+        @keyframes buttonShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
         .menu-button:hover, .menu-button:active {
-            transform: scale(1.1);
-            box-shadow: 0 0 50px rgba(0, 255, 0, 1), inset 0 0 30px rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.4), rgba(0, 255, 255, 0.6));
+            box-shadow: 
+                0 0 50px rgba(0, 255, 255, 1), 
+                inset 0 0 30px rgba(0, 255, 255, 0.4),
+                0 0 80px rgba(0, 255, 255, 0.6);
         }
 
         .menu-button.secondary {
-            background: linear-gradient(135deg, #00ffff, #00cccc);
-            border-color: #00ffff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(255, 0, 255, 0.4));
+            border-color: #ff00ff;
+            box-shadow: 
+                0 0 30px rgba(255, 0, 255, 0.6), 
+                inset 0 0 20px rgba(255, 0, 255, 0.2),
+                0 0 60px rgba(255, 0, 255, 0.4);
         }
 
         .menu-button.secondary:hover, .menu-button.secondary:active {
-            box-shadow: 0 0 50px rgba(0, 255, 255, 1), inset 0 0 30px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.4), rgba(255, 0, 255, 0.6));
+            box-shadow: 
+                0 0 50px rgba(255, 0, 255, 1), 
+                inset 0 0 30px rgba(255, 0, 255, 0.4),
+                0 0 80px rgba(255, 0, 255, 0.6);
         }
 
         #skillScreen {
@@ -433,6 +628,7 @@
             z-index: 100;
             padding: 40px 20px;
             overflow-y: auto;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
         }
 
         #skillScreen.active {
@@ -449,70 +645,377 @@
 
         #skillsContainer {
             display: flex;
-            gap: 20px;
+            gap: clamp(15px, 2vw, 30px); /* Responsive gap - smaller on mobile */
             justify-content: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap; /* Keep 3 cards in single row */
             margin-bottom: 30px;
+            padding: 60px 15px 40px 15px; /* Reduced horizontal padding */
+            align-items: center;
+            max-width: 100%;
+            overflow: visible; /* Allow icon to extend outside */
         }
 
-        .skill-card {
-            width: min(200px, 30vw);
-            background: linear-gradient(135deg, #1a1a3e 0%, #2a2a4e 100%);
+        /* Further reduce gap on very small screens */
+        @media (max-width: 400px) {
+            #skillsContainer {
+                gap: 12px;
+                padding: 60px 10px 40px 10px;
+            }
+        }
+
+        /* THREE-LAYER SKILL CARD SYSTEM */
+        
+        /* Layer 1 - Outer Frame (div1) - Static neon border, never animates */
+        .skill-card-outer {
+            position: relative;
+            width: min(180px, 25vw); /* Reduced from 220px and 28vw */
+            aspect-ratio: 2/3;
+            background: transparent;
             border: 3px solid #00ffff;
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            overflow: visible; /* CRITICAL: Allow icon to extend outside */
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            transition: box-shadow 0.3s ease;
+            flex-shrink: 1; /* Allow slight shrinking if needed */
+            max-width: 30%; /* Ensure no card exceeds 30% of container width */
+            will-change: box-shadow; /* Optimize for animations */
+        }
+
+        .skill-card-outer:hover {
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 600px) {
+            .skill-card-outer {
+                width: min(160px, 27vw); /* Further reduce on mobile */
+                max-width: 29%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .skill-card-outer {
+                width: min(140px, 28vw); /* Even smaller on very small screens */
+                max-width: 30%;
+            }
+        }
+
+        /* Modern Premium Selection Effect - Soft pulsing glow in the gap */
+        .skill-card-outer.selected {
+            border-color: #ff00ff;
+            box-shadow: 0 0 35px rgba(255, 0, 255, 0.8);
+        }
+
+        /* Soft pulsing glow layer - stays in gap between Layer 1 and Layer 2 */
+        .skill-card-outer.selected::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(255, 0, 255, 0.15) 0%,
+                rgba(255, 0, 255, 0.08) 50%,
+                transparent 100%
+            );
+            border-radius: 6px;
+            z-index: 0;
+            animation: softPulse 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* Elegant animated border line tracing the edge */
+        .skill-card-outer.selected::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 8px;
+            padding: 3px;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 0, 255, 0.8) 30%,
+                rgba(0, 255, 255, 0.8) 70%,
+                transparent 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: 0;
+            animation: tracingLine 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes softPulse {
+            0%, 100% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes tracingLine {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 200% 0%;
+            }
+        }
+
+        /* Reduce glow intensity on small screens to prevent overflow issues */
+        @media (max-width: 600px) {
+            .skill-card-outer {
+                box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            }
+            
+            .skill-card-outer:hover {
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+            }
+            
+            .skill-card-outer.selected {
+                box-shadow: 0 0 25px rgba(255, 0, 255, 0.8);
+            }
+        }
+
+        /* Layer 2 - Inner Frame (div2) - Contains text, handles animations */
+        .skill-card-inner {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: rgba(10, 10, 40, 0.95);
+            border: 2px solid rgba(0, 255, 255, 0.6);
+            border-radius: 10px;
+            padding: clamp(40px, 8vw, 50px) clamp(10px, 2vw, 15px) clamp(40px, 8vw, 50px) clamp(10px, 2vw, 15px); /* Top: icon clearance | Bottom: tier bar clearance */
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center; /* Centers name + description between icon area and tier bar */
             text-align: center;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+            box-shadow: 
+                0 0 15px rgba(0, 255, 255, 0.3),
+                inset 0 0 15px rgba(0, 255, 255, 0.08);
+            z-index: 1;
+            overflow: hidden; /* Clips tier bar to the card's rounded bottom corners (icon is a sibling, not affected) */
+            will-change: transform; /* Optimize for animations */
         }
 
-        .skill-card:hover, .skill-card:active {
-            transform: translateY(-10px);
-            box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+        /* Hover State - Layer 2 scales up slightly with soft glow */
+        .skill-card-outer:hover .skill-card-inner {
+            transform: scale(1.02);
+            box-shadow: 
+                0 0 25px rgba(0, 255, 255, 0.5),
+                inset 0 0 20px rgba(0, 255, 255, 0.12);
         }
 
-        .skill-card.selected {
-            border-color: #00ff00;
-            background: linear-gradient(135deg, #2a4a2a 0%, #3a5a3a 100%);
-            transform: translateY(-10px) scale(1.05);
+        /* Click/Press State - Quick shrink then return */
+        .skill-card-outer:active .skill-card-inner {
+            animation: pressAnimation 0.3s ease;
+        }
+
+        @keyframes pressAnimation {
+            0% { transform: scale(1); }
+            40% { transform: scale(0.97); }
+            100% { transform: scale(1.02); }
+        }
+
+        /* Selected state - Change Layer 2 border and background with smooth transition */
+        .skill-card-outer.selected .skill-card-inner {
+            border-color: rgba(255, 0, 255, 0.8);
+            background: rgba(20, 5, 30, 0.95);
+            box-shadow: 
+                0 0 30px rgba(255, 0, 255, 0.5),
+                inset 0 0 20px rgba(255, 0, 255, 0.12);
+        }
+
+        /* Layer 3 - Icon Layer (div3) - Dedicated wrapper, overlaps Layer 1 */
+        .skill-icon-wrapper {
+            position: absolute;
+            top: clamp(-30px, -5vw, -35px); /* Responsive top position */
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(55px, 10vw, 70px); /* Responsive icon size */
+            height: clamp(55px, 10vw, 70px);
+            z-index: 10; /* Above all other layers */
+            pointer-events: none; /* Don't interfere with card clicks */
         }
 
         .skill-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
+            position: relative; /* Anchor for absolutely-positioned image overlay */
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 255, 255, 0.5));
+            border: 3px solid #00ffff;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(28px, 5vw, 38px); /* Responsive font size */
+            box-shadow: 
+                0 0 25px rgba(0, 255, 255, 0.6),
+                inset 0 0 15px rgba(0, 255, 255, 0.2);
+            transition: box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+            will-change: box-shadow; /* Optimize for animations */
         }
 
+        /* Hover state - Soft glow increase on icon */
+        .skill-card-outer:hover .skill-icon {
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.8),
+                inset 0 0 18px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Selected state - Change icon colors with smooth transition */
+        .skill-card-outer.selected .skill-icon {
+            border-color: #ff00ff;
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.3), rgba(255, 0, 255, 0.5));
+            box-shadow: 
+                0 0 30px rgba(255, 0, 255, 0.8),
+                inset 0 0 18px rgba(255, 0, 255, 0.3);
+        }
+
+        /* Reduce icon glow on mobile to prevent overflow */
+        @media (max-width: 600px) {
+            .skill-icon {
+                box-shadow: 
+                    0 0 15px rgba(0, 255, 255, 0.6),
+                    inset 0 0 10px rgba(0, 255, 255, 0.2);
+            }
+            
+            .skill-card-outer:hover .skill-icon {
+                box-shadow: 
+                    0 0 20px rgba(0, 255, 255, 0.8),
+                    inset 0 0 12px rgba(0, 255, 255, 0.3);
+            }
+            
+            .skill-card-outer.selected .skill-icon {
+                box-shadow: 
+                    0 0 20px rgba(255, 0, 255, 0.8),
+                    inset 0 0 12px rgba(255, 0, 255, 0.3);
+            }
+        }
+
+        /* Icon image support — absolutely overlays the fallback emoji inside .skill-icon */
+        .skill-icon img.skill-icon-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;       /* Preserves aspect ratio — no stretching or distortion */
+            background: transparent;   /* PNG transparency shows the neon container behind */
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* Skill Name */
         .skill-name {
-            font-size: 18px;
+            font-size: clamp(14px, 2.5vw, 17px); /* Responsive font size */
             color: #00ffff;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: clamp(8px, 1.5vw, 12px);
+            text-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+            letter-spacing: 0.5px;
+            line-height: 1.3;
         }
 
+        .skill-card-outer.selected .skill-name {
+            color: #ff00ff;
+            text-shadow: 0 0 12px rgba(255, 0, 255, 0.8);
+        }
+
+        /* Skill Description */
         .skill-description {
-            font-size: 13px;
-            color: #aaa;
-            line-height: 1.4;
+            font-size: clamp(10px, 1.8vw, 12px); /* Responsive font size */
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+            letter-spacing: 0.3px;
         }
 
-        #confirmSkill {
-            padding: 20px 50px;
-            background: linear-gradient(135deg, #00ff00, #00cc00);
-            border: 3px solid #00ff00;
-            border-radius: 50px;
-            color: #000;
-            font-size: 24px;
+        /* Tier indicator bar — trapezoidal banner anchored to the bottom of the inner card.
+           clip-path creates the sketch shape: narrower at the top, widening to full width at the base. */
+        .skill-tier-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: clamp(36px, 7vw, 46px);
+            clip-path: polygon(7% 0%, 93% 0%, 100% 100%, 0% 100%);
+            background: linear-gradient(180deg, rgba(0, 255, 255, 0.15) 0%, rgba(0, 255, 255, 0.45) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00ffff;
+            font-size: clamp(11px, 2.5vw, 14px);
             font-weight: bold;
-            cursor: pointer;
-            filter: drop-shadow(0 0 20px #00ff00);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: background 0.25s ease, color 0.25s ease, text-shadow 0.25s ease;
         }
 
-        #confirmSkill:disabled {
-            opacity: 0.5;
+        /* Tier bar — selected state shifts to magenta */
+        .skill-card-outer.selected .skill-tier-bar {
+            background: linear-gradient(180deg, rgba(255, 0, 255, 0.15) 0%, rgba(255, 0, 255, 0.45) 100%);
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+        }
+
+        /* Upgrade Button - Default (Disabled) State */
+        #confirmSkill {
+            min-width: 240px;
+            padding: 15px 40px;
+            background: rgba(25, 25, 40, 0.9);
+            border: 2px solid #444;
+            border-radius: 8px;
+            color: #555;
+            font-size: 20px;
+            font-weight: bold;
             cursor: not-allowed;
+            filter: none;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+            transition: all 0.25s ease;
+            letter-spacing: 2px;
+            will-change: transform, box-shadow;
+        }
+
+        /* Upgrade Button - Active State (when skill selected) */
+        #confirmSkill:not(:disabled) {
+            background: rgba(0, 15, 0, 0.85);
+            border-color: #00ff00;
+            color: #00ff00;
+            cursor: pointer;
+            filter: none;
+            box-shadow:
+                0 0 14px rgba(0, 255, 0, 0.4),
+                inset 0 0 20px rgba(0, 255, 0, 0.08);
+        }
+
+        #confirmSkill:not(:disabled):hover {
+            transform: scale(1);
+            filter: none;
+            box-shadow:
+                0 0 24px rgba(0, 255, 0, 0.6),
+                inset 0 0 24px rgba(0, 255, 0, 0.13);
+        }
+
+        #confirmSkill:not(:disabled):active {
+            transform: scale(0.96);
+            box-shadow:
+                0 0 8px rgba(0, 255, 0, 0.3),
+                inset 0 0 12px rgba(0, 255, 0, 0.06);
         }
 
         #gameOverScreen {
@@ -670,6 +1173,17 @@
             </div>
         </div>
         
+        <!-- Boss Health Bar (fixed position, appears when boss is active) -->
+        <div id="bossHealthBar">
+            <div class="boss-icon">💀</div>
+            <div class="boss-hp-container">
+                <div class="boss-hp-bar-wrapper">
+                    <div class="boss-hp-fill" id="bossHpFill"></div>
+                    <div class="boss-hp-text" id="bossHpText">1000 / 1000</div>
+                </div>
+            </div>
+        </div>
+        
         <div id="currency" class="hud-element">
             <div class="currency-display">⭐ <span id="scoreDisplay">0</span></div>
             <div class="currency-display">💰 <span id="coinDisplay">0</span></div>
@@ -739,77 +1253,88 @@
 
                 <div class="help-section">
                     <div class="help-section-title">🎯 Skills</div>
-                    <p class="help-text">🔫 Support Fighters - Summon fighters to assist</p>
-                    <p class="help-text">💥 Explosive Rounds - Bullets explode on impact</p>
-                    <p class="help-text">⚡ Chain Lightning - Periodic lightning chains</p>
-                    <p class="help-text">🚀 Homing Missiles - Heat-seeking missiles</p>
-                    <p class="help-text">🔄 Ricochet Bullets - Bullets bounce off targets</p>
-                    <p class="help-text">🎯 Piercing Bullets - Penetrate multiple enemies</p>
-                    <p class="help-text">🔴 Laser Fortress - Continuous laser support</p>
+                    <p class="help-text">🔫 Support Fighters – Deploy escort ships that fire alongside you</p>
+                    <p class="help-text">💥 Explosive Rounds – Shots explode on impact, dealing area damage</p>
+                    <p class="help-text">⚡ Chain Lightning – Releases lightning that jumps between enemies</p>
+                    <p class="help-text">🚀 Homing Missiles – Launch missiles that track and hunt targets</p>
+                    <p class="help-text">🔄 Ricochet Bullets – Bullets bounce to new targets after hitting</p>
+                    <p class="help-text">🎯 Piercing Bullets – Bullets pass through multiple enemies</p>
+                    <p class="help-text">🔴 Laser Fortress – Summons laser turrets for sustained fire support</p>
                 </div>
             </div>
             <button class="close-help-btn" onclick="game.closeHelp()">✅ GOT IT!</button>
         </div>
-    </div>
 
     <script>
         const SKILLS = {
             support_fighters: {
                 id: 'support_fighters',
                 name: 'Extra Firepower',
-                icon: '🔫',
-                description: 'Support Fighters',
+                icon: './img/support_fighters.png',
+                description: 'Deploy escort ships that fire alongside you',
                 maxTier: 2,
                 conflicts: []
             },
             explosive_bullets: {
                 id: 'explosive_bullets',
                 name: 'Explosive Rounds',
-                icon: '💥',
-                description: 'Bullets explode on impact',
+                icon: './img/explosive_bullets.png',
+                description: 'Shots explode on impact, dealing area damage',
                 maxTier: 2,
                 conflicts: []
             },
             chain_lightning: {
                 id: 'chain_lightning',
                 name: 'Chain Lightning',
-                icon: '⚡',
-                description: 'Periodic lightning chains',
+                icon: './img/chain_lightning.png',
+                description: 'Releases lightning that jumps between enemiess',
                 maxTier: 2,
                 conflicts: []
             },
             homing_missiles: {
                 id: 'homing_missiles',
                 name: 'Homing Missiles',
-                icon: '🚀',
-                description: 'Heat-seeking missiles',
+                icon: './img/homing_missiles.png',
+                description: 'Launch missiles that track and hunt targets',
                 maxTier: 2,
                 conflicts: []
             },
             ricochet_bullets: {
                 id: 'ricochet_bullets',
                 name: 'Ricochet Bullets',
-                icon: '🔁',
-                description: 'Bullets bounce off targets',
+                icon: './img/ricochet_bullets.png',
+                description: 'Bullets bounce to new targets after hitting',
                 maxTier: 2,
                 conflicts: ['piercing_bullets']
             },
             piercing_bullets: {
                 id: 'piercing_bullets',
                 name: 'Piercing Bullets',
-                icon: '🎯',
-                description: 'Penetrate multiple enemies',
+                icon: './img/piercing_bullets.png',
+                description: 'Bullets pass through multiple enemies',
                 maxTier: 2,
                 conflicts: ['ricochet_bullets']
             },
             laser_fortress: {
                 id: 'laser_fortress',
                 name: 'Laser Fortress',
-                icon: '🔴',
-                description: 'Continuous laser support',
+                icon: './img/laser_fortress.png',
+                description: 'Summons laser turrets for sustained fire support',
                 maxTier: 2,
                 conflicts: []
             }
+        };
+
+        // Fallback emojis rendered instantly when an external image is unavailable or fails to load.
+        // Each emoji matches the icon already shown in the help screen for visual consistency.
+        const DEFAULT_ICON_EMOJIS = {
+            support_fighters:  '🔫',
+            explosive_bullets: '💥',
+            chain_lightning:   '⚡',
+            homing_missiles:   '🚀',
+            ricochet_bullets:  '🔄',
+            piercing_bullets:  '🎯',
+            laser_fortress:    '🔴'
         };
 
         // BOSS DEFINITIONS
@@ -1057,6 +1582,14 @@
             heart: './img/heart.png'             // Heart/life icon
         };
 
+        // IMAGE SCALE CONFIGURATION (affects visual size only, NOT hitboxes)
+        // Set to percentage (e.g., 150 for 150%) or null to use default size
+        const IMAGE_SCALES = {
+            playerShip: 110,       // Main player ship scale
+            supportShip: 110,      // Support fighter ships scale
+            laserFortress: 140     // Laser fortress turret scale
+        };
+
         const game = {
             canvas: null,
             ctx: null,
@@ -1086,7 +1619,10 @@
                 damage: 20,
                 attackSpeed: 3,
                 skills: {},
-                lastShot: 0
+                lastShot: 0,
+                invincible: false,
+                invincibleUntil: 0,
+                damageFlashUntil: 0
             },
 
             bullets: [],
@@ -1135,14 +1671,11 @@
             },
 
             resizeCanvas() {
-                const container = document.getElementById('gameContainer');
-                const rect = container.getBoundingClientRect();
-                this.canvas.width = rect.width;
-                this.canvas.height = rect.height;
-                
-                // Store scale for calculations
-                this.scaleX = this.canvas.width / 720;
-                this.scaleY = this.canvas.height / 1280;
+                // Always use 720×1280 internal resolution; CSS handles visual scaling
+                this.canvas.width = 720;
+                this.canvas.height = 1280;
+                this.scaleX = 1;
+                this.scaleY = 1;
             },
 
             initStarLayers() {
@@ -1231,6 +1764,7 @@
 
             startGame() {
                 document.getElementById('mainMenu').classList.remove('active');
+                this.clearBossUI();
                 
                 this.state = {
                     running: true,
@@ -1239,7 +1773,8 @@
                     coins: 0,
                     selectedSkill: null,
                     gameTime: 0,
-                    lastBossSpawn: 0
+                    lastBossSpawn: 0,
+                    bossEncounterCount: 0 // Track number of boss encounters for skill frequency adjustment
                 };
 
                 this.player = {
@@ -1295,6 +1830,7 @@
             returnToMainMenu() {
                 this.state.paused = false;
                 this.state.running = false;
+                this.clearBossUI();
                 document.getElementById('pauseMenu').classList.remove('active');
                 document.getElementById('touchLayer').classList.remove('active');
                 document.getElementById('pauseBtn').classList.remove('active');
@@ -1380,22 +1916,82 @@
                     const currentTier = this.player.skills[skill.id] || 0;
                     const nextTier = currentTier + 1;
 
-                    const card = document.createElement('div');
-                    card.className = 'skill-card';
-                    card.innerHTML = `
-                        <div class="skill-icon">${skill.icon}</div>
+                    // Layer 1: Outer frame (div1)
+                    const cardOuter = document.createElement('div');
+                    cardOuter.className = 'skill-card-outer';
+                    
+                    // Layer 3: Icon wrapper (div3) - positioned at top, overlapping Layer 1
+                    const iconWrapper = document.createElement('div');
+                    iconWrapper.className = 'skill-icon-wrapper';
+                    
+                    const icon = document.createElement('div');
+                    icon.className = 'skill-icon';
+
+                    // 1. Render the fallback emoji immediately — guarantees the icon is never
+                    //    empty and prevents layout shifts regardless of image availability.
+                    const fallbackEmoji = DEFAULT_ICON_EMOJIS[skill.id] || '🎯';
+                    const fallback = document.createElement('span');
+                    fallback.className = 'icon-fallback';
+                    fallback.textContent = fallbackEmoji;
+                    icon.appendChild(fallback);
+
+                    // 2. Determine whether skill.icon is an image URL (relative path, absolute
+                    //    path, full URL, or data URI).  Plain emoji strings are skipped.
+                    const isImageUrl = skill.icon && (
+                        skill.icon.startsWith('data:image/') ||
+                        /\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(skill.icon)
+                    );
+
+                    // 3. If an image URL is present, attempt to load it asynchronously.
+                    //    Handlers are attached before src is set to avoid a race when the
+                    //    image is served from cache and loads synchronously.
+                    if (isImageUrl) {
+                        const img = document.createElement('img');
+                        img.className = 'skill-icon-img';
+                        img.alt = skill.name;
+
+                        img.onload = function () {
+                            // Image loaded successfully — remove the fallback emoji so it
+                            // does not bleed through transparent regions of the PNG.
+                            const fb = icon.querySelector('.icon-fallback');
+                            if (fb) fb.remove();
+                        };
+
+                        img.onerror = function () {
+                            // Image failed (broken URL, CORS, unsupported format, etc.) —
+                            // remove the <img> entirely so no broken-image placeholder appears.
+                            // The fallback emoji is already visible and stays in place.
+                            img.remove();
+                        };
+
+                        img.src = skill.icon; // src set last — triggers the load after handlers are ready
+                        icon.appendChild(img);
+                    }
+
+                    iconWrapper.appendChild(icon);
+                    
+                    // Layer 2: Inner frame (div2) - contains text content
+                    const cardInner = document.createElement('div');
+                    cardInner.className = 'skill-card-inner';
+                    cardInner.innerHTML = `
                         <div class="skill-name">${skill.name}</div>
-                        <div class="skill-description">${skill.description}<br>Tier ${nextTier}/${skill.maxTier}</div>
+                        <div class="skill-description">${skill.description}</div>
+                        <div class="skill-tier-bar">Tier ${nextTier} / ${skill.maxTier}</div>
                     `;
-                    card.onclick = () => this.selectSkill(skill, nextTier, card);
-                    container.appendChild(card);
+                    
+                    // Assemble the three layers
+                    cardOuter.appendChild(iconWrapper);
+                    cardOuter.appendChild(cardInner);
+                    
+                    cardOuter.onclick = () => this.selectSkill(skill, nextTier, cardOuter);
+                    container.appendChild(cardOuter);
                 });
 
                 document.getElementById('skillScreen').classList.add('active');
             },
 
             selectSkill(skill, tier, cardElement) {
-                document.querySelectorAll('.skill-card').forEach(c => c.classList.remove('selected'));
+                document.querySelectorAll('.skill-card-outer').forEach(c => c.classList.remove('selected'));
                 cardElement.classList.add('selected');
                 this.state.selectedSkill = { id: skill.id, tier: tier };
                 document.getElementById('confirmSkill').disabled = false;
@@ -1478,15 +2074,21 @@
                 if (bossTimer) {
                     bossTimer.style.display = 'none';
                 }
+                
+                // Hide boss health bar
+                const bossHealthBar = document.getElementById('bossHealthBar');
+                if (bossHealthBar) {
+                    bossHealthBar.classList.remove('active');
+                }
             },
 
             spawnBoss() {
                 const bossTypes = Object.values(BOSSES);
                 const selectedBoss = bossTypes[Math.floor(Math.random() * bossTypes.length)];
                 
-                // Boss HP scales moderately with time (every 180 seconds = 1 boss cycle adds 20% HP)
-                const bossCount = Math.floor(this.state.gameTime / 180);
-                const hpScaling = 1 + (bossCount * 0.2); // 20% increase per boss cycle
+                // Boss HP scales smoothly with time (every 60 seconds adds 15% HP)
+                const timeMinutes = this.state.gameTime / 60;
+                const hpScaling = 1 + (timeMinutes * 0.15);
                 
                 this.boss = {
                     ...selectedBoss,
@@ -1499,6 +2101,9 @@
                     spawnTime: Date.now()
                 };
 
+                // Increment boss encounter counter
+                this.state.bossEncounterCount++;
+
                 // Show boss warning
                 const warning = document.getElementById('bossWarning');
                 warning.classList.add('active');
@@ -1506,7 +2111,30 @@
                     warning.classList.remove('active');
                 }, 3000);
 
+                // Show and initialize boss health bar
+                const bossHealthBar = document.getElementById('bossHealthBar');
+                const bossHpFill = document.getElementById('bossHpFill');
+                const bossHpText = document.getElementById('bossHpText');
+                if (bossHealthBar) {
+                    bossHealthBar.classList.add('active');
+                    bossHpFill.style.width = '100%';
+                    bossHpText.textContent = `${this.boss.currentHp} / ${this.boss.maxHp}`;
+                }
+
                 this.state.lastBossSpawn = this.state.gameTime;
+            },
+
+            updateBossHealthBar() {
+                if (!this.boss) return;
+                
+                const bossHpFill = document.getElementById('bossHpFill');
+                const bossHpText = document.getElementById('bossHpText');
+                
+                if (bossHpFill && bossHpText) {
+                    const hpPercent = Math.max(0, (this.boss.currentHp / this.boss.maxHp) * 100);
+                    bossHpFill.style.width = hpPercent + '%';
+                    bossHpText.textContent = `${Math.max(0, Math.floor(this.boss.currentHp))} / ${this.boss.maxHp}`;
+                }
             },
 
             gameLoop() {
@@ -1521,6 +2149,34 @@
                 requestAnimationFrame(() => this.gameLoop());
             },
 
+            takeDamage(amount) {
+                const now = Date.now();
+                
+                // Check if player is invincible
+                if (this.player.invincible || now < this.player.invincibleUntil) {
+                    return; // No damage during invincibility
+                }
+                
+                // Apply damage
+                this.player.hearts -= amount;
+                this.updateHUD();
+                
+                // Activate invincibility for 1.8 seconds (increased from 1 second)
+                this.player.invincible = true;
+                this.player.invincibleUntil = now + 1800;
+                this.player.damageFlashUntil = now + 1800;
+                
+                // Deactivate invincibility after 1.8 seconds
+                setTimeout(() => {
+                    this.player.invincible = false;
+                }, 1800);
+                
+                // Check game over
+                if (this.player.hearts <= 0) {
+                    this.gameOver();
+                }
+            },
+
             update() {
                 // Keyboard movement
                 if (this.keys['ArrowLeft'] || this.keys['a']) this.player.x -= this.player.speed;
@@ -1531,16 +2187,30 @@
                 this.player.x = Math.max(30, Math.min(690, this.player.x));
                 this.player.y = Math.max(30, Math.min(1250, this.player.y));
 
-                // Boss spawning (every 3 minutes = 180 seconds)
-                if (!this.boss && this.state.gameTime - this.state.lastBossSpawn >= 180) {
-                    this.spawnBoss();
+                // Boss spawning (first at 2 minutes, then every 3 minutes)
+                const firstBossTime = 120; // 2 minutes
+                const subsequentBossInterval = 180; // 3 minutes
+                
+                if (!this.boss) {
+                    const timeSinceLastBoss = this.state.gameTime - this.state.lastBossSpawn;
+                    const shouldSpawn = this.state.lastBossSpawn === 0 
+                        ? this.state.gameTime >= firstBossTime 
+                        : timeSinceLastBoss >= subsequentBossInterval;
+                    
+                    if (shouldSpawn) {
+                        this.spawnBoss();
+                    }
                 }
 
                 // Update boss countdown timer
                 const bossTimerEl = document.getElementById('bossTimer');
                 const bossTimerText = document.getElementById('bossTimerText');
                 if (!this.boss) {
-                    const timeUntilBoss = 180 - (this.state.gameTime - this.state.lastBossSpawn);
+                    const isFirstBoss = this.state.lastBossSpawn === 0;
+                    const targetTime = isFirstBoss ? firstBossTime : subsequentBossInterval;
+                    const currentTime = isFirstBoss ? this.state.gameTime : (this.state.gameTime - this.state.lastBossSpawn);
+                    const timeUntilBoss = targetTime - currentTime;
+                    
                     if (timeUntilBoss > 0) {
                         bossTimerEl.style.display = 'block';
                         const minutes = Math.floor(timeUntilBoss / 60);
@@ -1604,29 +2274,31 @@
                 // Laser Fortress
                 const laserTier = this.player.skills.laser_fortress || 0;
                 if (laserTier > 0) {
-                    const cooldown = laserTier === 1 ? 15000 : 10000;
-                    const duration = 10000;
+                    const cooldown = 15000; // 15s cooldown for both levels, starts AFTER laser ends
+                    const duration = laserTier === 1 ? 10000 : 15000; // L1: 10s fire, L2: 15s fire
 
-                    // Check if it's time to activate all turrets (synchronized)
-                    const shouldActivate = !this.laserShips.some(ship => ship.active) && 
-                                          now - this.lastLaserActivation > cooldown;
-                    
-                    if (shouldActivate) {
-                        // Activate ALL turrets at once (synchronized for level 2)
-                        this.laserShips.forEach(ship => {
-                            ship.active = true;
-                            ship.activationTime = now;
-                            ship.lastDamageTick = 0; // Reset damage tick timer
-                        });
-                        this.lastLaserActivation = now;
-                    }
-
-                    // Update all turrets
+                    // Deactivate expired turrets and record deactivation time
                     this.laserShips.forEach(ship => {
                         if (ship.active && now - ship.activationTime > duration) {
                             ship.active = false;
+                            this.lastLaserActivation = now; // Cooldown starts after laser ends
                         }
+                    });
 
+                    // Activate all turrets if none active and cooldown has passed since last deactivation
+                    const shouldActivate = !this.laserShips.some(ship => ship.active) &&
+                                          (this.lastLaserActivation === 0 || now - this.lastLaserActivation > cooldown);
+
+                    if (shouldActivate) {
+                        this.laserShips.forEach(ship => {
+                            ship.active = true;
+                            ship.activationTime = now;
+                            ship.lastDamageTick = 0;
+                        });
+                    }
+
+                    // Apply damage while active
+                    this.laserShips.forEach(ship => {
                         if (ship.active) {
                             this.applyLaserDamage(ship, laserTier);
                         }
@@ -1638,9 +2310,14 @@
                     const bossTime = now - this.boss.spawnTime;
                     this.boss.movement(this.boss, this, bossTime);
 
-                    // Boss skills
+                    // Boss skills with frequency adjustment
+                    // First boss encounter: reduce skill frequency (2x cooldown)
+                    // Subsequent bosses: normal frequency
+                    const cooldownMultiplier = this.state.bossEncounterCount === 1 ? 2.0 : 1.0;
+                    
                     this.boss.skills.forEach((skill, idx) => {
-                        if (now - this.boss.skillCooldowns[idx] > skill.cooldown) {
+                        const adjustedCooldown = skill.cooldown * cooldownMultiplier;
+                        if (now - this.boss.skillCooldowns[idx] > adjustedCooldown) {
                             skill.execute(this.boss, this);
                             this.boss.skillCooldowns[idx] = now;
                         }
@@ -1683,19 +2360,16 @@
                         proj.y += proj.vy;
                     }
 
-                    // Check collision with player
+                    // Check collision with player (skip entirely while invincible)
+                    const playerInvincible = this.player.invincible || now < this.player.invincibleUntil;
                     if (proj.ring) {
                         const dist = Math.sqrt((this.player.x - proj.x) ** 2 + (this.player.y - proj.y) ** 2);
-                        if (Math.abs(dist - proj.radius) < 20) {
-                            this.player.hearts -= proj.damage;
-                            this.updateHUD();
-                            if (this.player.hearts <= 0) this.gameOver();
+                        if (Math.abs(dist - proj.radius) < 20 && !playerInvincible) {
+                            this.takeDamage(proj.damage);
                         }
-                    } else if (this.checkCollision(this.player, proj)) {
-                        this.player.hearts -= proj.damage;
-                        this.updateHUD();
+                    } else if (this.checkCollision(this.player, proj) && !playerInvincible) {
+                        this.takeDamage(proj.damage);
                         this.bossProjectiles.splice(idx, 1);
-                        if (this.player.hearts <= 0) this.gameOver();
                     }
 
                     if (proj.x < -50 || proj.x > 770 || proj.y < -50 || proj.y > 1330) {
@@ -1772,13 +2446,25 @@
                     
                     a.rotation += a.rotSpeed;
 
-                    if (a.x <= a.size/2 || a.x >= 720 - a.size/2) a.vx *= -1;
+                    // Wall collision with position clamping for symmetrical, accurate bouncing
+                    if (a.x - a.size / 2 < 0) {
+                        a.x = a.size / 2;
+                        a.vx = Math.abs(a.vx);
+                        if (a.knockbackVx !== undefined) a.knockbackVx = Math.abs(a.knockbackVx);
+                    }
+                    if (a.x + a.size / 2 > 720) {
+                        a.x = 720 - a.size / 2;
+                        a.vx = -Math.abs(a.vx);
+                        if (a.knockbackVx !== undefined) a.knockbackVx = -Math.abs(a.knockbackVx);
+                    }
 
+                    // Player collision: skip entirely while invincible
                     if (this.checkCollision(this.player, a)) {
-                        this.player.hearts--;
-                        this.updateHUD();
-                        this.asteroids.splice(i, 1);
-                        if (this.player.hearts <= 0) this.gameOver();
+                        const isInvincible = this.player.invincible || Date.now() < this.player.invincibleUntil;
+                        if (!isInvincible) {
+                            this.takeDamage(1);
+                            this.asteroids.splice(i, 1);
+                        }
                     }
 
                     if (a.y > 1300) this.asteroids.splice(i, 1);
@@ -1786,47 +2472,27 @@
 
                 // Bullet-asteroid/boss collisions
                 this.bullets.forEach((b, bi) => {
-                    let hitCount = 0;
-                    // Only apply piercing to main ship bullets, not support fighter bullets
-                    const pierceTier = !b.fromFighter ? (this.player.skills.piercing_bullets || 0) : 0;
-                    const maxPierce = pierceTier === 1 ? 2 : (pierceTier === 2 ? 4 : 1);
-                    
-                    // Check boss collision
-                    if (this.boss && this.checkCollision(b, this.boss) && hitCount < maxPierce) {
-                        const dmg = b.damage || this.player.damage;
-                        const finalDmg = pierceTier === 2 && hitCount === 0 ? dmg * 2 : dmg;
-                        
-                        this.boss.currentHp -= finalDmg;
-                        hitCount++;
-                        
-                        // Only apply explosive to main ship bullets
-                        const explosiveTier = !b.fromFighter ? (this.player.skills.explosive_bullets || 0) : 0;
-                        if (explosiveTier > 0) {
-                            this.createExplosion(b.x, b.y, explosiveTier);
-                        }
-                        
-                        if (this.boss.currentHp <= 0) {
-                            this.gainXP(500);
-                            this.state.score += 1000;
-                            this.state.coins += 50;
-                            this.clearBossUI();
-                            this.boss = null;
-                            this.updateHUD();
-                        }
-                        
-                        if (pierceTier === 0) {
-                            this.bullets.splice(bi, 1);
-                        }
+                    // Initialize hit tracking if not exists
+                    if (!b.hitEntities) {
+                        b.hitEntities = new Set();
                     }
                     
-                    // Check asteroid collisions
-                    this.asteroids.forEach((a, ai) => {
-                        if (this.checkCollision(b, a) && hitCount < maxPierce) {
+                    // Only apply piercing to main ship bullets, not support fighter bullets
+                    const pierceTier = !b.fromFighter ? (this.player.skills.piercing_bullets || 0) : 0;
+                    const maxPierce = pierceTier === 1 ? 2 : (pierceTier === 2 ? 5 : 1);
+                    
+                    let shouldRemoveBullet = false;
+                    
+                    // Check boss collision
+                    if (this.boss && this.checkCollision(b, this.boss)) {
+                        // Only damage if we haven't hit this boss yet
+                        if (!b.hitEntities.has(this.boss)) {
                             const dmg = b.damage || this.player.damage;
-                            const finalDmg = pierceTier === 2 && hitCount === 0 ? dmg * 2 : dmg;
+                            const finalDmg = pierceTier === 2 && b.hitEntities.size === 0 ? dmg * 2 : dmg;
                             
-                            a.hp -= finalDmg;
-                            hitCount++;
+                            this.boss.currentHp -= finalDmg;
+                            this.updateBossHealthBar();
+                            b.hitEntities.add(this.boss);
                             
                             // Only apply explosive to main ship bullets
                             const explosiveTier = !b.fromFighter ? (this.player.skills.explosive_bullets || 0) : 0;
@@ -1834,53 +2500,93 @@
                                 this.createExplosion(b.x, b.y, explosiveTier);
                             }
                             
-                            // Only apply ricochet to main ship bullets
-                            const ricochetTier = !b.fromFighter ? (this.player.skills.ricochet_bullets || 0) : 0;
-                            if (ricochetTier > 0 && !b.bounced) {
-                                if (ricochetTier === 1) {
-                                    b.bounced = true;
-                                    const angle = Math.random() * Math.PI * 2;
-                                    b.vx = Math.cos(angle) * 10;
-                                    b.vy = Math.sin(angle) * 10;
-                                    b.ricochet = true;
-                                } else {
-                                    for (let i = 0; i < 2; i++) {
-                                        const angle = Math.random() * Math.PI * 2;
-                                        this.bullets.push({
-                                            x: b.x,
-                                            y: b.y,
-                                            width: 6,
-                                            height: 16,
-                                            damage: dmg,
-                                            vx: Math.cos(angle) * 8,
-                                            vy: Math.sin(angle) * 8,
-                                            bounced: true,
-                                            ricochet: true
-                                        });
-                                    }
-                                }
-                            }
-                            
-                            if (a.hp <= 0) {
-                                const rewards = this.getRewardsForAsteroid(a.tier);
-                                this.destroyAsteroid(a, ai);
-                                this.gainXP(10);
-                                this.state.score += rewards.stars;
-                                this.state.coins += rewards.coins;
+                            if (this.boss.currentHp <= 0) {
+                                this.gainXP(500);
+                                this.state.score += 1000;
+                                this.state.coins += 50;
+                                this.clearBossUI();
+                                this.boss = null;
                                 this.updateHUD();
                             }
                             
-                            if (pierceTier === 0 && ricochetTier === 0) {
-                                this.bullets.splice(bi, 1);
+                            // Remove bullet if no piercing or hit max targets
+                            if (pierceTier === 0 || b.hitEntities.size >= maxPierce) {
+                                shouldRemoveBullet = true;
                             }
                         }
-                    });
+                    }
+                    
+                    // Check asteroid collisions
+                    if (!shouldRemoveBullet) {
+                        this.asteroids.forEach((a, ai) => {
+                            if (this.checkCollision(b, a) && !b.hitEntities.has(a)) {
+                                const dmg = b.damage || this.player.damage;
+                                const finalDmg = pierceTier === 2 && b.hitEntities.size === 0 ? dmg * 2 : dmg;
+                                
+                                a.hp -= finalDmg;
+                                b.hitEntities.add(a);
+                                
+                                // Only apply explosive to main ship bullets
+                                const explosiveTier = !b.fromFighter ? (this.player.skills.explosive_bullets || 0) : 0;
+                                if (explosiveTier > 0) {
+                                    this.createExplosion(b.x, b.y, explosiveTier);
+                                }
+                                
+                                // Only apply ricochet to main ship bullets
+                                const ricochetTier = !b.fromFighter ? (this.player.skills.ricochet_bullets || 0) : 0;
+                                if (ricochetTier > 0 && !b.bounced) {
+                                    if (ricochetTier === 1) {
+                                        b.bounced = true;
+                                        const angle = Math.random() * Math.PI * 2;
+                                        b.vx = Math.cos(angle) * 10;
+                                        b.vy = Math.sin(angle) * 10;
+                                        b.ricochet = true;
+                                    } else {
+                                        for (let i = 0; i < 2; i++) {
+                                            const angle = Math.random() * Math.PI * 2;
+                                            this.bullets.push({
+                                                x: b.x,
+                                                y: b.y,
+                                                width: 6,
+                                                height: 16,
+                                                damage: dmg,
+                                                vx: Math.cos(angle) * 8,
+                                                vy: Math.sin(angle) * 8,
+                                                bounced: true,
+                                                ricochet: true
+                                            });
+                                        }
+                                    }
+                                }
+                                
+                                if (a.hp <= 0) {
+                                    const rewards = this.getRewardsForAsteroid(a.tier);
+                                    this.destroyAsteroid(a, ai);
+                                    this.gainXP(10);
+                                    this.state.score += rewards.stars;
+                                    this.state.coins += rewards.coins;
+                                    this.updateHUD();
+                                }
+                                
+                                // Remove bullet if no piercing/ricochet or hit max targets
+                                if ((pierceTier === 0 && ricochetTier === 0) || b.hitEntities.size >= maxPierce) {
+                                    shouldRemoveBullet = true;
+                                }
+                            }
+                        });
+                    }
+                    
+                    // Remove bullet if marked for removal
+                    if (shouldRemoveBullet) {
+                        this.bullets.splice(bi, 1);
+                    }
                 });
 
                 // Missile collisions
                 this.missiles.forEach((m, mi) => {
                     if (this.boss && this.checkCollision(m, this.boss)) {
                         this.boss.currentHp -= this.player.damage * 1.5;
+                        this.updateBossHealthBar();
                         
                         if (this.boss.currentHp <= 0) {
                             this.gainXP(500);
@@ -1954,6 +2660,7 @@
                     
                     if (target === this.boss) {
                         this.boss.currentHp -= damage;
+                        this.updateBossHealthBar();
                         if (this.boss.currentHp <= 0) {
                             this.gainXP(500);
                             this.state.score += 1000;
@@ -2005,7 +2712,7 @@
             },
 
             applyLaserDamage(ship, tier) {
-                const damage = tier === 1 ? 10 : 15;
+                const damage = tier === 1 ? 14 : 20;
                 const laserY = ship.y;
                 const laserThickness = 15;
                 
@@ -2054,6 +2761,7 @@
                             // This is the first target in the beam path - damage it and stop
                             if (target === this.boss) {
                                 this.boss.currentHp -= damage;
+                                this.updateBossHealthBar();
                                 if (this.boss.currentHp <= 0) {
                                     this.gainXP(500);
                                     this.state.score += 1000;
@@ -2163,6 +2871,7 @@
                     if (dist < radius) {
                         if (target === this.boss) {
                             this.boss.currentHp -= damage;
+                            this.updateBossHealthBar();
                             if (this.boss.currentHp <= 0) {
                                 this.gainXP(500);
                                 this.state.score += 1000;
@@ -2246,9 +2955,9 @@
                     'small': 10
                 };
                 
-                // HP scales up gradually with game time (every 60 seconds increases HP by 10%)
-                const timeBonus = Math.floor(this.state.gameTime / 60) * 0.1;
-                const scalingFactor = 1 + timeBonus;
+                // HP scales gradually with game time (every 60 seconds increases HP by 8%)
+                const timeMinutes = this.state.gameTime / 60;
+                const scalingFactor = 1 + (timeMinutes * 0.08);
                 
                 return Math.floor(baseHPs[tier] * scalingFactor);
             },
@@ -2336,6 +3045,18 @@
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 this.renderParallaxStars();
 
+                // Render damage flash (red screen edge border)
+                const now = Date.now();
+                if (now < this.player.damageFlashUntil) {
+                    const flashAlpha = (this.player.damageFlashUntil - now) / 1000; // Fade out over 1 second
+                    this.ctx.strokeStyle = `rgba(255, 0, 0, ${flashAlpha * 0.8})`;
+                    this.ctx.lineWidth = 20;
+                    this.ctx.shadowBlur = 30;
+                    this.ctx.shadowColor = `rgba(255, 0, 0, ${flashAlpha})`;
+                    this.ctx.strokeRect(10, 10, this.canvas.width - 20, this.canvas.height - 20);
+                    this.ctx.shadowBlur = 0;
+                }
+
                 // Render horizontal laser beams (stops at first target)
                 this.laserShips.forEach(ship => {
                     if (ship.active) {
@@ -2417,24 +3138,30 @@
                 });
 
                 // Render laser turrets with image override support
+                const laserScale = IMAGE_SCALES.laserFortress ? IMAGE_SCALES.laserFortress / 100 : 1;
                 this.laserShips.forEach(ship => {
                     const tier = this.player.skills.laser_fortress || 0;
                     const imageKey = tier === 1 ? 'laserFortressL1' : 'laserFortressL2';
                     const img = this.loadedImages[imageKey];
                     
                     if (img) {
-                        // Use custom image
+                        // Use custom image with optional scale (visual only, hitbox unchanged)
                         this.ctx.save();
                         this.ctx.translate(ship.x, ship.y);
-                        this.ctx.drawImage(img, -20, -20, 40, 40);
+                        const scaledSize = 40 * laserScale;
+                        this.ctx.drawImage(img, -scaledSize/2, -scaledSize/2, scaledSize, scaledSize);
                         this.ctx.restore();
                     } else {
-                        // Default visual
+                        // Default visual with optional scale
+                        this.ctx.save();
+                        this.ctx.translate(ship.x, ship.y);
+                        this.ctx.scale(laserScale, laserScale);
                         this.ctx.fillStyle = ship.active ? '#ff0000' : '#666';
                         this.ctx.shadowBlur = ship.active ? 15 : 0;
                         this.ctx.shadowColor = '#ff0000';
-                        this.ctx.fillRect(ship.x - 20, ship.y - 20, 40, 40);
+                        this.ctx.fillRect(-20, -20, 40, 40);
                         this.ctx.shadowBlur = 0;
+                        this.ctx.restore();
                     }
                 });
 
@@ -2557,25 +3284,6 @@
                     
                     this.ctx.shadowBlur = 0;
                     this.ctx.restore();
-                    
-                    // HP bar
-                    const barWidth = 150;
-                    const barHeight = 10;
-                    const hpPercent = this.boss.currentHp / this.boss.maxHp;
-                    
-                    this.ctx.fillStyle = '#333';
-                    this.ctx.fillRect(this.boss.x - barWidth/2, this.boss.y - this.boss.size - 20, barWidth, barHeight);
-                    this.ctx.fillStyle = '#ff0000';
-                    this.ctx.fillRect(this.boss.x - barWidth/2, this.boss.y - this.boss.size - 20, barWidth * hpPercent, barHeight);
-                    this.ctx.strokeStyle = '#fff';
-                    this.ctx.lineWidth = 2;
-                    this.ctx.strokeRect(this.boss.x - barWidth/2, this.boss.y - this.boss.size - 20, barWidth, barHeight);
-                    
-                    // Boss name
-                    this.ctx.fillStyle = '#fff';
-                    this.ctx.font = 'bold 16px Arial';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(this.boss.name, this.boss.x, this.boss.y - this.boss.size - 35);
                 }
 
                 // Render asteroids
@@ -2607,55 +3315,71 @@
 
                 // Render player with image override support
                 const playerImg = this.loadedImages['playerShip'];
-                this.ctx.save();
-                this.ctx.translate(this.player.x, this.player.y);
+                const playerScale = IMAGE_SCALES.playerShip ? IMAGE_SCALES.playerShip / 100 : 1;
+                const isInvincible = now < this.player.invincibleUntil;
+                const shouldBlink = isInvincible && Math.floor(now / 100) % 2 === 0; // Blink every 100ms
                 
-                if (playerImg) {
-                    // Use custom image
-                    this.ctx.drawImage(playerImg, -30, -45, 60, 90);
-                } else {
-                    // Default visual
-                    this.ctx.fillStyle = '#fff';
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.shadowColor = '#00ffff';
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(0, -30);
-                    this.ctx.lineTo(-20, 30);
-                    this.ctx.lineTo(0, 20);
-                    this.ctx.lineTo(20, 30);
-                    this.ctx.closePath();
-                    this.ctx.fill();
-                    this.ctx.shadowBlur = 0;
-                }
-                this.ctx.restore();
-
-                // Render support fighters with image override support
-                const supportImg = this.loadedImages['supportShip'];
-                this.supportFighters.forEach(fighter => {
-                    const x = this.player.x + fighter.offsetX;
-                    const y = this.player.y + fighter.offsetY;
+                if (!shouldBlink) { // Only render if not blinking off
                     this.ctx.save();
-                    this.ctx.translate(x, y);
+                    this.ctx.translate(this.player.x, this.player.y);
                     
-                    if (supportImg) {
-                        // Use custom image
-                        this.ctx.drawImage(supportImg, -15, -22.5, 30, 45);
+                    if (playerImg) {
+                        // Use custom image with optional scale (visual only, hitbox unchanged)
+                        const scaledWidth = 60 * playerScale;
+                        const scaledHeight = 90 * playerScale;
+                        this.ctx.drawImage(playerImg, -scaledWidth/2, -scaledHeight/2, scaledWidth, scaledHeight);
                     } else {
-                        // Default visual
-                        this.ctx.fillStyle = '#00ffff';
-                        this.ctx.shadowBlur = 10;
+                        // Default visual with optional scale
+                        this.ctx.scale(playerScale, playerScale);
+                        this.ctx.fillStyle = '#fff';
+                        this.ctx.shadowBlur = 15;
                         this.ctx.shadowColor = '#00ffff';
                         this.ctx.beginPath();
-                        this.ctx.moveTo(0, -15);
-                        this.ctx.lineTo(-10, 15);
-                        this.ctx.lineTo(0, 10);
-                        this.ctx.lineTo(10, 15);
+                        this.ctx.moveTo(0, -30);
+                        this.ctx.lineTo(-20, 30);
+                        this.ctx.lineTo(0, 20);
+                        this.ctx.lineTo(20, 30);
                         this.ctx.closePath();
                         this.ctx.fill();
                         this.ctx.shadowBlur = 0;
                     }
                     this.ctx.restore();
-                });
+                }
+
+                // Render support fighters with image override support
+                const supportImg = this.loadedImages['supportShip'];
+                const supportScale = IMAGE_SCALES.supportShip ? IMAGE_SCALES.supportShip / 100 : 1;
+                
+                if (!shouldBlink) { // Only render if not blinking off (same as player)
+                    this.supportFighters.forEach(fighter => {
+                        const x = this.player.x + fighter.offsetX;
+                        const y = this.player.y + fighter.offsetY;
+                        this.ctx.save();
+                        this.ctx.translate(x, y);
+                        
+                        if (supportImg) {
+                            // Use custom image with optional scale (visual only, hitbox unchanged)
+                            const scaledWidth = 30 * supportScale;
+                            const scaledHeight = 45 * supportScale;
+                            this.ctx.drawImage(supportImg, -scaledWidth/2, -scaledHeight/2, scaledWidth, scaledHeight);
+                        } else {
+                            // Default visual with optional scale
+                            this.ctx.scale(supportScale, supportScale);
+                            this.ctx.fillStyle = '#00ffff';
+                            this.ctx.shadowBlur = 10;
+                            this.ctx.shadowColor = '#00ffff';
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(0, -15);
+                            this.ctx.lineTo(-10, 15);
+                            this.ctx.lineTo(0, 10);
+                            this.ctx.lineTo(10, 15);
+                            this.ctx.closePath();
+                            this.ctx.fill();
+                            this.ctx.shadowBlur = 0;
+                        }
+                        this.ctx.restore();
+                    });
+                }
 
                 // Render bullets
                 this.bullets.forEach(b => {
@@ -2785,6 +3509,7 @@
 
             gameOver() {
                 this.state.running = false;
+                this.clearBossUI();
                 document.getElementById('touchLayer').classList.remove('active');
                 document.getElementById('pauseBtn').classList.remove('active');
                 document.getElementById('finalScore').textContent = this.state.score;
@@ -2798,6 +3523,7 @@
 
             backToMenu() {
                 document.getElementById('gameOverScreen').classList.remove('active');
+                this.clearBossUI();
                 this.showMainMenu();
             }
         };
