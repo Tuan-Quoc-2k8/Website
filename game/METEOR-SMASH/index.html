@@ -50,6 +50,11 @@
             z-index: 1;
         }
 
+        /* Ensure laser fortress visuals at screen edges are fully visible */
+        canvas {
+            image-rendering: auto;
+        }
+
         #touchLayer {
             position: absolute;
             top: 0;
@@ -333,6 +338,26 @@
         @keyframes waveEffect {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: #00ffff;
+            font-size: 18px;
+            opacity: 0.8;
+            z-index: 1;
+            position: relative;
+        }
+
+        .loading-text::after {
+            content: '';
+            animation: loadingDots 1.5s infinite;
+        }
+
+        @keyframes loadingDots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
         }
 
         #mainMenu {
@@ -652,10 +677,10 @@
         
         <div id="bossWarning">⚠️ BOSS APPROACHING ⚠️</div>
         
-        <div id="bossTimer" class="hud-element" style="top: 100px; left: 50%; transform: translateX(-50%); display: none;">
-            <div style="background: rgba(0,0,0,0.8); border: 2px solid #ff0000; border-radius: 10px; padding: 10px 20px; text-align: center;">
+        <div id="bossTimer" class="hud-element" style="top: 80px; left: 20px; display: none;">
+            <div style="background: rgba(0,0,0,0.8); border: 2px solid #ff0000; border-radius: 10px; padding: 10px 15px;">
                 <div style="color: #ff0000; font-size: 14px; margin-bottom: 5px;">👹 NEXT BOSS</div>
-                <div id="bossTimerText" style="color: #fff; font-size: 20px; font-weight: bold;">3:00</div>
+                <div id="bossTimerText" style="color: #fff; font-size: 20px; font-weight: bold; text-align: center;">3:00</div>
             </div>
         </div>
         
@@ -666,6 +691,7 @@
             <div class="loading-bar">
                 <div class="loading-fill"></div>
             </div>
+            <div class="loading-text">Loading</div>
         </div>
         
         <div id="mainMenu">
@@ -1025,9 +1051,10 @@
             supportShip: './img/support-fighter.png',      // Support fighter ships
             laserFortressL1: './img/laser-fortress-lv1.png',  // Laser fortress level 1 turret
             laserFortressL2: './img/laser-fortress-lv2.png',  // Laser fortress level 2 turrets
-            boss1: null,            // First boss type
-            boss2: null,            // Second boss type
-            boss3: null             // Third boss type
+            boss1: './img/boss-1.png',            // First boss type
+            boss2: './img/boss-2.png',            // Second boss type
+            boss3: './img/boss-3.png',            // Third boss type
+            heart: './img/heart.png'             // Heart/life icon
         };
 
         const game = {
@@ -1285,9 +1312,21 @@
             updateHUD() {
                 const heartsContainer = document.getElementById('hearts');
                 heartsContainer.innerHTML = '';
+                const heartImg = this.loadedImages['heart'];
+                
                 for (let i = 0; i < this.player.hearts; i++) {
                     const heart = document.createElement('div');
                     heart.className = 'heart';
+                    
+                    // Use custom heart image if available
+                    if (heartImg) {
+                        heart.style.background = 'none';
+                        heart.style.clipPath = 'none';
+                        heart.style.backgroundImage = `url(${heartImg.src})`;
+                        heart.style.backgroundSize = 'cover';
+                        heart.style.backgroundPosition = 'center';
+                    }
+                    
                     heartsContainer.appendChild(heart);
                 }
 
@@ -1397,27 +1436,47 @@
             initLaserShips(tier) {
                 this.laserShips = [];
                 if (tier === 1) {
-                    // Level 1: 1 turret on left edge
+                    // Level 1: 1 turret on left edge (half inside, half outside)
                     this.laserShips.push({
-                        x: 30,
+                        x: 20,
                         y: 400,
                         active: false,
-                        activationTime: 0
+                        activationTime: 0,
+                        lastFired: 0,
+                        lastDamageTick: 0
                     });
                 } else {
-                    // Level 2: 2 turrets on right edge, remove left turret
+                    // Level 2: 2 turrets on right edge (half inside, half outside)
                     this.laserShips.push({
-                        x: 690,
+                        x: 700,
                         y: 300,
                         active: false,
-                        activationTime: 0
+                        activationTime: 0,
+                        lastFired: 0,
+                        lastDamageTick: 0
                     });
                     this.laserShips.push({
-                        x: 690,
-                        y: 500,
+                        x: 700,
+                        y: 650,  // Moved down from 500 to 650 for better spacing
                         active: false,
-                        activationTime: 0
+                        activationTime: 0,
+                        lastFired: 0,
+                        lastDamageTick: 0
                     });
+                }
+            },
+
+            clearBossUI() {
+                // Hide boss warning
+                const warning = document.getElementById('bossWarning');
+                if (warning) {
+                    warning.classList.remove('active');
+                }
+                
+                // Hide boss timer (will show again when next boss countdown starts)
+                const bossTimer = document.getElementById('bossTimer');
+                if (bossTimer) {
+                    bossTimer.style.display = 'none';
                 }
             },
 
@@ -1526,7 +1585,7 @@
                 // Chain Lightning
                 const lightningTier = this.player.skills.chain_lightning || 0;
                 if (lightningTier > 0) {
-                    const cooldown = lightningTier === 1 ? 8000 : 5000;
+                    const cooldown = lightningTier === 1 ? 3000 : 2000;
                     if (now - this.lastLightning > cooldown) {
                         this.activateChainLightning(lightningTier);
                         this.lastLightning = now;
@@ -1548,13 +1607,22 @@
                     const cooldown = laserTier === 1 ? 15000 : 10000;
                     const duration = 10000;
 
-                    this.laserShips.forEach(ship => {
-                        if (!ship.active && now - this.lastLaserActivation > cooldown) {
+                    // Check if it's time to activate all turrets (synchronized)
+                    const shouldActivate = !this.laserShips.some(ship => ship.active) && 
+                                          now - this.lastLaserActivation > cooldown;
+                    
+                    if (shouldActivate) {
+                        // Activate ALL turrets at once (synchronized for level 2)
+                        this.laserShips.forEach(ship => {
                             ship.active = true;
                             ship.activationTime = now;
-                            this.lastLaserActivation = now;
-                        }
+                            ship.lastDamageTick = 0; // Reset damage tick timer
+                        });
+                        this.lastLaserActivation = now;
+                    }
 
+                    // Update all turrets
+                    this.laserShips.forEach(ship => {
                         if (ship.active && now - ship.activationTime > duration) {
                             ship.active = false;
                         }
@@ -1719,7 +1787,8 @@
                 // Bullet-asteroid/boss collisions
                 this.bullets.forEach((b, bi) => {
                     let hitCount = 0;
-                    const pierceTier = this.player.skills.piercing_bullets || 0;
+                    // Only apply piercing to main ship bullets, not support fighter bullets
+                    const pierceTier = !b.fromFighter ? (this.player.skills.piercing_bullets || 0) : 0;
                     const maxPierce = pierceTier === 1 ? 2 : (pierceTier === 2 ? 4 : 1);
                     
                     // Check boss collision
@@ -1730,7 +1799,8 @@
                         this.boss.currentHp -= finalDmg;
                         hitCount++;
                         
-                        const explosiveTier = this.player.skills.explosive_bullets || 0;
+                        // Only apply explosive to main ship bullets
+                        const explosiveTier = !b.fromFighter ? (this.player.skills.explosive_bullets || 0) : 0;
                         if (explosiveTier > 0) {
                             this.createExplosion(b.x, b.y, explosiveTier);
                         }
@@ -1739,6 +1809,7 @@
                             this.gainXP(500);
                             this.state.score += 1000;
                             this.state.coins += 50;
+                            this.clearBossUI();
                             this.boss = null;
                             this.updateHUD();
                         }
@@ -1757,12 +1828,14 @@
                             a.hp -= finalDmg;
                             hitCount++;
                             
-                            const explosiveTier = this.player.skills.explosive_bullets || 0;
+                            // Only apply explosive to main ship bullets
+                            const explosiveTier = !b.fromFighter ? (this.player.skills.explosive_bullets || 0) : 0;
                             if (explosiveTier > 0) {
                                 this.createExplosion(b.x, b.y, explosiveTier);
                             }
                             
-                            const ricochetTier = this.player.skills.ricochet_bullets || 0;
+                            // Only apply ricochet to main ship bullets
+                            const ricochetTier = !b.fromFighter ? (this.player.skills.ricochet_bullets || 0) : 0;
                             if (ricochetTier > 0 && !b.bounced) {
                                 if (ricochetTier === 1) {
                                     b.bounced = true;
@@ -1813,6 +1886,7 @@
                             this.gainXP(500);
                             this.state.score += 1000;
                             this.state.coins += 50;
+                            this.clearBossUI();
                             this.boss = null;
                             this.updateHUD();
                         }
@@ -1884,6 +1958,7 @@
                             this.gainXP(500);
                             this.state.score += 1000;
                             this.state.coins += 50;
+                            this.clearBossUI();
                             this.boss = null;
                             this.updateHUD();
                         }
@@ -1930,14 +2005,36 @@
             },
 
             applyLaserDamage(ship, tier) {
-                const damage = tier === 1 ? 5 : 7.5;
+                const damage = tier === 1 ? 10 : 15;
                 const laserY = ship.y;
                 const laserThickness = 15;
+                
+                // Damage tick rate control - only apply damage every 200ms instead of every frame
+                const now = Date.now();
+                const damageCooldown = 200; // milliseconds between damage ticks
+                
+                if (now - ship.lastDamageTick < damageCooldown) {
+                    return; // Skip damage application this frame
+                }
+                
+                ship.lastDamageTick = now;
 
                 let targets = [...this.asteroids];
                 if (this.boss) targets.push(this.boss);
                 
-                targets.forEach((target, idx) => {
+                // Sort targets by distance from turret to find closest target first
+                targets = targets.sort((a, b) => {
+                    if (tier === 1) {
+                        // Left turret - sort by x position (closest to turret first)
+                        return a.x - b.x;
+                    } else {
+                        // Right turret - sort by x position (closest to turret first)
+                        return b.x - a.x;
+                    }
+                });
+                
+                // Only damage the FIRST target hit (no piercing)
+                for (let target of targets) {
                     // Check if target is within the horizontal beam's vertical range
                     const targetSize = target.size || target.width || 50;
                     const verticalDist = Math.abs(target.y - laserY);
@@ -1954,34 +2051,36 @@
                         }
 
                         if (inBeamPath) {
-                            // Check if blocked by another entity
-                            const blocked = this.isHorizontalLaserBlocked(ship, target, tier);
-                            
-                            if (!blocked && Math.random() < 0.05) {
-                                if (target === this.boss) {
-                                    this.boss.currentHp -= damage;
-                                    if (this.boss.currentHp <= 0) {
-                                        this.gainXP(500);
-                                        this.state.score += 1000;
-                                        this.state.coins += 50;
-                                        this.boss = null;
-                                        this.updateHUD();
+                            // This is the first target in the beam path - damage it and stop
+                            if (target === this.boss) {
+                                this.boss.currentHp -= damage;
+                                if (this.boss.currentHp <= 0) {
+                                    this.gainXP(500);
+                                    this.state.score += 1000;
+                                    this.state.coins += 50;
+                                    this.clearBossUI(); // Clear all boss UI
+                                    this.boss = null;
+                                    this.updateHUD();
+                                }
+                            } else {
+                                target.hp -= damage;
+                                if (target.hp <= 0) {
+                                    const rewards = this.getRewardsForAsteroid(target.tier);
+                                    const targetIndex = this.asteroids.indexOf(target);
+                                    if (targetIndex !== -1) {
+                                        this.destroyAsteroid(target, targetIndex);
                                     }
-                                } else {
-                                    target.hp -= damage;
-                                    if (target.hp <= 0) {
-                                        const rewards = this.getRewardsForAsteroid(target.tier);
-                                        this.destroyAsteroid(target, idx);
-                                        this.gainXP(10);
-                                        this.state.score += rewards.stars;
-                                        this.state.coins += rewards.coins;
-                                        this.updateHUD();
-                                    }
+                                    this.gainXP(10);
+                                    this.state.score += rewards.stars;
+                                    this.state.coins += rewards.coins;
+                                    this.updateHUD();
                                 }
                             }
+                            // Stop after hitting first target (no piercing)
+                            break;
                         }
                     }
-                });
+                }
             },
 
             isHorizontalLaserBlocked(ship, targetEntity, tier) {
@@ -2068,6 +2167,7 @@
                                 this.gainXP(500);
                                 this.state.score += 1000;
                                 this.state.coins += 50;
+                                this.clearBossUI();
                                 this.boss = null;
                                 this.updateHUD();
                             }
@@ -2236,12 +2336,46 @@
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 this.renderParallaxStars();
 
-                // Render horizontal laser beams (FIXED - no auto-targeting)
+                // Render horizontal laser beams (stops at first target)
                 this.laserShips.forEach(ship => {
                     if (ship.active) {
                         const laserY = ship.y;
                         const beamThickness = 15;
                         const tier = this.player.skills.laser_fortress || 0;
+                        
+                        // Find first target in laser path
+                        let targets = [...this.asteroids];
+                        if (this.boss) targets.push(this.boss);
+                        
+                        // Sort targets by distance from turret
+                        targets = targets.sort((a, b) => {
+                            if (tier === 1) {
+                                return a.x - b.x; // Left turret, sort left to right
+                            } else {
+                                return b.x - a.x; // Right turret, sort right to left
+                            }
+                        });
+                        
+                        // Find first target hit
+                        let endX = tier === 1 ? this.canvas.width : 0;
+                        for (let target of targets) {
+                            const targetSize = target.size || target.width || 50;
+                            const verticalDist = Math.abs(target.y - laserY);
+                            
+                            if (verticalDist < beamThickness / 2 + targetSize / 2) {
+                                let inBeamPath = false;
+                                if (tier === 1) {
+                                    inBeamPath = target.x >= ship.x;
+                                } else {
+                                    inBeamPath = target.x <= ship.x;
+                                }
+                                
+                                if (inBeamPath) {
+                                    endX = target.x;
+                                    break;
+                                }
+                            }
+                        }
                         
                         if (tier === 2) {
                             // Level 2: Red beam with white borders, fires to the left
@@ -2252,7 +2386,7 @@
                             this.ctx.shadowBlur = 15;
                             this.ctx.shadowColor = '#ffffff';
                             this.ctx.beginPath();
-                            this.ctx.moveTo(0, laserY);
+                            this.ctx.moveTo(endX, laserY);
                             this.ctx.lineTo(ship.x, laserY);
                             this.ctx.stroke();
                             
@@ -2261,7 +2395,7 @@
                             this.ctx.lineWidth = beamThickness;
                             this.ctx.shadowColor = '#ff0000';
                             this.ctx.beginPath();
-                            this.ctx.moveTo(0, laserY);
+                            this.ctx.moveTo(endX, laserY);
                             this.ctx.lineTo(ship.x, laserY);
                             this.ctx.stroke();
                         } else {
@@ -2273,7 +2407,7 @@
                             this.ctx.shadowColor = '#ff0000';
                             this.ctx.beginPath();
                             this.ctx.moveTo(ship.x, laserY);
-                            this.ctx.lineTo(this.canvas.width, laserY);
+                            this.ctx.lineTo(endX, laserY);
                             this.ctx.stroke();
                         }
                         
@@ -2593,18 +2727,43 @@
                     this.ctx.shadowBlur = 0;
                 });
 
-                // Render lightning
+                // Render lightning with improved visuals
                 this.lightningBolts.forEach(bolt => {
                     const alpha = 1 - (bolt.time / bolt.duration);
+                    
+                    // Draw outer glow
                     this.ctx.strokeStyle = bolt.color;
-                    this.ctx.lineWidth = 3;
-                    this.ctx.globalAlpha = alpha;
-                    this.ctx.shadowBlur = 15;
+                    this.ctx.lineWidth = 12;
+                    this.ctx.globalAlpha = alpha * 0.3;
+                    this.ctx.shadowBlur = 30;
                     this.ctx.shadowColor = bolt.color;
                     this.ctx.beginPath();
                     this.ctx.moveTo(bolt.x1, bolt.y1);
                     this.ctx.lineTo(bolt.x2, bolt.y2);
                     this.ctx.stroke();
+                    
+                    // Draw main bolt
+                    this.ctx.strokeStyle = bolt.color;
+                    this.ctx.lineWidth = 6;
+                    this.ctx.globalAlpha = alpha * 0.8;
+                    this.ctx.shadowBlur = 20;
+                    this.ctx.shadowColor = bolt.color;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(bolt.x1, bolt.y1);
+                    this.ctx.lineTo(bolt.x2, bolt.y2);
+                    this.ctx.stroke();
+                    
+                    // Draw bright core
+                    this.ctx.strokeStyle = '#ffffff';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.globalAlpha = alpha;
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowColor = '#ffffff';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(bolt.x1, bolt.y1);
+                    this.ctx.lineTo(bolt.x2, bolt.y2);
+                    this.ctx.stroke();
+                    
                     this.ctx.shadowBlur = 0;
                     this.ctx.globalAlpha = 1;
                 });
