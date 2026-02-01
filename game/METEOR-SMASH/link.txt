@@ -1,0 +1,10 @@
+const IMAGE_OVERRIDES = {
+    playerShip: './img/spacecraft.png',       // Main player ship
+    supportShip: './img/support-fighter.png',      // Support fighter ships
+    laserFortressL1: './img/laser-fortress-lv1.png',  // Laser fortress level 1 turret
+    laserFortressL2: './img/laser-fortress-lv2.png',  // Laser fortress level 2 turrets
+    boss1: './img/boss-1.png',            // First boss type
+    boss2: './img/boss-2.png',            // Second boss type
+    boss3: './img/boss-3.png',            // Third boss type
+    heart: './img/heart.png'             // Heart/life icon
+};
