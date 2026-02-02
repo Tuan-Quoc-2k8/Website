@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Meteor Smash</title>
     <style>
+        :root {
+            /* UI Image Scale Configuration - Adjustable sizes for UI images */
+            --game-over-title-scale: 80%; /* Game Over title image scale */
+            --pause-title-scale: 70%; /* Pause menu title image scale */
+            --boss-arrival-scale: 75%; /* Boss Incoming notification image scale */
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -27,19 +34,29 @@
         #gameContainer {
             position: relative;
             width: 100vw;
-            max-width: 720px;
             height: 100vh;
+            max-width: 720px;
             max-height: 1280px;
             background: #000;
             overflow: hidden;
-            overflow-x: hidden; /* Prevent horizontal scrollbar */
             box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+            /* Maintain 9:16 aspect ratio (720:1280) */
+            aspect-ratio: 9 / 16;
         }
 
-        @media (min-width: 721px) {
+        /* On desktop (wide screens), limit by width */
+        @media (min-aspect-ratio: 9/16) {
             #gameContainer {
-                width: 720px;
-                height: 1280px;
+                width: min(100vw, 720px);
+                height: auto;
+            }
+        }
+
+        /* On mobile (tall screens), limit by height */
+        @media (max-aspect-ratio: 9/16) {
+            #gameContainer {
+                width: auto;
+                height: min(100vh, 1280px);
             }
         }
 
@@ -78,15 +95,15 @@
         }
 
         #hearts {
-            top: 20px;
-            left: 20px;
+            top: clamp(12px, 1.5vh, 20px);
+            left: clamp(12px, 1.5vw, 20px);
             display: flex;
-            gap: 10px;
+            gap: clamp(6px, 1vw, 10px);
         }
 
         .heart {
-            width: 40px;
-            height: 40px;
+            width: clamp(30px, 4vw, 40px);
+            height: clamp(30px, 4vw, 40px);
             background: #ff0066;
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
             filter: drop-shadow(0 0 10px #ff0066);
@@ -99,7 +116,7 @@
         }
 
         #levelHud {
-            top: 20px;
+            top: clamp(12px, 1.5vh, 20px);
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
@@ -107,14 +124,14 @@
 
         .level-text {
             color: #00ffff;
-            font-size: 20px;
+            font-size: clamp(14px, 2.5vw, 20px);
             text-shadow: 0 0 10px #00ffff;
-            margin-bottom: 5px;
+            margin-bottom: clamp(3px, 0.5vh, 5px);
         }
 
         .xp-bar {
-            width: 250px;
-            height: 15px;
+            width: clamp(180px, 30vw, 250px);
+            height: clamp(12px, 2vh, 15px);
             background: rgba(0, 0, 0, 0.7);
             border: 2px solid #00ff00;
             border-radius: 10px;
@@ -131,16 +148,16 @@
 
         #bossHealthBar {
             position: absolute;
-            top: 70px;
+            top: clamp(55px, 8vh, 70px);
             left: 50%;
             transform: translateX(-50%);
             display: none;
             align-items: center;
-            gap: 12px;
+            gap: clamp(8px, 1.5vw, 12px);
             background: rgba(0, 0, 0, 0.85);
             border: 3px solid #ff0000;
             border-radius: 15px;
-            padding: 10px 20px;
+            padding: clamp(6px, 1.2vh, 10px) clamp(12px, 2.5vw, 20px);
             box-shadow: 0 0 25px rgba(255, 0, 0, 0.5);
             z-index: 10;
         }
@@ -150,7 +167,7 @@
         }
 
         .boss-icon {
-            font-size: 32px;
+            font-size: clamp(24px, 4vw, 32px);
             filter: drop-shadow(0 0 10px #ff0000);
         }
 
@@ -161,8 +178,8 @@
         }
 
         .boss-hp-bar-wrapper {
-            width: 300px;
-            height: 24px;
+            width: clamp(220px, 35vw, 300px);
+            height: clamp(18px, 3vh, 24px);
             background: rgba(0, 0, 0, 0.7);
             border: 2px solid #ff0000;
             border-radius: 10px;
@@ -175,8 +192,18 @@
             height: 100%;
             background: linear-gradient(90deg, #ff0000, #ff6600);
             width: 100%;
-            transition: width 0.2s;
+            transition: width 0.2s, background 0.5s ease;
             box-shadow: 0 0 15px #ff0000;
+        }
+
+        /* Boss invincible state - blue HP bar */
+        .boss-hp-fill.invincible {
+            background: linear-gradient(90deg, #0088ff, #00ccff);
+            box-shadow: 0 0 15px #00ccff;
+        }
+
+        .boss-hp-bar-wrapper.invincible {
+            border-color: #00ccff;
         }
 
         .boss-hp-text {
@@ -185,7 +212,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #fff;
-            font-size: 14px;
+            font-size: clamp(11px, 1.8vw, 14px);
             font-weight: bold;
             text-align: center;
             text-shadow: 0 0 8px #000, 0 0 4px #000, 1px 1px 2px #000, -1px -1px 2px #000;
@@ -194,20 +221,20 @@
         }
 
         #currency {
-            top: 20px;
-            right: 20px;
+            top: clamp(12px, 1.5vh, 20px);
+            right: clamp(12px, 1.5vw, 20px);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: clamp(6px, 1vh, 8px);
         }
 
         .currency-display {
             background: rgba(0, 0, 0, 0.8);
             border: 2px solid #00ff00;
             border-radius: 20px;
-            padding: 8px 15px;
+            padding: clamp(5px, 1vh, 8px) clamp(10px, 2vw, 15px);
             color: #fff;
-            font-size: 16px;
+            font-size: clamp(12px, 2vw, 16px);
             filter: drop-shadow(0 0 8px #00ff00);
         }
 
@@ -233,13 +260,13 @@
         }
 
         #pauseBtn {
-            top: 130px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
+            top: clamp(100px, 15vh, 130px);
+            right: clamp(12px, 1.5vw, 20px);
+            width: clamp(48px, 7vw, 60px);
+            height: clamp(48px, 7vw, 60px);
             padding: 0;
             border-radius: 50%;
-            font-size: 28px;
+            font-size: clamp(20px, 3.5vw, 28px);
             display: none;
         }
 
@@ -247,6 +274,26 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        /* Custom pause button image mode - completely replace default UI */
+        #pauseBtn.custom-image {
+            background: none !important;
+            border: none !important;
+            filter: none !important;
+            padding: 0 !important;
+        }
+
+        /* Hover effect for custom image - subtle scale only */
+        #pauseBtn.custom-image:hover {
+            transform: scale(1.05);
+            filter: none !important;
+        }
+
+        /* Active/press effect for custom image */
+        #pauseBtn.custom-image:active {
+            transform: scale(0.95);
+            filter: none !important;
         }
 
         #pauseMenu {
@@ -275,22 +322,52 @@
             animation: pulse 2s infinite;
         }
 
+        .pause-title img {
+            max-width: var(--pause-title-scale);
+            max-height: 20vh;
+            object-fit: contain;
+        }
+
         .pause-menu-button {
             padding: 20px 60px;
             margin: 15px;
-            background: linear-gradient(135deg, #00ff00, #00cc00);
-            border: 3px solid #00ff00;
-            border-radius: 50px;
-            color: #000;
+            background: rgba(0, 20, 40, 0.8);
+            border: 3px solid #00ffff;
+            border-radius: 8px;
+            color: #00ffff;
             font-size: 24px;
             font-weight: bold;
             cursor: pointer;
-            filter: drop-shadow(0 0 20px #00ff00);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.5),
+                inset 0 0 15px rgba(0, 255, 255, 0.1);
             transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pause-menu-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
         }
 
         .pause-menu-button:hover, .pause-menu-button:active {
-            transform: scale(1.1);
+            transform: scale(1.05);
+            background: rgba(0, 30, 50, 0.9);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.8),
+                inset 0 0 20px rgba(0, 255, 255, 0.2);
+            border-color: #00ffff;
+        }
+
+        .pause-menu-button:hover::before {
+            left: 100%;
         }
 
         #loadingScreen {
@@ -643,22 +720,34 @@
             text-align: center;
         }
 
+        .skill-title img {
+            max-width: 80vw;
+            max-height: 15vh;
+            object-fit: contain;
+        }
+
+        #pauseBtn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
         #skillsContainer {
             display: flex;
-            gap: clamp(15px, 2vw, 30px); /* Responsive gap - smaller on mobile */
+            gap: clamp(15px, 2.5vw, 30px);
             justify-content: center;
-            flex-wrap: nowrap; /* Keep 3 cards in single row */
+            flex-wrap: wrap; /* Allow wrapping for mobile 2-1 layout */
             margin-bottom: 30px;
-            padding: 60px 15px 40px 15px; /* Reduced horizontal padding */
-            align-items: center;
+            padding: 60px 15px 40px 15px;
+            align-items: flex-start; /* Align to top for wrapped layout */
             max-width: 100%;
             overflow: visible; /* Allow icon to extend outside */
         }
 
-        /* Further reduce gap on very small screens */
-        @media (max-width: 400px) {
+        /* Mobile: reduce gap further */
+        @media (max-width: 600px) {
             #skillsContainer {
-                gap: 12px;
+                gap: clamp(12px, 3vw, 20px);
                 padding: 60px 10px 40px 10px;
             }
         }
@@ -668,7 +757,7 @@
         /* Layer 1 - Outer Frame (div1) - Static neon border, never animates */
         .skill-card-outer {
             position: relative;
-            width: min(180px, 25vw); /* Reduced from 220px and 28vw */
+            width: 200px; /* Fixed width - cards stay readable regardless of count */
             aspect-ratio: 2/3;
             background: transparent;
             border: 3px solid #00ffff;
@@ -677,27 +766,25 @@
             overflow: visible; /* CRITICAL: Allow icon to extend outside */
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
             transition: box-shadow 0.3s ease;
-            flex-shrink: 1; /* Allow slight shrinking if needed */
-            max-width: 30%; /* Ensure no card exceeds 30% of container width */
-            will-change: box-shadow; /* Optimize for animations */
+            flex-shrink: 0; /* Never shrink - maintain readable size */
+            will-change: box-shadow;
         }
 
         .skill-card-outer:hover {
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
         }
 
-        /* Responsive adjustments for smaller screens */
+        /* Mobile: larger cards for 2-1 layout (2 on top row, 1 centered on bottom) */
         @media (max-width: 600px) {
             .skill-card-outer {
-                width: min(160px, 27vw); /* Further reduce on mobile */
-                max-width: 29%;
+                width: min(45%, 240px); /* Increased size on mobile for better visibility and balance */
             }
         }
 
+        /* Very small screens: slightly smaller but still readable */
         @media (max-width: 400px) {
             .skill-card-outer {
-                width: min(140px, 28vw); /* Even smaller on very small screens */
-                max-width: 30%;
+                width: min(46%, 210px); /* Increased from 44% and 200px for better mobile usability */
             }
         }
 
@@ -1044,6 +1131,12 @@
             animation: pulse 2s infinite;
         }
 
+        .game-over-title img {
+            max-width: var(--game-over-title-scale);
+            max-height: 25vh;
+            object-fit: contain;
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
@@ -1056,19 +1149,49 @@
         }
 
         .game-over-button {
-            padding: 20px 50px;
-            margin: 15px;
-            background: linear-gradient(135deg, #00ff00, #00cc00);
+            padding: 18px 45px;
+            margin: 12px;
+            background: rgba(0, 20, 0, 0.85);
             border: 3px solid #00ff00;
-            border-radius: 50px;
-            color: #000;
-            font-size: 24px;
+            border-radius: 8px;
+            color: #00ff00;
+            font-size: clamp(18px, 4vw, 24px);
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.4),
+                inset 0 0 15px rgba(0, 255, 0, 0.08);
+            transition: all 0.25s ease;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 200px;
         }
 
-        .game-over-button:hover, .game-over-button:active {
-            transform: scale(1.1);
+        .game-over-button:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 0, 0.6),
+                inset 0 0 20px rgba(0, 255, 0, 0.12);
+        }
+        
+        .game-over-button:active {
+            transform: scale(0.98);
+            box-shadow: 
+                0 0 15px rgba(0, 255, 0, 0.3),
+                inset 0 0 10px rgba(0, 255, 0, 0.06);
+        }
+        
+        /* Mobile-safe sizing */
+        @media (max-width: 600px) {
+            .game-over-button {
+                min-width: 180px;
+                padding: 15px 35px;
+                font-size: 18px;
+            }
         }
 
         #helpScreen {
@@ -1124,14 +1247,44 @@
         .close-help-btn {
             display: block;
             margin: 30px auto;
-            padding: 15px 40px;
-            background: linear-gradient(135deg, #00ff00, #00cc00);
+            padding: 20px 50px;
+            background: rgba(0, 20, 40, 0.8);
             border: 3px solid #00ff00;
-            border-radius: 50px;
-            color: #000;
-            font-size: 20px;
+            border-radius: 8px;
+            color: #00ff00;
+            font-size: 22px;
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.5),
+                inset 0 0 15px rgba(0, 255, 0, 0.1);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .close-help-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .close-help-btn:hover, .close-help-btn:active {
+            transform: scale(1.05);
+            background: rgba(0, 30, 50, 0.9);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 0, 0.8),
+                inset 0 0 20px rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .close-help-btn:hover::before {
+            left: 100%;
         }
 
         #bossWarning {
@@ -1156,6 +1309,134 @@
 
         #bossWarning.active {
             display: block;
+        }
+
+        /* Boss arrival notification message */
+        #bossArrivalMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 200;
+            display: none;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        #bossArrivalMessage.active {
+            display: block;
+        }
+
+        .boss-arrival-text {
+            font-size: clamp(36px, 8vw, 72px);
+            font-weight: bold;
+            color: #ff0000;
+            text-shadow: 0 0 30px #ff0000, 0 0 60px #ff0000;
+            animation: arrivalBlink 0.15s infinite, arrivalBlur 0.3s ease-in-out infinite alternate;
+        }
+
+        .boss-arrival-image {
+            max-width: var(--boss-arrival-scale);
+            max-height: 40vh;
+            object-fit: contain;
+            animation: arrivalBlink 0.15s infinite;
+        }
+
+        @keyframes arrivalBlink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0.4; }
+        }
+
+        @keyframes arrivalBlur {
+            0% { filter: blur(0px); }
+            100% { filter: blur(2px); }
+        }
+
+        #bossTimer {
+            top: clamp(60px, 9vh, 80px);
+            left: clamp(12px, 1.5vw, 20px);
+        }
+
+        /* Teleport Cooldown UI - Positioned in top-left area, below boss timer */
+        #teleportCooldownUI {
+            position: absolute;
+            top: clamp(130px, 18vh, 160px);
+            left: clamp(12px, 1.5vw, 20px);
+            background: rgba(0, 20, 40, 0.9);
+            border: 3px solid #00ffff;
+            border-radius: 10px;
+            padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 20px);
+            display: none;
+            align-items: center;
+            gap: clamp(10px, 2vw, 15px);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.4),
+                inset 0 0 15px rgba(0, 255, 255, 0.08);
+            z-index: 14;
+            transition: top 0.3s ease;
+        }
+        
+        /* When boss timer is hidden, move teleport UI up */
+        #teleportCooldownUI.boss-timer-hidden {
+            top: clamp(60px, 9vh, 80px);
+        }
+
+        #teleportCooldownUI.active {
+            display: flex;
+        }
+
+        .teleport-icon-container {
+            position: relative;
+            width: clamp(35px, 6vw, 45px);
+            height: clamp(35px, 6vw, 45px);
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 255, 255, 0.5));
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(20px, 4vw, 28px);
+            box-shadow: 
+                0 0 15px rgba(0, 255, 255, 0.5),
+                inset 0 0 10px rgba(0, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .teleport-icon-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: transparent;
+        }
+
+        #teleportIconFallback {
+            position: relative;
+            z-index: 1;
+        }
+
+        .teleport-cooldown-text {
+            color: #00ffff;
+            font-size: clamp(14px, 2.5vw, 18px);
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 600px) {
+            #teleportCooldownUI {
+                padding: 8px 12px;
+                gap: 8px;
+                top: clamp(120px, 16vh, 150px);
+            }
+            
+            #teleportCooldownUI.boss-timer-hidden {
+                top: clamp(50px, 8vh, 70px);
+            }
         }
     </style>
 </head>
@@ -1191,11 +1472,21 @@
         
         <div id="bossWarning">⚠️ BOSS APPROACHING ⚠️</div>
         
-        <div id="bossTimer" class="hud-element" style="top: 80px; left: 20px; display: none;">
-            <div style="background: rgba(0,0,0,0.8); border: 2px solid #ff0000; border-radius: 10px; padding: 10px 15px;">
-                <div style="color: #ff0000; font-size: 14px; margin-bottom: 5px;">👹 NEXT BOSS</div>
-                <div id="bossTimerText" style="color: #fff; font-size: 20px; font-weight: bold; text-align: center;">3:00</div>
+        <div id="bossArrivalMessage"></div>
+        
+        <div id="bossTimer" class="hud-element" style="display: none;">
+            <div style="background: rgba(0,0,0,0.8); border: 2px solid #ff0000; border-radius: 10px; padding: clamp(6px, 1vh, 10px) clamp(10px, 2vw, 15px);">
+                <div style="color: #ff0000; font-size: clamp(11px, 1.8vw, 14px); margin-bottom: clamp(3px, 0.5vh, 5px);">👹 NEXT BOSS</div>
+                <div id="bossTimerText" style="color: #fff; font-size: clamp(16px, 2.5vw, 20px); font-weight: bold; text-align: center;">3:00</div>
             </div>
+        </div>
+        
+        <!-- Teleport Cooldown UI -->
+        <div id="teleportCooldownUI">
+            <div class="teleport-icon-container">
+                <span id="teleportIconFallback">⚡</span>
+            </div>
+            <div class="teleport-cooldown-text" id="teleportCooldownText">Ready</div>
         </div>
         
         <button id="pauseBtn" class="game-button" onclick="game.togglePause()">⏸</button>
@@ -1221,7 +1512,7 @@
         </div>
         
         <div id="skillScreen">
-            <div class="skill-title">⬆️ LEVEL UP! Choose an Upgrade:</div>
+            <div class="skill-title" id="skillTitle">⬆️ LEVEL UP! Choose an Upgrade:</div>
             <div id="skillsContainer"></div>
             <button id="confirmSkill" onclick="game.confirmSkill()" disabled>✅ CONFIRM</button>
         </div>
@@ -1260,6 +1551,7 @@
                     <p class="help-text">🔄 Ricochet Bullets – Bullets bounce to new targets after hitting</p>
                     <p class="help-text">🎯 Piercing Bullets – Bullets pass through multiple enemies</p>
                     <p class="help-text">🔴 Laser Fortress – Summons laser turrets for sustained fire support</p>
+                    <p class="help-text">⚡ Teleport – Instantly move (Double tap on mobile / Right-click on PC)</p>
                 </div>
             </div>
             <button class="close-help-btn" onclick="game.closeHelp()">✅ GOT IT!</button>
@@ -1322,6 +1614,14 @@
                 description: 'Summons laser turrets for sustained fire support',
                 maxTier: 2,
                 conflicts: []
+            },
+            teleport: {
+                id: 'teleport',
+                name: 'Teleport',
+                icon: './img/teleport.png',
+                description: 'Instantly teleport to touch location (10s cooldown)',
+                maxTier: 2,
+                conflicts: []
             }
         };
 
@@ -1334,7 +1634,8 @@
             homing_missiles:   '🚀',
             ricochet_bullets:  '🔄',
             piercing_bullets:  '🎯',
-            laser_fortress:    '🔴'
+            laser_fortress:    '🔴',
+            teleport:          '⚡'
         };
 
         // BOSS DEFINITIONS
@@ -1476,7 +1777,7 @@
                         name: 'Dark Sphere',
                         cooldown: 7000,
                         execute: function(boss, game) {
-                            // Homing dark orb
+                            // Homing dark orb with 8-second lifetime
                             game.bossProjectiles.push({
                                 x: boss.x,
                                 y: boss.y,
@@ -1486,7 +1787,9 @@
                                 color: '#6600cc',
                                 damage: 2,
                                 homing: true,
-                                speed: 3
+                                speed: 3,
+                                createdAt: Date.now(),
+                                lifetime: 8000  // Self-destruct after 8 seconds
                             });
                         }
                     }
@@ -1506,20 +1809,8 @@
                 hp: 1500,
                 size: 140,
                 color: '#00ffff',
+                laserSweepUsed: false,  // Track if laser sweep has been used
                 skills: [
-                    {
-                        name: 'Laser Sweep',
-                        cooldown: 5000,
-                        execute: function(boss, game) {
-                            // Rotating laser beam
-                            boss.laserSweep = {
-                                active: true,
-                                angle: 0,
-                                duration: 3000,
-                                startTime: Date.now()
-                            };
-                        }
-                    },
                     {
                         name: 'EMP Pulse',
                         cooldown: 6000,
@@ -1561,10 +1852,34 @@
                     }
                 ],
                 movement: function(boss, game, time) {
-                    // Circular orbit movement
-                    const t = time / 3000;
-                    boss.x = 360 + Math.cos(t) * 220;
-                    boss.y = 300 + Math.sin(t) * 150;
+                    // If laser sweep is active and in positioning phase, move to center
+                    if (boss.laserSweep && boss.laserSweep.positioning) {
+                        const targetX = 360;
+                        const targetY = 400;
+                        const dx = targetX - boss.x;
+                        const dy = targetY - boss.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist > 5) {
+                            // Move towards center
+                            boss.x += (dx / dist) * 3;
+                            boss.y += (dy / dist) * 3;
+                        } else {
+                            // Reached center, start warning phase
+                            boss.laserSweep.positioning = false;
+                            boss.laserSweep.warningActive = true;
+                            boss.laserSweep.warningStartTime = Date.now();
+                        }
+                    } else if (boss.laserSweep && boss.laserSweep.active) {
+                        // Stay at center during laser sweep
+                        boss.x = 360;
+                        boss.y = 400;
+                    } else {
+                        // Normal circular orbit movement
+                        const t = time / 3000;
+                        boss.x = 360 + Math.cos(t) * 220;
+                        boss.y = 300 + Math.sin(t) * 150;
+                    }
                 }
             }
         };
@@ -1579,7 +1894,13 @@
             boss1: './img/boss-1.png',            // First boss type
             boss2: './img/boss-2.png',            // Second boss type
             boss3: './img/boss-3.png',            // Third boss type
-            heart: './img/heart.png'             // Heart/life icon
+            heart: './img/heart.png',            // Heart/life icon
+            bossArrival: './img/boss-arrival.png',                   // Boss arrival notification image (null for default text)
+            upgradeTitle: './img/upgrade-title.png',                  // Level-up upgrade screen title image (null for default text)
+            pauseButton: './img/pause.png',                    // Pause button image (null for default emoji)
+            pauseTitle: './img/pause-title.png',                     // Pause menu title image (null for default text)
+            gameOverTitle: './img/game-over-title.png',                // Game over screen title image (null for default text)
+            teleportIcon: './img/teleport.png'                // Teleport cooldown UI icon (null for default emoji)
         };
 
         // IMAGE SCALE CONFIGURATION (affects visual size only, NOT hitboxes)
@@ -1651,6 +1972,74 @@
                 this.setupEventListeners();
                 this.preloadImages();
                 this.simulateLoading();
+                // initUIImages() is now called inside preloadImages() after images are loaded
+            },
+
+            applyPauseButtonImage() {
+                // Apply pause button image if available, otherwise show default
+                const pauseBtn = document.getElementById('pauseBtn');
+                if (!pauseBtn) return;
+                
+                const pauseImage = this.loadedImages['pauseButton'];
+                
+                if (pauseImage) {
+                    // Custom image loaded successfully - replace entire button UI with image
+                    pauseBtn.classList.add('custom-image'); // Remove all default styling
+                    pauseBtn.textContent = ''; // Clear any text content (emoji)
+                    pauseBtn.innerHTML = ''; // Clear any HTML content
+                    const img = document.createElement('img');
+                    img.src = pauseImage.src;
+                    img.alt = 'Pause';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'contain';
+                    img.style.pointerEvents = 'none'; // Prevent image from blocking button clicks
+                    pauseBtn.appendChild(img);
+                } else {
+                    // No image or image failed to load - show default button with emoji
+                    pauseBtn.classList.remove('custom-image'); // Restore default styling
+                    pauseBtn.innerHTML = '⏸';
+                }
+            },
+
+            applyPauseTitleImage() {
+                // Apply pause title image if available, otherwise show default text
+                const pauseTitle = document.querySelector('.pause-title');
+                if (!pauseTitle) return;
+                
+                const pauseTitleImage = this.loadedImages['pauseTitle'];
+                
+                if (pauseTitleImage) {
+                    // Custom image loaded successfully - replace text with image
+                    pauseTitle.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = pauseTitleImage.src;
+                    img.alt = 'Paused';
+                    pauseTitle.appendChild(img);
+                } else {
+                    // No image or image failed to load - show default text
+                    pauseTitle.innerHTML = '⏸ PAUSED';
+                }
+            },
+
+            applyGameOverTitleImage() {
+                // Apply game over title image if available, otherwise show default text
+                const gameOverTitle = document.querySelector('.game-over-title');
+                if (!gameOverTitle) return;
+                
+                const gameOverTitleImage = this.loadedImages['gameOverTitle'];
+                
+                if (gameOverTitleImage) {
+                    // Custom image loaded successfully - replace text with image
+                    gameOverTitle.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = gameOverTitleImage.src;
+                    img.alt = 'Game Over';
+                    gameOverTitle.appendChild(img);
+                } else {
+                    // No image or image failed to load - show default text
+                    gameOverTitle.innerHTML = '💀 GAME OVER';
+                }
             },
 
             preloadImages() {
@@ -1660,10 +2049,20 @@
                         const img = new Image();
                         img.onload = () => {
                             this.loadedImages[key] = img;
+                            // Apply pause button image immediately after it loads
+                            if (key === 'pauseButton') {
+                                this.applyPauseButtonImage();
+                            }
+                            // Apply upgrade title image when loaded (used dynamically when skill screen shows)
+                            // No need to apply it here as it's handled in showSkillSelection()
                         };
                         img.onerror = () => {
                             console.warn(`Failed to load image for ${key}, using default`);
                             this.loadedImages[key] = null;
+                            // Ensure default pause UI is shown when image fails to load
+                            if (key === 'pauseButton') {
+                                this.applyPauseButtonImage();
+                            }
                         };
                         img.src = IMAGE_OVERRIDES[key];
                     }
@@ -1711,6 +2110,8 @@
                 touchLayer.height = 1280;
 
                 let touching = false;
+                let lastTapTime = 0;
+                const doubleTapDelay = 300; // milliseconds
 
                 const getTouchPos = (e) => {
                     const rect = touchLayer.getBoundingClientRect();
@@ -1723,11 +2124,26 @@
 
                 touchLayer.addEventListener('touchstart', (e) => {
                     e.preventDefault();
-                    touching = true;
+                    const now = Date.now();
+                    
                     if (this.state.running && !this.state.paused) {
                         const pos = getTouchPos(e);
-                        this.player.x = Math.max(30, Math.min(690, pos.x));
-                        this.player.y = Math.max(30, Math.min(1250, pos.y));
+                        
+                        // Double tap detection for teleport
+                        if (now - lastTapTime < doubleTapDelay) {
+                            // Double tap detected
+                            const teleportTier = this.player.skills['teleport'] || 0;
+                            if (teleportTier > 0) {
+                                this.useTeleport(pos.x, pos.y);
+                            }
+                            lastTapTime = 0; // Reset to prevent triple tap from triggering teleport again
+                        } else {
+                            // Single tap - just start tracking touch for movement
+                            lastTapTime = now;
+                            touching = true;
+                        }
+                    } else {
+                        touching = true;
                     }
                 });
 
@@ -1735,8 +2151,21 @@
                     e.preventDefault();
                     if (touching && this.state.running && !this.state.paused) {
                         const pos = getTouchPos(e);
-                        this.player.x = Math.max(30, Math.min(690, pos.x));
-                        this.player.y = Math.max(30, Math.min(1250, pos.y));
+                        
+                        // Smooth movement towards touch position (no instant teleport)
+                        const dx = pos.x - this.player.x;
+                        const dy = pos.y - this.player.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist > 5) {
+                            const moveSpeed = Math.min(this.player.speed, dist);
+                            this.player.x += (dx / dist) * moveSpeed;
+                            this.player.y += (dy / dist) * moveSpeed;
+                            
+                            // Keep within bounds
+                            this.player.x = Math.max(30, Math.min(690, this.player.x));
+                            this.player.y = Math.max(30, Math.min(1250, this.player.y));
+                        }
                     }
                 });
 
@@ -1748,6 +2177,25 @@
                 touchLayer.addEventListener('touchcancel', (e) => {
                     e.preventDefault();
                     touching = false;
+                });
+                
+                // Desktop right-click controls for teleport
+                touchLayer.addEventListener('contextmenu', (e) => {
+                    e.preventDefault(); // Prevent default right-click menu
+                    
+                    if (this.state.running && !this.state.paused) {
+                        const rect = touchLayer.getBoundingClientRect();
+                        const pos = {
+                            x: ((e.clientX - rect.left) / rect.width) * 720,
+                            y: ((e.clientY - rect.top) / rect.height) * 1280
+                        };
+                        
+                        // Right-click triggers teleport
+                        const teleportTier = this.player.skills['teleport'] || 0;
+                        if (teleportTier > 0) {
+                            this.useTeleport(pos.x, pos.y);
+                        }
+                    }
                 });
             },
 
@@ -1790,7 +2238,13 @@
                     damage: 20,
                     attackSpeed: 3,
                     skills: {},
-                    lastShot: 0
+                    lastShot: 0,
+                    teleport: {
+                        charges: 0,
+                        maxCharges: 0,
+                        lastUsed: 0,
+                        cooldown: 10000 // 10 seconds
+                    }
                 };
 
                 this.bullets = [];
@@ -1817,6 +2271,7 @@
                 const pauseMenu = document.getElementById('pauseMenu');
                 if (this.state.paused) {
                     pauseMenu.classList.add('active');
+                    this.applyPauseTitleImage(); // Apply custom pause title if available
                 } else {
                     pauseMenu.classList.remove('active');
                 }
@@ -1891,6 +2346,22 @@
             },
 
             showSkillSelection() {
+                // Apply upgrade title image if available
+                const skillTitle = document.getElementById('skillTitle');
+                const upgradeTitleImage = this.loadedImages['upgradeTitle'];
+                if (skillTitle) {
+                    if (upgradeTitleImage) {
+                        skillTitle.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = upgradeTitleImage.src;
+                        img.alt = 'Level Up - Choose an Upgrade';
+                        skillTitle.appendChild(img);
+                    } else {
+                        // Restore default text if no image
+                        skillTitle.textContent = '⬆️ LEVEL UP! Choose an Upgrade:';
+                    }
+                }
+                
                 const container = document.getElementById('skillsContainer');
                 container.innerHTML = '';
 
@@ -1973,9 +2444,18 @@
                     // Layer 2: Inner frame (div2) - contains text content
                     const cardInner = document.createElement('div');
                     cardInner.className = 'skill-card-inner';
+                    
+                    // Get tier-specific description for teleport skill
+                    let description = skill.description;
+                    if (skill.id === 'teleport') {
+                        description = nextTier === 1 
+                            ? 'Instantly teleport to touch location (1 charge, 10s cooldown)'
+                            : 'Instantly teleport to touch location (3 charges, 10s cooldown)';
+                    }
+                    
                     cardInner.innerHTML = `
                         <div class="skill-name">${skill.name}</div>
-                        <div class="skill-description">${skill.description}</div>
+                        <div class="skill-description">${description}</div>
                         <div class="skill-tier-bar">Tier ${nextTier} / ${skill.maxTier}</div>
                     `;
                     
@@ -2008,6 +2488,9 @@
                 }
                 if (id === 'laser_fortress') {
                     this.initLaserShips(tier);
+                }
+                if (id === 'teleport') {
+                    this.initTeleport(tier);
                 }
 
                 document.getElementById('skillScreen').classList.remove('active');
@@ -2062,6 +2545,141 @@
                 }
             },
 
+            initTeleport(tier) {
+                // Tier 1: 1 charge, Tier 2: 3 charges
+                this.player.teleport.maxCharges = tier === 1 ? 1 : 3;
+                this.player.teleport.charges = this.player.teleport.maxCharges;
+                this.player.teleport.lastUsed = 0;
+                
+                // Load custom teleport icon if available
+                const teleportIconContainer = document.querySelector('.teleport-icon-container');
+                const fallbackIcon = document.getElementById('teleportIconFallback');
+                const teleportIconImg = this.loadedImages['teleportIcon'];
+                
+                if (teleportIconImg) {
+                    // Use custom image with proper error handling
+                    const img = document.createElement('img');
+                    img.alt = 'Teleport';
+                    
+                    // Set up error handler before setting src
+                    img.onerror = function() {
+                        // Image failed to load, keep fallback visible
+                        img.remove();
+                        if (fallbackIcon) {
+                            fallbackIcon.style.display = 'block';
+                            fallbackIcon.textContent = '⚡';
+                        }
+                    };
+                    
+                    img.onload = function() {
+                        // Image loaded successfully, hide fallback
+                        if (fallbackIcon) {
+                            fallbackIcon.style.display = 'none';
+                        }
+                    };
+                    
+                    img.src = teleportIconImg.src;
+                    teleportIconContainer.appendChild(img);
+                } else {
+                    // No custom image, use default emoji
+                    if (fallbackIcon) {
+                        fallbackIcon.style.display = 'block';
+                        fallbackIcon.textContent = '⚡';
+                    }
+                }
+                
+                // Show teleport UI and set initial position based on boss timer visibility
+                const teleportUI = document.getElementById('teleportCooldownUI');
+                const bossTimerEl = document.getElementById('bossTimer');
+                teleportUI.classList.add('active');
+                
+                // If boss timer is hidden, move teleport UI up
+                if (bossTimerEl && bossTimerEl.style.display === 'none') {
+                    teleportUI.classList.add('boss-timer-hidden');
+                } else {
+                    teleportUI.classList.remove('boss-timer-hidden');
+                }
+                
+                this.updateTeleportUI();
+            },
+
+            useTeleport(targetX, targetY) {
+                const now = Date.now();
+                const teleportTier = this.player.skills['teleport'] || 0;
+                
+                if (teleportTier === 0) return; // No teleport skill
+                
+                // Check if charges are available
+                if (this.player.teleport.charges > 0) {
+                    // Perform teleport
+                    this.player.x = Math.max(30, Math.min(690, targetX));
+                    this.player.y = Math.max(30, Math.min(1250, targetY));
+                    
+                    // Use one charge
+                    this.player.teleport.charges--;
+                    
+                    // If all charges used, start cooldown
+                    if (this.player.teleport.charges === 0) {
+                        this.player.teleport.lastUsed = now;
+                    }
+                    
+                    // Update UI immediately
+                    this.updateTeleportUI();
+                    
+                    // Visual effect (optional - can add flash effect later)
+                    this.createTeleportEffect(targetX, targetY);
+                }
+            },
+
+            createTeleportEffect(x, y) {
+                // Create a brief teleport visual effect
+                this.explosions.push({
+                    x: x,
+                    y: y,
+                    radius: 10,
+                    maxRadius: 40,
+                    time: 0,
+                    duration: 200,
+                    color: '#00ffff'
+                });
+            },
+
+            updateTeleportUI() {
+                const teleportTier = this.player.skills['teleport'] || 0;
+                if (teleportTier === 0) {
+                    document.getElementById('teleportCooldownUI').classList.remove('active');
+                    return;
+                }
+                
+                const now = Date.now();
+                const cooldownUI = document.getElementById('teleportCooldownUI');
+                const cooldownText = document.getElementById('teleportCooldownText');
+                
+                // Check if on cooldown
+                if (this.player.teleport.charges === 0) {
+                    const timeSinceUse = now - this.player.teleport.lastUsed;
+                    const timeRemaining = this.player.teleport.cooldown - timeSinceUse;
+                    
+                    if (timeRemaining > 0) {
+                        // On cooldown
+                        const secondsRemaining = Math.ceil(timeRemaining / 1000);
+                        cooldownText.textContent = `${secondsRemaining}s`;
+                        cooldownText.style.color = '#ff6600';
+                    } else {
+                        // Cooldown finished, restore charges
+                        this.player.teleport.charges = this.player.teleport.maxCharges;
+                        cooldownText.textContent = `Ready (${this.player.teleport.charges})`;
+                        cooldownText.style.color = '#00ffff';
+                    }
+                } else {
+                    // Has charges available
+                    cooldownText.textContent = `Ready (${this.player.teleport.charges})`;
+                    cooldownText.style.color = '#00ffff';
+                }
+                
+                cooldownUI.classList.add('active');
+            },
+
             clearBossUI() {
                 // Hide boss warning
                 const warning = document.getElementById('bossWarning');
@@ -2080,6 +2698,41 @@
                 if (bossHealthBar) {
                     bossHealthBar.classList.remove('active');
                 }
+                
+                // Clear all boss projectiles (including homing projectiles)
+                this.bossProjectiles = [];
+            },
+
+            showBossArrival(callback) {
+                // Clear all asteroids for clean arrival
+                this.asteroids = [];
+                
+                const arrivalMsg = document.getElementById('bossArrivalMessage');
+                const bossArrivalImage = this.loadedImages['bossArrival'];
+                
+                if (arrivalMsg) {
+                    // Check if there's a custom image
+                    if (bossArrivalImage) {
+                        const img = document.createElement('img');
+                        img.src = bossArrivalImage.src;
+                        img.className = 'boss-arrival-image';
+                        img.alt = 'Boss Has Arrived';
+                        arrivalMsg.innerHTML = '';
+                        arrivalMsg.appendChild(img);
+                    } else {
+                        // Use default text
+                        arrivalMsg.innerHTML = '<div class="boss-arrival-text">BOSS HAS ARRIVED</div>';
+                    }
+                    
+                    arrivalMsg.classList.add('active');
+                    
+                    // Show for 1 second, then hide and spawn boss
+                    setTimeout(() => {
+                        arrivalMsg.classList.remove('active');
+                        arrivalMsg.innerHTML = ''; // Clean up
+                        if (callback) callback();
+                    }, 1000);
+                }
             },
 
             spawnBoss() {
@@ -2090,38 +2743,43 @@
                 const timeMinutes = this.state.gameTime / 60;
                 const hpScaling = 1 + (timeMinutes * 0.15);
                 
-                this.boss = {
-                    ...selectedBoss,
-                    x: 360,
-                    y: 200,
-                    currentHp: Math.floor(selectedBoss.hp * hpScaling),
-                    maxHp: Math.floor(selectedBoss.hp * hpScaling),
-                    skillCooldowns: selectedBoss.skills.map(() => 0),
-                    laserSweep: null,
-                    spawnTime: Date.now()
-                };
+                // Show arrival animation first, then spawn boss
+                this.showBossArrival(() => {
+                    this.boss = {
+                        ...selectedBoss,
+                        x: 360,
+                        y: 200,
+                        currentHp: Math.floor(selectedBoss.hp * hpScaling),
+                        maxHp: Math.floor(selectedBoss.hp * hpScaling),
+                        skillCooldowns: selectedBoss.skills.map(() => 0),
+                        laserSweep: null,
+                        laserSweepUsed: false,  // Track for Cyber Skull one-time laser sweep
+                        invincible: false,  // Track invincibility state
+                        spawnTime: Date.now()
+                    };
 
-                // Increment boss encounter counter
-                this.state.bossEncounterCount++;
+                    // Increment boss encounter counter
+                    this.state.bossEncounterCount++;
 
-                // Show boss warning
-                const warning = document.getElementById('bossWarning');
-                warning.classList.add('active');
-                setTimeout(() => {
-                    warning.classList.remove('active');
-                }, 3000);
+                    // Show boss warning
+                    const warning = document.getElementById('bossWarning');
+                    warning.classList.add('active');
+                    setTimeout(() => {
+                        warning.classList.remove('active');
+                    }, 3000);
 
-                // Show and initialize boss health bar
-                const bossHealthBar = document.getElementById('bossHealthBar');
-                const bossHpFill = document.getElementById('bossHpFill');
-                const bossHpText = document.getElementById('bossHpText');
-                if (bossHealthBar) {
-                    bossHealthBar.classList.add('active');
-                    bossHpFill.style.width = '100%';
-                    bossHpText.textContent = `${this.boss.currentHp} / ${this.boss.maxHp}`;
-                }
+                    // Show and initialize boss health bar
+                    const bossHealthBar = document.getElementById('bossHealthBar');
+                    const bossHpFill = document.getElementById('bossHpFill');
+                    const bossHpText = document.getElementById('bossHpText');
+                    if (bossHealthBar) {
+                        bossHealthBar.classList.add('active');
+                        bossHpFill.style.width = '100%';
+                        bossHpText.textContent = `${this.boss.currentHp} / ${this.boss.maxHp}`;
+                    }
 
-                this.state.lastBossSpawn = this.state.gameTime;
+                    this.state.lastBossSpawn = this.state.gameTime;
+                });
             },
 
             updateBossHealthBar() {
@@ -2134,6 +2792,23 @@
                     const hpPercent = Math.max(0, (this.boss.currentHp / this.boss.maxHp) * 100);
                     bossHpFill.style.width = hpPercent + '%';
                     bossHpText.textContent = `${Math.max(0, Math.floor(this.boss.currentHp))} / ${this.boss.maxHp}`;
+                }
+            },
+
+            updateBossHealthBarAppearance() {
+                if (!this.boss) return;
+                
+                const bossHpFill = document.getElementById('bossHpFill');
+                const bossHpWrapper = document.getElementById('bossHealthBar')?.querySelector('.boss-hp-bar-wrapper');
+                
+                if (bossHpFill && bossHpWrapper) {
+                    if (this.boss.invincible) {
+                        bossHpFill.classList.add('invincible');
+                        bossHpWrapper.classList.add('invincible');
+                    } else {
+                        bossHpFill.classList.remove('invincible');
+                        bossHpWrapper.classList.remove('invincible');
+                    }
                 }
             },
 
@@ -2205,6 +2880,8 @@
                 // Update boss countdown timer
                 const bossTimerEl = document.getElementById('bossTimer');
                 const bossTimerText = document.getElementById('bossTimerText');
+                const teleportUI = document.getElementById('teleportCooldownUI');
+                
                 if (!this.boss) {
                     const isFirstBoss = this.state.lastBossSpawn === 0;
                     const targetTime = isFirstBoss ? firstBossTime : subsequentBossInterval;
@@ -2216,11 +2893,17 @@
                         const minutes = Math.floor(timeUntilBoss / 60);
                         const seconds = Math.floor(timeUntilBoss % 60);
                         bossTimerText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        // Boss timer is visible, teleport UI should be below it
+                        if (teleportUI) teleportUI.classList.remove('boss-timer-hidden');
                     } else {
                         bossTimerEl.style.display = 'none';
+                        // Boss timer is hidden, teleport UI should move up
+                        if (teleportUI) teleportUI.classList.add('boss-timer-hidden');
                     }
                 } else {
                     bossTimerEl.style.display = 'none';
+                    // Boss timer is hidden, teleport UI should move up
+                    if (teleportUI) teleportUI.classList.add('boss-timer-hidden');
                 }
 
                 // Shooting
@@ -2255,7 +2938,7 @@
                 // Chain Lightning
                 const lightningTier = this.player.skills.chain_lightning || 0;
                 if (lightningTier > 0) {
-                    const cooldown = lightningTier === 1 ? 3000 : 2000;
+                    const cooldown = lightningTier === 1 ? 7000 : 5000; // Level 1: 7s, Level 2: 5s
                     if (now - this.lastLightning > cooldown) {
                         this.activateChainLightning(lightningTier);
                         this.lastLightning = now;
@@ -2310,6 +2993,23 @@
                     const bossTime = now - this.boss.spawnTime;
                     this.boss.movement(this.boss, this, bossTime);
 
+                    // Cyber Skull special: trigger laser sweep at 50% HP (once only)
+                    if (this.boss.id === 'cyber_skull' && !this.boss.laserSweepUsed) {
+                        const hpPercent = (this.boss.currentHp / this.boss.maxHp) * 100;
+                        if (hpPercent <= 50) {
+                            this.boss.laserSweepUsed = true;
+                            this.boss.laserSweep = {
+                                positioning: true,  // Move to center first
+                                warningActive: false,
+                                damageActive: false,
+                                angle: Math.random() < 0.5 ? 0 : Math.PI * 2, // Random start
+                                direction: Math.random() < 0.5 ? 1 : -1,  // Random direction (clockwise or counter)
+                                rotationSpeed: 0.03,
+                                rotationProgress: 0  // Track rotation in radians for precise completion
+                            };
+                        }
+                    }
+
                     // Boss skills with frequency adjustment
                     // First boss encounter: reduce skill frequency (2x cooldown)
                     // Subsequent bosses: normal frequency
@@ -2323,20 +3023,62 @@
                         }
                     });
 
-                    // Laser sweep for Cyber Skull
-                    if (this.boss.laserSweep && this.boss.laserSweep.active) {
-                        const elapsed = now - this.boss.laserSweep.startTime;
-                        if (elapsed > this.boss.laserSweep.duration) {
-                            this.boss.laserSweep.active = false;
-                        } else {
-                            this.boss.laserSweep.angle += 0.05;
+                    // Laser sweep update for Cyber Skull
+                    if (this.boss.laserSweep) {
+                        const ls = this.boss.laserSweep;
+                        
+                        // Warning phase (full rotation, no damage)
+                        if (ls.warningActive) {
+                            // Boss becomes invincible when warning starts
+                            if (!this.boss.invincible) {
+                                this.boss.invincible = true;
+                                this.updateBossHealthBarAppearance();
+                            }
+                            
+                            ls.angle += ls.rotationSpeed * ls.direction;
+                            const elapsed = now - ls.warningStartTime;
+                            const rotationTime = (Math.PI * 2) / ls.rotationSpeed; // Time for full rotation
+                            
+                            if (elapsed > rotationTime) {
+                                // Warning complete, start damage phase
+                                ls.warningActive = false;
+                                ls.damageActive = true;
+                                ls.damageStartTime = now;
+                                ls.damageStartAngle = ls.angle; // Remember where we started
+                                ls.rotationProgress = 0; // Reset rotation tracker for damage phase
+                            }
                         }
+                        // Damage phase (same rotation, deals damage, boss stays invincible)
+                        else if (ls.damageActive) {
+                            const angleChange = ls.rotationSpeed * ls.direction;
+                            ls.angle += angleChange;
+                            ls.rotationProgress += Math.abs(angleChange); // Track total rotation (absolute value)
+                            
+                            // Check if full 360-degree rotation is completed
+                            if (ls.rotationProgress >= Math.PI * 2) {
+                                // Full rotation complete - end invincibility and laser sweep
+                                ls.damageActive = false;
+                                ls.active = false;
+                                this.boss.invincible = false;
+                                this.updateBossHealthBarAppearance();
+                                this.boss.laserSweep = null;
+                            }
+                        }
+                        
+                        // Mark as active if in any phase (for rendering)
+                        ls.active = ls.warningActive || ls.damageActive;
                     }
                 }
 
                 // Update boss projectiles
                 this.bossProjectiles.forEach((proj, idx) => {
                     if (proj.homing) {
+                        // Check if homing projectile has expired
+                        if (proj.lifetime && Date.now() - proj.createdAt > proj.lifetime) {
+                            this.bossProjectiles.splice(idx, 1);
+                            return;
+                        }
+                        
                         const dx = this.player.x - proj.x;
                         const dy = this.player.y - proj.y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -2485,8 +3227,8 @@
                     
                     // Check boss collision
                     if (this.boss && this.checkCollision(b, this.boss)) {
-                        // Only damage if we haven't hit this boss yet
-                        if (!b.hitEntities.has(this.boss)) {
+                        // Only damage if we haven't hit this boss yet AND boss is not invincible
+                        if (!b.hitEntities.has(this.boss) && !this.boss.invincible) {
                             const dmg = b.damage || this.player.damage;
                             const finalDmg = pierceTier === 2 && b.hitEntities.size === 0 ? dmg * 2 : dmg;
                             
@@ -2584,7 +3326,7 @@
 
                 // Missile collisions
                 this.missiles.forEach((m, mi) => {
-                    if (this.boss && this.checkCollision(m, this.boss)) {
+                    if (this.boss && this.checkCollision(m, this.boss) && !this.boss.invincible) {
                         this.boss.currentHp -= this.player.damage * 1.5;
                         this.updateBossHealthBar();
                         
@@ -2630,11 +3372,16 @@
                     bolt.time += 16;
                     return bolt.time < bolt.duration;
                 });
+
+                // Update teleport UI
+                if (this.player.skills['teleport']) {
+                    this.updateTeleportUI();
+                }
             },
 
             activateChainLightning(tier) {
                 const chainCount = tier === 1 ? 3 : 5;
-                const damage = tier === 1 ? this.player.damage * 1.5 : this.player.damage * 1.75;
+                const damage = tier === 1 ? this.player.damage * 3.5 : this.player.damage * 4.5; // Increased damage to compensate for 7s/5s cooldown
                 const color = tier === 1 ? '#00ffff' : '#ff0066';
                 
                 let targets = [...this.asteroids];
@@ -2658,7 +3405,7 @@
                         duration: 500
                     });
                     
-                    if (target === this.boss) {
+                    if (target === this.boss && !this.boss.invincible) {
                         this.boss.currentHp -= damage;
                         this.updateBossHealthBar();
                         if (this.boss.currentHp <= 0) {
@@ -2669,7 +3416,7 @@
                             this.boss = null;
                             this.updateHUD();
                         }
-                    } else {
+                    } else if (target !== this.boss) {
                         target.hp -= damage;
                         if (target.hp <= 0) {
                             const idx = this.asteroids.indexOf(target);
@@ -2759,7 +3506,7 @@
 
                         if (inBeamPath) {
                             // This is the first target in the beam path - damage it and stop
-                            if (target === this.boss) {
+                            if (target === this.boss && !this.boss.invincible) {
                                 this.boss.currentHp -= damage;
                                 this.updateBossHealthBar();
                                 if (this.boss.currentHp <= 0) {
@@ -2869,7 +3616,7 @@
                 targets.forEach((target, idx) => {
                     const dist = Math.sqrt((target.x - x) ** 2 + (target.y - y) ** 2);
                     if (dist < radius) {
-                        if (target === this.boss) {
+                        if (target === this.boss && !this.boss.invincible) {
                             this.boss.currentHp -= damage;
                             this.updateBossHealthBar();
                             if (this.boss.currentHp <= 0) {
@@ -3166,20 +3913,83 @@
                 });
 
                 // Render boss laser sweep
+                // Render Cyber Skull laser sweep
                 if (this.boss && this.boss.laserSweep && this.boss.laserSweep.active) {
-                    const angle = this.boss.laserSweep.angle;
-                    this.ctx.strokeStyle = '#00ffff';
-                    this.ctx.lineWidth = 10;
-                    this.ctx.shadowBlur = 20;
-                    this.ctx.shadowColor = '#00ffff';
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(this.boss.x, this.boss.y);
-                    this.ctx.lineTo(
-                        this.boss.x + Math.cos(angle) * 1000,
-                        this.boss.y + Math.sin(angle) * 1000
-                    );
-                    this.ctx.stroke();
-                    this.ctx.shadowBlur = 0;
+                    const ls = this.boss.laserSweep;
+                    const angle = ls.angle;
+                    const laserLength = 1500;
+                    const endX = this.boss.x + Math.cos(angle) * laserLength;
+                    const endY = this.boss.y + Math.sin(angle) * laserLength;
+                    
+                    // Warning phase: thin cyan laser, no damage
+                    if (ls.warningActive) {
+                        this.ctx.strokeStyle = '#00ffff';
+                        this.ctx.lineWidth = 4;
+                        this.ctx.globalAlpha = 0.7;
+                        this.ctx.shadowBlur = 15;
+                        this.ctx.shadowColor = '#00ffff';
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(this.boss.x, this.boss.y);
+                        this.ctx.lineTo(endX, endY);
+                        this.ctx.stroke();
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.globalAlpha = 1;
+                    }
+                    // Damage phase: thick red laser with collision
+                    else if (ls.damageActive) {
+                        // Render thick red laser
+                        this.ctx.strokeStyle = '#ff0000';
+                        this.ctx.lineWidth = 20;
+                        this.ctx.globalAlpha = 0.8;
+                        this.ctx.shadowBlur = 30;
+                        this.ctx.shadowColor = '#ff0000';
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(this.boss.x, this.boss.y);
+                        this.ctx.lineTo(endX, endY);
+                        this.ctx.stroke();
+                        
+                        // White core
+                        this.ctx.strokeStyle = '#ffffff';
+                        this.ctx.lineWidth = 8;
+                        this.ctx.shadowColor = '#ffffff';
+                        this.ctx.shadowBlur = 20;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(this.boss.x, this.boss.y);
+                        this.ctx.lineTo(endX, endY);
+                        this.ctx.stroke();
+                        
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.globalAlpha = 1;
+                        
+                        // Collision detection with player
+                        if (!this.player.invincible && now >= this.player.invincibleUntil) {
+                            // Calculate distance from player to laser line
+                            const px = this.player.x - this.boss.x;
+                            const py = this.player.y - this.boss.y;
+                            const lx = Math.cos(angle);
+                            const ly = Math.sin(angle);
+                            const projection = px * lx + py * ly;
+                            
+                            if (projection > 0 && projection < laserLength) {
+                                const closestX = this.boss.x + lx * projection;
+                                const closestY = this.boss.y + ly * projection;
+                                const dist = Math.sqrt(
+                                    (this.player.x - closestX) ** 2 + 
+                                    (this.player.y - closestY) ** 2
+                                );
+                                
+                                // If player is within laser thickness (10 pixels from line)
+                                if (dist < 15) {
+                                    this.player.hp--;
+                                    this.player.invincibleUntil = now + 1000;
+                                    this.updateHUD();
+                                    if (this.player.hp <= 0) {
+                                        this.gameOver();
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // Render boss projectiles
@@ -3513,6 +4323,7 @@
                 document.getElementById('touchLayer').classList.remove('active');
                 document.getElementById('pauseBtn').classList.remove('active');
                 document.getElementById('finalScore').textContent = this.state.score;
+                this.applyGameOverTitleImage(); // Apply custom game over title if available
                 document.getElementById('gameOverScreen').classList.add('active');
             },
 
