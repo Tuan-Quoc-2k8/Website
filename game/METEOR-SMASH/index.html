@@ -7,9 +7,9 @@
     <style>
         :root {
             /* UI Image Scale Configuration - Adjustable sizes for UI images */
-            --game-over-title-scale: 80%; /* Game Over title image scale */
-            --pause-title-scale: 70%; /* Pause menu title image scale */
-            --boss-arrival-scale: 75%; /* Boss Incoming notification image scale */
+            --game-over-title-scale: 95%; /* Game Over title image scale */
+            --pause-title-scale: 100%; /* Pause menu title image scale */
+            --boss-arrival-scale: 170%; /* Boss Incoming notification image scale */
         }
 
         * {
@@ -320,6 +320,10 @@
             text-shadow: 0 0 30px #00ff00;
             margin-bottom: 60px;
             animation: pulse 2s infinite;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .pause-title img {
@@ -344,6 +348,7 @@
             transition: all 0.2s;
             position: relative;
             overflow: hidden;
+            width: 320px;
         }
 
         .pause-menu-button::before {
@@ -884,7 +889,7 @@
             background: rgba(10, 10, 40, 0.95);
             border: 2px solid rgba(0, 255, 255, 0.6);
             border-radius: 10px;
-            padding: clamp(40px, 8vw, 50px) clamp(10px, 2vw, 15px) clamp(40px, 8vw, 50px) clamp(10px, 2vw, 15px); /* Top: icon clearance | Bottom: tier bar clearance */
+            padding: clamp(35px, 6vw, 50px) clamp(10px, 2vw, 15px) clamp(35px, 6vw, 50px) clamp(10px, 2vw, 15px); /* Top: icon clearance | Bottom: tier bar clearance */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1038,7 +1043,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: clamp(36px, 7vw, 46px);
+            height: clamp(32px, 5.5vw, 46px);
             clip-path: polygon(7% 0%, 93% 0%, 100% 100%, 0% 100%);
             background: linear-gradient(180deg, rgba(0, 255, 255, 0.15) 0%, rgba(0, 255, 255, 0.45) 100%);
             display: flex;
@@ -1129,6 +1134,10 @@
             text-shadow: 0 0 40px #ff0066;
             margin-bottom: 40px;
             animation: pulse 2s infinite;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .game-over-title img {
@@ -1221,6 +1230,15 @@
             color: #00ff00;
             text-align: center;
             margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .help-header img {
+            max-width: 90%;
+            max-height: 15vh;
+            object-fit: contain;
         }
 
         .help-section {
@@ -1321,10 +1339,13 @@
             display: none;
             text-align: center;
             pointer-events: none;
+            width: 100%;
         }
 
         #bossArrivalMessage.active {
-            display: block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .boss-arrival-text {
@@ -1357,28 +1378,28 @@
             left: clamp(12px, 1.5vw, 20px);
         }
 
-        /* Teleport Cooldown UI - Positioned in top-left area, below boss timer */
+        /* Teleport Cooldown UI - Positioned on left side below Boss Timer */
         #teleportCooldownUI {
             position: absolute;
-            top: clamp(130px, 18vh, 160px);
-            left: clamp(12px, 1.5vw, 20px);
+            top: clamp(165px, 22vh, 200px);  /* Moved down to avoid boss countdown overlap */
+            left: clamp(12px, 1.5vw, 20px);  /* Left side alignment */
             background: rgba(0, 20, 40, 0.9);
             border: 3px solid #00ffff;
             border-radius: 10px;
-            padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 20px);
+            padding: clamp(6px, 1.2vh, 10px) clamp(12px, 2.5vw, 16px);
             display: none;
             align-items: center;
-            gap: clamp(10px, 2vw, 15px);
+            gap: clamp(8px, 1.5vw, 12px);
             box-shadow: 
                 0 0 20px rgba(0, 255, 255, 0.4),
                 inset 0 0 15px rgba(0, 255, 255, 0.08);
             z-index: 14;
-            transition: top 0.3s ease;
+            transition: top 0.3s ease, all 0.3s ease;
         }
         
-        /* When boss timer is hidden, move teleport UI up */
-        #teleportCooldownUI.boss-timer-hidden {
-            top: clamp(60px, 9vh, 80px);
+        /* When boss countdown is hidden, move teleport UI upward */
+        #teleportCooldownUI.no-boss-timer {
+            top: clamp(110px, 15vh, 140px);
         }
 
         #teleportCooldownUI.active {
@@ -1387,19 +1408,20 @@
 
         .teleport-icon-container {
             position: relative;
-            width: clamp(35px, 6vw, 45px);
-            height: clamp(35px, 6vw, 45px);
+            width: clamp(28px, 5vw, 36px);
+            height: clamp(28px, 5vw, 36px);
             background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 255, 255, 0.5));
             border: 2px solid #00ffff;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(20px, 4vw, 28px);
+            font-size: clamp(16px, 3.5vw, 22px);
             box-shadow: 
                 0 0 15px rgba(0, 255, 255, 0.5),
                 inset 0 0 10px rgba(0, 255, 255, 0.2);
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .teleport-icon-container img {
@@ -1419,7 +1441,7 @@
 
         .teleport-cooldown-text {
             color: #00ffff;
-            font-size: clamp(14px, 2.5vw, 18px);
+            font-size: clamp(12px, 2.2vw, 16px);
             font-weight: bold;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
             letter-spacing: 0.5px;
@@ -1429,15 +1451,410 @@
         /* Mobile optimization */
         @media (max-width: 600px) {
             #teleportCooldownUI {
-                padding: 8px 12px;
-                gap: 8px;
-                top: clamp(120px, 16vh, 150px);
-            }
-            
-            #teleportCooldownUI.boss-timer-hidden {
-                top: clamp(50px, 8vh, 70px);
+                padding: 6px 10px;
+                gap: 6px;
             }
         }
+
+        /* ===== SKILL TREE / UPGRADE SYSTEM ===== */
+        #upgradeScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 10, 0.95);
+            display: none;
+            flex-direction: column;
+            z-index: 200;
+            overflow: hidden;
+        }
+
+        #upgradeScreen.active {
+            display: flex;
+        }
+
+        .upgrade-header {
+            padding: clamp(12px, 2vh, 18px);
+            background: linear-gradient(180deg, rgba(138, 43, 226, 0.3), transparent);
+            border-bottom: 2px solid #9d4edd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upgrade-title {
+            font-size: clamp(18px, 3.2vw, 28px);
+            color: #e0aaff;
+            text-shadow: 0 0 15px rgba(157, 78, 221, 0.8);
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .upgrade-close-btn {
+            background: rgba(255, 50, 50, 0.3);
+            border: 2px solid #ff6b6b;
+            color: #ffaaaa;
+            padding: clamp(5px, 0.8vh, 8px) clamp(10px, 1.8vw, 16px);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: clamp(13px, 2vw, 16px);
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        .upgrade-close-btn:hover {
+            background: rgba(255, 50, 50, 0.5);
+            transform: scale(1.05);
+        }
+
+        .upgrade-currencies {
+            display: flex;
+            gap: clamp(12px, 2.5vw, 24px);
+            padding: clamp(8px, 1.2vh, 12px);
+            background: rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(157, 78, 221, 0.3);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .currency-display {
+            display: flex;
+            align-items: center;
+            gap: clamp(6px, 1vw, 10px);
+            background: rgba(138, 43, 226, 0.2);
+            padding: clamp(6px, 1vh, 10px) clamp(12px, 2vw, 18px);
+            border-radius: 8px;
+            border: 1px solid rgba(157, 78, 221, 0.5);
+        }
+
+        .currency-icon {
+            width: clamp(24px, 4vw, 32px);
+            height: clamp(24px, 4vw, 32px);
+            object-fit: contain;
+        }
+
+        .currency-amount {
+            font-size: clamp(14px, 2.5vw, 20px);
+            color: #e0aaff;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(224, 170, 255, 0.6);
+        }
+
+        .skill-tree-container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: clamp(15px, 2.5vh, 25px) clamp(5px, 1vw, 10px);
+            position: relative;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2a 50%, #0a0a1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .skill-tree-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .skill-tree-nodes {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            min-height: 100%;
+        }
+
+        /* Modular sci-fi skill tree nodes - rectangular with rounded corners */
+        .skill-node {
+            position: absolute;
+            width: 120px;
+            height: 140px;
+            border-radius: 12px;
+            border: 3px solid #4a4a5a;
+            background: linear-gradient(135deg, rgba(40, 42, 54, 0.95), rgba(30, 32, 44, 0.95));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.5),
+                inset 0 0 20px rgba(255, 255, 255, 0.02);
+            overflow: visible;
+        }
+        
+        /* Mobile responsive sizing */
+        @media (max-width: 600px) {
+            .skill-node {
+                width: clamp(105px, 16vw, 120px);
+                height: clamp(125px, 19vw, 140px);
+            }
+        }
+
+        /* Neon outline glow effect */
+        .skill-node::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, transparent, rgba(100, 100, 120, 0.3));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .skill-node:hover::before {
+            opacity: 1;
+        }
+
+        /* Owned nodes - green glow */
+        .skill-node.owned {
+            border-color: #00ff88;
+            background: linear-gradient(135deg, rgba(0, 100, 68, 0.4), rgba(0, 80, 54, 0.4));
+            box-shadow: 
+                0 0 25px rgba(0, 255, 136, 0.6),
+                0 4px 20px rgba(0, 0, 0, 0.6),
+                inset 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+
+        /* Unlocked nodes - yellow/gold glow with pulsing animation */
+        .skill-node.unlocked {
+            border-color: #ffd700;
+            background: linear-gradient(135deg, rgba(100, 85, 0, 0.4), rgba(80, 68, 0, 0.4));
+            box-shadow: 
+                0 0 25px rgba(255, 215, 0, 0.6),
+                0 4px 20px rgba(0, 0, 0, 0.6),
+                inset 0 0 30px rgba(255, 215, 0, 0.1);
+        }
+
+        .skill-node.unlocked.can-afford {
+            animation: nodeGlowModular 2s infinite ease-in-out;
+        }
+
+        @keyframes nodeGlowModular {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 25px rgba(255, 215, 0, 0.6),
+                    0 4px 20px rgba(0, 0, 0, 0.6);
+                transform: translateY(0);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 40px rgba(255, 215, 0, 0.9),
+                    0 0 60px rgba(255, 215, 0, 0.5),
+                    0 4px 25px rgba(0, 0, 0, 0.6);
+                transform: translateY(-2px);
+            }
+        }
+
+        /* Locked nodes - dark with minimal visibility */
+        .skill-node.locked {
+            border-color: #3a3a4a;
+            background: linear-gradient(135deg, rgba(30, 30, 40, 0.6), rgba(20, 20, 30, 0.6));
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.4),
+                inset 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Icon container - minimal futuristic white icon */
+        .skill-node-icon {
+            width: 55%;
+            height: 45%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+            margin-bottom: 10px;
+            font-size: clamp(40px, 5.5vw, 48px);
+        }
+
+        /* Progress indicator at bottom - clean bar */
+        .skill-node-progress {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(11px, 1.8vw, 14px);
+            color: #a0a0b0;
+            font-weight: 600;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 12px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .skill-node.owned .skill-node-progress {
+            color: #00ff88;
+            text-shadow: 0 0 6px rgba(0, 255, 136, 0.6);
+        }
+
+        .skill-node.unlocked .skill-node-progress {
+            color: #ffd700;
+            text-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+        }
+
+        /* Cost display */
+        .skill-node-cost {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(12px, 1.9vw, 15px);
+            color: #e0e0e0;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.6);
+            padding: 4px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+
+        /* Upgrade Info Panel - Centered Overlay */
+        .upgrade-info-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            width: min(90%, 500px);
+            background: linear-gradient(135deg, rgba(20, 10, 40, 0.98), rgba(10, 5, 30, 0.98));
+            border: 3px solid #9d4edd;
+            border-radius: 15px;
+            padding: clamp(20px, 3vh, 30px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 500;
+            box-shadow: 0 0 50px rgba(157, 78, 221, 0.6), inset 0 0 30px rgba(157, 78, 221, 0.1);
+        }
+
+        .upgrade-info-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .upgrade-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: clamp(12px, 2vh, 18px);
+        }
+
+        .upgrade-info-close {
+            background: rgba(255, 50, 50, 0.3);
+            border: 2px solid #ff6b6b;
+            color: #ffaaaa;
+            width: clamp(32px, 5vw, 40px);
+            height: clamp(32px, 5vw, 40px);
+            border-radius: 50%;
+            font-size: clamp(18px, 3vw, 24px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .upgrade-info-close:hover {
+            background: rgba(255, 50, 50, 0.5);
+            transform: scale(1.1);
+        }
+
+        .upgrade-info-icon {
+            width: clamp(60px, 10vw, 80px);
+            height: clamp(60px, 10vw, 80px);
+            font-size: clamp(40px, 7vw, 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto clamp(15px, 2.5vh, 20px) auto;
+            background: rgba(157, 78, 221, 0.2);
+            border: 2px solid #9d4edd;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(157, 78, 221, 0.5);
+        }
+
+        .upgrade-info-title {
+            font-size: clamp(20px, 3.5vw, 28px);
+            color: #e0aaff;
+            margin-bottom: clamp(10px, 1.5vh, 15px);
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(224, 170, 255, 0.8);
+            text-align: center;
+        }
+
+        .upgrade-info-desc {
+            font-size: clamp(14px, 2.5vw, 18px);
+            color: #ddd;
+            margin-bottom: clamp(15px, 2.5vh, 20px);
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .upgrade-info-level {
+            font-size: clamp(13px, 2.2vw, 16px);
+            color: #aaa;
+            margin-bottom: clamp(12px, 2vh, 18px);
+            text-align: center;
+        }
+
+        .upgrade-info-cost {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(10px, 2vw, 15px);
+            margin-bottom: clamp(15px, 2.5vh, 20px);
+            font-size: clamp(16px, 3vw, 22px);
+            color: #fff;
+        }
+
+        .upgrade-purchase-btn {
+            width: 100%;
+            padding: clamp(12px, 2.5vh, 18px);
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-size: clamp(16px, 3vw, 22px);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.5);
+        }
+
+        .upgrade-purchase-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #00ff00, #00ff00);
+            transform: scale(1.02);
+            box-shadow: 0 0 35px rgba(0, 255, 0, 0.7);
+        }
+
+        .upgrade-purchase-btn:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .upgrade-purchase-btn.owned {
+            background: rgba(0, 100, 0, 0.5);
+            color: #00ff00;
+            cursor: default;
+        }
+
     </style>
 </head>
 <body>
@@ -1502,6 +1919,7 @@
         <div id="mainMenu">
             <div class="menu-title">METEOR<br>SMASH</div>
             <button class="menu-button" onclick="game.startGame()">▶ PLAY</button>
+            <button class="menu-button" onclick="game.openUpgradeScreen()">⚡ UPGRADES</button>
             <button class="menu-button secondary" onclick="game.showHelp()">❓ HOW TO PLAY</button>
         </div>
         
@@ -1528,33 +1946,115 @@
             <div class="help-container">
                 <div class="help-header">📖 HOW TO PLAY</div>
                 
+                <!-- CONTROLS -->
                 <div class="help-section">
                     <div class="help-section-title">🎮 Controls</div>
-                    <p class="help-text">Desktop: Use WASD or Arrow Keys to move</p>
-                    <p class="help-text">Mobile: Touch and drag to move</p>
-                    <p class="help-text">Your ship fires automatically!</p>
+                    <p class="help-text">🖥 Desktop: Move with WASD or Arrow Keys</p>
+                    <p class="help-text">📱 Mobile: Touch & drag to move your ship</p>
+                    <p class="help-text">🖱 Desktop Skill: Left Click to teleport (if unlocked)</p>
+                    <p class="help-text">🔫 Your ship fires automatically</p>
                 </div>
 
+                <!-- CORE GAMEPLAY -->
+                <div class="help-section">
+                    <div class="help-section-title">🚀 Core Gameplay</div>
+                    <p class="help-text">Destroy asteroids and enemies to earn EXP and gold</p>
+                    <p class="help-text">Level up to choose powerful skill upgrades</p>
+                    <p class="help-text">Avoid enemy attacks — positioning is critical</p>
+                    <p class="help-text">The game gets harder over time</p>
+                </div>
+
+                <!-- BOSSES -->
                 <div class="help-section">
                     <div class="help-section-title">👾 Bosses</div>
-                    <p class="help-text">Powerful bosses appear every 3 minutes!</p>
-                    <p class="help-text">Each boss has unique attack patterns</p>
-                    <p class="help-text">Defeat them for massive rewards!</p>
+                    <p class="help-text">Bosses appear after a countdown warning</p>
+                    <p class="help-text">Only one boss appears at a time</p>
+                    <p class="help-text">Each boss has unique attack patterns and special phases</p>
+                    <p class="help-text">Some bosses become temporarily invincible — watch HP color!</p>
+                    <p class="help-text">Defeat bosses to earn rare Boss Coins</p>
                 </div>
 
+                <!-- SKILLS -->
                 <div class="help-section">
                     <div class="help-section-title">🎯 Skills</div>
-                    <p class="help-text">🔫 Support Fighters – Deploy escort ships that fire alongside you</p>
-                    <p class="help-text">💥 Explosive Rounds – Shots explode on impact, dealing area damage</p>
-                    <p class="help-text">⚡ Chain Lightning – Releases lightning that jumps between enemies</p>
-                    <p class="help-text">🚀 Homing Missiles – Launch missiles that track and hunt targets</p>
-                    <p class="help-text">🔄 Ricochet Bullets – Bullets bounce to new targets after hitting</p>
-                    <p class="help-text">🎯 Piercing Bullets – Bullets pass through multiple enemies</p>
-                    <p class="help-text">🔴 Laser Fortress – Summons laser turrets for sustained fire support</p>
-                    <p class="help-text">⚡ Teleport – Instantly move (Double tap on mobile / Right-click on PC)</p>
+                    <p class="help-text">🔫 Support Fighters – Summon escort ships that assist in combat</p>
+                    <p class="help-text">💥 Explosive Rounds – Bullets explode on impact, dealing area damage</p>
+                    <p class="help-text">⚡ Chain Lightning – Lightning jumps between enemies</p>
+                    <p class="help-text">🚀 Homing Missiles – Missiles automatically track targets</p>
+                    <p class="help-text">🔄 Ricochet Bullets – Bullets bounce between enemies</p>
+                    <p class="help-text">🎯 Piercing Bullets – Bullets penetrate multiple enemies</p>
+                    <p class="help-text">🔴 Laser Fortress – Deploy powerful laser turrets</p>
+                    <p class="help-text">⚡ Teleport – Instantly reposition to escape danger (cooldown applies)</p>
+                </div>
+
+                <!-- UPGRADE SYSTEM -->
+                <div class="help-section">
+                    <div class="help-section-title">🧬 Upgrade System</div>
+                    <p class="help-text">Upgrades are available in the Main Menu</p>
+                    <p class="help-text">Use Gold, Boss Coins, and other currencies to unlock upgrades</p>
+                    <p class="help-text">Upgrades are organized as a skill tree with connected branches</p>
+                    <p class="help-text">🟢 Green border: already owned</p>
+                    <p class="help-text">🟡 Yellow border: unlocked and purchasable</p>
+                    <p class="help-text">⚪ White border: locked</p>
+                    <p class="help-text">Upgrades permanently enhance your ship and skills</p>
+                </div>
+
+                <!-- SURVIVAL TIPS -->
+                <div class="help-section">
+                    <div class="help-section-title">💡 Survival Tips</div>
+                    <p class="help-text">Keep moving — staying still is dangerous</p>
+                    <p class="help-text">Save teleport for emergencies</p>
+                    <p class="help-text">Learn boss attack patterns to survive longer</p>
+                    <p class="help-text">Upgrade wisely to match your playstyle</p>
                 </div>
             </div>
             <button class="close-help-btn" onclick="game.closeHelp()">✅ GOT IT!</button>
+        </div>
+
+        <!-- Upgrade/Skill Tree Screen -->
+        <div id="upgradeScreen">
+            <div class="upgrade-header">
+                <div class="upgrade-title">⚡ UPGRADES</div>
+                <button class="upgrade-close-btn" onclick="game.closeUpgradeScreen()">✕ CLOSE</button>
+            </div>
+            
+            <div class="upgrade-currencies">
+                <div class="currency-display">
+                    <span class="currency-icon">💰</span>
+                    <span class="currency-amount" id="upgradeCoins">0</span>
+                </div>
+                <div class="currency-display">
+                    <span class="currency-icon">⭐</span>
+                    <span class="currency-amount" id="upgradeXP">0</span>
+                </div>
+                <div class="currency-display">
+                    <span class="currency-icon">👑</span>
+                    <span class="currency-amount" id="upgradeBossCoins">0</span>
+                </div>
+            </div>
+
+            <div class="skill-tree-container">
+                <svg class="skill-tree-svg" id="skillTreeSvg"></svg>
+                <div class="skill-tree-nodes" id="skillTreeNodes"></div>
+            </div>
+
+            <!-- Upgrade Info Panel (appears at bottom when node clicked) -->
+            <!-- Upgrade Info Panel (appears on top of game) -->
+            <div class="upgrade-info-panel" id="upgradeInfoPanel">
+                <div class="upgrade-info-header">
+                    <div style="flex: 1;"></div>
+                    <button class="upgrade-info-close" onclick="game.closeUpgradeInfo()">✕</button>
+                </div>
+                <div class="upgrade-info-icon" id="upgradeInfoIcon">🎯</div>
+                <div class="upgrade-info-title" id="upgradeInfoTitle">Upgrade Name</div>
+                <div class="upgrade-info-level" id="upgradeInfoLevel">Level 0/3</div>
+                <div class="upgrade-info-desc" id="upgradeInfoDesc">Description</div>
+                <div class="upgrade-info-cost">
+                    <span id="upgradeInfoCostIcon">💰</span>
+                    <span id="upgradeInfoCostAmount">100</span>
+                </div>
+                <button class="upgrade-purchase-btn" id="upgradePurchaseBtn">PURCHASE</button>
+            </div>
         </div>
 
     <script>
@@ -1638,6 +2138,189 @@
             teleport:          '⚡'
         };
 
+        // Number formatting helper function
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1).replace(/\.0$/, '') + ' M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1).replace(/\.0$/, '') + ' K';
+            }
+            return num.toString();
+        }
+
+        // GRID-BASED UPGRADE TREE LAYOUT
+        // Each row is an array of grid cells
+        // 0 = empty, string = node ID
+        // This allows precise manual control over branch alignment
+        const GRID_LAYOUT = [
+            // Row 0: Root nodes (centered)
+            [0, 0, 0, 0, 'skill_system_core', 0, 0, 0, 0],
+            
+            // Row 1: Tier 1 nodes (spread under roots)
+            [0, 'mag_weapon', 0, 'aim_system', 0, 'shield_boost', 0, 'energy_core', 0],
+            
+            // Row 2: Tier 2 synergy nodes (converging)
+            [0, 0, 'missile_pod', 0, 'dual_cannons', 0, 'power_amplifier', 0, 0],
+            
+            // Row 3: Ultimate node (centered)
+            [0, 0, 0, 0, 'ultimate_overdrive', 0, 0, 0, 0]
+        ];
+
+        // SKILL TREE UPGRADE NODES - Grid-based positioning system
+        // Grid: 720px wide, nodes at 120px intervals horizontally, 160px vertically
+        // Node positions: (col * 120 + 60, row * 160 + 80)
+        const UPGRADE_TREE = {
+
+            // === ROOT NODES (Row 0) ===
+            skill_system_core: {
+                id: 'skill_system_core',
+                parentIds: [],
+                levelMax: 1,
+                currentLevel: 0,
+                icon: '🧬',
+                iconImage: './img/skill-system.png',  // Image URL for icon (null for default emoji)
+                name: 'Skill System',
+                description: 'Unlock the skill upgrade interface',
+                cost: { gold: 0, xp: 0, bossCoin: 1 }, // điều kiện mở
+                effects: {
+                    unlockSkillUI: true
+                },
+                x: 360,
+                y: 80,
+                state: 'locked'
+            },
+            // === TIER 1 (Row 1) - Balanced under roots ===
+            mag_weapon: {
+                id: 'mag_weapon',
+                parentIds: ['skill_system_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🔫',
+                iconImage: './img/dame.png',  // Image URL for icon (null for default emoji)
+                name: 'MAG Weapon',
+                description: 'Increase base weapon damage',
+                cost: { gold: 200, xp: 0, bossCoin: 0 },
+                effects: { damage: 3 },
+                x: 100,  // Left child of root_gold
+                y: 240,
+                state: 'locked'
+            },
+
+            aim_system: {
+                id: 'aim_system',
+                parentIds: ['skill_system_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🎯',
+                iconImage: './img/aim.png',  // Image URL for icon (null for default emoji)
+                name: 'Aim System',
+                description: 'Improve critical accuracy',
+                cost: { gold: 240, xp: 0, bossCoin: 0 },
+                effects: { crit: 3 },
+                x: 260,  // Center-right child of root_gold
+                y: 240,
+                state: 'locked'
+            },
+
+            shield_boost: {
+                id: 'shield_boost',
+                parentIds: ['skill_system_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🛡️',
+                iconImage: './img/HP.png',  // Image URL for icon (null for default emoji)
+                name: 'Shield Boost',
+                description: 'Increase max HP',
+                cost: { gold: 260, xp: 0, bossCoin: 0 },
+                effects: { hp: 2 },
+                x: 460,  // Left child of root_xp
+                y: 240,
+                state: 'locked'
+            },
+
+            energy_core: {
+                id: 'energy_core',
+                parentIds: ['skill_system_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🔋',
+                iconImage: './img/chain_lightning.png',  // Image URL for icon (null for default emoji)
+                name: 'Energy Core',
+                description: 'Reduce skill cooldowns',
+                cost: { gold: 500, xp: 0, bossCoin: 0 },
+                effects: { cooldown: -5 },
+                x: 620,  // Right child of root_xp
+                y: 240,
+                state: 'locked'
+            },
+
+            // === TIER 2 (Row 2) - Synergy nodes ===
+            missile_pod: {
+                id: 'missile_pod',
+                parentIds: ['mag_weapon', 'aim_system'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🚀',
+                iconImage: './img/All.png',  // Image URL for icon (null for default emoji)
+                name: 'Missile Pod',
+                description: 'Unlock missile burst damage',
+                cost: { gold: 480, xp: 0, bossCoin: 0 },
+                effects: { missileDamage: 8 },
+                x: 180,  // Center between mag_weapon and aim_system
+                y: 400,
+                state: 'locked'
+            },
+
+            dual_cannons: {
+                id: 'dual_cannons',
+                parentIds: ['aim_system', 'shield_boost'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '⚔️',
+                iconImage: './img/dame.png',  // Image URL for icon (null for default emoji)
+                name: 'Dual Cannons',
+                description: 'Increase fire rate',
+                cost: { gold: 520, xp: 0, bossCoin: 0 },
+                effects: { fireRate: 0.3 },
+                x: 360,  // Center between aim_system and shield_boost
+                y: 400,
+                state: 'locked'
+            },
+
+            power_amplifier: {
+                id: 'power_amplifier',
+                parentIds: ['shield_boost', 'energy_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '⚡',
+                iconImage: './img/Power.png',  // Image URL for icon (null for default emoji)
+                name: 'Power Amplifier',
+                description: 'Boost all damage output',
+                cost: { gold: 550, xp: 0, bossCoin: 0 },
+                effects: { allDamage: 5 },
+                x: 540,  // Center between shield_boost and energy_core
+                y: 400,
+                state: 'locked'
+            },
+
+            // === TIER 3 (Row 3) - Ultimate ===
+            ultimate_overdrive: {
+                id: 'ultimate_overdrive',
+                parentIds: ['missile_pod', 'dual_cannons', 'power_amplifier'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🔥',
+                iconImage: './img/All.png',  // Image URL for icon (null for default emoji)
+                name: 'Overdrive Mode',
+                description: 'Massive temporary power boost',
+                cost: { gold: 800, xp: 0, bossCoin: 1 },
+                effects: { allDamage: 35 },
+                x: 360,  // Centered ultimate node
+                y: 560,
+                state: 'locked'
+            }
+        };
+
         // BOSS DEFINITIONS
         const BOSSES = {
             // Boss 1: Flame Demon - Fire-based attacks
@@ -1647,6 +2330,7 @@
                 hp: 1000,
                 size: 150,
                 color: '#ff3300',
+                phaseSkillUsed: false,  // Track if phase skill has been used
                 skills: [
                     {
                         name: 'Fire Circle',
@@ -1714,9 +2398,15 @@
                     }
                 ],
                 movement: function(boss, game, time) {
-                    // Sinusoidal horizontal movement
-                    boss.x = 360 + Math.sin(time / 1000) * 250;
-                    boss.y = 200 + Math.sin(time / 2000) * 50;
+                    // If fire vortex phase is active, stay at center
+                    if (boss.fireVortex && boss.fireVortex.active) {
+                        boss.x = 360;
+                        boss.y = 300;
+                    } else {
+                        // Sinusoidal horizontal movement
+                        boss.x = 360 + Math.sin(time / 1000) * 250;
+                        boss.y = 200 + Math.sin(time / 2000) * 50;
+                    }
                 }
             },
             
@@ -1727,6 +2417,7 @@
                 hp: 1200,
                 size: 160,
                 color: '#9900ff',
+                phaseSkillUsed: false,  // Track if phase skill has been used
                 skills: [
                     {
                         name: 'Tentacle Slam',
@@ -1795,10 +2486,16 @@
                     }
                 ],
                 movement: function(boss, game, time) {
-                    // Figure-8 movement
-                    const t = time / 2000;
-                    boss.x = 360 + Math.sin(t) * 200;
-                    boss.y = 250 + Math.sin(t * 2) * 100;
+                    // If void collapse phase is active, stay at center
+                    if (boss.voidCollapse && boss.voidCollapse.active) {
+                        boss.x = 360;
+                        boss.y = 300;
+                    } else {
+                        // Figure-8 movement
+                        const t = time / 2000;
+                        boss.x = 360 + Math.sin(t) * 200;
+                        boss.y = 250 + Math.sin(t * 2) * 100;
+                    }
                 }
             },
             
@@ -1843,7 +2540,7 @@
                                         vx: Math.cos(angle) * 6,
                                         vy: Math.sin(angle) * 6,
                                         size: 10,
-                                        color: '#00ff00',
+                                        color: '#00ffff',
                                         damage: 1
                                     });
                                 }, i * 100);
@@ -1900,7 +2597,8 @@
             pauseButton: './img/pause.png',                    // Pause button image (null for default emoji)
             pauseTitle: './img/pause-title.png',                     // Pause menu title image (null for default text)
             gameOverTitle: './img/game-over-title.png',                // Game over screen title image (null for default text)
-            teleportIcon: './img/teleport.png'                // Teleport cooldown UI icon (null for default emoji)
+            helpTitle: './img/HOW-TO-PLAY.png',                        // How to Play screen title image (null for default text)
+            teleportIcon: './img/teleport-ui-icon.png'                // Teleport cooldown UI icon (null for default emoji)
         };
 
         // IMAGE SCALE CONFIGURATION (affects visual size only, NOT hitboxes)
@@ -1922,9 +2620,11 @@
                 paused: false,
                 score: 0,
                 coins: 0,
+                bossCoins: 0,  // Boss Coin currency
                 selectedSkill: null,
                 gameTime: 0,
-                lastBossSpawn: 0
+                lastBossSpawn: 0,
+                ownedUpgrades: {}  // Track purchased upgrades from skill tree
             },
 
             player: {
@@ -1971,8 +2671,38 @@
                 this.initStarLayers();
                 this.setupEventListeners();
                 this.preloadImages();
+                
+                // Initialize persistent currency storage
+                this.loadSavedCurrency();
+                
                 this.simulateLoading();
                 // initUIImages() is now called inside preloadImages() after images are loaded
+            },
+            
+            loadSavedCurrency() {
+                // Load persistent currency from localStorage
+                try {
+                    const savedCoins = localStorage.getItem('meteorSmash_coins');
+                    const savedBossCoins = localStorage.getItem('meteorSmash_bossCoins');
+                    
+                    this.persistentCurrency = {
+                        coins: savedCoins ? parseInt(savedCoins, 10) : 0,
+                        bossCoins: savedBossCoins ? parseInt(savedBossCoins, 10) : 0
+                    };
+                } catch (e) {
+                    console.warn('Failed to load saved currency:', e);
+                    this.persistentCurrency = { coins: 0, bossCoins: 0 };
+                }
+            },
+            
+            saveCurrency() {
+                // Save currency to localStorage
+                try {
+                    localStorage.setItem('meteorSmash_coins', this.persistentCurrency.coins.toString());
+                    localStorage.setItem('meteorSmash_bossCoins', this.persistentCurrency.bossCoins.toString());
+                } catch (e) {
+                    console.warn('Failed to save currency:', e);
+                }
             },
 
             applyPauseButtonImage() {
@@ -2042,6 +2772,26 @@
                 }
             },
 
+            applyHelpTitleImage() {
+                // Apply help screen title image if available, otherwise show default text
+                const helpHeader = document.querySelector('.help-header');
+                if (!helpHeader) return;
+                
+                const helpTitleImage = this.loadedImages['helpTitle'];
+                
+                if (helpTitleImage) {
+                    // Custom image loaded successfully - replace text with image
+                    helpHeader.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = helpTitleImage.src;
+                    img.alt = 'How To Play';
+                    helpHeader.appendChild(img);
+                } else {
+                    // No image or image failed to load - show default text
+                    helpHeader.innerHTML = '📖 HOW TO PLAY';
+                }
+            },
+
             preloadImages() {
                 // Preload all image overrides
                 Object.keys(IMAGE_OVERRIDES).forEach(key => {
@@ -2104,14 +2854,51 @@
                     this.keys[e.key] = false;
                 });
 
+                // Mouse controls for teleport (desktop only)
+                const canvas = document.getElementById('gameCanvas');
+                canvas.addEventListener('click', (e) => {
+                    if (!this.state.running || this.state.paused) return;
+                    
+                    // Check if player has teleport skill
+                    const teleportTier = this.player.skills['teleport'] || 0;
+                    if (teleportTier > 0) {
+                        e.preventDefault();  // Prevent default behavior
+                        e.stopPropagation();  // Stop event from bubbling
+                        
+                        const rect = canvas.getBoundingClientRect();
+                        const x = ((e.clientX - rect.left) / rect.width) * 720;
+                        const y = ((e.clientY - rect.top) / rect.height) * 1280;
+                        
+                        // Call useTeleport - it will handle charge validation
+                        this.useTeleport(x, y);
+                    }
+                }, true);  // Use capture phase to ensure it runs first
+
                 // Touch controls
                 const touchLayer = document.getElementById('touchLayer');
                 touchLayer.width = 720;
                 touchLayer.height = 1280;
+                
+                // Add click listener to touchLayer for desktop (touchLayer is on top of canvas)
+                touchLayer.addEventListener('click', (e) => {
+                    if (!this.state.running || this.state.paused) return;
+                    
+                    // Check if player has teleport skill
+                    const teleportTier = this.player.skills['teleport'] || 0;
+                    if (teleportTier > 0) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const rect = touchLayer.getBoundingClientRect();
+                        const x = ((e.clientX - rect.left) / rect.width) * 720;
+                        const y = ((e.clientY - rect.top) / rect.height) * 1280;
+                        
+                        // Call useTeleport - it will handle charge validation
+                        this.useTeleport(x, y);
+                    }
+                });
 
                 let touching = false;
-                let lastTapTime = 0;
-                const doubleTapDelay = 300; // milliseconds
 
                 const getTouchPos = (e) => {
                     const rect = touchLayer.getBoundingClientRect();
@@ -2124,26 +2911,15 @@
 
                 touchLayer.addEventListener('touchstart', (e) => {
                     e.preventDefault();
-                    const now = Date.now();
-                    
+                    touching = true;
                     if (this.state.running && !this.state.paused) {
                         const pos = getTouchPos(e);
                         
-                        // Double tap detection for teleport
-                        if (now - lastTapTime < doubleTapDelay) {
-                            // Double tap detected
-                            const teleportTier = this.player.skills['teleport'] || 0;
-                            if (teleportTier > 0) {
-                                this.useTeleport(pos.x, pos.y);
-                            }
-                            lastTapTime = 0; // Reset to prevent triple tap from triggering teleport again
-                        } else {
-                            // Single tap - just start tracking touch for movement
-                            lastTapTime = now;
-                            touching = true;
+                        // Check if player has teleport skill and cooldown is ready
+                        const teleportTier = this.player.skills['teleport'] || 0;
+                        if (teleportTier > 0) {
+                            this.useTeleport(pos.x, pos.y);
                         }
-                    } else {
-                        touching = true;
                     }
                 });
 
@@ -2152,15 +2928,16 @@
                     if (touching && this.state.running && !this.state.paused) {
                         const pos = getTouchPos(e);
                         
-                        // Smooth movement towards touch position (no instant teleport)
+                        // Smooth movement towards touch position with improved interpolation
                         const dx = pos.x - this.player.x;
                         const dy = pos.y - this.player.y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         
-                        if (dist > 5) {
-                            const moveSpeed = Math.min(this.player.speed, dist);
-                            this.player.x += (dx / dist) * moveSpeed;
-                            this.player.y += (dy / dist) * moveSpeed;
+                        if (dist > 2) {
+                            // Use lerp factor for smoother movement
+                            const lerpFactor = Math.min(0.4, this.player.speed / dist);
+                            this.player.x += dx * lerpFactor;
+                            this.player.y += dy * lerpFactor;
                             
                             // Keep within bounds
                             this.player.x = Math.max(30, Math.min(690, this.player.x));
@@ -2177,25 +2954,6 @@
                 touchLayer.addEventListener('touchcancel', (e) => {
                     e.preventDefault();
                     touching = false;
-                });
-                
-                // Desktop right-click controls for teleport
-                touchLayer.addEventListener('contextmenu', (e) => {
-                    e.preventDefault(); // Prevent default right-click menu
-                    
-                    if (this.state.running && !this.state.paused) {
-                        const rect = touchLayer.getBoundingClientRect();
-                        const pos = {
-                            x: ((e.clientX - rect.left) / rect.width) * 720,
-                            y: ((e.clientY - rect.top) / rect.height) * 1280
-                        };
-                        
-                        // Right-click triggers teleport
-                        const teleportTier = this.player.skills['teleport'] || 0;
-                        if (teleportTier > 0) {
-                            this.useTeleport(pos.x, pos.y);
-                        }
-                    }
                 });
             },
 
@@ -2219,10 +2977,13 @@
                     paused: false,
                     score: 0,
                     coins: 0,
+                    bossCoins: 0,  // Boss Coin currency
                     selectedSkill: null,
                     gameTime: 0,
                     lastBossSpawn: 0,
-                    bossEncounterCount: 0 // Track number of boss encounters for skill frequency adjustment
+                    bossEncounterCount: 0, // Track number of boss encounters for skill frequency adjustment
+                    bossSpawning: false, // Prevent multiple simultaneous boss spawns
+                    ownedUpgrades: {}  // Track purchased upgrades from skill tree
                 };
 
                 this.player = {
@@ -2294,10 +3055,558 @@
 
             showHelp() {
                 document.getElementById('helpScreen').classList.add('active');
+                this.applyHelpTitleImage(); // Apply custom help title image if available
             },
 
             closeHelp() {
                 document.getElementById('helpScreen').classList.remove('active');
+            },
+
+            openUpgradeScreen() {
+                // Update currency displays with persistent currency (not session currency)
+                document.getElementById('upgradeCoins').textContent = formatNumber(this.persistentCurrency.coins);
+                document.getElementById('upgradeXP').textContent = formatNumber(this.player.xp || 0);
+                document.getElementById('upgradeBossCoins').textContent = formatNumber(this.persistentCurrency.bossCoins);
+                
+                // Render skill tree
+                this.renderSkillTree();
+                
+                // Show the upgrade screen
+                document.getElementById('upgradeScreen').classList.add('active');
+                
+                // NO pause - this is only accessible from main menu
+            },
+
+            closeUpgradeScreen() {
+                document.getElementById('upgradeScreen').classList.remove('active');
+                document.getElementById('upgradeInfoPanel').classList.remove('active');
+            },
+
+            closeUpgradeInfo() {
+                document.getElementById('upgradeInfoPanel').classList.remove('active');
+                // Game continues running - NO pause/unpause
+            },
+            
+            // GRID LAYOUT SYSTEM - Calculates node tiers based on parent depth
+            calculateNodeTiers(tree) {
+                const tiers = {};
+                const visited = new Set();
+                
+                // Helper function to calculate tier depth recursively
+                const getTierDepth = (nodeId) => {
+                    if (visited.has(nodeId)) {
+                        return tiers[nodeId] || 0;
+                    }
+                    visited.add(nodeId);
+                    
+                    const node = tree[nodeId];
+                    if (!node || !node.parentIds || node.parentIds.length === 0) {
+                        tiers[nodeId] = 0;
+                        return 0;
+                    }
+                    
+                    // Tier is 1 + max tier of all parents
+                    const parentTiers = node.parentIds.map(pid => getTierDepth(pid));
+                    const maxParentTier = Math.max(...parentTiers);
+                    tiers[nodeId] = maxParentTier + 1;
+                    return maxParentTier + 1;
+                };
+                
+                // Calculate tiers for all nodes
+                Object.keys(tree).forEach(nodeId => getTierDepth(nodeId));
+                
+                // Group nodes by tier
+                const tierGroups = {};
+                Object.entries(tiers).forEach(([nodeId, tier]) => {
+                    if (!tierGroups[tier]) {
+                        tierGroups[tier] = [];
+                    }
+                    tierGroups[tier].push(nodeId);
+                });
+                
+                return { tiers, tierGroups };
+            },
+            
+            // Assigns grid positions to nodes based on tier structure
+            assignGridPositions(tree, tierData, config) {
+                const { tiers, tierGroups } = tierData;
+                const maxTier = Math.max(...Object.values(tiers));
+                
+                // Calculate positions for each tier
+                for (let tierLevel = 0; tierLevel <= maxTier; tierLevel++) {
+                    const nodesInTier = tierGroups[tierLevel] || [];
+                    const nodeCount = nodesInTier.length;
+                    
+                    if (nodeCount === 0) continue;
+                    
+                    // Calculate Y position for this tier
+                    const y = config.startY + (tierLevel * config.verticalSpacing);
+                    
+                    // Calculate horizontal distribution
+                    if (tierLevel === 0) {
+                        // Root tier - distribute with balanced spacing
+                        if (nodeCount === 1) {
+                            nodesInTier.forEach(nodeId => {
+                                tree[nodeId].gridX = config.containerWidth / 2;
+                                tree[nodeId].gridY = y;
+                            });
+                        } else if (nodeCount === 2) {
+                            // For 2 root nodes, use 1/3 and 2/3 positions
+                            const spacing = config.containerWidth / 3;
+                            nodesInTier.forEach((nodeId, index) => {
+                                tree[nodeId].gridX = spacing * (index + 1);
+                                tree[nodeId].gridY = y;
+                            });
+                        } else {
+                            // For 3+ nodes, use edge padding
+                            const edgePadding = 80;
+                            const usableWidth = config.containerWidth - (2 * edgePadding);
+                            const spacing = usableWidth / (nodeCount - 1);
+                            nodesInTier.forEach((nodeId, index) => {
+                                tree[nodeId].gridX = edgePadding + (spacing * index);
+                                tree[nodeId].gridY = y;
+                            });
+                        }
+                    } else {
+                        // Child tiers - position based on parent positions with smart centering
+                        nodesInTier.forEach(nodeId => {
+                            const node = tree[nodeId];
+                            
+                            if (node.parentIds && node.parentIds.length > 0) {
+                                // Get parent positions
+                                const parentPositions = node.parentIds.map(pid => tree[pid].gridX).sort((a, b) => a - b);
+                                
+                                if (parentPositions.length === 1) {
+                                    // Single parent - align directly
+                                    node.gridX = parentPositions[0];
+                                } else {
+                                    // Multiple parents - center between them
+                                    const leftMost = parentPositions[0];
+                                    const rightMost = parentPositions[parentPositions.length - 1];
+                                    node.gridX = (leftMost + rightMost) / 2;
+                                }
+                            } else {
+                                // Fallback - center
+                                node.gridX = config.containerWidth / 2;
+                            }
+                            
+                            node.gridY = y;
+                        });
+                        
+                        // Prevent overlaps within the tier with improved algorithm
+                        this.resolveHorizontalOverlaps(nodesInTier, tree, config);
+                    }
+                }
+            },
+            
+            // Resolves horizontal overlaps between nodes in the same tier
+            resolveHorizontalOverlaps(nodeIds, tree, config) {
+                if (nodeIds.length <= 1) return;
+                
+                // Sort nodes by current X position
+                const sortedNodes = nodeIds.map(id => ({ id, node: tree[id] })).sort((a, b) => a.node.gridX - b.node.gridX);
+                
+                // Multiple passes to resolve overlaps
+                let adjusted = true;
+                let iterations = 0;
+                const maxIterations = 20;
+                
+                while (adjusted && iterations < maxIterations) {
+                    adjusted = false;
+                    iterations++;
+                    
+                    // Forward pass - push right
+                    for (let i = 0; i < sortedNodes.length - 1; i++) {
+                        const current = sortedNodes[i].node;
+                        const next = sortedNodes[i + 1].node;
+                        const gap = next.gridX - current.gridX;
+                        
+                        if (gap < config.minHorizontalSpacing) {
+                            // Push next node to the right
+                            const deficit = config.minHorizontalSpacing - gap;
+                            next.gridX += deficit;
+                            adjusted = true;
+                        }
+                    }
+                    
+                    // Backward pass - push left
+                    for (let i = sortedNodes.length - 1; i > 0; i--) {
+                        const current = sortedNodes[i].node;
+                        const prev = sortedNodes[i - 1].node;
+                        const gap = current.gridX - prev.gridX;
+                        
+                        if (gap < config.minHorizontalSpacing) {
+                            // Push prev node to the left
+                            const deficit = config.minHorizontalSpacing - gap;
+                            prev.gridX -= deficit;
+                            adjusted = true;
+                        }
+                    }
+                    
+                    // Ensure nodes stay within container bounds with padding
+                    const edgePadding = 60;
+                    sortedNodes.forEach(({ node }) => {
+                        const minX = edgePadding;
+                        const maxX = config.containerWidth - edgePadding;
+                        node.gridX = Math.max(minX, Math.min(maxX, node.gridX));
+                    });
+                }
+                
+                // Final centering adjustment if there's extra space
+                this.centerNodesInTier(sortedNodes.map(sn => sn.node), config);
+            },
+            
+            // Centers a tier of nodes if they don't span the full width
+            centerNodesInTier(nodes, config) {
+                if (nodes.length === 0) return;
+                
+                const leftMost = Math.min(...nodes.map(n => n.gridX));
+                const rightMost = Math.max(...nodes.map(n => n.gridX));
+                const currentSpan = rightMost - leftMost;
+                const centerOfSpan = (leftMost + rightMost) / 2;
+                const containerCenter = config.containerWidth / 2;
+                
+                // If the tier is well within bounds, center it
+                const edgePadding = 80;
+                if (leftMost > edgePadding && rightMost < config.containerWidth - edgePadding) {
+                    const shift = containerCenter - centerOfSpan;
+                    
+                    // Only shift if it won't push nodes out of bounds
+                    const newLeftMost = leftMost + shift;
+                    const newRightMost = rightMost + shift;
+                    
+                    if (newLeftMost >= edgePadding && newRightMost <= config.containerWidth - edgePadding) {
+                        nodes.forEach(node => {
+                            node.gridX += shift;
+                        });
+                    }
+                }
+            },
+
+            renderSkillTree() {
+                const nodesContainer = document.getElementById('skillTreeNodes');
+                const svg = document.getElementById('skillTreeSvg');
+                
+                // Clear existing content
+                nodesContainer.innerHTML = '';
+                svg.innerHTML = '';
+                
+                // GRID-BASED LAYOUT CONFIGURATION
+                const gridConfig = {
+                    cellWidth: 78,          // Width of each grid cell (optimized to fit all 9 columns in 720px)
+                    cellHeight: 180,        // Height of each grid cell  
+                    nodeWidth: 120,         // Node width (matches CSS)
+                    nodeHeight: 140,        // Node height (matches CSS)
+                    startX: 0,              // Left padding (centering handles horizontal offset)
+                    startY: 50,             // Top padding (slightly increased)
+                };
+                
+                // Calculate grid dimensions
+                const gridCols = GRID_LAYOUT[0].length;
+                const gridRows = GRID_LAYOUT.length;
+                
+                // Calculate total tree dimensions
+                const treeWidth = gridCols * gridConfig.cellWidth;
+                const treeHeight = gridRows * gridConfig.cellHeight + gridConfig.startY;
+                
+                // Calculate centering offset to center the tree horizontally
+                const containerWidth = 720; // Upgrade screen width
+                // Center the tree with a slight adjustment to ensure perfect visual centering
+                const centerOffsetX = Math.max(0, (containerWidth - treeWidth) / 2) + 5;
+                
+                // Assign grid positions to nodes based on GRID_LAYOUT
+                GRID_LAYOUT.forEach((row, rowIndex) => {
+                    row.forEach((cell, colIndex) => {
+                        if (cell !== 0) {
+                            const node = UPGRADE_TREE[cell];
+                            if (node) {
+                                // Calculate center position of grid cell
+                                node.gridX = centerOffsetX + gridConfig.startX + (colIndex * gridConfig.cellWidth) + (gridConfig.cellWidth / 2);
+                                node.gridY = gridConfig.startY + (rowIndex * gridConfig.cellHeight) + (gridConfig.cellHeight / 2);
+                            }
+                        }
+                    });
+                });
+                
+                // Set SVG dimensions
+                const totalWidth = containerWidth;
+                const totalHeight = treeHeight + 100;
+                svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
+                svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+                nodesContainer.style.minHeight = totalHeight + 'px';
+                
+                // Draw connection lines first (behind nodes)
+                Object.values(UPGRADE_TREE).forEach(node => {
+                    if (node.parentIds && node.parentIds.length > 0) {
+                        node.parentIds.forEach(parentId => {
+                            const parent = UPGRADE_TREE[parentId];
+                            if (parent && parent.gridX !== undefined && node.gridX !== undefined) {
+                                // Determine line color based on ownership
+                                const parentOwned = parent.currentLevel >= parent.levelMax;
+                                const nodeOwned = node.currentLevel > 0;
+                                
+                                const lineColor = (parentOwned || nodeOwned) ? '#00ff88' : '#4a4a5a';
+                                const lineWidth = (parentOwned || nodeOwned) ? '3' : '2';
+                                
+                                // Create right-angle path
+                                const path = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                                const midY = (parent.gridY + node.gridY) / 2;
+                                
+                                // Vertical from parent, horizontal, then vertical to node
+                                const points = `${parent.gridX},${parent.gridY} ${parent.gridX},${midY} ${node.gridX},${midY} ${node.gridX},${node.gridY}`;
+                                
+                                path.setAttribute('points', points);
+                                path.setAttribute('fill', 'none');
+                                path.setAttribute('stroke', lineColor);
+                                path.setAttribute('stroke-width', lineWidth);
+                                path.setAttribute('stroke-linecap', 'square');
+                                
+                                // Add glow for active connections
+                                if (parentOwned || nodeOwned) {
+                                    path.style.filter = 'drop-shadow(0 0 4px #00ff88)';
+                                }
+                                
+                                svg.appendChild(path);
+                            }
+                        });
+                    }
+                });
+                
+                // Render nodes
+                Object.values(UPGRADE_TREE).forEach(node => {
+                    if (node.gridX === undefined || node.gridY === undefined) return;
+                    
+                    // Create node element
+                    const nodeEl = document.createElement('div');
+                    nodeEl.className = 'skill-node';
+                    // Shift nodes 3px left to perfectly align with branch centers
+                    nodeEl.style.left = (node.gridX - gridConfig.nodeWidth / 2 - 3) + 'px';
+                    nodeEl.style.top = (node.gridY - gridConfig.nodeHeight / 2) + 'px';
+                    nodeEl.style.width = gridConfig.nodeWidth + 'px';
+                    nodeEl.style.height = gridConfig.nodeHeight + 'px';
+                    
+                    // Determine node state
+                    const isMaxLevel = node.currentLevel >= node.levelMax;
+                    let isUnlocked = false;
+                    let canAfford = false;
+                    
+                    if (!isMaxLevel) {
+                        // Check if all parents are owned
+                        if (node.parentIds.length === 0) {
+                            isUnlocked = true;
+                        } else {
+                            isUnlocked = node.parentIds.every(parentId => {
+                                const parent = UPGRADE_TREE[parentId];
+                                return parent && parent.currentLevel > 0;
+                            });
+                        }
+                        
+                        // Check affordability
+                        if (isUnlocked) {
+                            const goldCost = node.cost.gold || 0;
+                            const xpCost = node.cost.xp || 0;
+                            const bossCost = node.cost.bossCoin || 0;
+                            
+                            const hasGold = this.persistentCurrency.coins >= goldCost;
+                            const hasXP = this.player.xp >= xpCost;
+                            const hasBoss = this.persistentCurrency.bossCoins >= bossCost;
+                            
+                            canAfford = hasGold && hasXP && hasBoss;
+                        }
+                    }
+                    
+                    // Apply state classes
+                    if (isMaxLevel) {
+                        nodeEl.classList.add('owned');
+                    } else if (isUnlocked) {
+                        nodeEl.classList.add('unlocked');
+                        if (canAfford) {
+                            nodeEl.classList.add('can-afford');
+                        }
+                    } else {
+                        nodeEl.classList.add('locked');
+                    }
+                    
+                    // Add icon
+                    const iconEl = document.createElement('div');
+                    iconEl.className = 'skill-node-icon';
+                    
+                    if (node.iconImage) {
+                        const img = document.createElement('img');
+                        img.src = node.iconImage;
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.objectFit = 'contain';
+                        img.onerror = () => {
+                            iconEl.innerHTML = '';
+                            iconEl.textContent = node.icon;
+                        };
+                        iconEl.appendChild(img);
+                    } else {
+                        iconEl.textContent = node.icon;
+                    }
+                    
+                    nodeEl.appendChild(iconEl);
+                    
+                    // Add progress indicator
+                    const progressEl = document.createElement('div');
+                    progressEl.className = 'skill-node-progress';
+                    progressEl.textContent = `${node.currentLevel}/${node.levelMax}`;
+                    nodeEl.appendChild(progressEl);
+                    
+                    // Add cost display if not max level
+                    if (!isMaxLevel) {
+                        const costEl = document.createElement('div');
+                        costEl.className = 'skill-node-cost';
+                        
+                        const goldCost = node.cost.gold || 0;
+                        const xpCost = node.cost.xp || 0;
+                        const bossCost = node.cost.bossCoin || 0;
+                        
+                        const costParts = [];
+                        if (goldCost > 0) costParts.push(`💰${formatNumber(goldCost)}`);
+                        if (xpCost > 0) costParts.push(`⭐${formatNumber(xpCost)}`);
+                        if (bossCost > 0) costParts.push(`👑${bossCost}`);
+                        
+                        costEl.textContent = costParts.length > 0 ? costParts.join(' ') : 'Free';
+                        
+                        nodeEl.appendChild(costEl);
+                    }
+                    
+                    // Add click handler
+                    nodeEl.addEventListener('click', () => {
+                        this.showUpgradeInfo(node, isUnlocked, canAfford, isMaxLevel);
+                    });
+                    
+                    nodesContainer.appendChild(nodeEl);
+                });
+            },
+
+                        showUpgradeInfo(node, isUnlocked, canAfford, isMaxLevel) {
+                const panel = document.getElementById('upgradeInfoPanel');
+                const iconEl = document.getElementById('upgradeInfoIcon');
+                const titleEl = document.getElementById('upgradeInfoTitle');
+                const levelEl = document.getElementById('upgradeInfoLevel');
+                const descEl = document.getElementById('upgradeInfoDesc');
+                const costIconEl = document.getElementById('upgradeInfoCostIcon');
+                const costAmountEl = document.getElementById('upgradeInfoCostAmount');
+                const purchaseBtn = document.getElementById('upgradePurchaseBtn');
+                
+                // Update info panel content
+                iconEl.textContent = node.icon;
+                titleEl.textContent = node.name;
+                levelEl.textContent = `Level ${node.currentLevel}/${node.levelMax}`;
+                descEl.textContent = node.description;
+                
+                // Show cost - reading from single source (node.cost)
+                const goldCost = node.cost.gold || 0;
+                const xpCost = node.cost.xp || 0;
+                const bossCost = node.cost.bossCoin || 0;
+                
+                // Build cost display with all active currencies
+                const costParts = [];
+                if (goldCost > 0) costParts.push(`💰${formatNumber(goldCost)}`);
+                if (xpCost > 0) costParts.push(`⭐${formatNumber(xpCost)}`);
+                if (bossCost > 0) costParts.push(`👑${bossCost}`);
+                
+                if (costParts.length > 0) {
+                    costIconEl.textContent = '';
+                    costAmountEl.textContent = costParts.join(' + ');
+                } else {
+                    costIconEl.textContent = '✨';
+                    costAmountEl.textContent = 'Free';
+                }
+                
+                // Update purchase button
+                purchaseBtn.onclick = () => this.purchaseUpgrade(node);
+                purchaseBtn.disabled = !isUnlocked || !canAfford || isMaxLevel;
+                
+                if (isMaxLevel) {
+                    purchaseBtn.textContent = '✅ MAX LEVEL';
+                    purchaseBtn.classList.add('owned');
+                } else {
+                    purchaseBtn.classList.remove('owned');
+                    if (!isUnlocked) {
+                        purchaseBtn.textContent = '🔒 LOCKED';
+                    } else if (!canAfford) {
+                        purchaseBtn.textContent = '❌ INSUFFICIENT FUNDS';
+                    } else {
+                        purchaseBtn.textContent = '⬆️ UPGRADE';
+                    }
+                }
+                
+                // Show panel
+                panel.classList.add('active');
+            },
+
+            purchaseUpgrade(node) {
+                // Check if at max level
+                if (node.currentLevel >= node.levelMax) return;
+                
+                // Double-check affordability using persistent currency
+                const goldCost = node.cost.gold || 0;
+                const xpCost = node.cost.xp || 0;
+                const bossCost = node.cost.bossCoin || 0;
+                
+                const hasGold = this.persistentCurrency.coins >= goldCost;
+                const hasXP = this.player.xp >= xpCost;
+                const hasBoss = this.persistentCurrency.bossCoins >= bossCost;
+                
+                if (!hasGold || !hasXP || !hasBoss) return;
+                
+                // Deduct cost from appropriate currency sources
+                this.persistentCurrency.coins -= goldCost;
+                this.player.xp -= xpCost;
+                this.persistentCurrency.bossCoins -= bossCost;
+                
+                // Save currency to localStorage
+                this.saveCurrency();
+                
+                // Increase level
+                node.currentLevel++;
+                
+                // Apply upgrade effect
+                this.applyUpgradeEffect(node);
+                
+                // Update currencies display
+                document.getElementById('upgradeCoins').textContent = formatNumber(this.persistentCurrency.coins);
+                document.getElementById('upgradeXP').textContent = formatNumber(this.player.xp || 0);
+                document.getElementById('upgradeBossCoins').textContent = formatNumber(this.persistentCurrency.bossCoins);
+                
+                // Re-render skill tree
+                this.renderSkillTree();
+                
+                // Close info panel
+                document.getElementById('upgradeInfoPanel').classList.remove('active');
+            },
+
+            applyUpgradeEffect(node) {
+                // Apply effects based on the effects object
+                if (node.effects.damage) {
+                    this.player.damage += node.effects.damage;
+                }
+                if (node.effects.crit) {
+                    // Add crit chance upgrade logic here
+                }
+                if (node.effects.hp) {
+                    this.player.hearts += node.effects.hp;
+                    this.updateHUD();
+                }
+                if (node.effects.fireRate) {
+                    this.player.attackSpeed += node.effects.fireRate;
+                }
+                if (node.effects.missileDamage) {
+                    // Add missile damage upgrade logic here
+                }
+                if (node.effects.allDamage) {
+                    this.player.damage *= (1 + node.effects.allDamage / 100);
+                }
+                // More effect types can be added as needed
+                
+                // Update HUD if hearts changed
+                if (node.stat === 'hp') {
+                    this.updateHUD();
+                }
             },
 
             updateHUD() {
@@ -2325,8 +3634,8 @@
                 const xpPercent = (this.player.xp / this.player.xpToNext) * 100;
                 document.getElementById('xpFill').style.width = xpPercent + '%';
 
-                document.getElementById('scoreDisplay').textContent = this.state.score;
-                document.getElementById('coinDisplay').textContent = this.state.coins;
+                document.getElementById('scoreDisplay').textContent = formatNumber(this.state.score);
+                document.getElementById('coinDisplay').textContent = formatNumber(this.state.coins);
             },
 
             gainXP(amount) {
@@ -2588,18 +3897,8 @@
                     }
                 }
                 
-                // Show teleport UI and set initial position based on boss timer visibility
-                const teleportUI = document.getElementById('teleportCooldownUI');
-                const bossTimerEl = document.getElementById('bossTimer');
-                teleportUI.classList.add('active');
-                
-                // If boss timer is hidden, move teleport UI up
-                if (bossTimerEl && bossTimerEl.style.display === 'none') {
-                    teleportUI.classList.add('boss-timer-hidden');
-                } else {
-                    teleportUI.classList.remove('boss-timer-hidden');
-                }
-                
+                // Show teleport UI
+                document.getElementById('teleportCooldownUI').classList.add('active');
                 this.updateTeleportUI();
             },
 
@@ -2655,29 +3954,36 @@
                 const cooldownUI = document.getElementById('teleportCooldownUI');
                 const cooldownText = document.getElementById('teleportCooldownText');
                 
-                // Check if on cooldown
+                // Check if boss timer is visible to adjust teleport UI position
+                const bossTimer = document.getElementById('bossTimer');
+                const isBossTimerVisible = bossTimer && bossTimer.style.display !== 'none';
+                
+                if (isBossTimerVisible) {
+                    cooldownUI.classList.remove('no-boss-timer');
+                } else {
+                    cooldownUI.classList.add('no-boss-timer');
+                }
+                
+                // Only show UI when on cooldown (charges = 0)
                 if (this.player.teleport.charges === 0) {
                     const timeSinceUse = now - this.player.teleport.lastUsed;
                     const timeRemaining = this.player.teleport.cooldown - timeSinceUse;
                     
                     if (timeRemaining > 0) {
-                        // On cooldown
+                        // On cooldown - show notification
                         const secondsRemaining = Math.ceil(timeRemaining / 1000);
                         cooldownText.textContent = `${secondsRemaining}s`;
                         cooldownText.style.color = '#ff6600';
+                        cooldownUI.classList.add('active');
                     } else {
-                        // Cooldown finished, restore charges
+                        // Cooldown finished, restore charges and hide notification
                         this.player.teleport.charges = this.player.teleport.maxCharges;
-                        cooldownText.textContent = `Ready (${this.player.teleport.charges})`;
-                        cooldownText.style.color = '#00ffff';
+                        cooldownUI.classList.remove('active');
                     }
                 } else {
-                    // Has charges available
-                    cooldownText.textContent = `Ready (${this.player.teleport.charges})`;
-                    cooldownText.style.color = '#00ffff';
+                    // Has charges available - hide notification
+                    cooldownUI.classList.remove('active');
                 }
-                
-                cooldownUI.classList.add('active');
             },
 
             clearBossUI() {
@@ -2739,12 +4045,16 @@
                 const bossTypes = Object.values(BOSSES);
                 const selectedBoss = bossTypes[Math.floor(Math.random() * bossTypes.length)];
                 
-                // Boss HP scales smoothly with time (every 60 seconds adds 15% HP)
+                // Boss HP scales progressively with time (every 60 seconds adds 25% HP)
                 const timeMinutes = this.state.gameTime / 60;
-                const hpScaling = 1 + (timeMinutes * 0.15);
+                const hpScaling = 1 + (timeMinutes * 0.25);
                 
                 // Show arrival animation first, then spawn boss
                 this.showBossArrival(() => {
+                    // Clear any existing boss instances (safety measure)
+                    this.boss = null;
+                    this.bossProjectiles = [];
+                    
                     this.boss = {
                         ...selectedBoss,
                         x: 360,
@@ -2754,6 +4064,7 @@
                         skillCooldowns: selectedBoss.skills.map(() => 0),
                         laserSweep: null,
                         laserSweepUsed: false,  // Track for Cyber Skull one-time laser sweep
+                        phaseSkillUsed: false,  // Track for other bosses' phase skills
                         invincible: false,  // Track invincibility state
                         spawnTime: Date.now()
                     };
@@ -2779,6 +4090,7 @@
                     }
 
                     this.state.lastBossSpawn = this.state.gameTime;
+                    this.state.bossSpawning = false; // Clear spawning flag
                 });
             },
 
@@ -2866,13 +4178,14 @@
                 const firstBossTime = 120; // 2 minutes
                 const subsequentBossInterval = 180; // 3 minutes
                 
-                if (!this.boss) {
+                if (!this.boss && !this.state.bossSpawning) {
                     const timeSinceLastBoss = this.state.gameTime - this.state.lastBossSpawn;
                     const shouldSpawn = this.state.lastBossSpawn === 0 
                         ? this.state.gameTime >= firstBossTime 
                         : timeSinceLastBoss >= subsequentBossInterval;
                     
                     if (shouldSpawn) {
+                        this.state.bossSpawning = true; // Set flag to prevent duplicate spawns
                         this.spawnBoss();
                     }
                 }
@@ -2880,8 +4193,6 @@
                 // Update boss countdown timer
                 const bossTimerEl = document.getElementById('bossTimer');
                 const bossTimerText = document.getElementById('bossTimerText');
-                const teleportUI = document.getElementById('teleportCooldownUI');
-                
                 if (!this.boss) {
                     const isFirstBoss = this.state.lastBossSpawn === 0;
                     const targetTime = isFirstBoss ? firstBossTime : subsequentBossInterval;
@@ -2893,17 +4204,11 @@
                         const minutes = Math.floor(timeUntilBoss / 60);
                         const seconds = Math.floor(timeUntilBoss % 60);
                         bossTimerText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                        // Boss timer is visible, teleport UI should be below it
-                        if (teleportUI) teleportUI.classList.remove('boss-timer-hidden');
                     } else {
                         bossTimerEl.style.display = 'none';
-                        // Boss timer is hidden, teleport UI should move up
-                        if (teleportUI) teleportUI.classList.add('boss-timer-hidden');
                     }
                 } else {
                     bossTimerEl.style.display = 'none';
-                    // Boss timer is hidden, teleport UI should move up
-                    if (teleportUI) teleportUI.classList.add('boss-timer-hidden');
                 }
 
                 // Shooting
@@ -2998,14 +4303,48 @@
                         const hpPercent = (this.boss.currentHp / this.boss.maxHp) * 100;
                         if (hpPercent <= 50) {
                             this.boss.laserSweepUsed = true;
+                            this.boss.invincible = true; // Start invincibility immediately
+                            this.updateBossHealthBarAppearance(); // Turn HP bar blue
                             this.boss.laserSweep = {
                                 positioning: true,  // Move to center first
                                 warningActive: false,
                                 damageActive: false,
                                 angle: Math.random() < 0.5 ? 0 : Math.PI * 2, // Random start
                                 direction: Math.random() < 0.5 ? 1 : -1,  // Random direction (clockwise or counter)
-                                rotationSpeed: 0.03,
+                                rotationSpeed: 0.02,  // Slower rotation for better player reaction time
                                 rotationProgress: 0  // Track rotation in radians for precise completion
+                            };
+                        }
+                    }
+
+                    // Flame Demon phase skill: Fire Vortex at 50% HP (once only)
+                    if (this.boss.id === 'flame_demon' && !this.boss.phaseSkillUsed) {
+                        const hpPercent = (this.boss.currentHp / this.boss.maxHp) * 100;
+                        if (hpPercent <= 50) {
+                            this.boss.phaseSkillUsed = true;
+                            this.boss.invincible = true;
+                            this.updateBossHealthBarAppearance();
+                            this.boss.fireVortex = {
+                                active: true,
+                                startTime: now,
+                                duration: 5000,  // 5 seconds
+                                waveCount: 0
+                            };
+                        }
+                    }
+
+                    // Void Kraken phase skill: Void Collapse at 50% HP (once only)
+                    if (this.boss.id === 'void_kraken' && !this.boss.phaseSkillUsed) {
+                        const hpPercent = (this.boss.currentHp / this.boss.maxHp) * 100;
+                        if (hpPercent <= 50) {
+                            this.boss.phaseSkillUsed = true;
+                            this.boss.invincible = true;
+                            this.updateBossHealthBarAppearance();
+                            this.boss.voidCollapse = {
+                                active: true,
+                                startTime: now,
+                                duration: 6000,  // 6 seconds
+                                pulseCount: 0
                             };
                         }
                     }
@@ -3029,12 +4368,6 @@
                         
                         // Warning phase (full rotation, no damage)
                         if (ls.warningActive) {
-                            // Boss becomes invincible when warning starts
-                            if (!this.boss.invincible) {
-                                this.boss.invincible = true;
-                                this.updateBossHealthBarAppearance();
-                            }
-                            
                             ls.angle += ls.rotationSpeed * ls.direction;
                             const elapsed = now - ls.warningStartTime;
                             const rotationTime = (Math.PI * 2) / ls.rotationSpeed; // Time for full rotation
@@ -3067,6 +4400,68 @@
                         
                         // Mark as active if in any phase (for rendering)
                         ls.active = ls.warningActive || ls.damageActive;
+                    }
+
+                    // Flame Demon Fire Vortex phase update
+                    if (this.boss.fireVortex && this.boss.fireVortex.active) {
+                        const elapsed = now - this.boss.fireVortex.startTime;
+                        
+                        // Spawn rotating fire waves
+                        if (elapsed % 800 < 16 && this.boss.fireVortex.waveCount < 6) {
+                            this.boss.fireVortex.waveCount++;
+                            const waveAngle = (this.boss.fireVortex.waveCount * Math.PI * 2) / 6;
+                            
+                            for (let i = 0; i < 12; i++) {
+                                const angle = waveAngle + (i / 12) * Math.PI * 2;
+                                this.bossProjectiles.push({
+                                    x: this.boss.x,
+                                    y: this.boss.y,
+                                    vx: Math.cos(angle) * 5,
+                                    vy: Math.sin(angle) * 5,
+                                    size: 16,
+                                    color: '#ff6600',
+                                    damage: 1
+                                });
+                            }
+                        }
+                        
+                        // End phase after duration
+                        if (elapsed >= this.boss.fireVortex.duration) {
+                            this.boss.fireVortex.active = false;
+                            this.boss.fireVortex = null;
+                            this.boss.invincible = false;
+                            this.updateBossHealthBarAppearance();
+                        }
+                    }
+
+                    // Void Kraken Void Collapse phase update
+                    if (this.boss.voidCollapse && this.boss.voidCollapse.active) {
+                        const elapsed = now - this.boss.voidCollapse.startTime;
+                        
+                        // Spawn void pulses that expand
+                        if (elapsed % 1200 < 16 && this.boss.voidCollapse.pulseCount < 5) {
+                            this.boss.voidCollapse.pulseCount++;
+                            
+                            this.bossProjectiles.push({
+                                x: this.boss.x,
+                                y: this.boss.y,
+                                radius: 0,
+                                maxRadius: 350,
+                                expandSpeed: 4,
+                                size: 8,
+                                color: '#9900ff',
+                                damage: 1,
+                                ring: true
+                            });
+                        }
+                        
+                        // End phase after duration
+                        if (elapsed >= this.boss.voidCollapse.duration) {
+                            this.boss.voidCollapse.active = false;
+                            this.boss.voidCollapse = null;
+                            this.boss.invincible = false;
+                            this.updateBossHealthBarAppearance();
+                        }
                     }
                 }
 
@@ -3246,6 +4641,7 @@
                                 this.gainXP(500);
                                 this.state.score += 1000;
                                 this.state.coins += 50;
+                                this.state.bossCoins += 1;  // Award 1 Boss Coin for defeating boss
                                 this.clearBossUI();
                                 this.boss = null;
                                 this.updateHUD();
@@ -3334,6 +4730,7 @@
                             this.gainXP(500);
                             this.state.score += 1000;
                             this.state.coins += 50;
+                            this.state.bossCoins += 1;  // Award 1 Boss Coin for defeating boss
                             this.clearBossUI();
                             this.boss = null;
                             this.updateHUD();
@@ -3412,6 +4809,7 @@
                             this.gainXP(500);
                             this.state.score += 1000;
                             this.state.coins += 50;
+                            this.state.bossCoins += 1;  // Award 1 Boss Coin for defeating boss
                             this.clearBossUI();
                             this.boss = null;
                             this.updateHUD();
@@ -3513,6 +4911,7 @@
                                     this.gainXP(500);
                                     this.state.score += 1000;
                                     this.state.coins += 50;
+                                    this.state.bossCoins += 1;  // Award 1 Boss Coin for defeating boss
                                     this.clearBossUI(); // Clear all boss UI
                                     this.boss = null;
                                     this.updateHUD();
@@ -3623,6 +5022,7 @@
                                 this.gainXP(500);
                                 this.state.score += 1000;
                                 this.state.coins += 50;
+                                this.state.bossCoins += 1;  // Award 1 Boss Coin for defeating boss
                                 this.clearBossUI();
                                 this.boss = null;
                                 this.updateHUD();
@@ -3935,14 +5335,14 @@
                         this.ctx.shadowBlur = 0;
                         this.ctx.globalAlpha = 1;
                     }
-                    // Damage phase: thick red laser with collision
+                    // Damage phase: thick blue-white laser with collision
                     else if (ls.damageActive) {
-                        // Render thick red laser
-                        this.ctx.strokeStyle = '#ff0000';
+                        // Render thick blue laser
+                        this.ctx.strokeStyle = '#0088ff';
                         this.ctx.lineWidth = 20;
                         this.ctx.globalAlpha = 0.8;
                         this.ctx.shadowBlur = 30;
-                        this.ctx.shadowColor = '#ff0000';
+                        this.ctx.shadowColor = '#0088ff';
                         this.ctx.beginPath();
                         this.ctx.moveTo(this.boss.x, this.boss.y);
                         this.ctx.lineTo(endX, endY);
@@ -4319,10 +5719,16 @@
 
             gameOver() {
                 this.state.running = false;
+                
+                // Save earned currency to persistent storage
+                this.persistentCurrency.coins += this.state.coins;
+                this.persistentCurrency.bossCoins += this.state.bossCoins;
+                this.saveCurrency();
+                
                 this.clearBossUI();
                 document.getElementById('touchLayer').classList.remove('active');
                 document.getElementById('pauseBtn').classList.remove('active');
-                document.getElementById('finalScore').textContent = this.state.score;
+                document.getElementById('finalScore').textContent = formatNumber(this.state.score);
                 this.applyGameOverTitleImage(); // Apply custom game over title if available
                 document.getElementById('gameOverScreen').classList.add('active');
             },
