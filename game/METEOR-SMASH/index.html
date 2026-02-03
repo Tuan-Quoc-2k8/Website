@@ -237,6 +237,18 @@
             font-size: clamp(12px, 2vw, 16px);
             filter: drop-shadow(0 0 8px #00ff00);
         }
+        
+        .currency-icon-hud {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        .currency-icon-hud img {
+            width: clamp(16px, 3vw, 20px);
+            height: clamp(16px, 3vw, 20px);
+            vertical-align: middle;
+            object-fit: contain;
+        }
 
         .game-button {
             position: absolute;
@@ -1533,6 +1545,15 @@
             width: clamp(24px, 4vw, 32px);
             height: clamp(24px, 4vw, 32px);
             object-fit: contain;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .currency-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .currency-amount {
@@ -1672,11 +1693,24 @@
         /* Icon container - minimal futuristic white icon */
         .skill-node-icon {
             width: 55%;
-            height: 45%;
+            aspect-ratio: 1 / 1;
             object-fit: contain;
             filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
             margin-bottom: 10px;
             font-size: clamp(40px, 5.5vw, 48px);
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .skill-node-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         /* Progress indicator at bottom - clean bar */
@@ -1786,6 +1820,15 @@
             border: 2px solid #9d4edd;
             border-radius: 50%;
             box-shadow: 0 0 20px rgba(157, 78, 221, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .upgrade-info-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .upgrade-info-title {
@@ -1883,8 +1926,8 @@
         </div>
         
         <div id="currency" class="hud-element">
-            <div class="currency-display">⭐ <span id="scoreDisplay">0</span></div>
-            <div class="currency-display">💰 <span id="coinDisplay">0</span></div>
+            <div class="currency-display"><span class="currency-icon-hud" id="hudScoreIcon">⭐</span> <span id="scoreDisplay">0</span></div>
+            <div class="currency-display"><span class="currency-icon-hud" id="hudCoinIcon">💰</span> <span id="coinDisplay">0</span></div>
         </div>
         
         <div id="bossWarning">⚠️ BOSS APPROACHING ⚠️</div>
@@ -1946,66 +1989,30 @@
             <div class="help-container">
                 <div class="help-header">📖 HOW TO PLAY</div>
                 
-                <!-- CONTROLS -->
                 <div class="help-section">
                     <div class="help-section-title">🎮 Controls</div>
-                    <p class="help-text">🖥 Desktop: Move with WASD or Arrow Keys</p>
-                    <p class="help-text">📱 Mobile: Touch & drag to move your ship</p>
-                    <p class="help-text">🖱 Desktop Skill: Left Click to teleport (if unlocked)</p>
-                    <p class="help-text">🔫 Your ship fires automatically</p>
+                    <p class="help-text">Desktop: Use WASD or Arrow Keys to move</p>
+                    <p class="help-text">Mobile: Touch and drag to move</p>
+                    <p class="help-text">Your ship fires automatically!</p>
                 </div>
 
-                <!-- CORE GAMEPLAY -->
-                <div class="help-section">
-                    <div class="help-section-title">🚀 Core Gameplay</div>
-                    <p class="help-text">Destroy asteroids and enemies to earn EXP and gold</p>
-                    <p class="help-text">Level up to choose powerful skill upgrades</p>
-                    <p class="help-text">Avoid enemy attacks — positioning is critical</p>
-                    <p class="help-text">The game gets harder over time</p>
-                </div>
-
-                <!-- BOSSES -->
                 <div class="help-section">
                     <div class="help-section-title">👾 Bosses</div>
-                    <p class="help-text">Bosses appear after a countdown warning</p>
-                    <p class="help-text">Only one boss appears at a time</p>
-                    <p class="help-text">Each boss has unique attack patterns and special phases</p>
-                    <p class="help-text">Some bosses become temporarily invincible — watch HP color!</p>
-                    <p class="help-text">Defeat bosses to earn rare Boss Coins</p>
+                    <p class="help-text">Powerful bosses appear every 3 minutes!</p>
+                    <p class="help-text">Each boss has unique attack patterns</p>
+                    <p class="help-text">Defeat them for massive rewards!</p>
                 </div>
 
-                <!-- SKILLS -->
                 <div class="help-section">
                     <div class="help-section-title">🎯 Skills</div>
-                    <p class="help-text">🔫 Support Fighters – Summon escort ships that assist in combat</p>
-                    <p class="help-text">💥 Explosive Rounds – Bullets explode on impact, dealing area damage</p>
-                    <p class="help-text">⚡ Chain Lightning – Lightning jumps between enemies</p>
-                    <p class="help-text">🚀 Homing Missiles – Missiles automatically track targets</p>
-                    <p class="help-text">🔄 Ricochet Bullets – Bullets bounce between enemies</p>
-                    <p class="help-text">🎯 Piercing Bullets – Bullets penetrate multiple enemies</p>
-                    <p class="help-text">🔴 Laser Fortress – Deploy powerful laser turrets</p>
-                    <p class="help-text">⚡ Teleport – Instantly reposition to escape danger (cooldown applies)</p>
-                </div>
-
-                <!-- UPGRADE SYSTEM -->
-                <div class="help-section">
-                    <div class="help-section-title">🧬 Upgrade System</div>
-                    <p class="help-text">Upgrades are available in the Main Menu</p>
-                    <p class="help-text">Use Gold, Boss Coins, and other currencies to unlock upgrades</p>
-                    <p class="help-text">Upgrades are organized as a skill tree with connected branches</p>
-                    <p class="help-text">🟢 Green border: already owned</p>
-                    <p class="help-text">🟡 Yellow border: unlocked and purchasable</p>
-                    <p class="help-text">⚪ White border: locked</p>
-                    <p class="help-text">Upgrades permanently enhance your ship and skills</p>
-                </div>
-
-                <!-- SURVIVAL TIPS -->
-                <div class="help-section">
-                    <div class="help-section-title">💡 Survival Tips</div>
-                    <p class="help-text">Keep moving — staying still is dangerous</p>
-                    <p class="help-text">Save teleport for emergencies</p>
-                    <p class="help-text">Learn boss attack patterns to survive longer</p>
-                    <p class="help-text">Upgrade wisely to match your playstyle</p>
+                    <p class="help-text">🔫 Support Fighters – Deploy escort ships that fire alongside you</p>
+                    <p class="help-text">💥 Explosive Rounds – Shots explode on impact, dealing area damage</p>
+                    <p class="help-text">⚡ Chain Lightning – Releases lightning that jumps between enemies</p>
+                    <p class="help-text">🚀 Homing Missiles – Launch missiles that track and hunt targets</p>
+                    <p class="help-text">🔄 Ricochet Bullets – Bullets bounce to new targets after hitting</p>
+                    <p class="help-text">🎯 Piercing Bullets – Bullets pass through multiple enemies</p>
+                    <p class="help-text">🔴 Laser Fortress – Summons laser turrets for sustained fire support</p>
+                    <p class="help-text">⚡ Teleport – Instantly move to touch location (10s cooldown)</p>
                 </div>
             </div>
             <button class="close-help-btn" onclick="game.closeHelp()">✅ GOT IT!</button>
@@ -2020,15 +2027,15 @@
             
             <div class="upgrade-currencies">
                 <div class="currency-display">
-                    <span class="currency-icon">💰</span>
+                    <span class="currency-icon" id="upgradeScreenCoinIcon">💰</span>
                     <span class="currency-amount" id="upgradeCoins">0</span>
                 </div>
                 <div class="currency-display">
-                    <span class="currency-icon">⭐</span>
+                    <span class="currency-icon" id="upgradeScreenScoreIcon">⭐</span>
                     <span class="currency-amount" id="upgradeXP">0</span>
                 </div>
                 <div class="currency-display">
-                    <span class="currency-icon">👑</span>
+                    <span class="currency-icon" id="upgradeScreenBossCoinsIcon">👑</span>
                     <span class="currency-amount" id="upgradeBossCoins">0</span>
                 </div>
             </div>
@@ -2167,8 +2174,9 @@
         ];
 
         // SKILL TREE UPGRADE NODES - Grid-based positioning system
-        // Grid: 720px wide, nodes at 120px intervals horizontally, 160px vertically
-        // Node positions: (col * 120 + 60, row * 160 + 80)
+        // Positions are automatically calculated from GRID_LAYOUT structure
+        // GRID_LAYOUT defines rows and columns, with each cell containing a node ID or 0 (empty)
+        // Node positions are calculated as: (col * cellWidth + cellWidth/2, row * cellHeight + cellHeight/2)
         const UPGRADE_TREE = {
 
             // === ROOT NODES (Row 0) ===
@@ -2185,8 +2193,6 @@
                 effects: {
                     unlockSkillUI: true
                 },
-                x: 360,
-                y: 80,
                 state: 'locked'
             },
             // === TIER 1 (Row 1) - Balanced under roots ===
@@ -2201,8 +2207,6 @@
                 description: 'Increase base weapon damage',
                 cost: { gold: 200, xp: 0, bossCoin: 0 },
                 effects: { damage: 3 },
-                x: 100,  // Left child of root_gold
-                y: 240,
                 state: 'locked'
             },
 
@@ -2217,8 +2221,6 @@
                 description: 'Improve critical accuracy',
                 cost: { gold: 240, xp: 0, bossCoin: 0 },
                 effects: { crit: 3 },
-                x: 260,  // Center-right child of root_gold
-                y: 240,
                 state: 'locked'
             },
 
@@ -2233,8 +2235,6 @@
                 description: 'Increase max HP',
                 cost: { gold: 260, xp: 0, bossCoin: 0 },
                 effects: { hp: 2 },
-                x: 460,  // Left child of root_xp
-                y: 240,
                 state: 'locked'
             },
 
@@ -2249,8 +2249,6 @@
                 description: 'Reduce skill cooldowns',
                 cost: { gold: 500, xp: 0, bossCoin: 0 },
                 effects: { cooldown: -5 },
-                x: 620,  // Right child of root_xp
-                y: 240,
                 state: 'locked'
             },
 
@@ -2266,8 +2264,6 @@
                 description: 'Unlock missile burst damage',
                 cost: { gold: 480, xp: 0, bossCoin: 0 },
                 effects: { missileDamage: 8 },
-                x: 180,  // Center between mag_weapon and aim_system
-                y: 400,
                 state: 'locked'
             },
 
@@ -2282,8 +2278,6 @@
                 description: 'Increase fire rate',
                 cost: { gold: 520, xp: 0, bossCoin: 0 },
                 effects: { fireRate: 0.3 },
-                x: 360,  // Center between aim_system and shield_boost
-                y: 400,
                 state: 'locked'
             },
 
@@ -2298,8 +2292,6 @@
                 description: 'Boost all damage output',
                 cost: { gold: 550, xp: 0, bossCoin: 0 },
                 effects: { allDamage: 5 },
-                x: 540,  // Center between shield_boost and energy_core
-                y: 400,
                 state: 'locked'
             },
 
@@ -2315,8 +2307,6 @@
                 description: 'Massive temporary power boost',
                 cost: { gold: 800, xp: 0, bossCoin: 1 },
                 effects: { allDamage: 35 },
-                x: 360,  // Centered ultimate node
-                y: 560,
                 state: 'locked'
             }
         };
@@ -2597,8 +2587,11 @@
             pauseButton: './img/pause.png',                    // Pause button image (null for default emoji)
             pauseTitle: './img/pause-title.png',                     // Pause menu title image (null for default text)
             gameOverTitle: './img/game-over-title.png',                // Game over screen title image (null for default text)
-            helpTitle: './img/HOW-TO-PLAY.png',                        // How to Play screen title image (null for default text)
-            teleportIcon: './img/teleport-ui-icon.png'                // Teleport cooldown UI icon (null for default emoji)
+            helpTitle: './img/HOW-TO-PLAY.png',                                          // How to Play screen title image (null for default text)
+            teleportIcon: './img/teleport.png',               // Teleport cooldown UI icon (null for default emoji)
+            coinIcon: './img/coin.png',                                           // Coin currency icon (null for default emoji 💰)
+            scoreIcon: './img/starts.png',                                          // Score/XP currency icon (null for default emoji ⭐)
+            bossCoinsIcon: './img/boss-coin.png'                                       // Boss coins currency icon (null for default emoji 👑)
         };
 
         // IMAGE SCALE CONFIGURATION (affects visual size only, NOT hitboxes)
@@ -2675,6 +2668,9 @@
                 // Initialize persistent currency storage
                 this.loadSavedCurrency();
                 
+                // Load upgrade progress from localStorage
+                this.loadUpgradeProgress();
+                
                 this.simulateLoading();
                 // initUIImages() is now called inside preloadImages() after images are loaded
             },
@@ -2702,6 +2698,36 @@
                     localStorage.setItem('meteorSmash_bossCoins', this.persistentCurrency.bossCoins.toString());
                 } catch (e) {
                     console.warn('Failed to save currency:', e);
+                }
+            },
+
+            saveUpgradeProgress() {
+                // Save all upgrade levels to localStorage
+                try {
+                    const upgradeData = {};
+                    Object.keys(UPGRADE_TREE).forEach(nodeId => {
+                        upgradeData[nodeId] = UPGRADE_TREE[nodeId].currentLevel;
+                    });
+                    localStorage.setItem('meteorSmash_upgrades', JSON.stringify(upgradeData));
+                } catch (e) {
+                    console.warn('Failed to save upgrade progress:', e);
+                }
+            },
+
+            loadUpgradeProgress() {
+                // Load all upgrade levels from localStorage
+                try {
+                    const savedData = localStorage.getItem('meteorSmash_upgrades');
+                    if (savedData) {
+                        const upgradeData = JSON.parse(savedData);
+                        Object.keys(upgradeData).forEach(nodeId => {
+                            if (UPGRADE_TREE[nodeId]) {
+                                UPGRADE_TREE[nodeId].currentLevel = upgradeData[nodeId] || 0;
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.warn('Failed to load upgrade progress:', e);
                 }
             },
 
@@ -2792,6 +2818,34 @@
                 }
             },
 
+            applyCurrencyIconImages() {
+                // Apply currency icon images if available
+                const applyIcon = (elementId, imageKey, fallbackIcon) => {
+                    const element = document.getElementById(elementId);
+                    if (!element) return;
+                    
+                    const iconImage = this.loadedImages[imageKey];
+                    if (iconImage) {
+                        element.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = iconImage.src;
+                        img.alt = fallbackIcon;
+                        element.appendChild(img);
+                    } else {
+                        element.textContent = fallbackIcon;
+                    }
+                };
+                
+                // Apply to HUD
+                applyIcon('hudCoinIcon', 'coinIcon', '💰');
+                applyIcon('hudScoreIcon', 'scoreIcon', '⭐');
+                
+                // Apply to upgrade screen
+                applyIcon('upgradeScreenCoinIcon', 'coinIcon', '💰');
+                applyIcon('upgradeScreenScoreIcon', 'scoreIcon', '⭐');
+                applyIcon('upgradeScreenBossCoinsIcon', 'bossCoinsIcon', '👑');
+            },
+
             preloadImages() {
                 // Preload all image overrides
                 Object.keys(IMAGE_OVERRIDES).forEach(key => {
@@ -2802,6 +2856,10 @@
                             // Apply pause button image immediately after it loads
                             if (key === 'pauseButton') {
                                 this.applyPauseButtonImage();
+                            }
+                            // Apply currency icon images immediately after they load
+                            if (key === 'coinIcon' || key === 'scoreIcon' || key === 'bossCoinsIcon') {
+                                this.applyCurrencyIconImages();
                             }
                             // Apply upgrade title image when loaded (used dynamically when skill screen shows)
                             // No need to apply it here as it's handled in showSkillSelection()
@@ -2899,6 +2957,13 @@
                 });
 
                 let touching = false;
+                
+                // Double-tap detection for mobile teleport
+                let lastTapTime = 0;
+                let lastTapX = 0;
+                let lastTapY = 0;
+                const doubleTapDelay = 300; // ms - time window for double-tap detection
+                const doubleTapDistance = 50; // pixels - max distance between taps to count as double-tap
 
                 const getTouchPos = (e) => {
                     const rect = touchLayer.getBoundingClientRect();
@@ -2914,11 +2979,36 @@
                     touching = true;
                     if (this.state.running && !this.state.paused) {
                         const pos = getTouchPos(e);
+                        const now = Date.now();
                         
-                        // Check if player has teleport skill and cooldown is ready
+                        // Check if player has teleport skill
                         const teleportTier = this.player.skills['teleport'] || 0;
                         if (teleportTier > 0) {
-                            this.useTeleport(pos.x, pos.y);
+                            // Calculate time since last tap
+                            const timeSinceLastTap = now - lastTapTime;
+                            
+                            // Calculate distance from last tap
+                            const distanceFromLastTap = Math.sqrt(
+                                Math.pow(pos.x - lastTapX, 2) + 
+                                Math.pow(pos.y - lastTapY, 2)
+                            );
+                            
+                            // Check if this is a double-tap (within time window and close proximity)
+                            if (timeSinceLastTap < doubleTapDelay && 
+                                distanceFromLastTap < doubleTapDistance) {
+                                // This is the second tap of a double-tap - activate teleport
+                                this.useTeleport(pos.x, pos.y);
+                                
+                                // Reset tap tracking to prevent triple-tap
+                                lastTapTime = 0;
+                                lastTapX = 0;
+                                lastTapY = 0;
+                            } else {
+                                // This is the first tap - just record it
+                                lastTapTime = now;
+                                lastTapX = pos.x;
+                                lastTapY = pos.y;
+                            }
                         }
                     }
                 });
@@ -2934,8 +3024,8 @@
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         
                         if (dist > 2) {
-                            // Use lerp factor for smoother movement
-                            const lerpFactor = Math.min(0.4, this.player.speed / dist);
+                            // Use lerp factor for smoother movement - increased from 0.4 to 0.7 for better touch responsiveness
+                            const lerpFactor = Math.min(0.7, this.player.speed / dist);
                             this.player.x += dx * lerpFactor;
                             this.player.y += dy * lerpFactor;
                             
@@ -2966,6 +3056,7 @@
 
             showMainMenu() {
                 document.getElementById('mainMenu').classList.add('active');
+                this.applyCurrencyIconImages(); // Ensure currency icons are applied
             },
 
             startGame() {
@@ -3044,6 +3135,11 @@
             },
 
             returnToMainMenu() {
+                // Save earned currency before returning to menu
+                this.persistentCurrency.coins += this.state.coins;
+                this.persistentCurrency.bossCoins += this.state.bossCoins;
+                this.saveCurrency();
+                
                 this.state.paused = false;
                 this.state.running = false;
                 this.clearBossUI();
@@ -3067,6 +3163,9 @@
                 document.getElementById('upgradeCoins').textContent = formatNumber(this.persistentCurrency.coins);
                 document.getElementById('upgradeXP').textContent = formatNumber(this.player.xp || 0);
                 document.getElementById('upgradeBossCoins').textContent = formatNumber(this.persistentCurrency.bossCoins);
+                
+                // Apply currency icon images
+                this.applyCurrencyIconImages();
                 
                 // Render skill tree
                 this.renderSkillTree();
@@ -3493,7 +3592,23 @@
                 const purchaseBtn = document.getElementById('upgradePurchaseBtn');
                 
                 // Update info panel content
-                iconEl.textContent = node.icon;
+                // Use iconImage if available, otherwise use default icon
+                if (node.iconImage) {
+                    iconEl.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = node.iconImage;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'contain';
+                    img.onerror = () => {
+                        iconEl.innerHTML = '';
+                        iconEl.textContent = node.icon;
+                    };
+                    iconEl.appendChild(img);
+                } else {
+                    iconEl.innerHTML = '';
+                    iconEl.textContent = node.icon;
+                }
                 titleEl.textContent = node.name;
                 levelEl.textContent = `Level ${node.currentLevel}/${node.levelMax}`;
                 descEl.textContent = node.description;
@@ -3564,6 +3679,9 @@
                 
                 // Increase level
                 node.currentLevel++;
+                
+                // Save upgrade progress to localStorage
+                this.saveUpgradeProgress();
                 
                 // Apply upgrade effect
                 this.applyUpgradeEffect(node);
@@ -5380,10 +5498,18 @@
                                 
                                 // If player is within laser thickness (10 pixels from line)
                                 if (dist < 15) {
-                                    this.player.hp--;
+                                    this.player.hearts--;
+                                    this.player.invincible = true;
                                     this.player.invincibleUntil = now + 1000;
+                                    this.player.damageFlashUntil = now + 1000;
                                     this.updateHUD();
-                                    if (this.player.hp <= 0) {
+                                    
+                                    // Deactivate invincibility after 1 second
+                                    setTimeout(() => {
+                                        this.player.invincible = false;
+                                    }, 1000);
+                                    
+                                    if (this.player.hearts <= 0) {
                                         this.gameOver();
                                     }
                                 }
