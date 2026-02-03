@@ -35,3 +35,153 @@ x: 120, y: 200, // Định vị có cấu trúc
 
 state: "locked"
 }
+
+            // === ROOT NODES (Row 0) ===
+            skill_system_core: {
+                id: 'skill_system_core',
+                parentIds: [],
+                levelMax: 1,
+                currentLevel: 0,
+                icon: '🧬',
+                iconImage: './img/skill-system.png',  // Image URL for icon (null for default emoji)
+                name: 'Skill System',
+                description: 'Unlock the skill upgrade interface',
+                cost: { gold: 0, xp: 0, bossCoin: 1 }, // điều kiện mở
+                effects: {
+                    unlockSkillUI: true
+                },
+                x: 360,
+                y: 80,
+                state: 'locked'
+            },
+            // === TIER 1 (Row 1) - Balanced under roots ===
+            mag_weapon: {
+                id: 'mag_weapon',
+                parentIds: ['skill_system_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🔫',
+                iconImage: './img/dame.png',  // Image URL for icon (null for default emoji)
+                name: 'MAG Weapon',
+                description: 'Increase base weapon damage',
+                cost: { gold: 200, xp: 0, bossCoin: 0 },
+                effects: { damage: 3 },
+                x: 100,  // Left child of root_gold
+                y: 240,
+                state: 'locked'
+            },
+
+            aim_system: {
+                id: 'aim_system',
+                parentIds: ['skill_system_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🎯',
+                iconImage: './img/aim.png',  // Image URL for icon (null for default emoji)
+                name: 'Aim System',
+                description: 'Improve critical accuracy',
+                cost: { gold: 240, xp: 0, bossCoin: 0 },
+                effects: { crit: 3 },
+                x: 260,  // Center-right child of root_gold
+                y: 240,
+                state: 'locked'
+            },
+
+            shield_boost: {
+                id: 'shield_boost',
+                parentIds: ['skill_system_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🛡️',
+                iconImage: './img/HP.png',  // Image URL for icon (null for default emoji)
+                name: 'Shield Boost',
+                description: 'Increase max HP',
+                cost: { gold: 260, xp: 0, bossCoin: 0 },
+                effects: { hp: 2 },
+                x: 460,  // Left child of root_xp
+                y: 240,
+                state: 'locked'
+            },
+
+            energy_core: {
+                id: 'energy_core',
+                parentIds: ['skill_system_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🔋',
+                iconImage: './img/chain_lightning.png',  // Image URL for icon (null for default emoji)
+                name: 'Energy Core',
+                description: 'Reduce skill cooldowns',
+                cost: { gold: 500, xp: 0, bossCoin: 0 },
+                effects: { cooldown: -5 },
+                x: 620,  // Right child of root_xp
+                y: 240,
+                state: 'locked'
+            },
+
+            // === TIER 2 (Row 2) - Synergy nodes ===
+            missile_pod: {
+                id: 'missile_pod',
+                parentIds: ['mag_weapon', 'aim_system'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🚀',
+                iconImage: './img/All.png',  // Image URL for icon (null for default emoji)
+                name: 'Missile Pod',
+                description: 'Unlock missile burst damage',
+                cost: { gold: 480, xp: 0, bossCoin: 0 },
+                effects: { missileDamage: 8 },
+                x: 180,  // Center between mag_weapon and aim_system
+                y: 400,
+                state: 'locked'
+            },
+
+            dual_cannons: {
+                id: 'dual_cannons',
+                parentIds: ['aim_system', 'shield_boost'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '⚔️',
+                iconImage: './img/dame.png',  // Image URL for icon (null for default emoji)
+                name: 'Dual Cannons',
+                description: 'Increase fire rate',
+                cost: { gold: 520, xp: 0, bossCoin: 0 },
+                effects: { fireRate: 0.3 },
+                x: 360,  // Center between aim_system and shield_boost
+                y: 400,
+                state: 'locked'
+            },
+
+            power_amplifier: {
+                id: 'power_amplifier',
+                parentIds: ['shield_boost', 'energy_core'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '⚡',
+                iconImage: './img/Power.png',  // Image URL for icon (null for default emoji)
+                name: 'Power Amplifier',
+                description: 'Boost all damage output',
+                cost: { gold: 550, xp: 0, bossCoin: 0 },
+                effects: { allDamage: 5 },
+                x: 540,  // Center between shield_boost and energy_core
+                y: 400,
+                state: 'locked'
+            },
+
+            // === TIER 3 (Row 3) - Ultimate ===
+            ultimate_overdrive: {
+                id: 'ultimate_overdrive',
+                parentIds: ['missile_pod', 'dual_cannons', 'power_amplifier'],
+                levelMax: 3,
+                currentLevel: 0,
+                icon: '🔥',
+                iconImage: './img/All.png',  // Image URL for icon (null for default emoji)
+                name: 'Overdrive Mode',
+                description: 'Massive temporary power boost',
+                cost: { gold: 800, xp: 0, bossCoin: 1 },
+                effects: { allDamage: 35 },
+                x: 360,  // Centered ultimate node
+                y: 560,
+                state: 'locked'
+            }
+        };
