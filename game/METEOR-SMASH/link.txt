@@ -8,3 +8,30 @@ const IMAGE_OVERRIDES = {
     boss3: './img/boss-3.png',            // Third boss type
     heart: './img/heart.png'             // Heart/life icon
 };
+
+{
+
+id: "mag_weapon",
+
+parentIds: ["root_gold"], // Mảng hỗ trợ nhiều đối tượng cha
+
+levelMax: 3,
+
+currentLevel: 0,
+
+icon: "🔫",
+
+imageUrl: null, // Sử dụng biểu tượng nếu null/thất bại
+
+name: "Vũ khí MAG",
+
+description: "Tăng sát thương vũ khí chính",
+
+cost: { gold: 100, bossCoin: 0 }, // Chi phí dựa trên đối tượng
+
+effects: { damage: 5 }, // Hiệu ứng được áp dụng khi nâng cấp
+
+x: 120, y: 200, // Định vị có cấu trúc
+
+state: "locked"
+}
