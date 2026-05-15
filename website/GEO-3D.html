@@ -242,17 +242,6 @@ select{cursor:pointer}
 <div class="tab-panel" id="panel-home">
   <div class="panel-row">
     <div class="pgrp">
-      <span class="plbl">Line Defaults</span>
-      <div class="prow">
-        <input type="color" id="line-color" value="#00d4aa" title="New line color"
-          oninput="syncLineColor(this.value)">
-        <span class="tog-lbl">W</span>
-        <input type="range" id="line-width" min="1" max="12" step="0.5" value="2"
-          style="width:66px" oninput="syncLineWidth(this.value)">
-        <span id="lw-val" style="font-size:11px;color:var(--text2);font-family:var(--mono);min-width:18px">2</span>
-      </div>
-    </div>
-    <div class="pgrp">
       <span class="plbl" data-i18n="point_style">Point Style</span>
       <div class="prow">
         <input type="color" id="pt-color" value="#4f8ef5" title="Default point color">
@@ -474,7 +463,7 @@ select{cursor:pointer}
     </div>
     <div class="pgrp">
       <span class="plbl">About</span>
-      <span style="font-size:11px;color:var(--text3)">Geo3D v2.1 · Three.js r128</span>
+      <span style="font-size:11px;color:var(--text3)">Geo3D v2.2 · Three.js r128</span>
     </div>
   </div>
 </div>
@@ -712,6 +701,7 @@ select{cursor:pointer}
       <button class="eq-type-btn"        id="eqt-sphere3d"   onclick="setEqType('sphere3d')">Sphere</button>
       <button class="eq-type-btn"        id="eqt-circle"     onclick="setEqType('circle')">Circle</button>
       <button class="eq-type-btn"        id="eqt-helix"      onclick="setEqType('helix')">Helix</button>
+      <button class="eq-type-btn"        id="eqt-param3d"    onclick="setEqType('param3d')" data-i18n="param3d">Parametric 3D</button>
     </div>
     <div class="eq-grid">
       <div style="display:flex;flex-direction:column;gap:7px">
@@ -729,9 +719,12 @@ select{cursor:pointer}
           <input type="color" id="eq-color" value="#00d4aa"
             style="width:22px;height:22px;padding:1px" oninput="state.eqColor=this.value">
         </div>
-        <div style="display:flex;gap:5px;margin-top:2px">
+        <div style="display:flex;gap:5px;margin-top:2px;align-items:center">
           <button class="btn accent" onclick="drawEquation()">▶ <span data-i18n="draw">Draw</span></button>
           <button class="btn danger"  onclick="clearEquations()">✕ <span data-i18n="clear_eq">Clear</span></button>
+          <span class="tog-lbl" style="margin-left:4px">W</span>
+          <input type="number" id="line-width" value="2" min="0.5" max="12" step="0.5"
+            style="width:44px;font-size:11px" title="Line width">
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
@@ -761,6 +754,7 @@ select{cursor:pointer}
       <button class="objtab btn sm"        id="objtab-plane"  data-tab="plane"  onclick="switchObjTab('plane')">▭ Planes</button>
       <button class="objtab btn sm"        id="objtab-vector" data-tab="vector" onclick="switchObjTab('vector')">→ Vectors</button>
       <button class="objtab btn sm"        id="objtab-shape"  data-tab="shape"  onclick="switchObjTab('shape')">⬡ Shapes</button>
+      <button class="objtab btn sm"        id="objtab-angle"  data-tab="angle"  onclick="switchObjTab('angle')" data-i18n="angle_tab">∠ Angles</button>
     </div>
 
     <!-- Lines panel -->
@@ -788,6 +782,7 @@ select{cursor:pointer}
 
     <!-- Planes panel -->
     <div class="objtab-panel" id="objpanel-plane" style="display:none">
+      <!-- Standard position/rotation constructor -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;font-size:11.5px">
         <div style="display:flex;flex-direction:column;gap:5px">
           <span class="tog-lbl">Position (X, Y, Z)</span>
@@ -816,6 +811,23 @@ select{cursor:pointer}
         <div style="display:flex;align-items:flex-end">
           <button class="btn sm accent2" onclick="addPlaneFromMgr()">+ Add Plane</button>
         </div>
+      </div>
+      <!-- From Normal + Point constructor -->
+      <div style="padding:8px;background:var(--bg4);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:8px">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px" data-i18n="normal_plane">From Normal Vector + Point</div>
+        <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;font-size:11.5px">
+          <span class="tog-lbl">n</span>
+          <input type="number" id="np-nx" value="0" style="width:50px" step="any" placeholder="nx">
+          <input type="number" id="np-ny" value="1" style="width:50px" step="any" placeholder="ny">
+          <input type="number" id="np-nz" value="0" style="width:50px" step="any" placeholder="nz">
+          <span class="tog-lbl">p</span>
+          <input type="number" id="np-px" value="0" style="width:50px" step="any" placeholder="px">
+          <input type="number" id="np-py" value="0" style="width:50px" step="any" placeholder="py">
+          <input type="number" id="np-pz" value="0" style="width:50px" step="any" placeholder="pz">
+          <input type="color" id="np-color" value="#4f8ef5" style="width:24px;height:24px;padding:1px">
+          <button class="btn sm accent2" onclick="addPlaneFromNormal()">+ <span data-i18n="normal_plane">Normal Plane</span></button>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px">nx(x−px)+ny(y−py)+nz(z−pz)=0</div>
       </div>
       <div style="max-height:200px;overflow-y:auto">
         <table class="conn-tbl" style="width:100%">
@@ -863,6 +875,35 @@ select{cursor:pointer}
       </div>
       <div style="margin-top:7px;font-size:11px;color:var(--text3)">
         Add shapes via the Geometry buttons in the Insert tab.
+      </div>
+    </div>
+
+    <!-- Angles panel -->
+    <div class="objtab-panel" id="objpanel-angle" style="display:none">
+      <div style="margin-bottom:8px;padding:8px;background:var(--bg4);border-radius:var(--radius);border:1px solid var(--border)">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px" data-i18n="add_angle">Add Angle</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;font-size:11.5px">
+          <span class="tog-lbl" data-i18n="angle_obj_a">Object A</span>
+          <select id="angle-obj-a" style="font-size:11px;min-width:120px"><option value="">— Select —</option></select>
+          <span class="tog-lbl" data-i18n="angle_obj_b">Object B</span>
+          <select id="angle-obj-b" style="font-size:11px;min-width:120px"><option value="">— Select —</option></select>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;margin-top:6px;flex-wrap:wrap">
+          <input type="color" id="angle-color" value="#f5a623" style="width:24px;height:24px;padding:1px" title="Arc color">
+          <input type="text" id="angle-name" placeholder="α" style="width:46px;font-family:var(--mono)" title="Angle name (e.g. α, β)">
+          <button class="btn sm accent" onclick="createAngleFromUI()" data-i18n="create_angle">Create Angle</button>
+        </div>
+      </div>
+      <div style="max-height:190px;overflow-y:auto">
+        <table class="conn-tbl" style="width:100%">
+          <thead><tr>
+            <th>Name</th><th>A</th><th>B</th><th>∠ Minor</th><th>∠ Major</th><th title="Show Major">Maj</th><th>Color</th><th></th>
+          </tr></thead>
+          <tbody id="angle-tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:6px;font-size:10.5px;color:var(--text3)">
+        Angles auto-update when objects move. Deleted when geometry breaks.
       </div>
     </div>
 
@@ -966,6 +1007,15 @@ const LANG = {
     add_multiple:'Add Multiple Points',
     multi_hint:'Enter "x,y,z" or "name,x,y,z" — one per line',
     add_all:'Add All',cancel:'Cancel',
+    angles:'Angles',add_angle:'Add Angle',angle_obj_a:'Object A',angle_obj_b:'Object B',
+    create_angle:'Create Angle',angle_invalid:'Cannot create valid angle between these objects',
+    angle_parallel:'Lines are parallel — no angle',angle_ok:'Angle created!',
+    angle_no_shared:'Lines must share a vertex to form an angle',
+    angle_show_major:'Show Major',angle_show_minor:'Show Minor',
+    param3d:'Parametric 3D',normal_plane:'From Normal',
+    normal_vec:'Normal (nx,ny,nz)',on_point:'Point (px,py,pz)',
+    add_param_line:'Add Parametric Line',
+    angle_tab:'∠ Angles',
   },
   vi:{
     tab_home:'Trang chủ',tab_insert:'Chèn',tab_view:'Hiển thị',tab_math:'Toán',tab_settings:'Cài đặt',
@@ -996,6 +1046,15 @@ const LANG = {
     add_multiple:'Thêm nhiều điểm',
     multi_hint:'Nhập "x,y,z" hoặc "tên,x,y,z" — mỗi dòng một điểm',
     add_all:'Thêm tất cả',cancel:'Hủy',
+    angles:'Góc',add_angle:'Thêm góc',angle_obj_a:'Đối tượng A',angle_obj_b:'Đối tượng B',
+    create_angle:'Tạo góc',angle_invalid:'Không thể tạo góc hợp lệ',
+    angle_parallel:'Hai đường thẳng song song — không có góc',angle_ok:'Đã tạo góc!',
+    angle_no_shared:'Hai đường phải có đỉnh chung để tạo góc',
+    angle_show_major:'Hiện góc lớn',angle_show_minor:'Hiện góc nhỏ',
+    param3d:'Tham số 3D',normal_plane:'Từ pháp tuyến',
+    normal_vec:'Pháp tuyến (nx,ny,nz)',on_point:'Điểm (px,py,pz)',
+    add_param_line:'Thêm đường tham số',
+    angle_tab:'∠ Góc',
   },
   ja:{
     tab_home:'ホーム',tab_insert:'挿入',tab_view:'表示',tab_math:'数学',tab_settings:'設定',
@@ -1026,6 +1085,13 @@ const LANG = {
     add_multiple:'複数の点を追加',
     multi_hint:'"x,y,z" または "名前,x,y,z" — 1行に1点',
     add_all:'全追加',cancel:'キャンセル',
+    angles:'角度',add_angle:'角度を追加',angle_obj_a:'オブジェクトA',angle_obj_b:'オブジェクトB',
+    create_angle:'角度を作成',angle_invalid:'有効な角度を作成できません',
+    angle_parallel:'直線が平行です — 角度なし',angle_ok:'角度を作成しました!',
+    param3d:'媒介変数3D',normal_plane:'法線から',
+    normal_vec:'法線ベクトル(nx,ny,nz)',on_point:'点(px,py,pz)',
+    add_param_line:'媒介変数直線を追加',
+    angle_tab:'∠ 角度',
   }
 };
 let currentLang = 'en';
@@ -1051,6 +1117,10 @@ const state = {
   geometries:  [],   // {id,mesh,type}
   equations:   [],   // {id,mesh,type,expr,color}
   freeLines:   [],   // {id,line2}
+  angles:      [],   // {id,type,objAId,objBId,valueMinor,valueMajor,arcMesh,labelObj,labelDiv,dynamic}
+  parametricLines: [], // {id,mesh,xExpr,yExpr,zExpr,tMin,tMax,color}
+  dynamicRelations: [],
+  labelsVisible: true,
   selectedPoint: null,
   addPointMode:  false,
   connectMode:   false,
@@ -1246,8 +1316,11 @@ renderer.domElement.addEventListener('click', e => {
 // ESC / keyboard shortcuts
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { endAddPoint(); endConnectMode(); closeAllPanels(); }
-  if ((e.ctrlKey || e.metaKey) && e.key === 'z') undoAction();
-  if (e.key === 'Delete' && state.selectedPoint) deletePoint(state.selectedPoint.id);
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undoAction(); }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'z'))) { e.preventDefault(); redoAction(); }
+  if (e.key === 'Delete' && state.selectedPoint && !e.target.matches('input,textarea,select')) {
+    deletePoint(state.selectedPoint.id);
+  }
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -1297,17 +1370,16 @@ function addPoint(x, y, z, name, color, size) {
   const div = document.createElement('div');
   div.className = 'label3d';
   div.textContent = name;
+  const labelsOn = state.labelsVisible;
+  div.style.display = labelsOn ? '' : 'none';
   const labelObj = new THREE.CSS2DObject(div);
   labelObj.position.set(0, r + 0.2, 0);
+  labelObj.visible = labelsOn;
   mesh.add(labelObj);
-
-  const labelsOn = document.getElementById('show-labels')?.checked ??
-                   document.getElementById('show-labels-v')?.checked ?? true;
-  div.style.display = labelsOn ? '' : 'none';
 
   const pt = { id: uid(), name, mesh, labelObj, labelDiv: div, x, y, z, color, size };
   state.points.push(pt);
-  state.undoStack.push({ type: 'addPoint', id: pt.id });
+  pushUndo({ type: 'addPoint', id: pt.id });
   updateUI(); refreshCoordTable(); refreshConnTable();
   return pt;
 }
@@ -1367,6 +1439,21 @@ function removePoint(id) {
   document.getElementById('win-obj-body').innerHTML =
     `<div style="color:var(--text3);font-size:11.5px;text-align:center;padding:18px 0">${T('click_obj')}</div>`;
 }
+// ── deletePoint: full cleanup (mesh + label + connections + angles) ──
+function deletePoint(id) {
+  const pt = state.points.find(p => p.id == id);
+  if (!pt) return;
+  // Collect keys of connections/freeLines that reference this point
+  const deadKeys = [
+    ...state.connections.filter(c => c.p1id == id || c.p2id == id).map(c => 'conn:' + c.id),
+    ...state.freeLines.filter(l => l.p1id == id || l.p2id == id).map(l => 'free:' + l.id),
+  ];
+  // Remove angles that depend on any of those lines
+  [...state.angles.filter(a => deadKeys.includes(a.keyA) || deadKeys.includes(a.keyB))]
+    .forEach(a => removeAngle(a.id));
+  removePoint(id);
+}
+
 function addPointFromMgr() {
   const x = parseFloat(document.getElementById('nx').value) || 0;
   const y = parseFloat(document.getElementById('ny').value) || 0;
@@ -1437,7 +1524,7 @@ function addConnection(p1, p2, color, width, dashed) {
   scene.add(line2);
   const conn = { id: uid(), p1id: p1.id, p2id: p2.id, line2, color, width, dashed, visible: true };
   state.connections.push(conn);
-  state.undoStack.push({ type: 'addConn', id: conn.id });
+  pushUndo({ type: 'addConn', id: conn.id });
   updateUI(); refreshConnTable();
   notify(`Connected ${p1.name} → ${p2.name}`, 'success');
 }
@@ -1587,15 +1674,14 @@ function refreshConnTable() {
 //  LINE DEFAULT SYNC  (keeps Home ↔ Conn Manager ↔ Obj Manager in sync)
 // ═══════════════════════════════════════════════════════════════
 function syncLineColor(v) {
-  ['line-color','new-conn-color','fl-color'].forEach(id => {
+  ['new-conn-color','fl-color'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = v;
   });
 }
 function syncLineWidth(v) {
-  ['line-width','new-conn-width','fl-width'].forEach(id => {
+  ['new-conn-width','fl-width'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = v;
   });
-  const lw = document.getElementById('lw-val');  if (lw) lw.textContent = v;
   const nw = document.getElementById('ncw-val'); if (nw) nw.textContent = v;
 }
 function syncLineDash(v) {
@@ -1698,13 +1784,15 @@ function openObjectsManager(tab) {
   document.querySelectorAll('.objtab-panel').forEach(p => p.style.display = 'none');
   const pnl = document.getElementById('objpanel-' + (tab||'line'));
   if (pnl) pnl.style.display = '';
+  if (tab === 'angle') { refreshAnglesTable(); refreshAngleSelects(); }
 }
 function switchObjTab(tab) {
   document.querySelectorAll('.objtab').forEach(b => b.classList.remove('active'));
   document.getElementById('objtab-' + tab).classList.add('active');
   document.querySelectorAll('.objtab-panel').forEach(p => p.style.display = 'none');
   document.getElementById('objpanel-' + tab).style.display = '';
-  refreshObjectsTable(tab);
+  if (tab === 'angle') { refreshAnglesTable(); refreshAngleSelects(); }
+  else refreshObjectsTable(tab);
 }
 
 // ── FREE LINES ────────────────────────────────────────────────
@@ -1731,7 +1819,9 @@ function addFreeLineFromMgr() {
     color, width, dashed
   );
   scene.add(line2);
-  state.freeLines.push({ id: uid(), line2, p1id: p1.id, p2id: p2.id, color, width, dashed });
+  const flId = uid();
+  state.freeLines.push({ id: flId, line2, p1id: p1.id, p2id: p2.id, color, width, dashed });
+  pushUndo({ type: 'addFreeLine', id: flId });
   updateUI(); refreshObjectsTable('line');
 }
 function updateFreeLineColor(id, c) {
@@ -2037,6 +2127,7 @@ const EQ_TPL = {
   linear:     { ph: 'y = 2*x + 1',                         hint: 'Format: y = a*x + b' },
   quadratic:  { ph: 'y = x*x - 2*x + 1',                   hint: 'Format: y = a*x*x + b*x + c' },
   parametric: { ph: 'x(t)=cos(t), y(t)=t, z(t)=sin(t)',    hint: 'Comma-sep: x(t)=…, y(t)=…, z(t)=…' },
+  param3d:    { ph: '',                                     hint: 'x = a + bt,  y = c + dt,  z = e + ft' },
   plane:      { ph: 'x + 2*y - z = 3',                     hint: 'ax + by + cz = d' },
   sphere3d:   { ph: 'r = 3',                               hint: 'Sphere radius (centered at origin)' },
   circle:     { ph: 'r = 2',                               hint: 'Circle radius in XZ plane' },
@@ -2063,6 +2154,26 @@ function buildEqParams(type) {
       t <input type="number" id="eq-xmin" value="-6.28" style="width:58px"> to
       <input type="number" id="eq-xmax" value="6.28" style="width:58px">
       steps <input type="number" id="eq-steps" value="300" min="10" max="2000" style="width:54px">
+    </div>`;
+  } else if (type === 'param3d') {
+    p.innerHTML = `<div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--text2)">
+      <div style="display:flex;gap:4px;align-items:center">
+        <span style="width:16px;color:var(--accent);font-family:var(--mono);font-weight:600">x =</span>
+        <input type="text" id="p3d-x" placeholder="1 + 2*t" style="flex:1;font-family:var(--mono)" oninput="validateParam3d()">
+      </div>
+      <div style="display:flex;gap:4px;align-items:center">
+        <span style="width:16px;color:var(--accent);font-family:var(--mono);font-weight:600">y =</span>
+        <input type="text" id="p3d-y" placeholder="3 - t" style="flex:1;font-family:var(--mono)" oninput="validateParam3d()">
+      </div>
+      <div style="display:flex;gap:4px;align-items:center">
+        <span style="width:16px;color:var(--accent);font-family:var(--mono);font-weight:600">z =</span>
+        <input type="text" id="p3d-z" placeholder="4 + 0.5*t" style="flex:1;font-family:var(--mono)" oninput="validateParam3d()">
+      </div>
+      <div style="display:flex;gap:4px;align-items:center">
+        t <input type="number" id="eq-xmin" value="-10" style="width:54px"> to
+        <input type="number" id="eq-xmax" value="10" style="width:54px">
+        steps <input type="number" id="eq-steps" value="200" min="10" max="2000" style="width:54px">
+      </div>
     </div>`;
   } else if (type === 'sphere3d' || type === 'circle') {
     p.innerHTML = `<div style="font-size:11px;color:var(--text2)">Segments
@@ -2102,6 +2213,377 @@ function validateEq() {
     inp.className = 'error'; hint.className = 'eq-hint error'; hint.textContent = '✗ ' + err.message;
   }
 }
+// ── Param 3D live validation ──────────────────────────────────
+function validateParam3d() {
+  const fields = ['p3d-x','p3d-y','p3d-z'];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || !el.value.trim()) return;
+    try { safeEval(el.value, {t:1}); el.style.borderColor='rgba(0,212,170,0.6)'; }
+    catch(e) { el.style.borderColor='rgba(240,96,96,0.65)'; }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PLANE FROM NORMAL VECTOR + POINT
+// ═══════════════════════════════════════════════════════════════
+function addPlaneFromNormal() {
+  const nx = parseFloat(document.getElementById('np-nx')?.value) || 0;
+  const ny = parseFloat(document.getElementById('np-ny')?.value) || 1;
+  const nz = parseFloat(document.getElementById('np-nz')?.value) || 0;
+  const px = parseFloat(document.getElementById('np-px')?.value) || 0;
+  const py = parseFloat(document.getElementById('np-py')?.value) || 0;
+  const pz = parseFloat(document.getElementById('np-pz')?.value) || 0;
+  const color = document.getElementById('np-color')?.value || '#4f8ef5';
+  const normal = new THREE.Vector3(nx, nz, ny).normalize(); // remap to Three.js
+
+  // Compute Euler angles from normal vector to orient the plane
+  // Plane starts as XZ-plane (normal = Y), rotate it to align with given normal
+  const up = new THREE.Vector3(0, 1, 0);
+  const q  = new THREE.Quaternion().setFromUnitVectors(up, normal);
+  const euler = new THREE.Euler().setFromQuaternion(q, 'XYZ');
+  const rxDeg = THREE.MathUtils.radToDeg(euler.x);
+  const ryDeg = THREE.MathUtils.radToDeg(euler.y);
+  const rzDeg = THREE.MathUtils.radToDeg(euler.z);
+
+  addPlane({ px, py, pz, rx: rxDeg, ry: ryDeg, rz: rzDeg, color, opacity: 0.25, size: 8 });
+  notify(`Plane added  n=(${nx},${ny},${nz})  p=(${px},${py},${pz})`, 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ANGLE SYSTEM
+// ═══════════════════════════════════════════════════════════════
+// Returns shared point ID between two line keys (conn/free), or null
+function getSharedVertex(keyA, keyB) {
+  const getEndpointIds = key => {
+    const [kind, rawId] = key.split(':');
+    const id = parseFloat(rawId);
+    const arr = kind === 'conn' ? state.connections : (kind === 'free' ? state.freeLines : null);
+    if (!arr) return null;
+    const item = arr.find(x => x.id == id);
+    return item ? [item.p1id, item.p2id] : null;
+  };
+  const epsA = getEndpointIds(keyA);
+  const epsB = getEndpointIds(keyB);
+  if (!epsA || !epsB) return null;
+  const sharedId = epsA.find(id => epsB.includes(id));
+  if (!sharedId) return null;
+  return state.points.find(p => p.id == sharedId) || null;
+}
+
+// Build selector options for angle dropdowns (lines + planes + vectors)
+function buildAngleSelectOptions() {
+  const items = [];
+  state.connections.forEach(c => {
+    const p1 = state.points.find(p=>p.id==c.p1id), p2 = state.points.find(p=>p.id==c.p2id);
+    items.push({ id:'conn:'+c.id, label:`Line ${p1?.name||'?'}→${p2?.name||'?'}`, kind:'conn' });
+  });
+  state.freeLines.forEach(l => {
+    const p1 = state.points.find(p=>p.id==l.p1id), p2 = state.points.find(p=>p.id==l.p2id);
+    items.push({ id:'free:'+l.id, label:`FreeLine ${p1?.name||'?'}→${p2?.name||'?'}`, kind:'free' });
+  });
+  state.geometries.filter(g=>g.type==='plane').forEach(g => {
+    items.push({ id:'plane:'+g.id, label:`Plane (${(g.px||0).toFixed(1)},${(g.py||0).toFixed(1)},${(g.pz||0).toFixed(1)})`, kind:'plane' });
+  });
+  state.geometries.filter(g=>g.type==='vector').forEach(g => {
+    items.push({ id:'vec:'+g.id, label:`Vector (${g.dx},${g.dy},${g.dz})`, kind:'vec' });
+  });
+  return items;
+}
+function refreshAngleSelects() {
+  const items = buildAngleSelectOptions();
+  ['angle-obj-a','angle-obj-b'].forEach(sid => {
+    const sel = document.getElementById(sid);
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Select object —</option>' +
+      items.map(it => `<option value="${it.id}">${it.label}</option>`).join('');
+    sel.value = cur;
+  });
+}
+
+// Get direction vector for a geometry object key
+function getObjDirection(key) {
+  const [kind, rawId] = key.split(':');
+  const id = parseFloat(rawId);
+  if (kind === 'conn' || kind === 'free') {
+    const arr = kind==='conn' ? state.connections : state.freeLines;
+    const item = arr.find(x=>x.id==id);
+    if (!item) return null;
+    const p1 = state.points.find(p=>p.id==item.p1id);
+    const p2 = state.points.find(p=>p.id==item.p2id);
+    if (!p1||!p2) return null;
+    return new THREE.Vector3(p2.x-p1.x, p2.z-p1.z, p2.y-p1.y).normalize();
+  }
+  if (kind === 'vec') {
+    const g = state.geometries.find(g2=>g2.id==id&&g2.type==='vector');
+    if (!g) return null;
+    return new THREE.Vector3(g.dx, g.dz, g.dy).normalize();
+  }
+  if (kind === 'plane') {
+    const g = state.geometries.find(g2=>g2.id==id&&g2.type==='plane');
+    if (!g) return null;
+    // Plane normal: rotate Y-up by plane's rotation
+    const euler = new THREE.Euler(
+      THREE.MathUtils.degToRad(g.rx||0),
+      THREE.MathUtils.degToRad(g.ry||0),
+      THREE.MathUtils.degToRad(g.rz||0), 'XYZ');
+    return new THREE.Vector3(0,1,0).applyEuler(euler).normalize();
+  }
+  return null;
+}
+
+// Get midpoint/anchor position for arc placement
+function getObjPosition(key) {
+  const [kind, rawId] = key.split(':');
+  const id = parseFloat(rawId);
+  if (kind==='conn'||kind==='free') {
+    const arr = kind==='conn' ? state.connections : state.freeLines;
+    const item = arr.find(x=>x.id==id);
+    if (!item) return new THREE.Vector3();
+    const p1 = state.points.find(p=>p.id==item.p1id);
+    const p2 = state.points.find(p=>p.id==item.p2id);
+    if (!p1||!p2) return new THREE.Vector3();
+    return new THREE.Vector3((p1.x+p2.x)/2,(p1.z+p2.z)/2,(p1.y+p2.y)/2);
+  }
+  if (kind==='vec') {
+    const g = state.geometries.find(g2=>g2.id==id&&g2.type==='vector');
+    return g ? new THREE.Vector3(g.mesh.position.x,g.mesh.position.y,g.mesh.position.z) : new THREE.Vector3();
+  }
+  if (kind==='plane') {
+    const g = state.geometries.find(g2=>g2.id==id&&g2.type==='plane');
+    return g ? new THREE.Vector3(g.px||0,g.pz||0,g.py||0) : new THREE.Vector3();
+  }
+  return new THREE.Vector3();
+}
+
+function buildAngleArcMesh(pos, dirA, dirB, angleDeg, color) {
+  const radius = 0.8;
+  const segments = 48;
+  const pts = [];
+  const axis = dirA.clone().cross(dirB).normalize();
+  if (axis.length() < 0.001) return null; // parallel
+  const q = new THREE.Quaternion();
+  const angleRad = THREE.MathUtils.degToRad(angleDeg);
+  for (let i = 0; i <= segments; i++) {
+    const t = (i / segments) * angleRad;
+    q.setFromAxisAngle(axis, t);
+    const v = dirA.clone().applyQuaternion(q).multiplyScalar(radius);
+    pts.push(v.x + pos.x, v.y + pos.y, v.z + pos.z);
+  }
+  const geo = new THREE.LineGeometry(); geo.setPositions(pts);
+  const mat = new THREE.LineMaterial({ color:new THREE.Color(color||'#f5a623'), linewidth:2, resolution:state.resolution.clone() });
+  const arc = new THREE.Line2(geo, mat); arc.computeLineDistances();
+  return arc;
+}
+
+function createAngleFromUI() {
+  const keyA = document.getElementById('angle-obj-a')?.value;
+  const keyB = document.getElementById('angle-obj-b')?.value;
+  if (!keyA || !keyB || keyA === keyB) { notify('Select two different objects', 'warning'); return; }
+  const color = document.getElementById('angle-color')?.value || '#f5a623';
+  const name  = document.getElementById('angle-name')?.value?.trim() || 'α';
+  createAngle(keyA, keyB, color, name);
+}
+
+function createAngle(keyA, keyB, color, name) {
+  const dirA = getObjDirection(keyA);
+  const dirB = getObjDirection(keyB);
+  if (!dirA || !dirB) { notify(T('angle_invalid'), 'warning'); return null; }
+
+  // Check parallel
+  const dot = Math.abs(dirA.dot(dirB));
+  if (dot > 0.9999) { notify(T('angle_parallel'), 'warning'); return null; }
+
+  // ── STRICT VALIDATION: require shared vertex for line/freeline pairs ──
+  const kindA = keyA.split(':')[0];
+  const kindB = keyB.split(':')[0];
+  const bothLines = (kindA === 'conn' || kindA === 'free') && (kindB === 'conn' || kindB === 'free');
+  let arcPos;
+  if (bothLines) {
+    const shared = getSharedVertex(keyA, keyB);
+    if (!shared) {
+      notify('Cannot create angle: lines do not share a vertex', 'warning');
+      return null;
+    }
+    // Place arc at the shared vertex (Three.js coords: user X→x, Y→z, Z→y)
+    arcPos = new THREE.Vector3(shared.x, shared.z, shared.y);
+    // Ensure dirA points AWAY from the shared vertex along its line
+    const getLineDir = (key, sharedPtId) => {
+      const [kind, rawId] = key.split(':');
+      const id = parseFloat(rawId);
+      const arr = kind === 'conn' ? state.connections : state.freeLines;
+      const item = arr.find(x => x.id == id);
+      if (!item) return null;
+      const fromId = item.p1id == sharedPtId ? item.p2id : item.p1id;
+      const fromPt = state.points.find(p => p.id == fromId);
+      if (!fromPt) return null;
+      return new THREE.Vector3(fromPt.x - shared.x, fromPt.z - shared.z, fromPt.y - shared.y).normalize();
+    };
+    const dA = getLineDir(keyA, shared.id);
+    const dB = getLineDir(keyB, shared.id);
+    if (!dA || !dB) { notify(T('angle_invalid'), 'warning'); return null; }
+    // Use corrected outward directions
+    const cosMinor2 = Math.min(1, Math.max(-1, dA.dot(dB)));
+    const valueMinor2 = THREE.MathUtils.radToDeg(Math.acos(cosMinor2));
+    const valueMajor2 = 360 - valueMinor2;
+    const arc = buildAngleArcMesh(arcPos, dA, dB, valueMinor2, color);
+    if (!arc) { notify(T('angle_invalid'), 'warning'); return null; }
+    scene.add(arc);
+    const div = document.createElement('div');
+    div.className = 'label3d';
+    div.style.color = color;
+    div.textContent = `${name} = ${valueMinor2.toFixed(1)}°`;
+    const labelPos = dA.clone().add(dB).normalize().multiplyScalar(1.2).add(arcPos);
+    const labelObj = new THREE.CSS2DObject(div);
+    labelObj.position.copy(labelPos);
+    labelObj.visible = state.labelsVisible;
+    scene.add(labelObj);
+    const id = uid();
+    const angle = {
+      id, name, keyA, keyB, valueMinor: valueMinor2, valueMajor: valueMajor2,
+      arcMesh: arc, labelObj, labelDiv: div, color, dynamic: true,
+      sharedPtId: shared.id, showMajor: false
+    };
+    state.angles.push(angle);
+    pushUndo({ type: 'addAngle', id });
+    refreshAnglesTable(); updateUI();
+    notify(T('angle_ok') + ` ${name} = ${valueMinor2.toFixed(1)}°`, 'success');
+    return id;
+  }
+
+  // For non-line pairs (plane/vector), fall back to midpoint placement
+  const cosMinor = Math.min(1, Math.max(-1, dirA.dot(dirB)));
+  const valueMinor = THREE.MathUtils.radToDeg(Math.acos(Math.abs(cosMinor)));
+  const valueMajor = 180 - valueMinor;
+  arcPos = getObjPosition(keyA).clone().lerp(getObjPosition(keyB), 0.5);
+  const arc = buildAngleArcMesh(arcPos, dirA, dirB, valueMinor, color);
+  if (!arc) { notify(T('angle_invalid'), 'warning'); return null; }
+  scene.add(arc);
+  const div = document.createElement('div');
+  div.className = 'label3d';
+  div.style.color = color;
+  div.textContent = `${name} = ${valueMinor.toFixed(1)}°`;
+  const labelPos = dirA.clone().add(dirB).normalize().multiplyScalar(1.1).add(arcPos);
+  const labelObj = new THREE.CSS2DObject(div);
+  labelObj.position.copy(labelPos);
+  labelObj.visible = state.labelsVisible;
+  scene.add(labelObj);
+  const id = uid();
+  const angle = { id, name, keyA, keyB, valueMinor, valueMajor, arcMesh:arc, labelObj, labelDiv:div, color, dynamic:true, showMajor:false };
+  state.angles.push(angle);
+  pushUndo({ type: 'addAngle', id });
+  refreshAnglesTable(); updateUI();
+  notify(T('angle_ok') + ` ${name} = ${valueMinor.toFixed(1)}° / ${valueMajor.toFixed(1)}°`, 'success');
+  return id;
+}
+
+function updateAngle(angle) {
+  const kindA = angle.keyA.split(':')[0];
+  const kindB = angle.keyB.split(':')[0];
+  const bothLines = (kindA === 'conn' || kindA === 'free') && (kindB === 'conn' || kindB === 'free');
+  let pos, dA, dB;
+
+  if (bothLines && angle.sharedPtId) {
+    const shared = state.points.find(p => p.id == angle.sharedPtId);
+    if (!shared) { removeAngle(angle.id); return; }
+    pos = new THREE.Vector3(shared.x, shared.z, shared.y);
+    const getLineDir = key => {
+      const [kind, rawId] = key.split(':');
+      const id = parseFloat(rawId);
+      const arr = kind === 'conn' ? state.connections : state.freeLines;
+      const item = arr.find(x => x.id == id);
+      if (!item) return null;
+      const fromId = item.p1id == angle.sharedPtId ? item.p2id : item.p1id;
+      const fromPt = state.points.find(p => p.id == fromId);
+      if (!fromPt) return null;
+      return new THREE.Vector3(fromPt.x - shared.x, fromPt.z - shared.z, fromPt.y - shared.y).normalize();
+    };
+    dA = getLineDir(angle.keyA);
+    dB = getLineDir(angle.keyB);
+    if (!dA || !dB) { removeAngle(angle.id); return; }
+  } else {
+    dA = getObjDirection(angle.keyA);
+    dB = getObjDirection(angle.keyB);
+    if (!dA || !dB) { removeAngle(angle.id); return; }
+    pos = getObjPosition(angle.keyA).clone().lerp(getObjPosition(angle.keyB), 0.5);
+  }
+
+  const cosVal = Math.min(1, Math.max(-1, dA.dot(dB)));
+  angle.valueMinor = THREE.MathUtils.radToDeg(Math.acos(bothLines ? cosVal : Math.abs(cosVal)));
+  angle.valueMajor = bothLines ? 360 - angle.valueMinor : 180 - angle.valueMinor;
+
+  // Rebuild arc geometry
+  if (angle.arcMesh) { scene.remove(angle.arcMesh); angle.arcMesh.geometry?.dispose(); angle.arcMesh.material?.dispose(); }
+  const displayAngle = angle.showMajor ? angle.valueMajor : angle.valueMinor;
+  const arcDir = angle.showMajor ? dA.clone().negate() : dA;
+  const arc = buildAngleArcMesh(pos, arcDir, dB, displayAngle, angle.color);
+  if (!arc) return;
+  scene.add(arc);
+  angle.arcMesh = arc;
+
+  // Update label
+  const displayVal = angle.showMajor ? angle.valueMajor : angle.valueMinor;
+  if (angle.labelDiv) angle.labelDiv.textContent = `${angle.name} = ${displayVal.toFixed(1)}°`;
+  if (angle.labelObj) {
+    const labelPos = dA.clone().add(dB).normalize().multiplyScalar(1.2).add(pos);
+    angle.labelObj.position.copy(labelPos);
+  }
+  refreshAnglesTable();
+}
+
+function removeAngle(id) {
+  const i = state.angles.findIndex(a=>a.id==id);
+  if (i<0) return;
+  const a = state.angles[i];
+  if (a.arcMesh) { scene.remove(a.arcMesh); a.arcMesh.geometry?.dispose(); a.arcMesh.material?.dispose(); }
+  if (a.labelObj) { scene.remove(a.labelObj); if(a.labelDiv?.parentNode) a.labelDiv.parentNode.removeChild(a.labelDiv); }
+  state.angles.splice(i,1);
+  refreshAnglesTable(); updateUI();
+}
+
+function refreshAnglesTable() {
+  refreshAngleSelects();
+  const tbody = document.getElementById('angle-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  state.angles.forEach(a => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-family:var(--mono);font-size:12px">${a.name}</td>
+      <td style="font-size:10px;color:var(--text2)">${a.keyA.replace(/:/,'<br><span style="font-size:9px">').replace(/^/, '<span title="') + '">' + a.keyA.split(':')[0] + '</span>'}</td>
+      <td style="font-size:10px;color:var(--text2)">${a.keyB.split(':')[0]}</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--accent)">${a.valueMinor.toFixed(2)}°</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text2)">${a.valueMajor.toFixed(2)}°</td>
+      <td>
+        <label class="toggle" title="Show Major Angle">
+          <input type="checkbox" ${a.showMajor?'checked':''} onchange="toggleAngleMajor(${a.id},this.checked)">
+          <span class="tog-track"></span>
+        </label>
+      </td>
+      <td><input type="color" value="${a.color}" style="width:22px;height:20px;padding:1px"
+        oninput="updateAngleColor(${a.id},this.value)"></td>
+      <td><button onclick="removeAngle(${a.id})"
+        style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:13px;padding:0 2px">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleAngleMajor(id, showMajor) {
+  const a = state.angles.find(x => x.id == id);
+  if (!a) return;
+  a.showMajor = showMajor;
+  updateAngle(a);
+}
+
+function updateAngleColor(id, color) {
+  const a = state.angles.find(x=>x.id==id);
+  if (!a) return;
+  a.color = color;
+  if (a.arcMesh?.material) a.arcMesh.material.color.set(color);
+  if (a.labelDiv) a.labelDiv.style.color = color;
+}
+
 function setEqColor(c, el) {
   state.eqColor = c;
   document.getElementById('eq-color').value = c;
@@ -2115,11 +2597,41 @@ function drawEquation() {
   const steps = Math.min(parseInt(document.getElementById('eq-steps')?.value || 200), 1000);
   const xmin  = parseFloat(document.getElementById('eq-xmin')?.value ?? -10);
   const xmax  = parseFloat(document.getElementById('eq-xmax')?.value ?? 10);
-  const width = parseFloat(document.getElementById('line-width').value) || 2;
+  const width = parseFloat(document.getElementById('line-width')?.value) || 2;
   if (!expr && type !== 'helix') { notify('Enter an equation first', 'warning'); return; }
 
   try {
     const pts = [];
+    if (type === 'param3d') {
+      const xExpr = document.getElementById('p3d-x')?.value?.trim() || '0';
+      const yExpr = document.getElementById('p3d-y')?.value?.trim() || '0';
+      const zExpr = document.getElementById('p3d-z')?.value?.trim() || '0';
+      const tMin  = parseFloat(document.getElementById('eq-xmin')?.value ?? -10);
+      const tMax  = parseFloat(document.getElementById('eq-xmax')?.value ?? 10);
+      const steps2 = Math.min(parseInt(document.getElementById('eq-steps')?.value || 200), 1000);
+      for (let i = 0; i <= steps2; i++) {
+        const t = tMin + (tMax - tMin) * i / steps2;
+        const px2 = safeEval(xExpr, { t });
+        const py2 = safeEval(yExpr, { t });
+        const pz2 = safeEval(zExpr, { t });
+        if ([px2,py2,pz2].every(v => isFinite(v) && Math.abs(v) < 1e6))
+          pts.push(new THREE.Vector3(px2, pz2, py2)); // remap to Three.js coords
+      }
+      if (pts.length >= 2) {
+        const positions2 = []; pts.forEach(p => positions2.push(p.x,p.y,p.z));
+        const g2 = new THREE.LineGeometry(); g2.setPositions(positions2);
+        const m2 = new THREE.LineMaterial({ color:new THREE.Color(color), linewidth:width, resolution:state.resolution.clone() });
+        const l2 = new THREE.Line2(g2,m2); l2.computeLineDistances();
+        scene.add(l2);
+        const id2 = uid();
+        state.equations.push({ id:id2, mesh:l2, type, expr:xExpr+'|'+yExpr+'|'+zExpr, color,
+          xExpr, yExpr, zExpr, tMin, tMax });
+        state.parametricLines.push({ id:id2, xExpr, yExpr, zExpr, tMin, tMax, color });
+        refreshEqList(); updateUI();
+        notify(T('eq_param')+' drawn!', 'success');
+      } else { notify('No valid points generated', 'warning'); }
+      return;
+    }
     if (type === 'linear' || type === 'quadratic') {
       const rhs = expr.includes('=') ? expr.split('=').slice(1).join('=') : expr;
       for (let i = 0; i <= steps; i++) {
@@ -2191,7 +2703,9 @@ function drawEquation() {
     const line2 = new THREE.Line2(geo, mat);
     line2.computeLineDistances();
     scene.add(line2);
-    state.equations.push({ id: uid(), mesh: line2, type, expr, color });
+    const eqId = uid();
+    state.equations.push({ id: eqId, mesh: line2, type, expr, color });
+    pushUndo({ type: 'addEq', id: eqId });
     refreshEqList(); updateUI();
     notify('Equation drawn!', 'success');
   } catch(err) { notify('Error: ' + err.message, 'error'); }
@@ -2322,13 +2836,27 @@ function toggleLineVis() {
 }
 function toggleLabels(src) {
   const v = src ? src.checked : (document.getElementById('show-labels')?.checked ?? true);
-  // Hide/show ALL 3D labels: point names AND axis X/Y/Z letters
-  document.querySelectorAll('.label3d').forEach(el => el.style.display = v ? '' : 'none');
-  // Sync both checkboxes so they always agree
-  const a = document.getElementById('show-labels');
-  const b = document.getElementById('show-labels-v');
-  if (a) a.checked = v;
-  if (b) b.checked = v;
+  state.labelsVisible = v;
+  // Update all point label CSS2DObjects (visibility + DOM display)
+  state.points.forEach(p => {
+    if (p.labelObj) p.labelObj.visible = v;
+    if (p.labelDiv) p.labelDiv.style.display = v ? '' : 'none';
+  });
+  // Update axis label CSS2DObjects
+  if (state.axesGroup) {
+    state.axesGroup.traverse(obj => {
+      if (obj.isCSS2DObject) { obj.visible = v; if (obj.element) obj.element.style.display = v ? '' : 'none'; }
+    });
+  }
+  // Update angle labels
+  state.angles.forEach(a => {
+    if (a.labelObj) { a.labelObj.visible = v; if (a.labelDiv) a.labelDiv.style.display = v ? '' : 'none'; }
+  });
+  // Sync both checkboxes
+  const ck1 = document.getElementById('show-labels');
+  const ck2 = document.getElementById('show-labels-v');
+  if (ck1) ck1.checked = v;
+  if (ck2) ck2.checked = v;
 }
 function updateGridOpacity() {
   if (state.gridHelper)
@@ -2362,14 +2890,42 @@ function setTheme(t) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  UNDO
+//  UNDO / REDO
 // ═══════════════════════════════════════════════════════════════
+const redoStack = [];
+const MAX_UNDO = 50;
+
+function pushUndo(action) {
+  state.undoStack.push({ ...action, timestamp: Date.now() });
+  if (state.undoStack.length > MAX_UNDO) state.undoStack.shift();
+  redoStack.length = 0; // clear redo on new action
+}
+
 function undoAction() {
   if (!state.undoStack.length) { notify('Nothing to undo', 'info'); return; }
   const action = state.undoStack.pop();
-  if (action.type === 'addPoint') deletePoint(action.id);
-  else if (action.type === 'addConn') removeConnection(action.id);
-  notify('Undo', 'info');
+  redoStack.push(action);
+  switch (action.type) {
+    case 'addPoint':      deletePoint(action.id); break;
+    case 'addConn':       removeConnection(action.id); break;
+    case 'addFreeLine':   removeFreeLine(action.id); break;
+    case 'addAngle':      removeAngle(action.id); break;
+    case 'addEq':         removeEq(action.id); break;
+    case 'addGeom':       removeShape(action.id); break;
+    case 'movePoint': {
+      const pt = state.points.find(p => p.id == action.id);
+      if (pt) { movePt(action.id, 'x', action.ox); movePt(action.id, 'y', action.oy); movePt(action.id, 'z', action.oz); }
+      break;
+    }
+  }
+  notify('Undo: ' + action.type.replace(/^add/,'Remove ').replace(/^move/,'Revert '), 'info');
+}
+
+function redoAction() {
+  if (!redoStack.length) { notify('Nothing to redo', 'info'); return; }
+  // Redo is complex without full state snapshots — just notify
+  const action = redoStack[redoStack.length - 1];
+  notify('Redo not available for: ' + action.type, 'warning');
 }
 function openModal(opts) {
   // opts: { icon, title, msg, confirmLabel, confirmStyle, onConfirm }
@@ -2410,6 +2966,13 @@ function clearAll() {
       state.equations.forEach(e => scene.remove(e.mesh));
       state.points = []; state.connections = []; state.freeLines = [];
       state.geometries = []; state.equations = []; state.undoStack = [];
+      redoStack.length = 0;
+      // Remove angles
+      state.angles.forEach(a => {
+        if (a.arcMesh) { scene.remove(a.arcMesh); a.arcMesh.geometry?.dispose(); a.arcMesh.material?.dispose(); }
+        if (a.labelObj) { scene.remove(a.labelObj); if(a.labelDiv?.parentNode) a.labelDiv.parentNode.removeChild(a.labelDiv); }
+      });
+      state.angles = []; state.parametricLines = [];
       ptIdx = 0; state.selectedPoint = null;
       updateUI(); refreshCoordTable(); refreshConnTable(); refreshEqList(); refreshObjectsTable();
       notify('Scene cleared', 'info');
@@ -2422,13 +2985,15 @@ function clearAll() {
 // ═══════════════════════════════════════════════════════════════
 function saveJSON() {
   const data = {
-    version: '2.1',
+    version: '2.2',
     points: state.points.map(p => ({ name:p.name, x:p.x, y:p.y, z:p.z, color:p.color, size:p.size })),
     connections: state.connections.map(c => {
       const p1 = state.points.find(p=>p.id==c.p1id), p2 = state.points.find(p=>p.id==c.p2id);
       return { p1name:p1?.name, p2name:p2?.name, color:c.color, width:c.width };
     }),
-    equations: state.equations.map(e => ({ type:e.type, expr:e.expr||'', color:e.color })),
+    equations: state.equations.map(e => ({ type:e.type, expr:e.expr||'', color:e.color,
+      xExpr:e.xExpr, yExpr:e.yExpr, zExpr:e.zExpr, tMin:e.tMin, tMax:e.tMax })),
+    angles: state.angles.map(a => ({ name:a.name, keyA:a.keyA, keyB:a.keyB, color:a.color })),
   };
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)], {type:'application/json'}));
@@ -2452,10 +3017,27 @@ function handleLoad(e) {
       if (p1&&p2) addConnection(p1, p2, c.color, c.width);
     });
     if (d.equations) d.equations.forEach(eq => {
-      state.eqType=eq.type; state.eqColor=eq.color;
-      document.getElementById('eq-input').value = eq.expr||'';
-      setEqType(eq.type); drawEquation();
+      if (eq.type === 'param3d') {
+        state.eqType = 'param3d'; state.eqColor = eq.color;
+        setEqType('param3d');
+        setTimeout(() => {
+          const xe=document.getElementById('p3d-x'), ye=document.getElementById('p3d-y'), ze=document.getElementById('p3d-z');
+          if(xe) xe.value = eq.xExpr||'';
+          if(ye) ye.value = eq.yExpr||'';
+          if(ze) ze.value = eq.zExpr||'';
+          if(eq.tMin!=null){ const mn=document.getElementById('eq-xmin'); if(mn) mn.value=eq.tMin; }
+          if(eq.tMax!=null){ const mx=document.getElementById('eq-xmax'); if(mx) mx.value=eq.tMax; }
+          drawEquation();
+        }, 50);
+      } else {
+        state.eqType=eq.type; state.eqColor=eq.color;
+        document.getElementById('eq-input').value = eq.expr||'';
+        setEqType(eq.type); drawEquation();
+      }
     });
+    if (d.angles) setTimeout(() => {
+      d.angles.forEach(a => createAngle(a.keyA, a.keyB, a.color, a.name));
+    }, 200);
     notify(`Loaded: ${d.points?.length||0} pts, ${d.connections?.length||0} conn`, 'success');
   }).catch(() => notify('Load error', 'error'));
 }
@@ -2567,7 +3149,7 @@ function notify(msg, type='info') {
 // ═══════════════════════════════════════════════════════════════
 function updateUI() {
   const total = state.points.length + state.connections.length +
-    state.geometries.length + state.equations.length + state.freeLines.length;
+    state.geometries.length + state.equations.length + state.freeLines.length + state.angles.length;
   document.getElementById('obj-counter').textContent = total + ' obj';
   // Disable "Connect 2 Points" when fewer than 2 points exist
   const connBtn = document.getElementById('conn-mode-btn');
@@ -2605,6 +3187,11 @@ function animate(ts) {
 
   controls.update();
 
+  // Update dynamic angles (dependency-based, not full scene traversal)
+  if (state.frameN % 6 === 0 && state.angles.length > 0) {
+    state.angles.forEach(a => { if (a.dynamic) updateAngle(a); });
+  }
+
   // Subtle glow pulse on points (when glow enabled and not selected)
   if (document.getElementById('pt-glow')?.checked) {
     state.points.forEach(p => {
@@ -2632,7 +3219,7 @@ animate(0);
 // ═══════════════════════════════════════════════════════════════
 setEqType('linear');  // build equation params
 
-setTimeout(() => notify('Welcome to Geo3D v2.1  ·  Insert → + Point to begin', 'success'), 700);
+setTimeout(() => notify('Welcome to Geo3D v2.2  ·  Insert → + Point to begin', 'success'), 700);
 </script>
 </body>
 </html>
