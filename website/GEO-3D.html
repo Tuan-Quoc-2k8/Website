@@ -198,10 +198,104 @@ select{cursor:pointer}
 .theme-btn:hover{border-color:var(--border2);color:var(--text)}
 .theme-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,170,0.08)}
 
+kbd.kbd{background:var(--bg4);border:1px solid var(--border2);border-radius:4px;
+  padding:2px 7px;font-size:10px;font-family:var(--mono);color:var(--text);white-space:nowrap}
+
 /* SCROLLBARS */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── COMMAND PALETTE ─── */
+#cmd-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;
+  padding-top:10vh}
+#cmd-overlay.open{display:flex}
+#cmd-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius3);
+  width:min(520px,92vw);box-shadow:0 24px 64px rgba(0,0,0,0.8);overflow:hidden}
+#cmd-input{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--font);
+  font-size:15px;padding:14px 16px;outline:none}
+#cmd-results{max-height:340px;overflow-y:auto;border-top:1px solid var(--border)}
+.cmd-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;
+  transition:background var(--anim);font-size:13px}
+.cmd-item:hover,.cmd-item.active{background:rgba(0,212,170,0.1)}
+.cmd-icon{width:26px;height:26px;border-radius:6px;background:var(--bg3);display:flex;
+  align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.cmd-label{flex:1;color:var(--text)}
+.cmd-kbd{font-size:10px;color:var(--text3);font-family:var(--mono);background:var(--bg4);
+  padding:2px 5px;border-radius:4px}
+.cmd-section{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;
+  padding:8px 14px 3px;background:var(--bg3)}
+
+/* ── CONTEXT MENU ─── */
+#ctx-menu{position:fixed;z-index:900;background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--radius2);box-shadow:var(--shadow);min-width:170px;
+  padding:4px;display:none;animation:fadeIn .12s ease}
+#ctx-menu.open{display:block}
+@keyframes fadeIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+.ctx-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;
+  cursor:pointer;font-size:12.5px;color:var(--text);transition:background var(--anim)}
+.ctx-item:hover{background:rgba(255,255,255,0.07)}
+.ctx-item.danger:hover{background:rgba(240,96,96,0.12);color:var(--accent3)}
+.ctx-sep{height:1px;background:var(--border);margin:3px 0}
+.ctx-icon{width:16px;text-align:center;font-size:13px}
+
+/* ── OBJECTS LIBRARY ─── */
+#win-objlib{width:300px;top:68px;left:16px}
+.objlib-search{width:100%;margin-bottom:8px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);padding:6px 10px;border-radius:var(--radius);font-size:12px;outline:none}
+.objlib-filters{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:8px}
+.objlib-filter{background:var(--bg3);border:1px solid var(--border);color:var(--text3);
+  padding:3px 8px;border-radius:20px;font-size:11px;cursor:pointer;transition:all var(--anim)}
+.objlib-filter:hover,.objlib-filter.active{background:rgba(0,212,170,0.12);
+  border-color:var(--accent);color:var(--accent)}
+.objlib-list{display:flex;flex-direction:column;gap:1px;max-height:340px;overflow-y:auto}
+.objlib-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;
+  cursor:pointer;transition:background var(--anim);font-size:12px}
+.objlib-item:hover{background:rgba(255,255,255,0.05)}
+.objlib-item.sel{background:rgba(0,212,170,0.09)}
+.objlib-ico{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;
+  justify-content:center;font-size:12px;flex-shrink:0}
+.objlib-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.objlib-acts{display:flex;gap:2px;opacity:0;transition:opacity var(--anim)}
+.objlib-item:hover .objlib-acts{opacity:1}
+.objlib-act{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;
+  padding:2px 4px;border-radius:4px;transition:color var(--anim)}
+.objlib-act:hover{color:var(--text)}
+
+/* ── ACCORDION INSERT PANEL ─── */
+.acc-section{border-bottom:1px solid var(--border)}
+.acc-hdr{display:flex;align-items:center;gap:6px;padding:5px 10px;cursor:pointer;
+  font-size:11.5px;font-weight:500;color:var(--text2);transition:color var(--anim);
+  user-select:none}
+.acc-hdr:hover{color:var(--text)}
+.acc-arrow{font-size:9px;transition:transform var(--anim);margin-left:auto}
+.acc-section.open .acc-arrow{transform:rotate(90deg)}
+.acc-body{padding:6px 10px 8px;display:none;flex-wrap:wrap;gap:5px}
+.acc-section.open .acc-body{display:flex}
+.ins-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);
+  padding:5px 9px;border-radius:var(--radius);cursor:pointer;font-size:11.5px;
+  display:flex;align-items:center;gap:5px;transition:all var(--anim);white-space:nowrap}
+.ins-btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg4)}
+.ins-btn.primary{border-color:rgba(0,212,170,0.3);color:var(--accent);background:rgba(0,212,170,0.07)}
+.ins-btn.primary:hover{background:rgba(0,212,170,0.14)}
+#insert-search{width:100%;margin-bottom:6px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);padding:6px 10px;border-radius:var(--radius);font-size:12px;outline:none;
+  transition:border-color var(--anim)}
+#insert-search:focus{border-color:var(--accent)}
+
+/* ── SURFACE EQUATION PREVIEW ─── */
+.eq-preview{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
+  padding:6px 10px;font-family:var(--mono);font-size:12px;color:var(--accent2);
+  min-height:28px;margin-top:4px;word-break:break-all}
+
+/* ── TOAST IMPROVEMENTS ─── */
+#notif{bottom:34px}
+.notif-stack{display:flex;flex-direction:column;gap:4px}
+
+/* ── IMPROVED FWIN ─── */
+.fwin{transition:box-shadow var(--anim)}
+.fwin:focus-within{box-shadow:var(--shadow),0 0 0 1px rgba(0,212,170,0.15)}
 
 /* MOBILE */
 @media(max-width:600px){
@@ -233,6 +327,8 @@ select{cursor:pointer}
   </nav>
   <div id="toolbar-right">
     <span id="obj-counter">0 obj</span>
+    <button class="tb-btn" onclick="openCmdPalette()" title="Command Palette (Ctrl+P)">⌘</button>
+    <button class="tb-btn" onclick="openWin('win-objlib');refreshObjLib()" title="Objects Library">📚</button>
     <button class="tb-btn" onclick="undoAction()">↩ <span data-i18n="undo">Undo</span></button>
     <button class="tb-btn" onclick="clearAll()" style="color:var(--accent3)">🗑 <span data-i18n="clear">Clear</span></button>
   </div>
@@ -297,44 +393,81 @@ select{cursor:pointer}
 </div>
 
 <!-- ── INSERT PANEL ───────────────────────────────────── -->
-<div class="tab-panel" id="panel-insert">
-  <div class="panel-row">
-    <div class="pgrp">
-      <span class="plbl" data-i18n="points">Points</span>
-      <div class="prow">
-        <button class="btn sm accent" id="add-pt-btn" onclick="startAddPoint()">
-          + <span data-i18n="add_point">Point</span>
-        </button>
-        <button class="btn sm" onclick="openWin('win-multi')">
-          + <span data-i18n="multi_point">Multi</span>
-        </button>
+<div class="tab-panel" id="panel-insert" style="padding:8px 10px">
+  <input id="insert-search" placeholder="🔍 Search tools…" oninput="filterInsertPanel(this.value)" data-i18n-ph="search_tools" autocomplete="off">
+  <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;background:var(--bg3)">
+    <!-- Points -->
+    <div class="acc-section" id="acc-pts" style="flex:1;border:none;border-right:1px solid var(--border)">
+      <div class="acc-hdr" onclick="toggleAcc('pts')">
+        <span>📍</span> <span data-i18n="points">Points</span>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <button class="ins-btn primary" id="add-pt-btn" onclick="startAddPoint()">+ <span data-i18n="add_point">Point</span></button>
+        <button class="ins-btn" onclick="openWin('win-multi')">+ <span data-i18n="multi_point">Multi</span></button>
+        <button class="ins-btn" onclick="openWin('win-coords')">📋 <span data-i18n="coord_mgr">Manager</span></button>
       </div>
     </div>
-    <div class="pgrp">
-      <span class="plbl" data-i18n="geometry">Geometry</span>
-      <div class="prow">
-        <button class="btn sm" onclick="addGeom('cube')">□ Cube</button>
-        <button class="btn sm" onclick="addGeom('sphere')">○ Sphere</button>
-        <button class="btn sm" onclick="addGeom('cylinder')">⌀ Cylinder</button>
-        <button class="btn sm" onclick="addGeom('tetra')">△ Tetra</button>
-        <button class="btn sm" onclick="addGeom('pyramid')">▲ Pyramid</button>
-        <button class="btn sm" onclick="addGeom('torus')">⊙ Torus</button>
+    <!-- Lines -->
+    <div class="acc-section" id="acc-lines" style="flex:1;border:none;border-right:1px solid var(--border)">
+      <div class="acc-hdr" onclick="toggleAcc('lines')">
+        <span>—</span> <span data-i18n="lines">Lines</span>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <button class="ins-btn" onclick="openObjectsManager('line')" id="conn-mode-btn">🔗 <span data-i18n="connect_two">Connect</span></button>
+        <button class="ins-btn" onclick="openObjectsManager('line')">— <span data-i18n="line">FreeLine</span></button>
       </div>
     </div>
-    <div class="pgrp">
-      <span class="plbl" data-i18n="objects">Objects</span>
-      <div class="prow">
-        <button class="btn sm" onclick="openObjectsManager('line')">— <span data-i18n="line">Line</span></button>
-        <button class="btn sm" onclick="openObjectsManager('plane')">▭ <span data-i18n="plane">Plane</span></button>
-        <button class="btn sm" onclick="openObjectsManager('vector')">→ <span data-i18n="vector">Vector</span></button>
-        <button class="btn sm" onclick="openObjectsManager('shape')">⬡ <span>Shapes</span></button>
+    <!-- Shapes -->
+    <div class="acc-section" id="acc-shapes" style="flex:1.4;border:none;border-right:1px solid var(--border)">
+      <div class="acc-hdr" onclick="toggleAcc('shapes')">
+        <span>⬡</span> <span data-i18n="geometry">Shapes</span>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <button class="ins-btn" onclick="addGeom('cube')">□ Cube</button>
+        <button class="ins-btn" onclick="addGeom('sphere')">○ Sphere</button>
+        <button class="ins-btn" onclick="addGeom('cylinder')">⌀ Cylinder</button>
+        <button class="ins-btn" onclick="addGeom('tetra')">△ Tetra</button>
+        <button class="ins-btn" onclick="addGeom('pyramid')">▲ Pyramid</button>
+        <button class="ins-btn" onclick="addGeom('torus')">⊙ Torus</button>
       </div>
     </div>
-    <div class="pgrp">
-      <span class="plbl" data-i18n="file">File</span>
-      <div class="prow">
-        <button class="btn sm" onclick="saveJSON()">💾 <span data-i18n="save">Save</span></button>
-        <button class="btn sm" onclick="document.getElementById('json-inp').click()">📂 <span data-i18n="load">Load</span></button>
+    <!-- Advanced -->
+    <div class="acc-section" id="acc-adv" style="flex:1.2;border:none;border-right:1px solid var(--border)">
+      <div class="acc-hdr" onclick="toggleAcc('adv')">
+        <span>⟂</span> <span data-i18n="objects">Objects</span>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <button class="ins-btn" onclick="openObjectsManager('plane')">▭ <span data-i18n="plane">Plane</span></button>
+        <button class="ins-btn" onclick="openObjectsManager('vector')">→ <span data-i18n="vector">Vector</span></button>
+        <button class="ins-btn" onclick="openObjectsManager('angle')">∠ <span data-i18n="angles">Angle</span></button>
+      </div>
+    </div>
+    <!-- Math -->
+    <div class="acc-section" id="acc-math" style="flex:1.2;border:none;border-right:1px solid var(--border)">
+      <div class="acc-hdr" onclick="toggleAcc('math')">
+        <span>∫</span> Equations
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <button class="ins-btn" onclick="openEqEditor('surface')">z=f(x,y)</button>
+        <button class="ins-btn" onclick="openEqEditor('parametric')">Param</button>
+        <button class="ins-btn" onclick="openEqEditor('linear')">y=f(x)</button>
+        <button class="ins-btn" onclick="openEqEditor('polar')">Polar</button>
+      </div>
+    </div>
+    <!-- File -->
+    <div class="acc-section" id="acc-file" style="flex:1;border:none">
+      <div class="acc-hdr" onclick="toggleAcc('file')">
+        <span>💾</span> <span data-i18n="file">File</span>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <button class="ins-btn" onclick="saveJSON()">💾 <span data-i18n="save">Save</span></button>
+        <button class="ins-btn" onclick="document.getElementById('json-inp').click()">📂 <span data-i18n="load">Load</span></button>
         <input type="file" id="json-inp" accept=".json" style="display:none" onchange="handleLoad(event)">
       </div>
     </div>
@@ -385,34 +518,47 @@ select{cursor:pointer}
 
 <!-- ── MATH PANEL ─────────────────────────────────────── -->
 <div class="tab-panel" id="panel-math">
-  <div style="display:flex;gap:6px;flex-wrap:wrap">
-    <div class="eq-cat-card" onclick="openEqEditor('linear')">
-      <span style="font-size:12px;font-weight:500" data-i18n="eq_linear">Linear</span>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+    <span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-right:4px">Equation Types</span>
+    <div class="eq-cat-card" onclick="openEqEditor('linear')" title="y = ax + b">
+      <span style="font-size:11.5px;font-weight:500" data-i18n="eq_linear">Linear</span>
       <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">y = ax + b</span>
     </div>
-    <div class="eq-cat-card" onclick="openEqEditor('quadratic')">
-      <span style="font-size:12px;font-weight:500" data-i18n="eq_quad">Quadratic</span>
+    <div class="eq-cat-card" onclick="openEqEditor('quadratic')" title="y = ax² + bx + c">
+      <span style="font-size:11.5px;font-weight:500" data-i18n="eq_quad">Quadratic</span>
       <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">y = ax² + bx + c</span>
     </div>
     <div class="eq-cat-card" onclick="openEqEditor('parametric')">
-      <span style="font-size:12px;font-weight:500" data-i18n="eq_param">Parametric</span>
+      <span style="font-size:11.5px;font-weight:500" data-i18n="eq_param">Parametric</span>
       <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">x(t), y(t), z(t)</span>
     </div>
-    <div class="eq-cat-card" onclick="openEqEditor('plane')">
-      <span style="font-size:12px;font-weight:500" data-i18n="eq_plane">Plane</span>
-      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">ax+by+cz=d</span>
+    <div class="eq-cat-card" onclick="openEqEditor('surface')" title="z = f(x,y)">
+      <span style="font-size:11.5px;font-weight:500" data-i18n="eq_surface">z=f(x,y)</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">z = f(x,y)</span>
+    </div>
+    <div class="eq-cat-card" onclick="openEqEditor('polar')">
+      <span style="font-size:11.5px;font-weight:500">Polar</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">r = f(θ)</span>
     </div>
     <div class="eq-cat-card" onclick="openEqEditor('sphere3d')">
-      <span style="font-size:12px;font-weight:500" data-i18n="eq_sphere">Sphere</span>
+      <span style="font-size:11.5px;font-weight:500" data-i18n="eq_sphere">Sphere</span>
       <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">x²+y²+z²=r²</span>
     </div>
     <div class="eq-cat-card" onclick="openEqEditor('circle')">
-      <span style="font-size:12px;font-weight:500" data-i18n="eq_circle">Circle</span>
+      <span style="font-size:11.5px;font-weight:500" data-i18n="eq_circle">Circle</span>
       <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">x²+z²=r²</span>
     </div>
     <div class="eq-cat-card" onclick="openEqEditor('helix')">
-      <span style="font-size:12px;font-weight:500">Helix</span>
+      <span style="font-size:11.5px;font-weight:500">Helix</span>
       <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">3D spiral</span>
+    </div>
+    <div class="eq-cat-card" onclick="openEqEditor('param3d')">
+      <span style="font-size:11.5px;font-weight:500" data-i18n="param3d">Param 3D</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">x,y,z = f(t)</span>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:5px">
+      <button class="btn sm accent2" onclick="openWin('win-eq')" title="Open equation editor">✎ Editor</button>
+      <button class="btn sm" onclick="openWin('win-objlib')" title="Objects library">📚 Library</button>
     </div>
   </div>
 </div>
@@ -463,9 +609,60 @@ select{cursor:pointer}
     </div>
     <div class="pgrp">
       <span class="plbl">About</span>
-      <span style="font-size:11px;color:var(--text3)">Geo3D v2.2 · Three.js r128</span>
+      <span style="font-size:11px;color:var(--text3)">Geo3D v3.0 · Three.js r128</span>
     </div>
   </div>
+</div>
+
+<!-- ══ OBJECTS LIBRARY ════════════════════════ -->
+<div class="fwin" id="win-objlib" style="top:68px;left:16px;width:300px">
+  <div class="fwin-hdr" id="win-objlib-hdr">
+    <div class="fwin-title">📚 <span data-i18n="objects_library">Objects Library</span></div>
+    <div class="fwin-acts">
+      <button class="wbtn wmin" onclick="minimizeWin('win-objlib')">−</button>
+      <button class="wbtn wclose" onclick="closeWin('win-objlib')">×</button>
+    </div>
+  </div>
+  <div class="fwin-body" style="padding:8px 10px">
+    <input class="objlib-search" id="objlib-search" placeholder="🔍 Search objects…"
+      oninput="refreshObjLib()" autocomplete="off">
+    <div class="objlib-filters" id="objlib-filters">
+      <span class="objlib-filter active" data-filter="all" onclick="setObjLibFilter('all')">All</span>
+      <span class="objlib-filter" data-filter="point" onclick="setObjLibFilter('point')">📍 Pts</span>
+      <span class="objlib-filter" data-filter="line" onclick="setObjLibFilter('line')">— Lines</span>
+      <span class="objlib-filter" data-filter="shape" onclick="setObjLibFilter('shape')">⬡ Shape</span>
+      <span class="objlib-filter" data-filter="equation" onclick="setObjLibFilter('equation')">∫ Eq</span>
+      <span class="objlib-filter" data-filter="angle" onclick="setObjLibFilter('angle')">∠ Ang</span>
+    </div>
+    <div class="objlib-list" id="objlib-list"></div>
+    <div style="margin-top:8px;font-size:10.5px;color:var(--text3);display:flex;justify-content:space-between">
+      <span id="objlib-count">0 objects</span>
+      <button style="background:none;border:none;color:var(--accent2);font-size:10.5px;cursor:pointer"
+        onclick="refreshObjLib()">↻</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMMAND PALETTE ════════════════════════ -->
+<div id="cmd-overlay" onclick="closeCmdPalette(event)">
+  <div id="cmd-box">
+    <input id="cmd-input" placeholder="⌘ Type a command or search…" oninput="updateCmdResults()"
+      onkeydown="cmdKeyNav(event)" autocomplete="off" spellcheck="false">
+    <div id="cmd-results"></div>
+  </div>
+</div>
+
+<!-- ══ CONTEXT MENU ════════════════════════════ -->
+<div id="ctx-menu">
+  <div class="ctx-item" onclick="ctxAction('add-point')"><span class="ctx-icon">📍</span> Add Point Here</div>
+  <div class="ctx-item" id="ctx-props-item" onclick="ctxAction('props')" style="display:none"><span class="ctx-icon">⬡</span> Properties</div>
+  <div class="ctx-item" id="ctx-focus-item" onclick="ctxAction('focus')" style="display:none"><span class="ctx-icon">🎯</span> Focus Camera</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxAction('objlib')"><span class="ctx-icon">📚</span> Objects Library</div>
+  <div class="ctx-item" onclick="ctxAction('eq-editor')"><span class="ctx-icon">∫</span> Equation Editor</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxAction('undo')"><span class="ctx-icon">↩</span> Undo <span style="margin-left:auto;font-size:10px;color:var(--text3)">Ctrl+Z</span></div>
+  <div class="ctx-item danger" id="ctx-delete-item" onclick="ctxAction('delete')" style="display:none"><span class="ctx-icon">🗑</span> Delete Selected</div>
 </div>
 
 <!-- ══ COORDINATE MANAGER ════════════════════ -->
@@ -522,9 +719,9 @@ select{cursor:pointer}
 </div>
 
 <!-- ══ TUTORIAL WINDOW ════════════════════════ -->
-<div class="fwin" id="win-tutorial" style="top:80px;left:50%;transform:translateX(-50%);width:480px">
+<div class="fwin" id="win-tutorial" style="top:80px;left:50%;transform:translateX(-50%);width:500px">
   <div class="fwin-hdr" id="win-tutorial-hdr">
-    <div class="fwin-title">? Quick Tutorial</div>
+    <div class="fwin-title">? <span data-i18n="tut_title">Quick Tutorial</span></div>
     <div class="fwin-acts">
       <button class="wbtn wclose" onclick="closeWin('win-tutorial')">×</button>
     </div>
@@ -534,54 +731,58 @@ select{cursor:pointer}
       <!-- Navigation -->
       <div>
         <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;
-          letter-spacing:.08em;margin-bottom:8px">Navigation</div>
+          letter-spacing:.08em;margin-bottom:8px" data-i18n="tut_nav">Navigation</div>
         <table style="width:100%;border-collapse:collapse;font-size:12px">
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:5px 0;color:var(--text2)">Rotate view</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">Left drag</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_rotate">Rotate view</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">Left drag</kbd></td>
           </tr>
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:5px 0;color:var(--text2)">Pan view</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">Right drag</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_pan">Pan view</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">Right drag</kbd></td>
           </tr>
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:5px 0;color:var(--text2)">Zoom</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">Scroll wheel</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_zoom">Zoom</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">Scroll wheel</kbd></td>
           </tr>
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:5px 0;color:var(--text2)">Select point</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">Click</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_select">Select point</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">Click</kbd></td>
           </tr>
           <tr>
-            <td style="padding:5px 0;color:var(--text2)">Deselect</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">Click again / ESC</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_deselect">Deselect</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">Click again / ESC</kbd></td>
           </tr>
         </table>
       </div>
       <!-- Keyboard shortcuts -->
       <div>
         <div style="font-size:11px;font-weight:600;color:var(--accent2);text-transform:uppercase;
-          letter-spacing:.08em;margin-bottom:8px">Keyboard Shortcuts</div>
+          letter-spacing:.08em;margin-bottom:8px" data-i18n="tut_shortcuts">Keyboard Shortcuts</div>
         <table style="width:100%;border-collapse:collapse;font-size:12px">
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:5px 0;color:var(--text2)">Undo</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">Ctrl + Z</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="undo">Undo</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">Ctrl + Z</kbd></td>
           </tr>
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:5px 0;color:var(--text2)">Delete selected</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">Delete</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_delete">Delete selected</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">Delete</kbd></td>
           </tr>
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:5px 0;color:var(--text2)">Cancel mode</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">ESC</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_cancel">Cancel mode</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">ESC</kbd></td>
           </tr>
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:5px 0;color:var(--text2)">Multi-place pts</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">Shift + Click</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_multiplace">Multi-place pts</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">Shift + Click</kbd></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_resetcam">Reset camera</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">View → Reset</kbd></td>
           </tr>
           <tr>
-            <td style="padding:5px 0;color:var(--text2)">Reset camera</td>
-            <td style="padding:5px 0;text-align:right"><kbd style="background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-size:10px;font-family:var(--mono)">View → Reset</kbd></td>
+            <td style="padding:5px 0;color:var(--text2)" data-i18n="tut_cmdpal">Command palette</td>
+            <td style="padding:5px 0;text-align:right"><kbd class="kbd">Ctrl + P</kbd></td>
           </tr>
         </table>
       </div>
@@ -589,22 +790,27 @@ select{cursor:pointer}
     <!-- Workflow -->
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
       <div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;
-        letter-spacing:.08em;margin-bottom:8px">Basic Workflow</div>
+        letter-spacing:.08em;margin-bottom:8px" data-i18n="tut_workflow">Basic Workflow</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <div style="background:var(--bg4);border:1px solid var(--border);border-radius:6px;
           padding:7px 10px;font-size:11.5px;flex:1;min-width:130px">
-          <div style="color:var(--accent);font-weight:600;margin-bottom:3px">① Add Points</div>
-          <div style="color:var(--text2)">Insert → + Point, then click the canvas</div>
+          <div style="color:var(--accent);font-weight:600;margin-bottom:3px">① <span data-i18n="tut_step1_title">Add Points</span></div>
+          <div style="color:var(--text2)" data-i18n="tut_step1_desc">Insert → + Point, then click the canvas</div>
         </div>
         <div style="background:var(--bg4);border:1px solid var(--border);border-radius:6px;
           padding:7px 10px;font-size:11.5px;flex:1;min-width:130px">
-          <div style="color:var(--accent2);font-weight:600;margin-bottom:3px">② Connect</div>
-          <div style="color:var(--text2)">Home → Connections → Connect 2 Points</div>
+          <div style="color:var(--accent2);font-weight:600;margin-bottom:3px">② <span data-i18n="tut_step2_title">Connect</span></div>
+          <div style="color:var(--text2)" data-i18n="tut_step2_desc">Home → Connections → Connect 2 Points</div>
         </div>
         <div style="background:var(--bg4);border:1px solid var(--border);border-radius:6px;
           padding:7px 10px;font-size:11.5px;flex:1;min-width:130px">
-          <div style="color:#f5a623;font-weight:600;margin-bottom:3px">③ Customise</div>
-          <div style="color:var(--text2)">Click any point to edit color, size &amp; name</div>
+          <div style="color:#f5a623;font-weight:600;margin-bottom:3px">③ <span data-i18n="tut_step3_title">Customise</span></div>
+          <div style="color:var(--text2)" data-i18n="tut_step3_desc">Click any point to edit color, size &amp; name</div>
+        </div>
+        <div style="background:var(--bg4);border:1px solid var(--border);border-radius:6px;
+          padding:7px 10px;font-size:11.5px;flex:1;min-width:130px">
+          <div style="color:#c084fc;font-weight:600;margin-bottom:3px">④ <span data-i18n="tut_step4_title">Equations</span></div>
+          <div style="color:var(--text2)" data-i18n="tut_step4_desc">Math panel → pick type → draw. Use ⌘ to move.</div>
         </div>
       </div>
     </div>
@@ -692,16 +898,18 @@ select{cursor:pointer}
       <button class="wbtn wclose" onclick="closeWin('win-eq')">×</button>
     </div>
   </div>
-  <div class="fwin-body">
+  <div class="fwin-body" style="max-height:calc(90vh - 60px);overflow-y:auto">
     <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px">
-      <button class="eq-type-btn active" id="eqt-linear"     onclick="setEqType('linear')">Linear</button>
-      <button class="eq-type-btn"        id="eqt-quadratic"  onclick="setEqType('quadratic')">Quadratic</button>
-      <button class="eq-type-btn"        id="eqt-parametric" onclick="setEqType('parametric')">Parametric</button>
-      <button class="eq-type-btn"        id="eqt-plane"      onclick="setEqType('plane')">Plane</button>
-      <button class="eq-type-btn"        id="eqt-sphere3d"   onclick="setEqType('sphere3d')">Sphere</button>
-      <button class="eq-type-btn"        id="eqt-circle"     onclick="setEqType('circle')">Circle</button>
-      <button class="eq-type-btn"        id="eqt-helix"      onclick="setEqType('helix')">Helix</button>
-      <button class="eq-type-btn"        id="eqt-param3d"    onclick="setEqType('param3d')" data-i18n="param3d">Parametric 3D</button>
+      <button class="eq-type-btn active" id="eqt-linear"     onclick="setEqType('linear')"    data-i18n="eq_linear">Linear</button>
+      <button class="eq-type-btn"        id="eqt-quadratic"  onclick="setEqType('quadratic')" data-i18n="eq_quad">Quadratic</button>
+      <button class="eq-type-btn"        id="eqt-parametric" onclick="setEqType('parametric')" data-i18n="eq_param">Parametric</button>
+      <button class="eq-type-btn"        id="eqt-plane"      onclick="setEqType('plane')"     data-i18n="eq_plane">Plane</button>
+      <button class="eq-type-btn"        id="eqt-sphere3d"   onclick="setEqType('sphere3d')"  data-i18n="eq_sphere">Sphere</button>
+      <button class="eq-type-btn"        id="eqt-circle"     onclick="setEqType('circle')"    data-i18n="eq_circle">Circle</button>
+      <button class="eq-type-btn"        id="eqt-helix"      onclick="setEqType('helix')"     data-i18n="eq_helix">Helix</button>
+      <button class="eq-type-btn"        id="eqt-param3d"    onclick="setEqType('param3d')"   data-i18n="param3d">Parametric 3D</button>
+      <button class="eq-type-btn"        id="eqt-surface"    onclick="setEqType('surface')"   data-i18n="eq_surface">z=f(x,y)</button>
+      <button class="eq-type-btn"        id="eqt-polar"      onclick="setEqType('polar')"     data-i18n="eq_polar">Polar r=f(θ)</button>
     </div>
     <div class="eq-grid">
       <div style="display:flex;flex-direction:column;gap:7px">
@@ -731,7 +939,7 @@ select{cursor:pointer}
         <div style="font-size:11px;color:var(--text2)" data-i18n="parameters">Parameters</div>
         <div id="eq-params"></div>
         <div style="font-size:11px;color:var(--text2);margin-top:6px" data-i18n="drawn">Drawn</div>
-        <div id="eq-list" style="max-height:110px;overflow-y:auto;display:flex;flex-direction:column;gap:3px"></div>
+        <div id="eq-list" style="max-height:260px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:3px;padding-right:2px"></div>
       </div>
     </div>
   </div>
@@ -749,12 +957,13 @@ select{cursor:pointer}
   </div>
   <div class="fwin-body">
     <!-- Tabs -->
-    <div style="display:flex;gap:2px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px">
+    <div style="display:flex;gap:2px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px;flex-wrap:wrap">
       <button class="objtab btn sm active" id="objtab-line"   data-tab="line"   onclick="switchObjTab('line')">— Lines</button>
       <button class="objtab btn sm"        id="objtab-plane"  data-tab="plane"  onclick="switchObjTab('plane')">▭ Planes</button>
       <button class="objtab btn sm"        id="objtab-vector" data-tab="vector" onclick="switchObjTab('vector')">→ Vectors</button>
       <button class="objtab btn sm"        id="objtab-shape"  data-tab="shape"  onclick="switchObjTab('shape')">⬡ Shapes</button>
       <button class="objtab btn sm"        id="objtab-angle"  data-tab="angle"  onclick="switchObjTab('angle')" data-i18n="angle_tab">∠ Angles</button>
+      <button class="objtab btn sm"        id="objtab-eq"     data-tab="eq"     onclick="switchObjTab('eq')" style="color:var(--accent2)">∫ Equations</button>
     </div>
 
     <!-- Lines panel -->
@@ -907,6 +1116,17 @@ select{cursor:pointer}
       </div>
     </div>
 
+    <!-- ── Equations panel ──────────────────────────────────── -->
+    <div class="objtab-panel" id="objpanel-eq" style="display:none">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+        <span style="font-size:11px;color:var(--text3);flex:1">Equation-generated objects. Click a row to expand move controls.</span>
+        <button class="btn sm accent2" onclick="openWin('win-eq')">✎ Editor</button>
+        <button class="btn sm danger" onclick="clearEquations()">✕ Clear all</button>
+      </div>
+      <div id="eq-list-mgr" style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:3px"></div>
+      <div style="margin-top:6px;font-size:10.5px;color:var(--text3)" id="eq-mgr-count">0 equation objects</div>
+    </div>
+
   </div>
 </div>
 
@@ -1001,7 +1221,7 @@ const LANG = {
     new_conn_defaults:'New:',
     equation_editor:'Equation Editor',
     eq_linear:'Linear',eq_quad:'Quadratic',eq_param:'Parametric',
-    eq_plane:'Plane',eq_sphere:'Sphere',eq_circle:'Circle',
+    eq_plane:'Plane',eq_sphere:'Sphere',eq_circle:'Circle',eq_surface:'Surface',
     equation:'Equation',parameters:'Parameters',draw:'Draw',clear_eq:'Clear',drawn:'Drawn',
     properties:'Properties',click_obj:'Click an object to inspect',
     add_multiple:'Add Multiple Points',
@@ -1016,6 +1236,29 @@ const LANG = {
     normal_vec:'Normal (nx,ny,nz)',on_point:'Point (px,py,pz)',
     add_param_line:'Add Parametric Line',
     angle_tab:'∠ Angles',
+    objects_library:'Objects Library',
+    search_tools:'Search tools…',
+    cmd_palette:'Command Palette',
+    surface_eq:'Surface z=f(x,y)',
+    polar_eq:'Polar r=f(θ)',
+    focus_camera:'Focus Camera',
+    hide_obj:'Hide',show_obj:'Show',delete_obj:'Delete',
+    no_objects:'No objects in scene',
+    // Tutorial
+    tut_title:'Quick Tutorial',
+    tut_nav:'Navigation',tut_shortcuts:'Keyboard Shortcuts',tut_workflow:'Basic Workflow',
+    tut_rotate:'Rotate view',tut_pan:'Pan view',tut_zoom:'Zoom',
+    tut_select:'Select point',tut_deselect:'Deselect',
+    tut_delete:'Delete selected',tut_cancel:'Cancel mode',
+    tut_multiplace:'Multi-place pts',tut_resetcam:'Reset camera',tut_cmdpal:'Command palette',
+    tut_step1_title:'Add Points',tut_step1_desc:'Insert → + Point, then click the canvas',
+    tut_step2_title:'Connect',tut_step2_desc:'Home → Connections → Connect 2 Points',
+    tut_step3_title:'Customise',tut_step3_desc:'Click any point to edit color, size & name',
+    tut_step4_title:'Equations',tut_step4_desc:'Math panel → pick type → draw. Use ⌘ to move.',
+    // Equation type names
+    eq_linear:'Linear',eq_quad:'Quadratic',eq_param:'Parametric',
+    eq_plane:'Plane',eq_sphere:'Sphere',eq_circle:'Circle',
+    eq_helix:'Helix',eq_surface:'z=f(x,y)',eq_polar:'Polar r=f(θ)',
   },
   vi:{
     tab_home:'Trang chủ',tab_insert:'Chèn',tab_view:'Hiển thị',tab_math:'Toán',tab_settings:'Cài đặt',
@@ -1040,7 +1283,7 @@ const LANG = {
     new_conn_defaults:'Mới:',
     equation_editor:'Trình soạn phương trình',
     eq_linear:'Tuyến tính',eq_quad:'Bậc 2',eq_param:'Tham số',
-    eq_plane:'Mặt phẳng',eq_sphere:'Mặt cầu',eq_circle:'Đường tròn',
+    eq_plane:'Mặt phẳng',eq_sphere:'Mặt cầu',eq_circle:'Đường tròn',eq_surface:'Mặt z=f(x,y)',
     equation:'Phương trình',parameters:'Tham số',draw:'Vẽ',clear_eq:'Xóa',drawn:'Đã vẽ',
     properties:'Thuộc tính',click_obj:'Nhấp vào đối tượng để xem',
     add_multiple:'Thêm nhiều điểm',
@@ -1055,6 +1298,28 @@ const LANG = {
     normal_vec:'Pháp tuyến (nx,ny,nz)',on_point:'Điểm (px,py,pz)',
     add_param_line:'Thêm đường tham số',
     angle_tab:'∠ Góc',
+    objects_library:'Thư viện đối tượng',
+    search_tools:'Tìm công cụ…',
+    cmd_palette:'Bảng lệnh',
+    surface_eq:'Mặt z=f(x,y)',polar_eq:'Cực r=f(θ)',
+    focus_camera:'Căn chỉnh camera',
+    hide_obj:'Ẩn',show_obj:'Hiện',delete_obj:'Xóa',
+    no_objects:'Không có đối tượng nào',
+    // Tutorial
+    tut_title:'Hướng dẫn nhanh',
+    tut_nav:'Điều hướng',tut_shortcuts:'Phím tắt',tut_workflow:'Quy trình cơ bản',
+    tut_rotate:'Xoay góc nhìn',tut_pan:'Dịch chuyển',tut_zoom:'Thu phóng',
+    tut_select:'Chọn điểm',tut_deselect:'Bỏ chọn',
+    tut_delete:'Xóa đã chọn',tut_cancel:'Hủy chế độ',
+    tut_multiplace:'Đặt nhiều điểm',tut_resetcam:'Đặt lại camera',tut_cmdpal:'Bảng lệnh',
+    tut_step1_title:'Thêm điểm',tut_step1_desc:'Chèn → + Điểm, sau đó nhấp vào canvas',
+    tut_step2_title:'Kết nối',tut_step2_desc:'Home → Kết nối → Kết nối 2 điểm',
+    tut_step3_title:'Tùy chỉnh',tut_step3_desc:'Nhấp vào điểm để chỉnh màu, kích thước & tên',
+    tut_step4_title:'Phương trình',tut_step4_desc:'Bảng Toán → chọn loại → vẽ. Dùng ⌘ để di chuyển.',
+    // Equation type names
+    eq_linear:'Tuyến tính',eq_quad:'Bậc hai',eq_param:'Tham số',
+    eq_plane:'Mặt phẳng',eq_sphere:'Mặt cầu',eq_circle:'Đường tròn',
+    eq_helix:'Xoắn ốc',eq_surface:'z=f(x,y)',eq_polar:'Cực r=f(θ)',
   },
   ja:{
     tab_home:'ホーム',tab_insert:'挿入',tab_view:'表示',tab_math:'数学',tab_settings:'設定',
@@ -1079,7 +1344,7 @@ const LANG = {
     new_conn_defaults:'新規:',
     equation_editor:'方程式エディタ',
     eq_linear:'一次関数',eq_quad:'二次関数',eq_param:'媒介変数',
-    eq_plane:'平面',eq_sphere:'球',eq_circle:'円',
+    eq_plane:'平面',eq_sphere:'球',eq_circle:'円',eq_surface:'曲面 z=f(x,y)',
     equation:'方程式',parameters:'パラメータ',draw:'描画',clear_eq:'クリア',drawn:'描画済み',
     properties:'プロパティ',click_obj:'オブジェクトをクリック',
     add_multiple:'複数の点を追加',
@@ -1088,20 +1353,61 @@ const LANG = {
     angles:'角度',add_angle:'角度を追加',angle_obj_a:'オブジェクトA',angle_obj_b:'オブジェクトB',
     create_angle:'角度を作成',angle_invalid:'有効な角度を作成できません',
     angle_parallel:'直線が平行です — 角度なし',angle_ok:'角度を作成しました!',
+    angle_no_shared:'角度を作成するには頂点を共有する必要があります',
+    angle_show_major:'優角を表示',angle_show_minor:'劣角を表示',
     param3d:'媒介変数3D',normal_plane:'法線から',
     normal_vec:'法線ベクトル(nx,ny,nz)',on_point:'点(px,py,pz)',
     add_param_line:'媒介変数直線を追加',
     angle_tab:'∠ 角度',
+    objects_library:'オブジェクトライブラリ',
+    search_tools:'ツールを検索…',
+    cmd_palette:'コマンドパレット',
+    surface_eq:'曲面 z=f(x,y)',polar_eq:'極座標 r=f(θ)',
+    focus_camera:'カメラフォーカス',
+    hide_obj:'非表示',show_obj:'表示',delete_obj:'削除',
+    no_objects:'シーンにオブジェクトがありません',
+    // Tutorial
+    tut_title:'クイックチュートリアル',
+    tut_nav:'ナビゲーション',tut_shortcuts:'キーボードショートカット',tut_workflow:'基本ワークフロー',
+    tut_rotate:'ビューを回転',tut_pan:'ビューをパン',tut_zoom:'ズーム',
+    tut_select:'点を選択',tut_deselect:'選択解除',
+    tut_delete:'選択を削除',tut_cancel:'モードをキャンセル',
+    tut_multiplace:'複数点配置',tut_resetcam:'カメラリセット',tut_cmdpal:'コマンドパレット',
+    tut_step1_title:'点を追加',tut_step1_desc:'挿入 → + 点、その後キャンバスをクリック',
+    tut_step2_title:'接続',tut_step2_desc:'ホーム → 接続 → 2点を接続',
+    tut_step3_title:'カスタマイズ',tut_step3_desc:'点をクリックして色・サイズ・名前を編集',
+    tut_step4_title:'方程式',tut_step4_desc:'数学パネル → 種類を選択 → 描画。⌘で移動。',
+    // Equation type names
+    eq_linear:'一次関数',eq_quad:'二次関数',eq_param:'媒介変数',
+    eq_plane:'平面',eq_sphere:'球',eq_circle:'円',
+    eq_helix:'らせん',eq_surface:'z=f(x,y)',eq_polar:'極座標 r=f(θ)',
   }
 };
 let currentLang = 'en';
 function T(k){ return LANG[currentLang][k] || LANG.en[k] || k; }
 function setLang(lang) {
   currentLang = lang;
+  localStorage.setItem('geo3d_lang', lang);
   const t = LANG[lang];
+  // textContent
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
     if (t[k] !== undefined) el.textContent = t[k];
+  });
+  // placeholder
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.getAttribute('data-i18n-ph');
+    if (t[k] !== undefined) el.placeholder = t[k];
+  });
+  // title / tooltip
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const k = el.getAttribute('data-i18n-title');
+    if (t[k] !== undefined) el.title = t[k];
+  });
+  // aria-label
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const k = el.getAttribute('data-i18n-aria');
+    if (t[k] !== undefined) el.setAttribute('aria-label', t[k]);
   });
   document.querySelectorAll('.theme-btn[id^="lang-"]').forEach(b => b.classList.remove('active'));
   const lb = document.getElementById('lang-' + lang);
@@ -1264,16 +1570,23 @@ renderer.domElement.addEventListener('mousemove', e => {
 });
 
 // ─ Canvas click ────────────────────────────────────────────────
+// Track pointer-down position to distinguish a real click from an orbit drag
+let _ptrDownX = 0, _ptrDownY = 0;
+renderer.domElement.addEventListener('pointerdown', e => { _ptrDownX = e.clientX; _ptrDownY = e.clientY; });
+
 renderer.domElement.addEventListener('click', e => {
+  // Ignore if the pointer moved more than 4px — that was a drag, not a click
+  if (Math.hypot(e.clientX - _ptrDownX, e.clientY - _ptrDownY) > 4) return;
+
   updateMouse(e);
   ray.setFromCamera(mouse, activeCam());
 
-  // Add-point mode: place on ground plane
+  // Add-point mode: place ONE point per click; Shift+click keeps mode active
   if (state.addPointMode) {
     const t = new THREE.Vector3();
     if (ray.ray.intersectPlane(groundPlane, t)) {
       addPoint(snap(t.x), snap(t.z), 0);
-      if (!e.shiftKey) endAddPoint();
+      if (!e.shiftKey) endAddPoint();   // single click → exit after one point
     }
     return;
   }
@@ -1303,19 +1616,22 @@ renderer.domElement.addEventListener('click', e => {
   if (hits.length) {
     const pt = state.points.find(p => p.mesh === hits[0].object);
     if (pt) {
-      // Clicking already-selected point → deselect
       if (state.selectedPoint && state.selectedPoint.id === pt.id) deselectPoint();
       else selectPoint(pt);
     }
   } else {
-    // Clicked empty space → deselect
     deselectPoint();
   }
 });
 
 // ESC / keyboard shortcuts
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { endAddPoint(); endConnectMode(); closeAllPanels(); }
+  if (e.key === 'Escape') {
+    endAddPoint(); endConnectMode(); closeAllPanels();
+    document.getElementById('cmd-overlay').classList.remove('open');
+    document.getElementById('ctx-menu').classList.remove('open');
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'p') { e.preventDefault(); openCmdPalette(); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undoAction(); }
   if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'z'))) { e.preventDefault(); redoAction(); }
   if (e.key === 'Delete' && state.selectedPoint && !e.target.matches('input,textarea,select')) {
@@ -1792,7 +2108,61 @@ function switchObjTab(tab) {
   document.querySelectorAll('.objtab-panel').forEach(p => p.style.display = 'none');
   document.getElementById('objpanel-' + tab).style.display = '';
   if (tab === 'angle') { refreshAnglesTable(); refreshAngleSelects(); }
+  else if (tab === 'eq') refreshEqMgr();
   else refreshObjectsTable(tab);
+}
+
+function refreshEqMgr() {
+  const list  = document.getElementById('eq-list-mgr');
+  const count = document.getElementById('eq-mgr-count');
+  if (!list) return;
+  list.innerHTML = '';
+  if (count) count.textContent = state.equations.length + ' equation object' + (state.equations.length !== 1 ? 's' : '');
+  if (!state.equations.length) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:12px;padding:20px 0">No equation objects yet.<br>Use the Equation Editor to draw one.</div>';
+    return;
+  }
+  state.equations.forEach(eq => {
+    if (!eq.offset) eq.offset = { x:0, y:0, z:0 };
+    const label = (eq.type || 'eq') + ': ' + (eq.expr || '').slice(0, 26);
+    const d = document.createElement('div');
+    d.style.cssText = 'border-radius:6px;background:var(--bg3);border:1px solid var(--border);margin-bottom:4px;overflow:hidden';
+    d.innerHTML = `
+      <div style="display:flex;align-items:center;gap:6px;padding:5px 10px;cursor:pointer"
+        onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <span style="width:10px;height:10px;border-radius:50%;background:${eq.color};flex-shrink:0"></span>
+        <span style="font-family:var(--mono);font-size:11px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+          title="${eq.expr||eq.type}">${label}</span>
+        <button onclick="event.stopPropagation();toggleEqVis(${eq.id});refreshEqMgr()"
+          style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0 3px" title="Hide/Show">👁</button>
+        <button onclick="event.stopPropagation();removeEq(${eq.id});refreshEqMgr()"
+          style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:12px;padding:0 3px" title="Delete">✕</button>
+      </div>
+      <div style="display:none;padding:8px 10px 10px;border-top:1px solid var(--border);background:var(--bg4)">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Position Offset</div>
+        <div style="display:flex;gap:4px;align-items:center;font-size:11.5px;flex-wrap:wrap">
+          <label style="color:var(--accent);font-family:var(--mono)">X</label>
+          <input type="number" value="${eq.offset.x}" step="0.5" style="width:56px"
+            oninput="moveEq(${eq.id},'x',+this.value)">
+          <label style="color:var(--accent);font-family:var(--mono)">Y</label>
+          <input type="number" value="${eq.offset.y}" step="0.5" style="width:56px"
+            oninput="moveEq(${eq.id},'y',+this.value)">
+          <label style="color:var(--accent);font-family:var(--mono)">Z</label>
+          <input type="number" value="${eq.offset.z}" step="0.5" style="width:56px"
+            oninput="moveEq(${eq.id},'z',+this.value)">
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;margin-top:6px">
+          <button onclick="resetEqOffset(${eq.id});refreshEqMgr()"
+            style="background:none;border:1px solid var(--border);color:var(--text2);font-size:10.5px;border-radius:4px;padding:2px 8px;cursor:pointer">↺ Reset</button>
+          <label style="font-size:11px;color:var(--text3)">Color</label>
+          <input type="color" value="${eq.color}" style="width:22px;height:20px;padding:1px;cursor:pointer"
+            oninput="recolorEq(${eq.id},this.value)">
+          <button onclick="objLibFocus('equation',${eq.id})"
+            style="background:none;border:1px solid var(--border);color:var(--accent2);font-size:10.5px;border-radius:4px;padding:2px 8px;cursor:pointer">🎯 Focus</button>
+        </div>
+      </div>`;
+    list.appendChild(d);
+  });
 }
 
 // ── FREE LINES ────────────────────────────────────────────────
@@ -2132,6 +2502,8 @@ const EQ_TPL = {
   sphere3d:   { ph: 'r = 3',                               hint: 'Sphere radius (centered at origin)' },
   circle:     { ph: 'r = 2',                               hint: 'Circle radius in XZ plane' },
   helix:      { ph: '(built-in)',                           hint: 'Adjust t-range and steps below' },
+  surface:    { ph: 'sin(sqrt(x*x + y*y))',                hint: 'z = f(x,y) — use x, y as variables' },
+  polar:      { ph: '2 + 2*cos(t)',                        hint: 'r = f(θ) — polar curve in XZ plane' },
 };
 function openEqEditor(type) { setEqType(type); closeAllPanels(); openWin('win-eq'); }
 function setEqType(type) {
@@ -2178,6 +2550,28 @@ function buildEqParams(type) {
   } else if (type === 'sphere3d' || type === 'circle') {
     p.innerHTML = `<div style="font-size:11px;color:var(--text2)">Segments
       <input type="number" id="eq-steps" value="64" min="8" max="256" style="width:54px">
+    </div>`;
+  } else if (type === 'surface') {
+    p.innerHTML = `<div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--text2)">
+      <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+        x <input type="number" id="surf-xmin" value="-5" style="width:46px"> to
+        <input type="number" id="surf-xmax" value="5" style="width:46px">
+        &nbsp; y <input type="number" id="surf-ymin" value="-5" style="width:46px"> to
+        <input type="number" id="surf-ymax" value="5" style="width:46px">
+      </div>
+      <div style="display:flex;gap:4px;align-items:center">
+        Grid <input type="number" id="eq-steps" value="40" min="5" max="120" style="width:46px">×<input type="number" id="surf-vsteps" value="40" min="5" max="120" style="width:46px">
+        &nbsp;<label style="display:flex;align-items:center;gap:3px">
+          <input type="checkbox" id="surf-wire" checked> Wireframe</label>
+        <label style="display:flex;align-items:center;gap:3px">
+          <input type="checkbox" id="surf-solid"> Solid</label>
+      </div>
+    </div>`;
+  } else if (type === 'polar') {
+    p.innerHTML = `<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--text2)">
+      θ <input type="number" id="eq-xmin" value="0" style="width:54px"> to
+      <input type="number" id="eq-xmax" value="6.28" style="width:58px">
+      steps <input type="number" id="eq-steps" value="300" min="10" max="2000" style="width:54px">
     </div>`;
   } else {
     p.innerHTML = `<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--text2)">
@@ -2357,13 +2751,18 @@ function getObjPosition(key) {
   return new THREE.Vector3();
 }
 
-function buildAngleArcMesh(pos, dirA, dirB, angleDeg, color) {
-  const radius = 0.8;
-  const segments = 48;
-  const pts = [];
+function buildAngleArcMesh(pos, dirA, dirB, angleDeg, color, reverseDir = false) {
+  // Use more segments for large arcs so they stay smooth near 360°
+  const segments = Math.max(48, Math.ceil(angleDeg * 0.5));
+  const radius   = 0.8;
+  const pts      = [];
+
+  // Rotation axis: dirA × dirB  (or its negative for the major/reflex arc)
   const axis = dirA.clone().cross(dirB).normalize();
-  if (axis.length() < 0.001) return null; // parallel
-  const q = new THREE.Quaternion();
+  if (axis.length() < 0.001) return null; // parallel vectors — no arc possible
+  if (reverseDir) axis.negate();          // sweep the "long way" for the major angle
+
+  const q        = new THREE.Quaternion();
   const angleRad = THREE.MathUtils.degToRad(angleDeg);
   for (let i = 0; i <= segments; i++) {
     const t = (i / segments) * angleRad;
@@ -2371,9 +2770,16 @@ function buildAngleArcMesh(pos, dirA, dirB, angleDeg, color) {
     const v = dirA.clone().applyQuaternion(q).multiplyScalar(radius);
     pts.push(v.x + pos.x, v.y + pos.y, v.z + pos.z);
   }
-  const geo = new THREE.LineGeometry(); geo.setPositions(pts);
-  const mat = new THREE.LineMaterial({ color:new THREE.Color(color||'#f5a623'), linewidth:2, resolution:state.resolution.clone() });
-  const arc = new THREE.Line2(geo, mat); arc.computeLineDistances();
+
+  const geo = new THREE.LineGeometry();
+  geo.setPositions(pts);
+  const mat = new THREE.LineMaterial({
+    color: new THREE.Color(color || '#f5a623'),
+    linewidth: 2,
+    resolution: state.resolution.clone()
+  });
+  const arc = new THREE.Line2(geo, mat);
+  arc.computeLineDistances();
   return arc;
 }
 
@@ -2427,7 +2833,7 @@ function createAngle(keyA, keyB, color, name) {
     const cosMinor2 = Math.min(1, Math.max(-1, dA.dot(dB)));
     const valueMinor2 = THREE.MathUtils.radToDeg(Math.acos(cosMinor2));
     const valueMajor2 = 360 - valueMinor2;
-    const arc = buildAngleArcMesh(arcPos, dA, dB, valueMinor2, color);
+    const arc = buildAngleArcMesh(arcPos, dA, dB, valueMinor2, color, false);
     if (!arc) { notify(T('angle_invalid'), 'warning'); return null; }
     scene.add(arc);
     const div = document.createElement('div');
@@ -2514,19 +2920,28 @@ function updateAngle(angle) {
   angle.valueMajor = bothLines ? 360 - angle.valueMinor : 180 - angle.valueMinor;
 
   // Rebuild arc geometry
-  if (angle.arcMesh) { scene.remove(angle.arcMesh); angle.arcMesh.geometry?.dispose(); angle.arcMesh.material?.dispose(); }
+  if (angle.arcMesh) {
+    scene.remove(angle.arcMesh);
+    angle.arcMesh.geometry?.dispose();
+    angle.arcMesh.material?.dispose();
+  }
   const displayAngle = angle.showMajor ? angle.valueMajor : angle.valueMinor;
-  const arcDir = angle.showMajor ? dA.clone().negate() : dA;
-  const arc = buildAngleArcMesh(pos, arcDir, dB, displayAngle, angle.color);
+  // For the major arc: keep dA as-is, negate the rotation axis inside buildAngleArcMesh
+  // (negating dA was wrong — it also flips the cross-product, causing the overlap bug)
+  const arc = buildAngleArcMesh(pos, dA, dB, displayAngle, angle.color, angle.showMajor);
   if (!arc) return;
   scene.add(arc);
   angle.arcMesh = arc;
 
-  // Update label
+  // Update label — place it along the bisector of the displayed arc
   const displayVal = angle.showMajor ? angle.valueMajor : angle.valueMinor;
   if (angle.labelDiv) angle.labelDiv.textContent = `${angle.name} = ${displayVal.toFixed(1)}°`;
   if (angle.labelObj) {
-    const labelPos = dA.clone().add(dB).normalize().multiplyScalar(1.2).add(pos);
+    // Minor: bisector between dA and dB; Major: bisector of the reflex sector = -(dA+dB)
+    const bisector = angle.showMajor
+      ? dA.clone().add(dB).normalize().negate()
+      : dA.clone().add(dB).normalize();
+    const labelPos = bisector.multiplyScalar(1.4).add(pos);
     angle.labelObj.position.copy(labelPos);
   }
   refreshAnglesTable();
@@ -2622,12 +3037,13 @@ function drawEquation() {
         const g2 = new THREE.LineGeometry(); g2.setPositions(positions2);
         const m2 = new THREE.LineMaterial({ color:new THREE.Color(color), linewidth:width, resolution:state.resolution.clone() });
         const l2 = new THREE.Line2(g2,m2); l2.computeLineDistances();
-        scene.add(l2);
+        const p3dGroup = new THREE.Group(); p3dGroup.add(l2);
+        scene.add(p3dGroup);
         const id2 = uid();
-        state.equations.push({ id:id2, mesh:l2, type, expr:xExpr+'|'+yExpr+'|'+zExpr, color,
-          xExpr, yExpr, zExpr, tMin, tMax });
+        state.equations.push({ id:id2, mesh:p3dGroup, type, expr:xExpr+'|'+yExpr+'|'+zExpr, color,
+          xExpr, yExpr, zExpr, tMin, tMax, offset:{x:0,y:0,z:0} });
         state.parametricLines.push({ id:id2, xExpr, yExpr, zExpr, tMin, tMax, color });
-        refreshEqList(); updateUI();
+        refreshEqList(); updateUI(); refreshObjLib();
         notify(T('eq_param')+' drawn!', 'success');
       } else { notify('No valid points generated', 'warning'); }
       return;
@@ -2669,17 +3085,127 @@ function drawEquation() {
         const t = xmin + (xmax - xmin) * i / steps;
         pts.push(new THREE.Vector3(2*Math.cos(t), t*0.5, 2*Math.sin(t)));
       }
-    } else if (type === 'sphere3d') {
+    } else if (type === 'plane') {
+      // Parse ax + by + cz = d  (any order, any sign)
+      // Normalise: move everything to left side → ax + by + cz - d = 0
+      let lhs = expr, rhs0 = '0';
+      if (expr.includes('=')) { [lhs, rhs0] = expr.split('=').map(s => s.trim()); }
+      // Extract coefficients by evaluating partial derivatives
+      const evalCoef = (v) => {
+        const others = {x:0,y:0,z:0}; others[v] = 1;
+        const base   = {x:0,y:0,z:0};
+        try {
+          return safeEval(lhs, others) - safeEval(lhs, base);
+        } catch(e) { return 0; }
+      };
+      const a = evalCoef('x'), b = evalCoef('y'), c = evalCoef('z');
+      const d = parseFloat(rhs0) || (() => { try { return safeEval(rhs0, {}); } catch(e){return 0;}})();
+      const base0 = safeEval(lhs, {x:0,y:0,z:0});
+      const dFinal = d - base0;  // adjust for constant term on lhs
+      const normal = new THREE.Vector3(a, c, b).normalize(); // Three.js coords
+      if (normal.length() < 0.0001) { notify('Could not parse plane equation', 'warning'); return; }
+      // Origin point on the plane (closest to origin)
+      const norm2 = a*a + b*b + c*c;
+      const t0 = norm2 > 0 ? dFinal / norm2 : 0;
+      const ox = a*t0, oy = b*t0, oz = c*t0;
+      // Build a large quad (PlaneGeometry) and orient it
+      const planeSize = 14;
+      const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize, 1, 1);
+      const planeMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(color), side: THREE.DoubleSide,
+        transparent: true, opacity: 0.28, wireframe: false
+      });
+      const wireGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(planeSize, planeSize, 6, 6));
+      const wireMat = new THREE.LineBasicMaterial({ color: new THREE.Color(color), transparent:true, opacity:0.5 });
+      const planeGroup = new THREE.Group();
+      const solidMesh = new THREE.Mesh(planeGeo, planeMat);
+      const wireMesh  = new THREE.LineSegments(wireGeo, wireMat);
+      // Orient group to face the normal
+      const up = new THREE.Vector3(0, 0, 1);
+      const q = new THREE.Quaternion().setFromUnitVectors(up, normal);
+      solidMesh.applyQuaternion(q); wireMesh.applyQuaternion(q);
+      // Translate to closest-to-origin point
+      planeGroup.position.set(ox, oz, oy); // Three.js coords
+      planeGroup.add(solidMesh); planeGroup.add(wireMesh);
+      scene.add(planeGroup);
+      const pid = uid();
+      state.equations.push({ id:pid, mesh:planeGroup, type:'plane',
+        expr, color, offset:{x:0,y:0,z:0} });
+      pushUndo({ type:'addEq', id:pid });
+      refreshEqList(); updateUI(); refreshObjLib();
+      notify(`Plane: ${a.toFixed(2)}x + ${b.toFixed(2)}y + ${c.toFixed(2)}z = ${dFinal.toFixed(2)}`, 'success');
+      return;
       const r = parseFloat(expr.replace(/r\s*=\s*/i,'')) || 3;
       const seg = Math.min(steps, 48);
       const geo = new THREE.SphereGeometry(r, seg, seg);
       const mat = new THREE.MeshBasicMaterial({ color: new THREE.Color(color), wireframe:true, transparent:true, opacity:.55 });
-      const mesh = new THREE.Mesh(geo, mat);
-      scene.add(mesh);
-      state.equations.push({ id: uid(), mesh, type, expr, color });
-      refreshEqList(); updateUI();
+      const sphereMesh = new THREE.Mesh(geo, mat);
+      const sphereGroup = new THREE.Group(); sphereGroup.add(sphereMesh);
+      scene.add(sphereGroup);
+      const sphId = uid();
+      state.equations.push({ id: sphId, mesh: sphereGroup, type, expr, color, offset:{x:0,y:0,z:0} });
+      pushUndo({ type:'addEq', id: sphId });
+      refreshEqList(); updateUI(); refreshObjLib();
       notify('Sphere drawn!', 'success');
       return;
+    } else if (type === 'sphere3d') {
+      // z = f(x,y) rendered as wireframe mesh
+      const rhs = expr.includes('=') ? expr.split('=').slice(1).join('=').trim() : expr;
+      const xmin2 = parseFloat(document.getElementById('surf-xmin')?.value ?? -5);
+      const xmax2 = parseFloat(document.getElementById('surf-xmax')?.value ?? 5);
+      const ymin  = parseFloat(document.getElementById('surf-ymin')?.value ?? -5);
+      const ymax  = parseFloat(document.getElementById('surf-ymax')?.value ?? 5);
+      const xSteps= Math.min(parseInt(document.getElementById('eq-steps')?.value || 40), 120);
+      const ySteps= Math.min(parseInt(document.getElementById('surf-vsteps')?.value || 40), 120);
+      const useSolid = document.getElementById('surf-solid')?.checked;
+      const useWire  = document.getElementById('surf-wire')?.checked ?? true;
+      const verts = [], indices = [];
+      for (let j = 0; j <= ySteps; j++) {
+        for (let i = 0; i <= xSteps; i++) {
+          const x = xmin2 + (xmax2 - xmin2) * i / xSteps;
+          const y = ymin  + (ymax  - ymin)  * j / ySteps;
+          const z = safeEval(rhs, { x, y });
+          const zv = isFinite(z) && Math.abs(z) < 1e5 ? z : 0;
+          // Three.js coords: user(x,y,z) → THREE(x,z,y)
+          verts.push(x, zv, y);
+        }
+      }
+      for (let j = 0; j < ySteps; j++) {
+        for (let i = 0; i < xSteps; i++) {
+          const a = j*(xSteps+1)+i, b=a+1, c=a+(xSteps+1), d=c+1;
+          indices.push(a,b,d, a,d,c);
+        }
+      }
+      const surfGeo = new THREE.BufferGeometry();
+      surfGeo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+      surfGeo.setIndex(indices);
+      surfGeo.computeVertexNormals();
+      const group = new THREE.Group();
+      if (useSolid) {
+        group.add(new THREE.Mesh(surfGeo, new THREE.MeshPhongMaterial({
+          color: new THREE.Color(color), transparent:true, opacity:0.55,
+          side: THREE.DoubleSide, shininess: 60 })));
+      }
+      if (useWire) {
+        group.add(new THREE.Mesh(surfGeo, new THREE.MeshBasicMaterial({
+          color: new THREE.Color(color), wireframe:true, transparent:true, opacity:0.7 })));
+      }
+      scene.add(group);
+      const sid = uid();
+      state.equations.push({ id:sid, mesh:group, type:'surface', expr:rhs, color, offset:{x:0,y:0,z:0} });
+      pushUndo({ type:'addEq', id:sid });
+      refreshEqList(); updateUI(); refreshObjLib();
+      notify('Surface drawn!', 'success');
+      return;
+    } else if (type === 'polar') {
+      // r = f(θ) in the XZ plane
+      const rhs = expr.includes('=') ? expr.split('=').slice(1).join('=').trim() : expr;
+      for (let i = 0; i <= steps; i++) {
+        const t = xmin + (xmax - xmin) * i / steps;
+        const r = safeEval(rhs, { t, theta:t });
+        if (isFinite(r) && Math.abs(r) < 1e5)
+          pts.push(new THREE.Vector3(r * Math.cos(t), 0, r * Math.sin(t)));
+      }
     } else if (type === 'circle') {
       const r = parseFloat(expr.replace(/r\s*=\s*/i,'')) || 2;
       for (let i = 0; i <= steps; i++) {
@@ -2702,11 +3228,14 @@ function drawEquation() {
     });
     const line2 = new THREE.Line2(geo, mat);
     line2.computeLineDistances();
-    scene.add(line2);
+    // Wrap in Group so equation objects can be repositioned via .position
+    const eqGroup = new THREE.Group();
+    eqGroup.add(line2);
+    scene.add(eqGroup);
     const eqId = uid();
-    state.equations.push({ id: eqId, mesh: line2, type, expr, color });
+    state.equations.push({ id: eqId, mesh: eqGroup, type, expr, color, offset:{x:0,y:0,z:0} });
     pushUndo({ type: 'addEq', id: eqId });
-    refreshEqList(); updateUI();
+    refreshEqList(); updateUI(); refreshObjLib();
     notify('Equation drawn!', 'success');
   } catch(err) { notify('Error: ' + err.message, 'error'); }
 }
@@ -2718,21 +3247,102 @@ function clearEquations() {
 }
 function refreshEqList() {
   const list = document.getElementById('eq-list');
+  if (!list) return;
   list.innerHTML = '';
   state.equations.forEach(eq => {
+    if (!eq.offset) eq.offset = { x:0, y:0, z:0 };
+    const label = (eq.type||'eq') + ': ' + (eq.expr||'').slice(0,18);
     const d = document.createElement('div');
-    d.style.cssText = 'display:flex;align-items:center;gap:5px;padding:3px 6px;border-radius:4px;background:var(--bg3)';
+    d.style.cssText = 'border-radius:6px;background:var(--bg3);border:1px solid var(--border);margin-bottom:4px;overflow:hidden';
     d.innerHTML = `
-      <span style="width:9px;height:9px;border-radius:50%;background:${eq.color};flex-shrink:0"></span>
-      <span style="font-family:var(--mono);font-size:10px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${eq.expr||eq.type}</span>
-      <button onclick="removeEq(${eq.id})"
-        style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:11px;padding:0 2px;flex-shrink:0">✕</button>`;
+      <div style="display:flex;align-items:center;gap:5px;padding:4px 8px;cursor:pointer"
+        onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
+        <span style="width:9px;height:9px;border-radius:50%;background:${eq.color};flex-shrink:0"></span>
+        <span style="font-family:var(--mono);font-size:10.5px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+          title="${eq.expr||eq.type}">${label}</span>
+        <button onclick="event.stopPropagation();toggleEqVis(${eq.id})"
+          style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:0 2px" title="Hide/Show">👁</button>
+        <button onclick="event.stopPropagation();removeEq(${eq.id})"
+          style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:11px;padding:0 2px" title="Delete">✕</button>
+      </div>
+      <div style="display:none;padding:6px 8px 8px;border-top:1px solid var(--border)">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Position Offset</div>
+        <div style="display:flex;gap:4px;align-items:center;font-size:11px;flex-wrap:wrap">
+          <label style="color:var(--accent);font-family:var(--mono)">X</label>
+          <input type="number" value="${eq.offset.x}" step="0.5" style="width:52px;font-size:11px"
+            oninput="moveEq(${eq.id},'x',+this.value)">
+          <label style="color:var(--accent);font-family:var(--mono)">Y</label>
+          <input type="number" value="${eq.offset.y}" step="0.5" style="width:52px;font-size:11px"
+            oninput="moveEq(${eq.id},'y',+this.value)">
+          <label style="color:var(--accent);font-family:var(--mono)">Z</label>
+          <input type="number" value="${eq.offset.z}" step="0.5" style="width:52px;font-size:11px"
+            oninput="moveEq(${eq.id},'z',+this.value)">
+          <button onclick="resetEqOffset(${eq.id})"
+            style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10px;border-radius:4px;padding:2px 5px;cursor:pointer">↺ Reset</button>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center;font-size:11px;flex-wrap:wrap;margin-top:5px">
+          <label style="color:var(--text3)">Color</label>
+          <input type="color" value="${eq.color}" style="width:22px;height:20px;padding:1px;cursor:pointer"
+            oninput="recolorEq(${eq.id},this.value)">
+          <button onclick="objLibFocus('equation',${eq.id})"
+            style="background:none;border:1px solid var(--border);color:var(--accent2);font-size:10px;border-radius:4px;padding:2px 6px;cursor:pointer">🎯 Focus</button>
+        </div>
+      </div>`;
     list.appendChild(d);
   });
+  // Keep manager panel in sync too
+  refreshEqMgr();
 }
+
+function moveEq(id, axis, val) {
+  const eq = state.equations.find(e => e.id == id);
+  if (!eq || !eq.mesh) return;
+  if (!eq.offset) eq.offset = { x:0, y:0, z:0 };
+  eq.offset[axis] = val;
+  // Three.js: user X→x, user Y→z(Three), user Z→y(Three)
+  eq.mesh.position.set(eq.offset.x, eq.offset.z, eq.offset.y);
+}
+
+function resetEqOffset(id) {
+  const eq = state.equations.find(e => e.id == id);
+  if (!eq || !eq.mesh) return;
+  eq.offset = { x:0, y:0, z:0 };
+  eq.mesh.position.set(0, 0, 0);
+  refreshEqList();
+}
+
+function toggleEqVis(id) {
+  const eq = state.equations.find(e => e.id == id);
+  if (!eq || !eq.mesh) return;
+  eq.mesh.visible = !eq.mesh.visible;
+}
+
+function recolorEq(id, color) {
+  const eq = state.equations.find(e => e.id == id);
+  if (!eq || !eq.mesh) return;
+  eq.color = color;
+  eq.mesh.traverse(child => {
+    if (child.material) {
+      if (Array.isArray(child.material)) child.material.forEach(m => m.color?.set(color));
+      else child.material.color?.set(color);
+    }
+  });
+}
+
 function removeEq(id) {
   const i = state.equations.findIndex(e => e.id == id);
-  if (i >= 0) { scene.remove(state.equations[i].mesh); state.equations.splice(i,1); refreshEqList(); updateUI(); }
+  if (i >= 0) {
+    const eq = state.equations[i];
+    scene.remove(eq.mesh);
+    // Dispose geometry/material
+    eq.mesh.traverse(child => {
+      child.geometry?.dispose();
+      if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
+      else child.material?.dispose();
+    });
+    state.equations.splice(i, 1);
+    refreshEqList(); updateUI();
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3101,7 +3711,7 @@ function makeResizable(winId, rhId) {
   });
   document.addEventListener('mouseup', () => rs = false);
 }
-['coords','conn','eq','obj','multi','objs','tutorial'].forEach(id => makeDraggable('win-'+id, 'win-'+id+'-hdr'));
+['coords','conn','eq','obj','multi','objs','tutorial','objlib'].forEach(id => makeDraggable('win-'+id, 'win-'+id+'-hdr'));
 ['coords','conn','eq'].forEach(id => makeResizable('win-'+id, 'win-'+id+'-rh'));
 
 // ═══════════════════════════════════════════════════════════════
@@ -3151,7 +3761,6 @@ function updateUI() {
   const total = state.points.length + state.connections.length +
     state.geometries.length + state.equations.length + state.freeLines.length + state.angles.length;
   document.getElementById('obj-counter').textContent = total + ' obj';
-  // Disable "Connect 2 Points" when fewer than 2 points exist
   const connBtn = document.getElementById('conn-mode-btn');
   if (connBtn) {
     const hasEnough = state.points.length >= 2;
@@ -3159,6 +3768,7 @@ function updateUI() {
     connBtn.style.opacity = hasEnough ? '' : '0.4';
     connBtn.title = hasEnough ? '' : 'Need at least 2 points to connect';
   }
+  _debouncedRefreshLib();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3218,8 +3828,282 @@ animate(0);
 //  INIT  — clean empty workspace, no demo objects
 // ═══════════════════════════════════════════════════════════════
 setEqType('linear');  // build equation params
+// Restore saved language
+setLang(localStorage.getItem('geo3d_lang') || 'en');
 
-setTimeout(() => notify('Welcome to Geo3D v2.2  ·  Insert → + Point to begin', 'success'), 700);
+// ═══════════════════════════════════════════════════════════════
+//  INSERT PANEL ACCORDION
+// ═══════════════════════════════════════════════════════════════
+function toggleAcc(id) {
+  const el = document.getElementById('acc-' + id);
+  if (!el) return;
+  el.classList.toggle('open');
+}
+function filterInsertPanel(q) {
+  const query = q.toLowerCase().trim();
+  if (!query) {
+    document.querySelectorAll('.acc-section').forEach(s => {
+      s.style.display = '';
+      s.querySelectorAll('.ins-btn').forEach(b => b.style.display = '');
+    });
+    return;
+  }
+  document.querySelectorAll('.acc-section').forEach(sec => {
+    let anyVisible = false;
+    sec.querySelectorAll('.ins-btn').forEach(btn => {
+      const match = btn.textContent.toLowerCase().includes(query);
+      btn.style.display = match ? '' : 'none';
+      if (match) anyVisible = true;
+    });
+    sec.style.display = anyVisible ? '' : 'none';
+    if (anyVisible) sec.classList.add('open');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  OBJECTS LIBRARY
+// ═══════════════════════════════════════════════════════════════
+let _objLibFilter = 'all';
+function setObjLibFilter(f) {
+  _objLibFilter = f;
+  document.querySelectorAll('.objlib-filter').forEach(el => {
+    el.classList.toggle('active', el.dataset.filter === f);
+  });
+  refreshObjLib();
+}
+
+const OBJ_ICO = { point:'📍', line:'—', shape:'⬡', equation:'∫', angle:'∠', vector:'→', plane:'▭' };
+const OBJ_CLR = { point:'#00d4aa', line:'#4f8ef5', shape:'#f5a623', equation:'#c084fc', angle:'#f06060', vector:'#4f8ef5', plane:'#a0aec0' };
+
+function getAllLibObjects() {
+  const objs = [];
+  state.points.forEach(p => objs.push({ id:p.id, name:p.name||p.id, kind:'point', hidden:p.hidden, ref:p }));
+  state.connections.forEach(c => {
+    const p1 = state.points.find(p=>p.id==c.p1id), p2 = state.points.find(p=>p.id==c.p2id);
+    objs.push({ id:c.id, name:`${p1?.name||'?'}→${p2?.name||'?'}`, kind:'line', hidden:!c.visible, ref:c });
+  });
+  state.freeLines.forEach(l => {
+    const p1 = state.points.find(p=>p.id==l.p1id), p2 = state.points.find(p=>p.id==l.p2id);
+    objs.push({ id:l.id, name:`Line ${p1?.name||'?'}-${p2?.name||'?'}`, kind:'line', hidden:l.hidden, ref:l });
+  });
+  state.geometries.forEach(g => objs.push({ id:g.id, name:g.type[0].toUpperCase()+g.type.slice(1)+' '+g.id, kind:'shape', hidden:!g.mesh.visible, ref:g }));
+  state.equations.forEach(e => objs.push({ id:e.id, name:(e.type||'eq')+': '+(e.expr||'').slice(0,22), kind:'equation', hidden:!e.mesh.visible, ref:e }));
+  state.angles.forEach(a => objs.push({ id:a.id, name:`∠ ${a.name} = ${a.valueMinor?.toFixed(1)||'?'}°`, kind:'angle', hidden:a.hidden, ref:a }));
+  return objs;
+}
+
+function refreshObjLib() {
+  const list = document.getElementById('objlib-list');
+  const count = document.getElementById('objlib-count');
+  if (!list) return;
+  const query = (document.getElementById('objlib-search')?.value || '').toLowerCase();
+  let objs = getAllLibObjects();
+  if (_objLibFilter !== 'all') objs = objs.filter(o => o.kind === _objLibFilter);
+  if (query) objs = objs.filter(o => o.name.toLowerCase().includes(query) || o.kind.includes(query));
+  if (count) count.textContent = objs.length + ' object' + (objs.length!==1?'s':'');
+  if (!objs.length) {
+    list.innerHTML = `<div style="text-align:center;color:var(--text3);font-size:12px;padding:20px 0">${T('no_objects')}</div>`;
+    return;
+  }
+  list.innerHTML = '';
+  objs.forEach(obj => {
+    const row = document.createElement('div');
+    row.className = 'objlib-item';
+    row.style.opacity = obj.hidden ? '0.45' : '1';
+    row.innerHTML = `
+      <div class="objlib-ico" style="background:${OBJ_CLR[obj.kind]}22;color:${OBJ_CLR[obj.kind]}">${OBJ_ICO[obj.kind]||'◻'}</div>
+      <span class="objlib-name" title="${obj.name}">${obj.name}</span>
+      <div class="objlib-acts">
+        <button class="objlib-act" onclick="objLibFocus('${obj.kind}',${obj.id})" title="Focus">🎯</button>
+        <button class="objlib-act" onclick="objLibToggleVis('${obj.kind}',${obj.id})" title="${obj.hidden?'Show':'Hide'}">${obj.hidden?'👁':'🙈'}</button>
+        <button class="objlib-act" onclick="objLibDelete('${obj.kind}',${obj.id})" title="Delete" style="color:var(--accent3)">🗑</button>
+      </div>`;
+    row.onclick = e => { if (!e.target.closest('.objlib-acts')) objLibFocus(obj.kind, obj.id); };
+    list.appendChild(row);
+  });
+}
+
+function objLibFocus(kind, id) {
+  // Move camera to look at the object
+  let pos = null;
+  if (kind === 'point') {
+    const p = state.points.find(x => x.id == id);
+    if (p) pos = new THREE.Vector3(p.x, p.z, p.y);
+  } else if (kind === 'shape') {
+    const g = state.geometries.find(x => x.id == id);
+    if (g) pos = g.mesh.position.clone();
+  } else if (kind === 'equation') {
+    const e = state.equations.find(x => x.id == id);
+    if (e && e.mesh.position) pos = e.mesh.position.clone();
+  }
+  if (pos) {
+    controls.target.copy(pos);
+    camera.position.set(pos.x + 6, pos.y + 5, pos.z + 6);
+    controls.update();
+  }
+}
+
+function objLibToggleVis(kind, id) {
+  if (kind === 'point') {
+    const p = state.points.find(x => x.id == id);
+    if (p) { p.hidden = !p.hidden; p.mesh.visible = !p.hidden; if(p.labelObj) p.labelObj.visible = !p.hidden && state.labelsVisible; }
+  } else if (kind === 'line') {
+    const c = state.connections.find(x => x.id == id);
+    if (c) { c.visible = !c.visible; c.line2.visible = c.visible; }
+    const l = state.freeLines.find(x => x.id == id);
+    if (l) { l.hidden = !l.hidden; l.line2.visible = !l.hidden; }
+  } else if (kind === 'shape') {
+    const g = state.geometries.find(x => x.id == id);
+    if (g) g.mesh.visible = !g.mesh.visible;
+  } else if (kind === 'equation') {
+    const e = state.equations.find(x => x.id == id);
+    if (e) e.mesh.visible = !e.mesh.visible;
+  } else if (kind === 'angle') {
+    const a = state.angles.find(x => x.id == id);
+    if (a) { a.hidden = !a.hidden; if(a.arcMesh) a.arcMesh.visible=!a.hidden; if(a.labelObj) a.labelObj.visible=!a.hidden; }
+  }
+  refreshObjLib();
+}
+
+function objLibDelete(kind, id) {
+  if (kind === 'point')    deletePoint(id);
+  else if (kind === 'line') { removeConnection(id); removeFreeLine(id); }
+  else if (kind === 'shape') removeShape(id);
+  else if (kind === 'equation') removeEq(id);
+  else if (kind === 'angle') removeAngle(id);
+  refreshObjLib();
+}
+
+// Auto-refresh library when state changes (debounced)
+const _debouncedRefreshLib = (() => {
+  let t; return () => { clearTimeout(t); t = setTimeout(refreshObjLib, 300); };
+})();
+// _debouncedRefreshLib is called directly inside updateUI above — no patch needed
+
+// ═══════════════════════════════════════════════════════════════
+//  COMMAND PALETTE
+// ═══════════════════════════════════════════════════════════════
+const CMD_LIST = [
+  { icon:'📍', label:'Add Point',         kbd:'',        action:() => startAddPoint() },
+  { icon:'🔗', label:'Connect Points',    kbd:'',        action:() => openObjectsManager('line') },
+  { icon:'∫',  label:'Equation Editor',  kbd:'',        action:() => openWin('win-eq') },
+  { icon:'📚', label:'Objects Library',  kbd:'',        action:() => { openWin('win-objlib'); refreshObjLib(); } },
+  { icon:'📋', label:'Coordinates',      kbd:'',        action:() => openWin('win-coords') },
+  { icon:'z=', label:'Draw Surface z=f(x,y)', kbd:'',  action:() => openEqEditor('surface') },
+  { icon:'r=', label:'Draw Polar Curve', kbd:'',        action:() => openEqEditor('polar') },
+  { icon:'⌀',  label:'Add Sphere',       kbd:'',        action:() => addGeom('sphere') },
+  { icon:'□',  label:'Add Cube',         kbd:'',        action:() => addGeom('cube') },
+  { icon:'⊙',  label:'Add Torus',        kbd:'',        action:() => addGeom('torus') },
+  { icon:'↩',  label:'Undo',             kbd:'Ctrl+Z',  action:() => undoAction() },
+  { icon:'↩',  label:'Redo',             kbd:'Ctrl+Y',  action:() => redoAction() },
+  { icon:'🌑', label:'Dark Theme',       kbd:'',        action:() => setTheme('dark') },
+  { icon:'☀️', label:'Light Theme',      kbd:'',        action:() => setTheme('light') },
+  { icon:'💡', label:'Neon Theme',       kbd:'',        action:() => setTheme('neon') },
+  { icon:'↺',  label:'Reset Camera',     kbd:'',        action:() => resetCamera() },
+  { icon:'🗑', label:'Clear All',         kbd:'',        action:() => clearAll() },
+  { icon:'🇬🇧', label:'Language: English', kbd:'',     action:() => setLang('en') },
+  { icon:'🇻🇳', label:'Language: Tiếng Việt', kbd:'', action:() => setLang('vi') },
+  { icon:'🇯🇵', label:'Language: 日本語', kbd:'',      action:() => setLang('ja') },
+  { icon:'💾', label:'Save Scene',        kbd:'',        action:() => saveJSON() },
+];
+let _cmdActive = -1;
+
+function openCmdPalette() {
+  document.getElementById('cmd-overlay').classList.add('open');
+  const inp = document.getElementById('cmd-input');
+  inp.value = '';
+  _cmdActive = -1;
+  updateCmdResults();
+  setTimeout(() => inp.focus(), 50);
+}
+function closeCmdPalette(e) {
+  if (!e || e.target.id === 'cmd-overlay') {
+    document.getElementById('cmd-overlay').classList.remove('open');
+  }
+}
+function updateCmdResults() {
+  const q = document.getElementById('cmd-input').value.toLowerCase();
+  const results = document.getElementById('cmd-results');
+  const filtered = q ? CMD_LIST.filter(c => c.label.toLowerCase().includes(q)) : CMD_LIST;
+  _cmdActive = -1;
+  if (!filtered.length) { results.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:12px">No commands found</div>'; return; }
+  results.innerHTML = filtered.map((c, i) => `
+    <div class="cmd-item" id="cmd-r-${i}" onclick="runCmd(${CMD_LIST.indexOf(c)})">
+      <div class="cmd-icon">${c.icon}</div>
+      <span class="cmd-label">${c.label}</span>
+      ${c.kbd ? `<span class="cmd-kbd">${c.kbd}</span>` : ''}
+    </div>`).join('');
+}
+function runCmd(i) {
+  if (CMD_LIST[i]) { CMD_LIST[i].action(); closeCmdPalette(); }
+}
+function cmdKeyNav(e) {
+  const items = document.querySelectorAll('.cmd-item');
+  if (e.key === 'ArrowDown')  { e.preventDefault(); _cmdActive = Math.min(_cmdActive+1, items.length-1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); _cmdActive = Math.max(_cmdActive-1, 0); }
+  else if (e.key === 'Enter') {
+    const active = document.querySelector('.cmd-item.active');
+    if (active) { active.click(); return; }
+    const first = document.querySelector('.cmd-item');
+    if (first) first.click();
+    return;
+  } else if (e.key === 'Escape') { closeCmdPalette(); return; }
+  items.forEach((el, i) => el.classList.toggle('active', i === _cmdActive));
+  if (_cmdActive >= 0) items[_cmdActive]?.scrollIntoView({ block:'nearest' });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CONTEXT MENU
+// ═══════════════════════════════════════════════════════════════
+let _ctxPos = { x: 0, y: 0 };
+document.getElementById('three-wrap')?.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  _ctxPos = { x: e.clientX, y: e.clientY };
+  const menu = document.getElementById('ctx-menu');
+  const hasSel = !!state.selectedPoint;
+  document.getElementById('ctx-props-item').style.display  = hasSel ? '' : 'none';
+  document.getElementById('ctx-focus-item').style.display  = hasSel ? '' : 'none';
+  document.getElementById('ctx-delete-item').style.display = hasSel ? '' : 'none';
+  // Position menu
+  const mw = 180, mh = 220;
+  menu.style.left = Math.min(e.clientX, window.innerWidth  - mw) + 'px';
+  menu.style.top  = Math.min(e.clientY, window.innerHeight - mh) + 'px';
+  menu.classList.add('open');
+});
+document.addEventListener('click', () => document.getElementById('ctx-menu').classList.remove('open'));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('ctx-menu').classList.remove('open');
+});
+
+function ctxAction(action) {
+  document.getElementById('ctx-menu').classList.remove('open');
+  if (action === 'add-point') {
+    startAddPoint();
+  } else if (action === 'props') {
+    if (state.selectedPoint) openWin('win-obj');
+  } else if (action === 'focus') {
+    if (state.selectedPoint) {
+      const p = state.selectedPoint;
+      const pos = new THREE.Vector3(p.x, p.z, p.y);
+      controls.target.copy(pos);
+      camera.position.set(pos.x+5, pos.y+4, pos.z+5);
+      controls.update();
+    }
+  } else if (action === 'objlib') {
+    openWin('win-objlib'); refreshObjLib();
+  } else if (action === 'eq-editor') {
+    openWin('win-eq');
+  } else if (action === 'undo') {
+    undoAction();
+  } else if (action === 'delete') {
+    if (state.selectedPoint) deletePoint(state.selectedPoint.id);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT COMPLETE
+// ═══════════════════════════════════════════════════════════════
+setTimeout(() => notify('Welcome to Geo3D v3 ·  Ctrl+P for command palette', 'success'), 700);
 </script>
 </body>
 </html>
