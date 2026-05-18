@@ -227,19 +227,6 @@ kbd.kbd{background:var(--bg4);border:1px solid var(--border2);border-radius:4px;
 .cmd-section{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;
   padding:8px 14px 3px;background:var(--bg3)}
 
-/* ── CONTEXT MENU ─── */
-#ctx-menu{position:fixed;z-index:900;background:var(--bg2);border:1px solid var(--border2);
-  border-radius:var(--radius2);box-shadow:var(--shadow);min-width:170px;
-  padding:4px;display:none;animation:fadeIn .12s ease}
-#ctx-menu.open{display:block}
-@keyframes fadeIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
-.ctx-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;
-  cursor:pointer;font-size:12.5px;color:var(--text);transition:background var(--anim)}
-.ctx-item:hover{background:rgba(255,255,255,0.07)}
-.ctx-item.danger:hover{background:rgba(240,96,96,0.12);color:var(--accent3)}
-.ctx-sep{height:1px;background:var(--border);margin:3px 0}
-.ctx-icon{width:16px;text-align:center;font-size:13px}
-
 /* ── OBJECTS LIBRARY ─── */
 #win-objlib{width:300px;top:68px;left:16px}
 .objlib-search{width:100%;margin-bottom:8px;background:var(--bg3);border:1px solid var(--border);
@@ -970,7 +957,7 @@ kbd.kbd{background:var(--bg4);border:1px solid var(--border2);border-radius:4px;
     <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
         <span class="eq-section-lbl" style="margin:0">Drawn Equations</span>
-        <span id="eq-mgr-count" style="font-size:10px;color:var(--text3)">0 equation objects</span>
+        <span id="eq-editor-count" style="font-size:10px;color:var(--text3)">0 equation objects</span>
       </div>
       <div id="eq-list" style="max-height:220px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:2px"></div>
     </div>
@@ -1660,7 +1647,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     endAddPoint(); endConnectMode(); closeAllPanels();
     document.getElementById('cmd-overlay').classList.remove('open');
-    document.getElementById('ctx-menu').classList.remove('open');
   }
   if ((e.ctrlKey || e.metaKey) && e.key === 'p') { e.preventDefault(); openCmdPalette(); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undoAction(); }
@@ -2145,51 +2131,50 @@ function switchObjTab(tab) {
 
 function refreshEqMgr() {
   const list  = document.getElementById('eq-list-mgr');
-  const count = document.getElementById('eq-mgr-count');
   if (!list) return;
   list.innerHTML = '';
-  if (count) count.textContent = state.equations.length + ' equation object' + (state.equations.length !== 1 ? 's' : '');
   if (!state.equations.length) {
     list.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:12px;padding:20px 0">No equation objects yet.<br>Use the Equation Editor to draw one.</div>';
     return;
   }
   state.equations.forEach(eq => {
     if (!eq.offset) eq.offset = { x:0, y:0, z:0 };
+    if (eq.opacity === undefined) eq.opacity = 0.65;
     const label = (eq.type || 'eq') + ': ' + (eq.expr || '').slice(0, 26);
     const d = document.createElement('div');
-    d.style.cssText = 'border-radius:6px;background:var(--bg3);border:1px solid var(--border);margin-bottom:4px;overflow:hidden';
+    d.style.cssText = 'border-radius:6px;background:var(--bg3);border:1px solid var(--border);margin-bottom:3px;overflow:hidden';
     d.innerHTML = `
       <div style="display:flex;align-items:center;gap:6px;padding:5px 10px;cursor:pointer"
         onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
         <span style="width:10px;height:10px;border-radius:50%;background:${eq.color};flex-shrink:0"></span>
-        <span style="font-family:var(--mono);font-size:11px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
-          title="${eq.expr||eq.type}">${label}</span>
-        <button onclick="event.stopPropagation();toggleEqVis(${eq.id});refreshEqMgr()"
-          style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0 3px" title="Hide/Show">👁</button>
-        <button onclick="event.stopPropagation();removeEq(${eq.id});refreshEqMgr()"
-          style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:12px;padding:0 3px" title="Delete">✕</button>
+        <span style="font-family:var(--mono);font-size:11px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${label}</span>
+        <button onclick="event.stopPropagation();toggleEqVis(${eq.id})"
+          style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0 3px">👁</button>
+        <button onclick="event.stopPropagation();removeEq(${eq.id})"
+          style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:12px;padding:0 3px">✕</button>
       </div>
       <div style="display:none;padding:8px 10px 10px;border-top:1px solid var(--border);background:var(--bg4)">
-        <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Position Offset</div>
-        <div style="display:flex;gap:4px;align-items:center;font-size:11.5px;flex-wrap:wrap">
-          <label style="color:var(--accent);font-family:var(--mono)">X</label>
-          <input type="number" value="${eq.offset.x}" step="0.5" style="width:56px"
-            oninput="moveEq(${eq.id},'x',+this.value)">
-          <label style="color:var(--accent);font-family:var(--mono)">Y</label>
-          <input type="number" value="${eq.offset.y}" step="0.5" style="width:56px"
-            oninput="moveEq(${eq.id},'y',+this.value)">
-          <label style="color:var(--accent);font-family:var(--mono)">Z</label>
-          <input type="number" value="${eq.offset.z}" step="0.5" style="width:56px"
-            oninput="moveEq(${eq.id},'z',+this.value)">
+        <div style="display:flex;gap:4px;align-items:center;font-size:11px;flex-wrap:wrap;margin-bottom:6px">
+          <label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;min-width:40px">X offset</label>
+          <input type="number" value="${eq.offset.x}" step="0.5" style="width:50px;font-size:11px" oninput="moveEq(${eq.id},'x',+this.value)">
+          <label style="font-size:10px;color:var(--text3)">Y</label>
+          <input type="number" value="${eq.offset.y}" step="0.5" style="width:50px;font-size:11px" oninput="moveEq(${eq.id},'y',+this.value)">
+          <label style="font-size:10px;color:var(--text3)">Z</label>
+          <input type="number" value="${eq.offset.z}" step="0.5" style="width:50px;font-size:11px" oninput="moveEq(${eq.id},'z',+this.value)">
+          <button onclick="resetEqOffset(${eq.id})" style="background:none;border:1px solid var(--border);color:var(--text2);font-size:10px;border-radius:4px;padding:2px 6px;cursor:pointer">↺</button>
         </div>
-        <div style="display:flex;gap:5px;align-items:center;margin-top:6px">
-          <button onclick="resetEqOffset(${eq.id});refreshEqMgr()"
-            style="background:none;border:1px solid var(--border);color:var(--text2);font-size:10.5px;border-radius:4px;padding:2px 8px;cursor:pointer">↺ Reset</button>
-          <label style="font-size:11px;color:var(--text3)">Color</label>
-          <input type="color" value="${eq.color}" style="width:22px;height:20px;padding:1px;cursor:pointer"
-            oninput="recolorEq(${eq.id},this.value)">
+        <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
+          <label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Opacity</label>
+          <input type="range" min="0.03" max="1" step="0.03" value="${eq.opacity}"
+            style="width:80px;accent-color:var(--accent2)"
+            oninput="updateEqOpacity(${eq.id},parseFloat(this.value));this.nextElementSibling.textContent=Math.round(this.value*100)+'%'">
+          <span style="font-size:10px;font-family:var(--mono);color:var(--text2);min-width:28px">${Math.round(eq.opacity*100)}%</span>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center">
+          <label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Color</label>
+          <input type="color" value="${eq.color}" style="width:22px;height:20px;padding:1px;cursor:pointer" oninput="recolorEq(${eq.id},this.value)">
           <button onclick="objLibFocus('equation',${eq.id})"
-            style="background:none;border:1px solid var(--border);color:var(--accent2);font-size:10.5px;border-radius:4px;padding:2px 8px;cursor:pointer">🎯 Focus</button>
+            style="background:none;border:1px solid var(--border);color:var(--accent2);font-size:10px;border-radius:4px;padding:2px 7px;cursor:pointer">🎯 Focus</button>
         </div>
       </div>`;
     list.appendChild(d);
@@ -2524,18 +2509,6 @@ function refreshObjectsTable(tab) {
 // ═══════════════════════════════════════════════════════════════
 //  EQUATIONS
 // ═══════════════════════════════════════════════════════════════
-const EQ_TPL = {
-  linear:     { ph: 'y = 2*x + 1',                         hint: 'Format: y = a*x + b' },
-  quadratic:  { ph: 'y = x*x - 2*x + 1',                   hint: 'Format: y = a*x*x + b*x + c' },
-  parametric: { ph: 'x(t)=cos(t), y(t)=t, z(t)=sin(t)',    hint: 'Comma-sep: x(t)=…, y(t)=…, z(t)=…' },
-  param3d:    { ph: '',                                     hint: 'x = a + bt,  y = c + dt,  z = e + ft' },
-  plane:      { ph: 'x + 2*y - z = 3',                     hint: 'ax + by + cz = d' },
-  sphere3d:   { ph: 'r = 3',                               hint: 'Sphere radius (centered at origin)' },
-  circle:     { ph: 'r = 2',                               hint: 'Circle radius in XZ plane' },
-  helix:      { ph: '(built-in)',                           hint: 'Adjust t-range and steps below' },
-  surface:    { ph: 'sin(sqrt(x*x + y*y))',                hint: 'z = f(x,y) — use x, y as variables' },
-  polar:      { ph: '2 + 2*cos(t)',                        hint: 'r = f(θ) — polar curve in XZ plane' },
-};
 function openEqEditor(type) { setEqType(type); closeAllPanels(); openWin('win-eq'); }
 function setEqType(type) {
   state.eqType = type;
@@ -2796,27 +2769,13 @@ function safeEval(expr, vars) {
        .replace(/\bpi\b/gi, 'Math.PI').replace(/\be\b/g, 'Math.E');
   return Function('"use strict";return(' + e + ')')();
 }
-function validateEq() {
-  const v = document.getElementById('eq-input').value.trim();
-  const inp = document.getElementById('eq-input');
-  const hint = document.getElementById('eq-hint');
-  if (!v) { inp.className = ''; hint.className = 'eq-hint'; hint.textContent = EQ_TPL[state.eqType]?.hint||''; return; }
-  try {
-    if (state.eqType === 'linear' || state.eqType === 'quadratic')
-      safeEval((v.includes('=') ? v.split('=')[1] : v), {x: 1});
-    inp.className = 'valid'; hint.className = 'eq-hint valid'; hint.textContent = '✓ Valid equation';
-  } catch(err) {
-    inp.className = 'error'; hint.className = 'eq-hint error'; hint.textContent = '✗ ' + err.message;
-  }
-}
-// ── Param 3D live validation ──────────────────────────────────
+// ── param3D live validation (checks x/y/z fields) ─────────────
 function validateParam3d() {
-  const fields = ['p3d-x','p3d-y','p3d-z'];
-  fields.forEach(id => {
+  ['p3d-x','p3d-y','p3d-z'].forEach(id => {
     const el = document.getElementById(id);
     if (!el || !el.value.trim()) return;
-    try { safeEval(el.value, {t:1}); el.style.borderColor='rgba(0,212,170,0.6)'; }
-    catch(e) { el.style.borderColor='rgba(240,96,96,0.65)'; }
+    try { safeEval(el.value, {t:1}); el.classList.remove('error'); el.classList.add('valid'); }
+    catch(e) { el.classList.remove('valid'); el.classList.add('error'); }
   });
 }
 
@@ -3330,10 +3289,10 @@ function drawEquation() {
       const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize, 1, 1);
       const planeMat = new THREE.MeshBasicMaterial({
         color: new THREE.Color(color), side: THREE.DoubleSide,
-        transparent: true, opacity: 0.28, wireframe: false
+        transparent: true, opacity: Math.max(0.05, opacity * 0.5), wireframe: false
       });
       const wireGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(planeSize, planeSize, 6, 6));
-      const wireMat = new THREE.LineBasicMaterial({ color: new THREE.Color(color), transparent:true, opacity:0.5 });
+      const wireMat = new THREE.LineBasicMaterial({ color: new THREE.Color(color), transparent:true, opacity: Math.min(opacity + 0.1, 0.85) });
       const planeGroup = new THREE.Group();
       const solidMesh = new THREE.Mesh(planeGeo, planeMat);
       const wireMesh  = new THREE.LineSegments(wireGeo, wireMat);
@@ -3347,7 +3306,7 @@ function drawEquation() {
       scene.add(planeGroup);
       const pid = uid();
       state.equations.push({ id:pid, mesh:planeGroup, type:'plane',
-        expr, color, offset:{x:0,y:0,z:0} });
+        expr, color, offset:{x:0,y:0,z:0}, opacity });
       pushUndo({ type:'addEq', id:pid });
       refreshEqList(); updateUI(); refreshObjLib();
       notify(`Plane: ${a.toFixed(2)}x + ${b.toFixed(2)}y + ${c.toFixed(2)}z = ${dFinal.toFixed(2)}`, 'success');
@@ -3395,6 +3354,58 @@ function drawEquation() {
       refreshEqList(); updateUI(); refreshObjLib();
       notify(`Sphere drawn  r = ${r}`, 'success');
       return;
+    } else if (type === 'surface') {
+      // z = f(x,y) surface mesh
+      const rhs = (document.getElementById('eq-input')?.value || '').trim();
+      if (!rhs) { notify('Enter a surface expression first', 'warning'); return; }
+      const xmin2 = parseFloat(document.getElementById('surf-xmin')?.value ?? -5);
+      const xmax2 = parseFloat(document.getElementById('surf-xmax')?.value ?? 5);
+      const ymin  = parseFloat(document.getElementById('surf-ymin')?.value ?? -5);
+      const ymax  = parseFloat(document.getElementById('surf-ymax')?.value ?? 5);
+      const xSteps= Math.min(parseInt(document.getElementById('eq-steps')?.value || 40), 120);
+      const ySteps= Math.min(parseInt(document.getElementById('surf-vsteps')?.value || 40), 120);
+      const useSolid = document.getElementById('surf-solid')?.checked;
+      const useWire  = document.getElementById('surf-wire')?.checked ?? true;
+      const surfOpacity = parseFloat(document.getElementById('eq-opacity')?.value ?? 0.55);
+      const verts = [], indices = [];
+      for (let j = 0; j <= ySteps; j++) {
+        for (let i = 0; i <= xSteps; i++) {
+          const x = xmin2 + (xmax2 - xmin2) * i / xSteps;
+          const y = ymin  + (ymax  - ymin)  * j / ySteps;
+          const z = safeEval(rhs, { x, y });
+          const zv = isFinite(z) && Math.abs(z) < 1e5 ? z : 0;
+          verts.push(x, zv, y); // Three.js coords: user(x,y,z)→THREE(x,z,y)
+        }
+      }
+      for (let j = 0; j < ySteps; j++) {
+        for (let i = 0; i < xSteps; i++) {
+          const a2 = j*(xSteps+1)+i, b2=a2+1, c2=a2+(xSteps+1), d2=c2+1;
+          indices.push(a2,b2,d2, a2,d2,c2);
+        }
+      }
+      const surfGeo = new THREE.BufferGeometry();
+      surfGeo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+      surfGeo.setIndex(indices);
+      surfGeo.computeVertexNormals();
+      const group = new THREE.Group();
+      if (useSolid) {
+        group.add(new THREE.Mesh(surfGeo, new THREE.MeshPhongMaterial({
+          color: new THREE.Color(color), transparent:true, opacity: surfOpacity,
+          side: THREE.DoubleSide, shininess: 60, depthWrite: surfOpacity > 0.6 })));
+      }
+      if (useWire) {
+        group.add(new THREE.Mesh(surfGeo, new THREE.MeshBasicMaterial({
+          color: new THREE.Color(color), wireframe:true, transparent:true,
+          opacity: Math.min(surfOpacity + 0.15, 0.9) })));
+      }
+      scene.add(group);
+      const sid = uid();
+      state.equations.push({ id:sid, mesh:group, type:'surface', expr:rhs, color,
+        offset:{x:0,y:0,z:0}, opacity: surfOpacity });
+      pushUndo({ type:'addEq', id:sid });
+      refreshEqList(); updateUI(); refreshObjLib();
+      notify('Surface drawn!', 'success');
+      return;
     } else if (type === 'polar') {
       // r = f(θ) in the XZ plane
       const rhs = expr.includes('=') ? expr.split('=').slice(1).join('=').trim() : expr;
@@ -3405,7 +3416,7 @@ function drawEquation() {
           pts.push(new THREE.Vector3(r * Math.cos(t), 0, r * Math.sin(t)));
       }
     } else if (type === 'circle') {
-      const r = parseFloat(expr.replace(/r\s*=\s*/i,'')) || 2;
+      const r = parseFloat(document.getElementById('eq-input')?.value) || 2;
       for (let i = 0; i <= steps; i++) {
         const t = 2 * Math.PI * i / steps;
         pts.push(new THREE.Vector3(r*Math.cos(t), 0, r*Math.sin(t)));
@@ -3449,8 +3460,11 @@ function refreshEqList() {
   list.innerHTML = '';
 
   // Update count in editor
-  const countEl = document.getElementById('eq-mgr-count');
+  const countEl = document.getElementById('eq-editor-count');
   if (countEl) countEl.textContent = state.equations.length + ' equation object' + (state.equations.length !== 1 ? 's' : '');
+  // Also update mgr count
+  const mgrCount = document.getElementById('eq-mgr-count');
+  if (mgrCount) mgrCount.textContent = state.equations.length + ' equation object' + (state.equations.length !== 1 ? 's' : '');
 
   state.equations.forEach(eq => {
     if (!eq.offset) eq.offset = { x:0, y:0, z:0 };
@@ -3904,9 +3918,14 @@ function handleLoad(e) {
           drawEquation();
         }, 50);
       } else {
-        state.eqType=eq.type; state.eqColor=eq.color;
-        document.getElementById('eq-input').value = eq.expr||'';
-        setEqType(eq.type); drawEquation();
+        state.eqType=eq.type; state.eqColor=eq.color||'#00d4aa';
+        setEqType(eq.type);
+        // Restore expression into the appropriate structured field
+        setTimeout(() => {
+          const mainInp = document.getElementById('lin-rhs') || document.getElementById('eq-input');
+          if (mainInp && eq.expr) mainInp.value = eq.expr.replace(/^[^=]+=\s*/,'');
+          drawEquation();
+        }, 60);
       }
     });
     if (d.angles) setTimeout(() => {
@@ -4091,7 +4110,7 @@ animate(0);
 // ═══════════════════════════════════════════════════════════════
 //  INIT  — clean empty workspace, no demo objects
 // ═══════════════════════════════════════════════════════════════
-setEqType('linear');  // build equation params
+setEqType('linear');  // build structured equation params for linear type on load
 // Restore saved language
 setLang(localStorage.getItem('geo3d_lang') || 'en');
 
