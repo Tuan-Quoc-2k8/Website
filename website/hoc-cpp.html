@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++Master — Nền tảng học C++ chuyên nghiệp</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+<style>
+/* ===== RESET & TOKENS ===== */
+:root {
+  --bg:   #0d0d0d;
+  --bg1:  #111111;
+  --bg2:  #171717;
+  --bg3:  #1d1d1d;
+  --bg4:  #232323;
+  --bd:   #252525;
+  --bd2:  #303030;
+  --tx:   #e8e8e8;
+  --tx2:  #9a9a9a;
+  --tx3:  #555555;
+  --ac:   #4da6c8;
+  --ac2:  rgba(77,166,200,.1);
+  --ac3:  rgba(77,166,200,.05);
+  --ok:   #4caf82;
+  --warn: #d4a44c;
+  --err:  #d45858;
+  --sbw:  224px;
+  --tbh:  44px;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:13px;overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bd2)}
+
+/* ===== TOPBAR ===== */
+#tb {
+  position:fixed;top:0;left:0;right:0;height:var(--tbh);
+  background:var(--bg1);border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;z-index:200;
+}
+.logo {
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  color:var(--ac);padding:0 18px;border-right:1px solid var(--bd);
+  height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;
+  letter-spacing:-.2px;
+}
+.logo em{color:var(--tx3);font-style:normal}
+.tnav{display:flex;flex:1;overflow:hidden;height:100%}
+.tnav button {
+  background:none;border:none;border-right:1px solid var(--bd);
+  color:var(--tx3);font-family:var(--sans);font-size:12px;
+  padding:0 15px;height:100%;cursor:pointer;
+  transition:color .12s,background .12s;
+  letter-spacing:.01em;white-space:nowrap;
+}
+.tnav button:hover{color:var(--tx);background:var(--bg2)}
+.tnav button.on{color:var(--ac);background:var(--ac2)}
+.tver {
+  font-family:var(--mono);font-size:10px;color:var(--tx3);
+  padding:0 16px;border-left:1px solid var(--bd);height:100%;
+  display:flex;align-items:center;flex-shrink:0;
+}
+
+/* ===== APP LAYOUT ===== */
+#app {
+  display:flex;
+  margin-top:var(--tbh);
+  height:calc(100vh - var(--tbh));
+  overflow:hidden;
+}
+
+/* ===== SIDEBAR ===== */
+#sb {
+  width:var(--sbw);min-width:var(--sbw);
+  background:var(--bg1);border-right:1px solid var(--bd);
+  overflow-y:auto;display:flex;flex-direction:column;flex-shrink:0;
+}
+.sb-section{padding:12px 0 4px}
+.sb-lbl {
+  font-size:9px;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--tx3);
+  padding:0 12px 5px;font-family:var(--mono);
+}
+.li {
+  display:flex;align-items:center;gap:6px;
+  padding:5px 12px;cursor:pointer;
+  transition:background .1s;font-size:12px;color:var(--tx2);
+  border-left:2px solid transparent;line-height:1.35;
+  position:relative;
+}
+.li:hover{background:var(--bg3);color:var(--tx)}
+.li.on{background:var(--ac2);color:var(--ac);border-left-color:var(--ac)}
+.li.done::after{content:'✓';position:absolute;right:9px;color:var(--ok);font-size:10px;font-family:var(--mono)}
+.dbadge {
+  font-size:8px;font-weight:600;padding:1px 4px;
+  font-family:var(--mono);letter-spacing:.04em;flex-shrink:0;
+}
+.bg{background:rgba(76,175,130,.12);color:var(--ok)}
+.mg{background:rgba(212,164,76,.12);color:var(--warn)}
+.rg{background:rgba(212,88,88,.12);color:var(--err)}
+.sb-divider{height:1px;background:var(--bd);margin:4px 0}
+
+/* ===== MAIN AREA ===== */
+#main{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.sec{display:none;flex:1;overflow:hidden}
+.sec.on{display:flex;flex-direction:column}
+
+/* ===== HOME ===== */
+#s-home{overflow-y:auto;padding:40px 48px 60px}
+.hero{padding:32px 0 28px}
+.htag {
+  font-family:var(--mono);font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ac);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.htag::before{content:'';display:inline-block;width:20px;height:1px;background:var(--ac)}
+.htitle{font-size:38px;font-weight:600;letter-spacing:-1.5px;line-height:1.05;color:var(--tx);margin-bottom:14px;font-family:var(--sans)}
+.htitle .c{color:var(--ac)}
+.hsub{font-size:14px;color:var(--tx2);max-width:520px;line-height:1.7;margin-bottom:28px}
+.hbtns{display:flex;gap:8px}
+.btn{padding:8px 20px;font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;border:none;letter-spacing:.02em;transition:all .12s}
+.btn-p{background:var(--ac);color:#000}.btn-p:hover{opacity:.88}
+.btn-o{background:transparent;border:1px solid var(--bd2);color:var(--tx)}.btn-o:hover{border-color:var(--ac);color:var(--ac)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);margin:26px 0}
+.scard{background:var(--bg1);padding:18px 20px}
+.sval{font-family:var(--mono);font-size:26px;font-weight:600;color:var(--tx);letter-spacing:-1px}
+.slbl{font-size:10px;color:var(--tx3);margin-top:3px;text-transform:uppercase;letter-spacing:.08em}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd)}
+.fcard{background:var(--bg1);padding:20px 22px;transition:background .12s;cursor:pointer}
+.fcard:hover{background:var(--bg2)}
+.ficon{font-family:var(--mono);font-size:14px;color:var(--ac);margin-bottom:8px}
+.ftit{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:5px}
+.fdesc{font-size:11px;color:var(--tx2);line-height:1.6}
+
+/* ===== LEARN SECTION ===== */
+#s-learn{flex-direction:row !important}
+.lcon{flex:1;overflow-y:auto;padding:24px 32px;min-width:0}
+.lhdr{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bd)}
+.lpath{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-bottom:5px;letter-spacing:.04em}
+.ltit{font-size:20px;font-weight:600;letter-spacing:-.4px;margin-bottom:7px}
+.lmeta{display:flex;gap:8px;align-items:center;font-size:10px;color:var(--tx3)}
+.ctit{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--ac);margin-bottom:8px;margin-top:20px;font-family:var(--mono)}
+.ctxt{font-size:12.5px;color:var(--tx2);line-height:1.75}
+.ctxt code{font-family:var(--mono);color:var(--ac);background:var(--ac2);padding:1px 5px;font-size:11px}
+.ctxt strong{color:var(--tx);font-weight:600}
+.cblk{background:var(--bg2);border:1px solid var(--bd);margin:12px 0}
+.cblk-hdr{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--bd);font-size:9px;color:var(--tx3);font-family:var(--mono)}
+.cblk-body{padding:12px 14px;font-family:var(--mono);font-size:12px;line-height:1.75;overflow-x:auto;white-space:pre}
+.dbox{background:var(--bg1);border:1px solid var(--bd);padding:16px;margin:12px 0}
+.dtit{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--tx3);margin-bottom:10px;font-family:var(--mono)}
+.exblk{background:rgba(77,166,200,.04);border:1px solid rgba(77,166,200,.18);padding:16px;margin:16px 0}
+.extit{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--ac);margin-bottom:7px;font-family:var(--mono)}
+.extxt{font-size:12.5px;color:var(--tx2);line-height:1.65}
+.qblk{background:var(--bg2);border:1px solid var(--bd);padding:16px;margin:16px 0}
+.qtit{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--warn);margin-bottom:8px;font-family:var(--mono)}
+.qq{font-size:13px;color:var(--tx);margin-bottom:10px;line-height:1.5}
+.qopts{display:flex;flex-direction:column;gap:4px}
+.qopt{padding:7px 11px;border:1px solid var(--bd);background:var(--bg1);cursor:pointer;font-size:12px;color:var(--tx2);transition:all .1s;font-family:var(--mono)}
+.qopt:hover{border-color:var(--ac);color:var(--ac)}
+.qopt.ok{border-color:var(--ok);color:var(--ok);background:rgba(76,175,130,.07)}
+.qopt.ng{border-color:var(--err);color:var(--err);background:rgba(212,88,88,.07)}
+.epanel{width:380px;min-width:380px;background:var(--bg1);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.phdr{display:flex;align-items:center;justify-content:space-between;padding:0 10px;height:36px;border-bottom:1px solid var(--bd);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);flex-shrink:0;font-family:var(--mono)}
+.pacts{display:flex;gap:4px}
+.ibtn{background:none;border:1px solid var(--bd);color:var(--tx2);padding:3px 9px;font-size:10px;cursor:pointer;font-family:var(--mono);transition:all .1s}
+.ibtn:hover{border-color:var(--ac);color:var(--ac)}
+.ibtn.run{background:var(--ac);border-color:var(--ac);color:#000;font-weight:600}
+.ibtn.run:hover{opacity:.85}
+.ewrap{flex:1;overflow:hidden;min-height:0}
+.ewrap .CodeMirror{height:100%;font-size:12px;background:var(--bg)!important;color:#d4d4d4;font-family:var(--mono)!important;line-height:1.6}
+.ewrap .CodeMirror-gutters{background:var(--bg2)!important;border-right:1px solid var(--bd)!important;min-width:40px}
+.ewrap .CodeMirror-linenumber{color:var(--tx3)!important}
+.outpan{height:148px;border-top:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0}
+.outbody{flex:1;padding:8px 12px;overflow-y:auto;font-family:var(--mono);font-size:11px;color:var(--tx2);line-height:1.65;white-space:pre-wrap}
+.out-ok{color:var(--ok)}.out-err{color:var(--err)}.out-warn{color:var(--warn)}
+/* Error panel */
+.err-panel{padding:8px 12px;overflow-y:auto;flex:1;font-family:var(--mono);font-size:11px;line-height:1.6}
+.err-line{color:var(--err);font-weight:600;margin-bottom:4px}
+.err-hint{color:var(--ok);margin-top:4px}
+.err-code{background:var(--bg2);border:1px solid var(--bd);padding:6px 10px;margin-top:6px;color:var(--ac);font-size:11px}
+.var-watch{background:var(--bg);padding:8px 12px;border-top:1px solid var(--bd);height:88px;overflow-y:auto;flex-shrink:0}
+.var-row{display:flex;gap:0;font-family:var(--mono);font-size:10px;margin:2px 0}
+.var-type{color:var(--warn);width:58px;flex-shrink:0}.var-name{color:var(--tx3);width:78px;flex-shrink:0}.var-val{color:var(--ac)}
+
+/* ===== PLAYGROUND ===== */
+#s-play{flex-direction:column !important}
+.ptabs{display:flex;align-items:center;background:var(--bg2);border-bottom:1px solid var(--bd);overflow-x:auto;flex-shrink:0;height:38px}
+.ptab{display:flex;align-items:center;gap:5px;padding:0 13px;height:38px;font-size:11px;cursor:pointer;color:var(--tx3);border-right:1px solid var(--bd);transition:color .1s,background .1s;font-family:var(--mono);white-space:nowrap;flex-shrink:0}
+.ptab.on{color:var(--tx);background:var(--bg1)}
+.ptab .tc{font-size:12px;color:var(--tx3);padding:0 2px;margin-left:2px}.ptab .tc:hover{color:var(--err)}
+.ptab-add{padding:0 13px;height:38px;font-size:15px;cursor:pointer;color:var(--tx3);transition:color .1s;border:none;background:none;flex-shrink:0}
+.ptab-add:hover{color:var(--ac)}
+.play-editor{flex:1;overflow:hidden;min-height:0}
+.play-editor .CodeMirror{height:100%;font-size:12.5px;background:var(--bg)!important;color:#d4d4d4;font-family:var(--mono)!important;line-height:1.62}
+.play-editor .CodeMirror-gutters{background:var(--bg2)!important;border-right:1px solid var(--bd)!important}
+.play-editor .CodeMirror-linenumber{color:var(--tx3)!important}
+.play-out{background:var(--bg2);border-top:1px solid var(--bd);flex-shrink:0;height:160px;display:flex;flex-direction:column;overflow:hidden}
+.out-tabs{display:flex;border-bottom:1px solid var(--bd);flex-shrink:0}
+.otab{padding:5px 15px;font-size:9px;text-transform:uppercase;letter-spacing:.09em;cursor:pointer;color:var(--tx3);border-right:1px solid var(--bd);transition:color .1s;font-family:var(--mono)}
+.otab.on{color:var(--ac)}
+.play-out-body{flex:1;padding:9px 14px;overflow-y:auto;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;min-height:0}
+.play-toolbar{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0}
+
+/* ===== VISUALIZER ===== */
+#s-viz{flex-direction:row !important}
+.vzsb{width:200px;min-width:200px;background:var(--bg1);border-right:1px solid var(--bd);padding:12px 0;overflow-y:auto;flex-shrink:0}
+.vzm{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.vzctrl{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg2);border-bottom:1px solid var(--bd);flex-wrap:wrap;flex-shrink:0}
+.vzwrap{flex:1;position:relative;overflow:hidden;min-height:0}
+#vzc{display:block;width:100%;height:100%}
+.rng{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);font-family:var(--mono)}
+.rng input[type=range]{width:72px;accent-color:var(--ac)}
+.vzinfo{padding:8px 14px;background:var(--bg2);border-top:1px solid var(--bd);font-family:var(--mono);font-size:11px;color:var(--tx2);flex-shrink:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+/* ===== PRACTICE ===== */
+#s-prac{flex-direction:row !important}
+.plist{width:280px;min-width:280px;background:var(--bg1);border-right:1px solid var(--bd);overflow-y:auto;flex-shrink:0}
+.pi{padding:10px 13px;cursor:pointer;border-bottom:1px solid var(--bd);transition:background .1s}
+.pi:hover{background:var(--bg2)}.pi.on{background:var(--ac2)}
+.ptit{font-size:12px;color:var(--tx);margin-bottom:3px}
+.pmeta{display:flex;gap:6px;align-items:center;font-size:10px;color:var(--tx3)}
+.dd{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dd.e{background:var(--ok)}.dd.m{background:var(--warn)}.dd.h{background:var(--err)}
+.pwork{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.pw-split{display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden;min-height:0}
+.pdesc{padding:16px 20px;overflow-y:auto;border-right:1px solid var(--bd)}
+.pdesc h3{font-size:14px;font-weight:600;margin-bottom:8px;letter-spacing:-.2px}
+.pdesc p{font-size:12px;color:var(--tx2);line-height:1.65;margin-bottom:8px}
+.pdesc pre{background:var(--bg2);border:1px solid var(--bd);padding:9px;font-family:var(--mono);font-size:11px;overflow-x:auto;white-space:pre;margin:7px 0;color:var(--tx2)}
+.pwork-editor{overflow:hidden}
+.pwork-editor .CodeMirror{height:100%;font-size:12px;background:var(--bg)!important;font-family:var(--mono)!important}
+.pwork-editor .CodeMirror-gutters{background:var(--bg2)!important;border-right:1px solid var(--bd)!important}
+.test-panel{height:150px;border-top:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.tp-hdr{display:flex;align-items:center;gap:6px;padding:0 12px;height:34px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.test-results{flex:1;overflow-y:auto}
+.tc-row{display:flex;align-items:center;gap:7px;padding:6px 12px;font-family:var(--mono);font-size:11px;border-bottom:1px solid rgba(36,36,36,.4)}
+.tc-icon{width:13px;height:13px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
+.tc-icon.p{color:var(--ok)}.tc-icon.f{color:var(--err)}
+
+/* ===== DOCS ===== */
+#s-docs{flex-direction:row !important}
+.dnav{width:186px;min-width:186px;background:var(--bg1);border-right:1px solid var(--bd);overflow-y:auto;padding:12px 0;flex-shrink:0}
+.dcon{flex:1;padding:24px 40px 50px;overflow-y:auto;min-width:0}
+.d1{font-size:20px;font-weight:600;margin-bottom:7px;letter-spacing:-.4px}
+.d2{font-size:13px;font-weight:600;margin:20px 0 8px;color:var(--tx)}
+.dp{font-size:12.5px;color:var(--tx2);line-height:1.72;margin-bottom:8px}
+.dp code{font-family:var(--mono);color:var(--ac);background:var(--ac2);padding:1px 5px;font-size:11px}
+.dcode{font-family:var(--mono);background:var(--bg2);border:1px solid var(--bd);padding:11px 13px;margin:8px 0;font-size:11.5px;line-height:1.7;overflow-x:auto;white-space:pre;color:#d4d4d4}
+.ref-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}
+.ref-table th{text-align:left;padding:6px 10px;background:var(--bg2);color:var(--tx3);font-size:9px;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--bd);font-family:var(--mono)}
+.ref-table td{padding:6px 10px;border-bottom:1px solid rgba(36,36,36,.5);color:var(--tx2)}
+.ref-table td:first-child{font-family:var(--mono);color:var(--ac)}
+
+/* ===== COMMON ===== */
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.spin{width:11px;height:11px;border:2px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
+.section-lbl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  #sb{width:180px;min-width:180px}
+  .epanel{width:320px;min-width:320px}
+  .pw-split{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  #sb{display:none}
+  .epanel{width:100%;min-width:0;border-left:none;border-top:1px solid var(--bd)}
+  #s-learn{flex-direction:column !important}
+  .pw-split{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="tb">
+  <div class="logo">C<em>++</em>MASTER</div>
+  <nav class="tnav">
+    <button onclick="nav('home')" id="nb-home" class="on">Trang chủ</button>
+    <button onclick="nav('learn')" id="nb-learn">Học tập</button>
+    <button onclick="nav('prac')" id="nb-prac">Thực hành</button>
+    <button onclick="nav('viz')" id="nb-viz">Visualizer</button>
+    <button onclick="nav('play')" id="nb-play">Trình chạy code</button>
+    <button onclick="nav('docs')" id="nb-docs">Tài liệu</button>
+  </nav>
+  <div class="tver">C++17</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<!-- SIDEBAR (Lesson List) -->
+<nav id="sb">
+  <div class="sb-section">
+    <div class="sb-lbl">Cơ bản</div>
+    <div class="li done" onclick="loadLesson('hello')" id="li-hello"><span class="dbadge bg">CƠ BẢN</span> Hello World</div>
+    <div class="li done" onclick="loadLesson('vars')" id="li-vars"><span class="dbadge bg">CƠ BẢN</span> Biến</div>
+    <div class="li done" onclick="loadLesson('types')" id="li-types"><span class="dbadge bg">CƠ BẢN</span> Kiểu dữ liệu</div>
+    <div class="li" onclick="loadLesson('ops')" id="li-ops"><span class="dbadge bg">CƠ BẢN</span> Toán tử</div>
+    <div class="li" onclick="loadLesson('io')" id="li-io"><span class="dbadge bg">CƠ BẢN</span> Nhập / Xuất</div>
+  </div>
+  <div class="sb-divider"></div>
+  <div class="sb-section">
+    <div class="sb-lbl">Điều khiển</div>
+    <div class="li" onclick="loadLesson('if')" id="li-if"><span class="dbadge bg">CƠ BẢN</span> if / else</div>
+    <div class="li" onclick="loadLesson('switch')" id="li-switch"><span class="dbadge bg">CƠ BẢN</span> switch</div>
+    <div class="li" onclick="loadLesson('loops')" id="li-loops"><span class="dbadge bg">CƠ BẢN</span> Vòng lặp</div>
+    <div class="li" onclick="loadLesson('break')" id="li-break"><span class="dbadge bg">CƠ BẢN</span> break / continue</div>
+  </div>
+  <div class="sb-divider"></div>
+  <div class="sb-section">
+    <div class="sb-lbl">Hàm</div>
+    <div class="li" onclick="loadLesson('func')" id="li-func"><span class="dbadge mg">TB</span> Hàm</div>
+    <div class="li" onclick="loadLesson('scope')" id="li-scope"><span class="dbadge mg">TB</span> Phạm vi biến</div>
+    <div class="li" onclick="loadLesson('recur')" id="li-recur"><span class="dbadge mg">TB</span> Đệ quy</div>
+  </div>
+  <div class="sb-divider"></div>
+  <div class="sb-section">
+    <div class="sb-lbl">Bộ nhớ</div>
+    <div class="li" onclick="loadLesson('array')" id="li-array"><span class="dbadge mg">TB</span> Mảng</div>
+    <div class="li" onclick="loadLesson('vector')" id="li-vector"><span class="dbadge mg">TB</span> Vector</div>
+    <div class="li" onclick="loadLesson('ptr')" id="li-ptr"><span class="dbadge rg">KHÓ</span> Con trỏ</div>
+    <div class="li" onclick="loadLesson('ref')" id="li-ref"><span class="dbadge rg">KHÓ</span> Tham chiếu</div>
+  </div>
+  <div class="sb-divider"></div>
+  <div class="sb-section">
+    <div class="sb-lbl">OOP</div>
+    <div class="li" onclick="loadLesson('class')" id="li-class"><span class="dbadge rg">KHÓ</span> Class</div>
+    <div class="li" onclick="loadLesson('inherit')" id="li-inherit"><span class="dbadge rg">KHÓ</span> Kế thừa</div>
+    <div class="li" onclick="loadLesson('poly')" id="li-poly"><span class="dbadge rg">KHÓ</span> Đa hình</div>
+    <div class="li" onclick="loadLesson('stl')" id="li-stl"><span class="dbadge rg">KHÓ</span> STL</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- TRANG CHỦ -->
+<div class="sec on" id="s-home">
+  <div class="hero">
+    <div class="htag">Nền tảng học C++ chuyên nghiệp</div>
+    <div class="htitle">Học <span class="c">C++</span> từ cơ bản<br>đến chuyên sâu</div>
+    <div class="hsub">Môi trường học lập trình nghiêm túc với editor tích hợp, visualizer thuật toán và bài tập thực hành — hoàn toàn bằng tiếng Việt.</div>
+    <div class="hbtns">
+      <button class="btn btn-p" onclick="nav('learn');loadLesson('hello')">Bắt đầu học</button>
+      <button class="btn btn-o" onclick="nav('docs')">Tài liệu tham khảo</button>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="scard"><div class="sval">18</div><div class="slbl">Bài học</div></div>
+    <div class="scard"><div class="sval">5</div><div class="slbl">Bài tập</div></div>
+    <div class="scard"><div class="sval">10</div><div class="slbl">Thuật toán</div></div>
+    <div class="scard"><div class="sval">100%</div><div class="slbl">Tiếng Việt</div></div>
+  </div>
+  <div class="feat-grid">
+    <div class="fcard" onclick="nav('learn');loadLesson('hello')">
+      <div class="ficon">◈</div>
+      <div class="ftit">Bài học có hướng dẫn</div>
+      <div class="fdesc">Lý thuyết + ví dụ code + giải thích từng dòng + câu hỏi kiểm tra</div>
+    </div>
+    <div class="fcard" onclick="nav('play')">
+      <div class="ficon">▶</div>
+      <div class="ftit">Trình chạy code</div>
+      <div class="fdesc">Editor C++ với syntax highlighting, kiểm tra lỗi tức thì và mô phỏng kết quả</div>
+    </div>
+    <div class="fcard" onclick="nav('viz')">
+      <div class="ficon">◉</div>
+      <div class="ftit">Visualizer thuật toán</div>
+      <div class="fdesc">Trực quan hóa Bubble Sort, Quick Sort, Binary Search, Stack, Queue và hơn thế</div>
+    </div>
+    <div class="fcard" onclick="nav('prac')">
+      <div class="ficon">⊞</div>
+      <div class="ftit">Thực hành code</div>
+      <div class="fdesc">Bài tập từ dễ đến khó: tổng mảng, đảo chuỗi, Fibonacci, palindrome, danh sách liên kết</div>
+    </div>
+    <div class="fcard" onclick="nav('docs')">
+      <div class="ficon">⊟</div>
+      <div class="ftit">Tài liệu tham khảo</div>
+      <div class="fdesc">Tra cứu kiểu dữ liệu, toán tử, con trỏ, OOP, STL — nhanh chóng và đầy đủ</div>
+    </div>
+    <div class="fcard">
+      <div class="ficon">⚠</div>
+      <div class="ftit">Phân tích lỗi</div>
+      <div class="fdesc">Kiểm tra lỗi cú pháp phổ biến với giải thích và gợi ý sửa bằng tiếng Việt</div>
+    </div>
+  </div>
+</div>
+
+<!-- HỌC TẬP -->
+<div class="sec" id="s-learn">
+  <div class="lcon" id="lesson-content">
+    <div style="padding:40px 0;text-align:center;color:var(--tx3);font-family:var(--mono);font-size:12px">
+      ← Chọn bài học từ danh sách bên trái để bắt đầu
+    </div>
+  </div>
+  <div class="epanel">
+    <div class="phdr">
+      <span>Trình soạn thảo</span>
+      <div class="pacts">
+        <button class="ibtn run" onclick="runLearnCode()">▶ Chạy</button>
+        <button class="ibtn" onclick="checkLearnCode()">⚠ Kiểm tra lỗi</button>
+        <button class="ibtn" onclick="resetLearnCode()">↺</button>
+      </div>
+    </div>
+    <div class="ewrap" id="learn-editor-wrap"></div>
+    <div class="outpan">
+      <div class="phdr" style="height:30px">
+        <span id="out-mode-lbl">Kết quả</span>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--tx3)" id="run-info"></div>
+      </div>
+      <div class="outbody" id="learn-output"><span style="color:var(--tx3)">// Nhấn ▶ Chạy để xem kết quả</span></div>
+    </div>
+    <div class="var-watch" id="var-watch"><div style="font-size:10px;color:var(--tx3);font-family:var(--mono)">// Biến sẽ hiển thị tại đây sau khi chạy</div></div>
+  </div>
+</div>
+
+<!-- TRÌNH CHẠY CODE -->
+<div class="sec" id="s-play">
+  <div class="play-toolbar">
+    <button class="ibtn run" onclick="runPlayCode()">▶ Chạy</button>
+    <button class="ibtn" onclick="checkPlayCode()">⚠ Kiểm tra lỗi</button>
+    <button class="ibtn" onclick="clearPlayEditor()">Xóa</button>
+    <div style="flex:1"></div>
+    <span class="section-lbl">Trình chạy code C++</span>
+  </div>
+  <div class="ptabs" id="play-tabs">
+    <div class="ptab on" id="ptab-0" onclick="switchPlayTab(0)">
+      <span>file1.cpp</span>
+      <span class="tc" onclick="event.stopPropagation()"></span>
+    </div>
+    <div class="ptab" id="ptab-1" onclick="switchPlayTab(1)">
+      <span>file2.cpp</span>
+      <span class="tc" onclick="event.stopPropagation()"></span>
+    </div>
+    <button class="ptab-add" onclick="addPlayTab()" title="Tab mới">+</button>
+  </div>
+  <div class="play-editor" id="play-editor-wrap"></div>
+  <div class="play-out">
+    <div class="out-tabs">
+      <div class="otab on" id="ot-out" onclick="switchOutTab('out')">Kết quả</div>
+      <div class="otab" id="ot-err" onclick="switchOutTab('err')">Lỗi</div>
+    </div>
+    <div class="play-out-body" id="play-output"><span style="color:var(--tx3)">// Nhấn ▶ Chạy để thực thi code</span></div>
+  </div>
+</div>
+
+<!-- VISUALIZER -->
+<div class="sec" id="s-viz">
+  <div class="vzsb">
+    <div class="sb-section">
+      <div class="sb-lbl">Sắp xếp</div>
+      <div class="li on" onclick="setViz('bubble')" id="vl-bubble">Bubble Sort</div>
+      <div class="li" onclick="setViz('selection')" id="vl-selection">Selection Sort</div>
+      <div class="li" onclick="setViz('insertion')" id="vl-insertion">Insertion Sort</div>
+      <div class="li" onclick="setViz('quick')" id="vl-quick">Quick Sort</div>
+      <div class="li" onclick="setViz('merge')" id="vl-merge">Merge Sort</div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">Tìm kiếm</div>
+      <div class="li" onclick="setViz('binary')" id="vl-binary">Binary Search</div>
+      <div class="li" onclick="setViz('linear')" id="vl-linear">Linear Search</div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">Cấu trúc dữ liệu</div>
+      <div class="li" onclick="setViz('stack')" id="vl-stack">Stack</div>
+      <div class="li" onclick="setViz('queue')" id="vl-queue">Queue</div>
+      <div class="li" onclick="setViz('memory')" id="vl-memory">Bộ nhớ</div>
+    </div>
+  </div>
+  <div class="vzm">
+    <div class="vzctrl">
+      <button class="ibtn run" id="viz-play-btn" onclick="startViz()">▶ Phát</button>
+      <button class="ibtn" onclick="stepViz()">⏭ Bước</button>
+      <button class="ibtn" onclick="resetViz()">↺ Đặt lại</button>
+      <div class="rng"><span>Tốc độ</span><input type="range" id="viz-speed" min="1" max="10" value="5"><span id="viz-speed-val">5</span></div>
+      <div class="rng"><span>Kích thước</span><input type="range" id="viz-size" min="6" max="24" value="12"><span id="viz-size-val">12</span></div>
+      <span id="viz-step-info" class="section-lbl">Bước: 0</span>
+      <span id="viz-title" style="font-family:var(--mono);font-size:11px;color:var(--ac);margin-left:auto">Bubble Sort</span>
+    </div>
+    <div class="vzwrap"><canvas id="vzc"></canvas></div>
+    <div class="vzinfo" id="viz-info">Bubble Sort: So sánh từng cặp kề, hoán đổi nếu sai thứ tự. Độ phức tạp O(n²).</div>
+  </div>
+</div>
+
+<!-- THỰC HÀNH -->
+<div class="sec" id="s-prac">
+  <div class="plist">
+    <div style="padding:10px 13px;border-bottom:1px solid var(--bd)">
+      <span class="section-lbl">Danh sách bài tập</span>
+    </div>
+    <div id="problem-list"></div>
+  </div>
+  <div class="pwork">
+    <div class="pw-split">
+      <div class="pdesc" id="problem-desc">
+        <div style="color:var(--tx3);font-family:var(--mono);font-size:11px;padding-top:20px">← Chọn bài tập</div>
+      </div>
+      <div class="pwork-editor" id="prac-editor-wrap"></div>
+    </div>
+    <div class="test-panel">
+      <div class="tp-hdr">
+        <button class="ibtn run" onclick="runTests()">▶ Chạy test</button>
+        <button class="ibtn" onclick="submitSolution()">✓ Nộp bài</button>
+        <span class="section-lbl" style="margin-left:auto">Kết quả kiểm thử</span>
+      </div>
+      <div class="test-results" id="test-results">
+        <div style="padding:8px 13px;font-family:var(--mono);font-size:11px;color:var(--tx3)">Nhấn ▶ Chạy test để kiểm tra</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TÀI LIỆU -->
+<div class="sec" id="s-docs">
+  <div class="dnav">
+    <div class="sb-section">
+      <div class="sb-lbl">Tham khảo</div>
+      <div class="li on" onclick="loadDoc('types')" id="dl-types">Kiểu dữ liệu</div>
+      <div class="li" onclick="loadDoc('ops')" id="dl-ops">Toán tử</div>
+      <div class="li" onclick="loadDoc('control')" id="dl-control">Điều khiển</div>
+      <div class="li" onclick="loadDoc('funcs')" id="dl-funcs">Hàm</div>
+      <div class="li" onclick="loadDoc('ptrs')" id="dl-ptrs">Con trỏ</div>
+      <div class="li" onclick="loadDoc('oop')" id="dl-oop">OOP</div>
+      <div class="li" onclick="loadDoc('stl')" id="dl-stl">STL</div>
+    </div>
+  </div>
+  <div class="dcon" id="doc-content"></div>
+</div>
+
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script>
+// ===== STATE =====
+const S = {
+  completedLessons: new Set(),
+  currentLesson: null,
+  currentProblem: null,
+  playTabCount: 2,
+  activePlayTab: 0,
+  editors: { learn: null, play: null, prac: null }
+};
+const PLAY_CODES = ['', ''];
+
+// ===== INIT =====
+function init() {
+  loadProgress();
+  initEditors();
+  buildProblemList();
+  setViz('bubble');
+  loadDoc('types');
+  setTimeout(() => resizeCanvas(), 300);
+  window.addEventListener('resize', resizeCanvas);
+}
+
+// ===== NAV =====
+function nav(sec) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.tnav button').forEach(b => b.classList.remove('on'));
+  document.getElementById('s-' + sec).classList.add('on');
+  document.getElementById('nb-' + sec).classList.add('on');
+  setTimeout(() => {
+    Object.values(S.editors).forEach(e => e && e.refresh());
+    resizeCanvas();
+  }, 60);
+}
+
+// ===== EDITORS =====
+const CM_OPTS = {
+  mode: 'text/x-c++src', theme: 'dracula', lineNumbers: true,
+  matchBrackets: true, autoCloseBrackets: true,
+  indentUnit: 4, tabSize: 4,
+  extraKeys: { "Tab": cm => cm.replaceSelection("    ") }
+};
+
+function initEditors() {
+  const mkEd = (wrapId, code) => {
+    const ta = document.createElement('textarea');
+    document.getElementById(wrapId).appendChild(ta);
+    const ed = CodeMirror.fromTextArea(ta, { ...CM_OPTS });
+    ed.setValue(code || '');
+    ed.setSize('100%', '100%');
+    return ed;
+  };
+  S.editors.learn = mkEd('learn-editor-wrap', '');
+  S.editors.play  = mkEd('play-editor-wrap', PLAY_DEFAULT[0]);
+  S.editors.prac  = mkEd('prac-editor-wrap', PRAC_TPL);
+  PLAY_CODES[0] = PLAY_DEFAULT[0];
+  PLAY_CODES[1] = PLAY_DEFAULT[1];
+}
+
+const PLAY_DEFAULT = [
+`#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int main() {
+    cout << "Xin chao, the gioi!" << endl;
+
+    int x = 10;
+    double pi = 3.14159;
+    string ten = "C++Master";
+
+    cout << "x = " << x << endl;
+    cout << "pi = " << pi << endl;
+    cout << "ten = " << ten << endl;
+
+    return 0;
+}`,
+`#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+void bubbleSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (arr[j] > arr[j+1]) swap(arr[j], arr[j+1]);
+}
+
+int main() {
+    vector<int> arr = {64, 34, 25, 12, 22, 11, 90};
+    cout << "Truoc: ";
+    for (int x : arr) cout << x << " ";
+    cout << endl;
+    bubbleSort(arr);
+    cout << "Sau:   ";
+    for (int x : arr) cout << x << " ";
+    cout << endl;
+    return 0;
+}`];
+
+const PRAC_TPL = `#include <iostream>
+using namespace std;
+
+int main() {
+    // Viet loi giai cua ban o day
+
+    return 0;
+}`;
+
+// ===== LESSONS =====
+const LESSONS = {
+  hello: {
+    title: 'Hello World', cat: 'Cơ bản', diff: 'Cơ bản', time: '5 phút',
+    code: `#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Xin chao, the gioi!" << endl;
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Cơ bản / Bắt đầu</div><div class="ltit">Hello World</div><div class="lmeta"><span class="dbadge bg">CƠ BẢN</span><span>5 phút</span></div></div>
+<div class="ctit">C++ là gì?</div>
+<div class="ctxt">C++ là ngôn ngữ lập trình mạnh mẽ, hiệu năng cao, được dùng trong lập trình hệ thống, game engine, hệ điều hành và phần mềm nhúng. Ngôn ngữ này cho phép bạn kiểm soát trực tiếp phần cứng và bộ nhớ máy tính.</div>
+<div class="ctit">Chương trình đầu tiên</div>
+<div class="cblk"><div class="cblk-hdr"><span>hello.cpp</span><span>C++</span></div><div class="cblk-body"><span style="color:#c586c0">#include</span> <span style="color:#ce9178">&lt;iostream&gt;</span>
+<span style="color:#569cd6">using namespace</span> <span style="color:#4ec9b0">std</span>;
+
+<span style="color:#4ec9b0">int</span> <span style="color:#dcdcaa">main</span>() {
+    <span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#ce9178">"Xin chao, the gioi!"</span> &lt;&lt; <span style="color:#9cdcfe">endl</span>;
+    <span style="color:#569cd6">return</span> <span style="color:#b5cea8">0</span>;
+}</div></div>
+<div class="ctit">Giải thích từng dòng</div>
+<div class="ctxt"><strong>#include &lt;iostream&gt;</strong> — Thêm thư viện xuất/nhập dữ liệu, cho phép dùng <code>cout</code> và <code>cin</code>.</div>
+<div class="ctxt" style="margin-top:7px"><strong>using namespace std;</strong> — Cho phép viết <code>cout</code> thay vì <code>std::cout</code>.</div>
+<div class="ctxt" style="margin-top:7px"><strong>int main()</strong> — Hàm chính, nơi chương trình C++ bắt đầu chạy.</div>
+<div class="ctxt" style="margin-top:7px"><strong>cout &lt;&lt; "..."</strong> — In văn bản ra màn hình. <code>endl</code> xuống dòng.</div>
+<div class="ctxt" style="margin-top:7px"><strong>return 0;</strong> — Báo hiệu chương trình kết thúc thành công.</div>
+<div class="dbox"><div class="dtit">Cấu trúc chương trình C++</div>
+<svg viewBox="0 0 340 100" style="width:100%;height:auto"><rect x="10" y="8" width="140" height="24" fill="none" stroke="#252525"/><text x="80" y="24" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#6a9955">#include &lt;iostream&gt;</text><rect x="10" y="36" width="140" height="24" fill="none" stroke="#252525"/><text x="80" y="52" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#569cd6">using namespace std</text><rect x="10" y="64" width="140" height="24" fill="none" stroke="#252525"/><text x="80" y="80" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#dcdcaa">int main()</text><text x="165" y="24" font-family="IBM Plex Mono" font-size="10" fill="#555">← Thư viện chuẩn</text><text x="165" y="52" font-family="IBM Plex Mono" font-size="10" fill="#555">← Không gian tên</text><text x="165" y="80" font-family="IBM Plex Mono" font-size="10" fill="#555">← Điểm vào của chương trình</text></svg></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Sửa code để in tên bạn ở dòng 1, và ngôn ngữ yêu thích của bạn ở dòng 2. Dùng <code>endl</code> để xuống dòng.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Câu lệnh <code>return 0;</code> trong <code>main()</code> có ý nghĩa gì?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. Chương trình không trả về gì</div><div class="qopt" onclick="checkQuiz(this,true)">B. Chương trình kết thúc thành công</div><div class="qopt" onclick="checkQuiz(this,false)">C. Chương trình in số 0</div><div class="qopt" onclick="checkQuiz(this,false)">D. Câu lệnh tùy chọn, không có tác dụng</div></div></div>`
+  },
+  vars: {
+    title: 'Biến', cat: 'Cơ bản', diff: 'Cơ bản', time: '8 phút',
+    code: `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    int tuoi = 20;
+    double chieu_cao = 1.75;
+    char ky_tu = 'A';
+    bool la_sinh_vien = true;
+    string ten = "Nguyen Van A";
+
+    cout << "Ten:         " << ten << endl;
+    cout << "Tuoi:        " << tuoi << endl;
+    cout << "Chieu cao:   " << chieu_cao << endl;
+    cout << "Ky tu:       " << ky_tu << endl;
+    cout << "Sinh vien:   " << la_sinh_vien << endl;
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Cơ bản</div><div class="ltit">Biến</div><div class="lmeta"><span class="dbadge bg">CƠ BẢN</span><span>8 phút</span></div></div>
+<div class="ctit">Biến là gì?</div>
+<div class="ctxt">Biến là ô nhớ được đặt tên để lưu trữ dữ liệu. Trong C++, bạn phải khai báo <strong>kiểu dữ liệu</strong> trước khi sử dụng — đây gọi là <em>kiểu tĩnh (static typing)</em>.</div>
+<div class="cblk"><div class="cblk-hdr"><span>bien.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span>    <span style="color:#9cdcfe">tuoi</span>        = <span style="color:#b5cea8">20</span>;        <span style="color:#6a9955">// Số nguyên</span>
+<span style="color:#4ec9b0">float</span>  <span style="color:#9cdcfe">gia</span>         = <span style="color:#b5cea8">9.99f</span>;     <span style="color:#6a9955">// Số thực 32-bit</span>
+<span style="color:#4ec9b0">double</span> <span style="color:#9cdcfe">chieu_cao</span>  = <span style="color:#b5cea8">1.75</span>;      <span style="color:#6a9955">// Số thực 64-bit (chính xác hơn)</span>
+<span style="color:#4ec9b0">char</span>   <span style="color:#9cdcfe">ky_tu</span>      = <span style="color:#ce9178">'A'</span>;      <span style="color:#6a9955">// Ký tự đơn</span>
+<span style="color:#4ec9b0">bool</span>   <span style="color:#9cdcfe">san_sang</span>   = <span style="color:#569cd6">true</span>;     <span style="color:#6a9955">// Đúng/Sai</span>
+<span style="color:#4ec9b0">string</span> <span style="color:#9cdcfe">ten</span>        = <span style="color:#ce9178">"Alice"</span>;  <span style="color:#6a9955">// Chuỗi ký tự</span></div></div>
+<div class="dbox"><div class="dtit">Bộ nhớ — Cách lưu biến</div>
+<svg viewBox="0 0 360 110" style="width:100%;height:auto"><g font-family="IBM Plex Mono" font-size="10"><rect x="10" y="10" width="340" height="18" fill="#1d1d1d" stroke="#252525"/><text x="16" y="23" fill="#555">ĐỊA CHỈ</text><text x="110" y="23" fill="#555">TÊN</text><text x="185" y="23" fill="#555">KIỂU</text><text x="265" y="23" fill="#555">GIÁ TRỊ</text><rect x="10" y="28" width="340" height="16" fill="#171717" stroke="#252525"/><text x="16" y="40" fill="#555">0x7fff01</text><text x="110" y="40" fill="#9cdcfe">tuoi</text><text x="185" y="40" fill="#4ec9b0">int</text><text x="265" y="40" fill="#b5cea8">20</text><rect x="10" y="44" width="340" height="16" fill="#1d1d1d" stroke="#252525"/><text x="16" y="56" fill="#555">0x7fff05</text><text x="110" y="56" fill="#9cdcfe">gia</text><text x="185" y="56" fill="#4ec9b0">float</text><text x="265" y="56" fill="#b5cea8">9.99</text><rect x="10" y="60" width="340" height="16" fill="#171717" stroke="#252525"/><text x="16" y="72" fill="#555">0x7fff09</text><text x="110" y="72" fill="#9cdcfe">ky_tu</text><text x="185" y="72" fill="#4ec9b0">char</text><text x="265" y="72" fill="#ce9178">'A'</text><rect x="10" y="76" width="340" height="16" fill="#1d1d1d" stroke="#252525"/><text x="16" y="88" fill="#555">0x7fff0a</text><text x="110" y="88" fill="#9cdcfe">san_sang</text><text x="185" y="88" fill="#4ec9b0">bool</text><text x="265" y="88" fill="#b5cea8">1 (true)</text></g></svg></div>
+<div class="ctit">Hằng số (const)</div>
+<div class="ctxt">Dùng <code>const</code> để khai báo giá trị không thay đổi:</div>
+<div class="cblk"><div class="cblk-hdr"><span>hang.cpp</span></div><div class="cblk-body"><span style="color:#569cd6">const</span> <span style="color:#4ec9b0">double</span> <span style="color:#9cdcfe">PI</span> = <span style="color:#b5cea8">3.14159265</span>;
+<span style="color:#569cd6">const</span> <span style="color:#4ec9b0">int</span> <span style="color:#9cdcfe">MAX_SIZE</span> = <span style="color:#b5cea8">100</span>;</div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Tạo các biến lưu: tuổi (int), chiều cao tính bằng mét (double), chữ cái đầu tên (char), và có phải sinh viên không (bool). In tất cả 4 giá trị ra màn hình.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Kiểu dữ liệu nào lưu số <code>3.14159265358979</code> với độ chính xác cao nhất?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. int</div><div class="qopt" onclick="checkQuiz(this,false)">B. float</div><div class="qopt" onclick="checkQuiz(this,true)">C. double</div><div class="qopt" onclick="checkQuiz(this,false)">D. char</div></div></div>`
+  },
+  types: {
+    title: 'Kiểu dữ liệu', cat: 'Cơ bản', diff: 'Cơ bản', time: '10 phút',
+    code: `#include <iostream>
+#include <climits>
+using namespace std;
+
+int main() {
+    cout << "int:       " << sizeof(int) << " byte" << endl;
+    cout << "long long: " << sizeof(long long) << " byte" << endl;
+    cout << "double:    " << sizeof(double) << " byte" << endl;
+    cout << "char:      " << sizeof(char) << " byte" << endl;
+    cout << "\\nGioi han:" << endl;
+    cout << "INT_MAX = " << INT_MAX << endl;
+    cout << "INT_MIN = " << INT_MIN << endl;
+    int x = 7, y = 2;
+    cout << "\\n7 / 2 (int)    = " << x / y << endl;
+    cout << "(double)7 / 2  = " << (double)x / y << endl;
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Cơ bản</div><div class="ltit">Kiểu dữ liệu</div><div class="lmeta"><span class="dbadge bg">CƠ BẢN</span><span>10 phút</span></div></div>
+<div class="ctit">Kích thước và phạm vi</div>
+<div class="ctxt">Mỗi kiểu dữ liệu chiếm một số byte nhất định trong bộ nhớ, xác định phạm vi giá trị có thể lưu.</div>
+<div class="dbox"><div class="dtit">Bảng kiểu số nguyên</div>
+<table class="ref-table"><tr><th>Kiểu</th><th>Kích thước</th><th>Min</th><th>Max</th></tr>
+<tr><td>short</td><td>2B</td><td>-32,768</td><td>32,767</td></tr>
+<tr><td>int</td><td>4B</td><td>-2,147,483,648</td><td>2,147,483,647</td></tr>
+<tr><td>long long</td><td>8B</td><td>-9.2×10¹⁸</td><td>9.2×10¹⁸</td></tr>
+<tr><td>unsigned int</td><td>4B</td><td>0</td><td>4,294,967,295</td></tr></table></div>
+<div class="ctit">Ép kiểu (Type Casting)</div>
+<div class="ctxt">Chuyển đổi giữa các kiểu dữ liệu:</div>
+<div class="cblk"><div class="cblk-hdr"><span>ep_kieu.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span> <span style="color:#9cdcfe">x</span> = <span style="color:#b5cea8">7</span>, <span style="color:#9cdcfe">y</span> = <span style="color:#b5cea8">2</span>;
+<span style="color:#9cdcfe">cout</span> &lt;&lt; x / y;                  <span style="color:#6a9955">// Kết quả: 3 (phép chia nguyên)</span>
+<span style="color:#9cdcfe">cout</span> &lt;&lt; (<span style="color:#4ec9b0">double</span>)x / y;          <span style="color:#6a9955">// Kết quả: 3.5 (ép sang double)</span>
+<span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#569cd6">static_cast</span>&lt;<span style="color:#4ec9b0">double</span>&gt;(x) / y; <span style="color:#6a9955">// Cách hiện đại (C++)</span></div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Dùng <code>sizeof()</code> in kích thước byte của mỗi kiểu: <code>int</code>, <code>double</code>, <code>char</code>, <code>bool</code>, <code>long long</code>.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Kết quả của <code>7 / 2</code> khi cả hai là <code>int</code> là gì?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. 3.5</div><div class="qopt" onclick="checkQuiz(this,true)">B. 3</div><div class="qopt" onclick="checkQuiz(this,false)">C. 4</div><div class="qopt" onclick="checkQuiz(this,false)">D. Lỗi biên dịch</div></div></div>`
+  },
+  ops: {
+    title: 'Toán tử', cat: 'Cơ bản', diff: 'Cơ bản', time: '8 phút',
+    code: `#include <iostream>
+using namespace std;
+int main() {
+    int a = 10, b = 3;
+    cout << "a + b = " << a + b << endl;
+    cout << "a - b = " << a - b << endl;
+    cout << "a * b = " << a * b << endl;
+    cout << "a / b = " << a / b << endl;
+    cout << "a % b = " << a % b << endl;
+    a += 5; cout << "a += 5 => a = " << a << endl;
+    cout << "a > b: " << (a > b) << endl;
+    cout << "a == b: " << (a == b) << endl;
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Cơ bản</div><div class="ltit">Toán tử</div><div class="lmeta"><span class="dbadge bg">CƠ BẢN</span><span>8 phút</span></div></div>
+<div class="ctit">Toán tử số học</div>
+<div class="cblk"><div class="cblk-hdr"><span>toan_tu.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span> <span style="color:#9cdcfe">a</span> = <span style="color:#b5cea8">10</span>, <span style="color:#9cdcfe">b</span> = <span style="color:#b5cea8">3</span>;
+a + b   <span style="color:#6a9955">// = 13  (cộng)</span>
+a - b   <span style="color:#6a9955">// = 7   (trừ)</span>
+a * b   <span style="color:#6a9955">// = 30  (nhân)</span>
+a / b   <span style="color:#6a9955">// = 3   (chia nguyên)</span>
+a % b   <span style="color:#6a9955">// = 1   (chia lấy dư)</span>
+a++     <span style="color:#6a9955">// a = a + 1</span></div></div>
+<div class="ctit">Toán tử gán kép</div>
+<div class="cblk"><div class="cblk-hdr"><span>gan_kep.cpp</span></div><div class="cblk-body">x += <span style="color:#b5cea8">5</span>;  <span style="color:#6a9955">// x = x + 5</span>
+x -= <span style="color:#b5cea8">3</span>;  <span style="color:#6a9955">// x = x - 3</span>
+x *= <span style="color:#b5cea8">2</span>;  <span style="color:#6a9955">// x = x * 2</span>
+x /= <span style="color:#b5cea8">4</span>;  <span style="color:#6a9955">// x = x / 4</span>
+x %= <span style="color:#b5cea8">3</span>;  <span style="color:#6a9955">// x = x % 3</span></div></div>
+<div class="ctit">Toán tử logic và so sánh</div>
+<div class="cblk"><div class="cblk-hdr"><span>logic.cpp</span></div><div class="cblk-body">&amp;&amp;   <span style="color:#6a9955">// VÀ: cả hai đều đúng</span>
+||   <span style="color:#6a9955">// HOẶC: ít nhất một đúng</span>
+!    <span style="color:#6a9955">// KHÔNG: đảo ngược</span>
+==   <span style="color:#6a9955">// bằng nhau</span>
+!=   <span style="color:#6a9955">// khác nhau</span>
+&lt; &gt; &lt;= &gt;=</div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Viết chương trình nhập hai số và in ra: tổng, hiệu, tích, thương và phần dư của chúng.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Kết quả của <code>17 % 5</code> là bao nhiêu?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. 3.4</div><div class="qopt" onclick="checkQuiz(this,false)">B. 3</div><div class="qopt" onclick="checkQuiz(this,true)">C. 2</div><div class="qopt" onclick="checkQuiz(this,false)">D. 5</div></div></div>`
+  },
+  io: {
+    title: 'Nhập / Xuất', cat: 'Cơ bản', diff: 'Cơ bản', time: '8 phút',
+    code: `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string ten;
+    int tuoi;
+    cout << "Nhap ten: ";
+    getline(cin, ten);
+    cout << "Nhap tuoi: ";
+    cin >> tuoi;
+    cout << "Xin chao, " << ten << "!" << endl;
+    cout << "Ban " << tuoi << " tuoi." << endl;
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Cơ bản</div><div class="ltit">Nhập / Xuất</div><div class="lmeta"><span class="dbadge bg">CƠ BẢN</span><span>8 phút</span></div></div>
+<div class="ctit">cout — Xuất dữ liệu</div>
+<div class="cblk"><div class="cblk-hdr"><span>cout.cpp</span></div><div class="cblk-body"><span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#ce9178">"Xin chao!"</span>;         <span style="color:#6a9955">// In chuỗi</span>
+<span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#9cdcfe">x</span>;                  <span style="color:#6a9955">// In biến</span>
+<span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#ce9178">"x = "</span> &lt;&lt; <span style="color:#9cdcfe">x</span> &lt;&lt; <span style="color:#9cdcfe">endl</span>; <span style="color:#6a9955">// Nối nhiều giá trị</span>
+<span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#ce9178">"\\n"</span>;               <span style="color:#6a9955">// Xuống dòng (thay endl)</span></div></div>
+<div class="ctit">cin — Nhập dữ liệu</div>
+<div class="cblk"><div class="cblk-hdr"><span>cin.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span> <span style="color:#9cdcfe">tuoi</span>;
+<span style="color:#9cdcfe">cin</span> &gt;&gt; <span style="color:#9cdcfe">tuoi</span>;             <span style="color:#6a9955">// Nhập số nguyên</span>
+
+<span style="color:#4ec9b0">string</span> <span style="color:#9cdcfe">ten</span>;
+<span style="color:#9cdcfe">getline</span>(<span style="color:#9cdcfe">cin</span>, <span style="color:#9cdcfe">ten</span>);      <span style="color:#6a9955">// Nhập cả dòng (kể cả khoảng trắng)</span>
+
+<span style="color:#4ec9b0">double</span> <span style="color:#9cdcfe">a</span>, <span style="color:#9cdcfe">b</span>;
+<span style="color:#9cdcfe">cin</span> &gt;&gt; <span style="color:#9cdcfe">a</span> &gt;&gt; <span style="color:#9cdcfe">b</span>;          <span style="color:#6a9955">// Nhập nhiều giá trị</span></div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Viết chương trình nhập vào bán kính hình tròn, tính và in ra chu vi và diện tích. (<code>PI = 3.14159</code>)</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Dùng hàm nào để nhập chuỗi có khoảng trắng?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. cin >> s</div><div class="qopt" onclick="checkQuiz(this,true)">B. getline(cin, s)</div><div class="qopt" onclick="checkQuiz(this,false)">C. cout << s</div><div class="qopt" onclick="checkQuiz(this,false)">D. scanf("%s", s)</div></div></div>`
+  },
+  if: {
+    title: 'if / else', cat: 'Điều khiển', diff: 'Cơ bản', time: '10 phút',
+    code: `#include <iostream>
+using namespace std;
+int main() {
+    int diem;
+    cout << "Nhap diem (0-100): ";
+    cin >> diem;
+    if (diem >= 90)
+        cout << "Xuat sac" << endl;
+    else if (diem >= 75)
+        cout << "Gioi" << endl;
+    else if (diem >= 60)
+        cout << "Kha" << endl;
+    else if (diem >= 50)
+        cout << "Trung binh" << endl;
+    else
+        cout << "Yeu" << endl;
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Điều khiển</div><div class="ltit">if / else</div><div class="lmeta"><span class="dbadge bg">CƠ BẢN</span><span>10 phút</span></div></div>
+<div class="ctit">Câu lệnh if / else</div>
+<div class="cblk"><div class="cblk-hdr"><span>if_else.cpp</span></div><div class="cblk-body"><span style="color:#569cd6">if</span> (x &gt; <span style="color:#b5cea8">0</span>) {
+    <span style="color:#6a9955">// x dương</span>
+} <span style="color:#569cd6">else if</span> (x &lt; <span style="color:#b5cea8">0</span>) {
+    <span style="color:#6a9955">// x âm</span>
+} <span style="color:#569cd6">else</span> {
+    <span style="color:#6a9955">// x = 0</span>
+}</div></div>
+<div class="ctit">Toán tử ba ngôi (ternary)</div>
+<div class="cblk"><div class="cblk-hdr"><span>ternary.cpp</span></div><div class="cblk-body"><span style="color:#9cdcfe">string</span> ket_qua = (x &gt; <span style="color:#b5cea8">0</span>) ? <span style="color:#ce9178">"duong"</span> : <span style="color:#ce9178">"am hoac bang 0"</span>;</div></div>
+<div class="dbox"><div class="dtit">Sơ đồ if / else</div>
+<svg viewBox="0 0 320 140" style="width:100%;height:auto"><rect x="120" y="8" width="80" height="24" fill="none" stroke="#4da6c8"/><text x="160" y="24" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#4da6c8">Điều kiện</text><line x1="160" y1="32" x2="160" y2="52" stroke="#444"/><polygon points="160,52 154,44 166,44" fill="#444"/><rect x="80" y="52" width="60" height="22" fill="none" stroke="#4caf82"/><text x="110" y="67" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#4caf82">true</text><rect x="180" y="52" width="60" height="22" fill="none" stroke="#d45858"/><text x="210" y="67" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#d45858">false</text><rect x="60" y="92" width="100" height="22" fill="none" stroke="#252525"/><text x="110" y="107" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#9a9a9a">khối if {}</text><rect x="170" y="92" width="100" height="22" fill="none" stroke="#252525"/><text x="220" y="107" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#9a9a9a">khối else {}</text></svg></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Viết chương trình nhận điểm số và phân loại: Xuất sắc (≥90), Giỏi (≥75), Khá (≥60), Trung bình (≥50), Yếu (&lt;50).</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Với <code>x = 5</code>, biểu thức <code>x > 3 && x < 10</code> cho kết quả gì?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,true)">A. true (1)</div><div class="qopt" onclick="checkQuiz(this,false)">B. false (0)</div><div class="qopt" onclick="checkQuiz(this,false)">C. 5</div><div class="qopt" onclick="checkQuiz(this,false)">D. Lỗi</div></div></div>`
+  },
+  switch: {
+    title: 'switch', cat: 'Điều khiển', diff: 'Cơ bản', time: '8 phút',
+    code: `#include <iostream>
+using namespace std;
+int main() {
+    int ngay = 3;
+    switch (ngay) {
+        case 1: cout << "Thu Hai" << endl; break;
+        case 2: cout << "Thu Ba" << endl; break;
+        case 3: cout << "Thu Tu" << endl; break;
+        case 4: cout << "Thu Nam" << endl; break;
+        case 5: cout << "Thu Sau" << endl; break;
+        case 6: cout << "Thu Bay" << endl; break;
+        case 7: cout << "Chu Nhat" << endl; break;
+        default: cout << "Ngay khong hop le" << endl;
+    }
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Điều khiển</div><div class="ltit">switch</div><div class="lmeta"><span class="dbadge bg">CƠ BẢN</span><span>8 phút</span></div></div>
+<div class="ctit">Cú pháp switch</div>
+<div class="cblk"><div class="cblk-hdr"><span>switch.cpp</span></div><div class="cblk-body"><span style="color:#569cd6">switch</span> (x) {
+    <span style="color:#569cd6">case</span> <span style="color:#b5cea8">1</span>: <span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#ce9178">"Một"</span>; <span style="color:#569cd6">break</span>;
+    <span style="color:#569cd6">case</span> <span style="color:#b5cea8">2</span>: <span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#ce9178">"Hai"</span>; <span style="color:#569cd6">break</span>;
+    <span style="color:#569cd6">default</span>: <span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#ce9178">"Khác"</span>;
+}</div></div>
+<div class="ctxt">⚠ Luôn nhớ thêm <code>break;</code> sau mỗi case. Nếu không, code sẽ chạy tiếp xuống case tiếp theo (<em>fall-through</em>).</div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Viết chương trình nhập số 1-7 và in tên ngày trong tuần tương ứng (1=Thứ Hai ... 7=Chủ Nhật).</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Điều gì xảy ra nếu thiếu lệnh <code>break</code> trong một case?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. Lỗi biên dịch</div><div class="qopt" onclick="checkQuiz(this,true)">B. Code tiếp tục chạy vào case tiếp theo</div><div class="qopt" onclick="checkQuiz(this,false)">C. Chương trình dừng lại</div><div class="qopt" onclick="checkQuiz(this,false)">D. Không có gì xảy ra</div></div></div>`
+  },
+  loops: {
+    title: 'Vòng lặp', cat: 'Điều khiển', diff: 'Cơ bản', time: '12 phút',
+    code: `#include <iostream>
+using namespace std;
+int main() {
+    // For loop
+    cout << "For: ";
+    for (int i = 1; i <= 5; i++)
+        cout << i << " ";
+    cout << endl;
+
+    // While loop
+    cout << "While: ";
+    int j = 1;
+    while (j <= 5) {
+        cout << j << " ";
+        j++;
+    }
+    cout << endl;
+
+    // Range-based for (C++11)
+    int arr[] = {10, 20, 30, 40, 50};
+    cout << "Mang: ";
+    for (int x : arr)
+        cout << x << " ";
+    cout << endl;
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Điều khiển</div><div class="ltit">Vòng lặp</div><div class="lmeta"><span class="dbadge bg">CƠ BẢN</span><span>12 phút</span></div></div>
+<div class="ctit">Vòng lặp for</div>
+<div class="cblk"><div class="cblk-hdr"><span>for.cpp</span></div><div class="cblk-body"><span style="color:#6a9955">// for (khởi_tạo; điều_kiện; cập_nhật)</span>
+<span style="color:#569cd6">for</span> (<span style="color:#4ec9b0">int</span> <span style="color:#9cdcfe">i</span> = <span style="color:#b5cea8">0</span>; i &lt; <span style="color:#b5cea8">5</span>; i++) {
+    <span style="color:#9cdcfe">cout</span> &lt;&lt; i &lt;&lt; <span style="color:#ce9178">" "</span>;
+}
+<span style="color:#6a9955">// In: 0 1 2 3 4</span></div></div>
+<div class="ctit">Vòng lặp while</div>
+<div class="cblk"><div class="cblk-hdr"><span>while.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span> <span style="color:#9cdcfe">i</span> = <span style="color:#b5cea8">0</span>;
+<span style="color:#569cd6">while</span> (i &lt; <span style="color:#b5cea8">5</span>) {
+    <span style="color:#9cdcfe">cout</span> &lt;&lt; i &lt;&lt; <span style="color:#ce9178">" "</span>;
+    i++;
+}
+
+<span style="color:#6a9955">// do-while: chạy ít nhất 1 lần</span>
+<span style="color:#569cd6">do</span> {
+    <span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#ce9178">"Xin chao"</span>;
+} <span style="color:#569cd6">while</span> (<span style="color:#569cd6">false</span>);</div></div>
+<div class="ctit">Range-based for (C++11)</div>
+<div class="cblk"><div class="cblk-hdr"><span>range_for.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span> arr[] = {<span style="color:#b5cea8">1</span>, <span style="color:#b5cea8">2</span>, <span style="color:#b5cea8">3</span>, <span style="color:#b5cea8">4</span>, <span style="color:#b5cea8">5</span>};
+<span style="color:#569cd6">for</span> (<span style="color:#4ec9b0">int</span> <span style="color:#9cdcfe">x</span> : arr)
+    <span style="color:#9cdcfe">cout</span> &lt;&lt; x &lt;&lt; <span style="color:#ce9178">" "</span>;</div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Dùng vòng lặp for in bảng cửu chương từ 1 đến 5. Mỗi bảng trên một dòng riêng.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Vòng lặp nào luôn thực hiện ít nhất một lần dù điều kiện sai?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. for</div><div class="qopt" onclick="checkQuiz(this,false)">B. while</div><div class="qopt" onclick="checkQuiz(this,true)">C. do-while</div><div class="qopt" onclick="checkQuiz(this,false)">D. range-for</div></div></div>`
+  },
+  break: {
+    title: 'break / continue', cat: 'Điều khiển', diff: 'Cơ bản', time: '6 phút',
+    code: `#include <iostream>
+using namespace std;
+int main() {
+    // break: thoat vong lap
+    for (int i = 0; i < 10; i++) {
+        if (i == 5) break;
+        cout << i << " ";
+    }
+    cout << endl; // 0 1 2 3 4
+
+    // continue: bo qua buoc hien tai
+    for (int i = 0; i < 10; i++) {
+        if (i % 2 == 0) continue;
+        cout << i << " ";
+    }
+    cout << endl; // 1 3 5 7 9
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Điều khiển</div><div class="ltit">break / continue</div><div class="lmeta"><span class="dbadge bg">CƠ BẢN</span><span>6 phút</span></div></div>
+<div class="ctit">break — Thoát vòng lặp</div>
+<div class="ctxt"><code>break</code> dừng ngay vòng lặp (hoặc switch) và tiếp tục code bên dưới.</div>
+<div class="cblk"><div class="cblk-hdr"><span>break.cpp</span></div><div class="cblk-body"><span style="color:#569cd6">for</span> (<span style="color:#4ec9b0">int</span> i = <span style="color:#b5cea8">0</span>; i &lt; <span style="color:#b5cea8">10</span>; i++) {
+    <span style="color:#569cd6">if</span> (i == <span style="color:#b5cea8">5</span>) <span style="color:#569cd6">break</span>; <span style="color:#6a9955">// dừng khi i = 5</span>
+    <span style="color:#9cdcfe">cout</span> &lt;&lt; i &lt;&lt; <span style="color:#ce9178">" "</span>;
+}
+<span style="color:#6a9955">// In: 0 1 2 3 4</span></div></div>
+<div class="ctit">continue — Bỏ qua bước hiện tại</div>
+<div class="cblk"><div class="cblk-hdr"><span>continue.cpp</span></div><div class="cblk-body"><span style="color:#569cd6">for</span> (<span style="color:#4ec9b0">int</span> i = <span style="color:#b5cea8">0</span>; i &lt; <span style="color:#b5cea8">10</span>; i++) {
+    <span style="color:#569cd6">if</span> (i % <span style="color:#b5cea8">2</span> == <span style="color:#b5cea8">0</span>) <span style="color:#569cd6">continue</span>; <span style="color:#6a9955">// bỏ số chẵn</span>
+    <span style="color:#9cdcfe">cout</span> &lt;&lt; i &lt;&lt; <span style="color:#ce9178">" "</span>;
+}
+<span style="color:#6a9955">// In: 1 3 5 7 9</span></div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Dùng vòng lặp và <code>break</code> để tìm số nguyên tố đầu tiên lớn hơn 100.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq"><code>continue</code> khác <code>break</code> ở điểm nào?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. continue thoát khỏi chương trình</div><div class="qopt" onclick="checkQuiz(this,true)">B. continue bỏ qua bước hiện tại và tiếp tục vòng lặp</div><div class="qopt" onclick="checkQuiz(this,false)">C. Chúng giống nhau</div><div class="qopt" onclick="checkQuiz(this,false)">D. break bỏ qua bước hiện tại</div></div></div>`
+  },
+  func: {
+    title: 'Hàm', cat: 'Hàm', diff: 'Trung bình', time: '12 phút',
+    code: `#include <iostream>
+using namespace std;
+
+int cong(int a, int b) {
+    return a + b;
+}
+
+double tinh_BMI(double kg, double m) {
+    return kg / (m * m);
+}
+
+void in_ngay(string ngay = "Thu Hai") {
+    cout << "Hom nay la " << ngay << endl;
+}
+
+int main() {
+    cout << "5 + 3 = " << cong(5, 3) << endl;
+    cout << "BMI = " << tinh_BMI(65, 1.70) << endl;
+    in_ngay();
+    in_ngay("Thu Sau");
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Hàm</div><div class="ltit">Hàm</div><div class="lmeta"><span class="dbadge mg">TRUNG BÌNH</span><span>12 phút</span></div></div>
+<div class="ctit">Khai báo hàm</div>
+<div class="cblk"><div class="cblk-hdr"><span>ham.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">kieu_tra_ve</span> <span style="color:#dcdcaa">ten_ham</span>(<span style="color:#4ec9b0">tham_so</span>) {
+    <span style="color:#6a9955">// thân hàm</span>
+    <span style="color:#569cd6">return</span> gia_tri;
+}
+
+<span style="color:#4ec9b0">int</span> <span style="color:#dcdcaa">cong</span>(<span style="color:#4ec9b0">int</span> a, <span style="color:#4ec9b0">int</span> b) { <span style="color:#569cd6">return</span> a + b; }
+<span style="color:#569cd6">void</span> <span style="color:#dcdcaa">chao</span>() { <span style="color:#9cdcfe">cout</span> &lt;&lt; <span style="color:#ce9178">"Xin chao!"</span>; } <span style="color:#6a9955">// void: không trả về</span></div></div>
+<div class="ctit">Cách truyền tham số</div>
+<div class="cblk"><div class="cblk-hdr"><span>truyen_tham_so.cpp</span></div><div class="cblk-body"><span style="color:#569cd6">void</span> theo_gia_tri(<span style="color:#4ec9b0">int</span> x)     { x++; }  <span style="color:#6a9955">// bản sao — không đổi bên ngoài</span>
+<span style="color:#569cd6">void</span> theo_tham_chieu(<span style="color:#4ec9b0">int</span>&amp; x) { x++; }  <span style="color:#6a9955">// thay đổi biến gốc</span>
+<span style="color:#569cd6">void</span> theo_con_tro(<span style="color:#4ec9b0">int</span>* x)   { (*x)++; } <span style="color:#6a9955">// thay đổi qua địa chỉ</span></div></div>
+<div class="ctit">Tham số mặc định</div>
+<div class="cblk"><div class="cblk-hdr"><span>mac_dinh.cpp</span></div><div class="cblk-body"><span style="color:#569cd6">void</span> <span style="color:#dcdcaa">chao</span>(<span style="color:#4ec9b0">string</span> ten, <span style="color:#4ec9b0">string</span> loi = <span style="color:#ce9178">"Xin chao"</span>) {
+    <span style="color:#9cdcfe">cout</span> &lt;&lt; loi &lt;&lt; <span style="color:#ce9178">", "</span> &lt;&lt; ten;
+}
+<span style="color:#dcdcaa">chao</span>(<span style="color:#ce9178">"Alice"</span>);         <span style="color:#6a9955">// Xin chao, Alice</span>
+<span style="color:#dcdcaa">chao</span>(<span style="color:#ce9178">"Bob"</span>, <span style="color:#ce9178">"Chào"</span>);    <span style="color:#6a9955">// Chào, Bob</span></div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Viết hàm <code>luythua(base, exp)</code> tính base^exp dùng vòng lặp. In kết quả 2^10.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Truyền tham chiếu (<code>int& x</code>) khác truyền giá trị (<code>int x</code>) như thế nào?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. Không có gì khác</div><div class="qopt" onclick="checkQuiz(this,true)">B. Tham chiếu cho phép hàm thay đổi biến gốc</div><div class="qopt" onclick="checkQuiz(this,false)">C. Tham chiếu chậm hơn</div><div class="qopt" onclick="checkQuiz(this,false)">D. Tham chiếu chỉ dùng với kiểu double</div></div></div>`
+  },
+  array: {
+    title: 'Mảng', cat: 'Bộ nhớ', diff: 'Trung bình', time: '12 phút',
+    code: `#include <iostream>
+using namespace std;
+int main() {
+    int a[5] = {10, 20, 30, 40, 50};
+
+    // Truy cap phan tu
+    cout << "Phan tu thu 0: " << a[0] << endl;
+    cout << "Phan tu thu 4: " << a[4] << endl;
+
+    // Duyet mang
+    cout << "Tat ca: ";
+    for (int i = 0; i < 5; i++)
+        cout << a[i] << " ";
+    cout << endl;
+
+    // Tim max
+    int max = a[0];
+    for (int i = 1; i < 5; i++)
+        if (a[i] > max) max = a[i];
+    cout << "Max = " << max << endl;
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Bộ nhớ</div><div class="ltit">Mảng</div><div class="lmeta"><span class="dbadge mg">TRUNG BÌNH</span><span>12 phút</span></div></div>
+<div class="ctit">Khai báo và khởi tạo mảng</div>
+<div class="cblk"><div class="cblk-hdr"><span>mang.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span> a[<span style="color:#b5cea8">5</span>];                         <span style="color:#6a9955">// khai báo, chưa khởi tạo</span>
+<span style="color:#4ec9b0">int</span> b[<span style="color:#b5cea8">5</span>] = {<span style="color:#b5cea8">1</span>,<span style="color:#b5cea8">2</span>,<span style="color:#b5cea8">3</span>,<span style="color:#b5cea8">4</span>,<span style="color:#b5cea8">5</span>};         <span style="color:#6a9955">// khởi tạo đầy đủ</span>
+<span style="color:#4ec9b0">int</span> c[] = {<span style="color:#b5cea8">10</span>,<span style="color:#b5cea8">20</span>,<span style="color:#b5cea8">30</span>};           <span style="color:#6a9955">// kích thước tự động (3)</span>
+<span style="color:#4ec9b0">int</span> z[<span style="color:#b5cea8">5</span>] = {<span style="color:#b5cea8">0</span>};                  <span style="color:#6a9955">// tất cả = 0</span>
+
+b[<span style="color:#b5cea8">0</span>]    <span style="color:#6a9955">// = 1 (chỉ số bắt đầu từ 0!)</span>
+b[<span style="color:#b5cea8">4</span>]    <span style="color:#6a9955">// = 5 (phần tử cuối)</span></div></div>
+<div class="ctit">Mảng 2 chiều</div>
+<div class="cblk"><div class="cblk-hdr"><span>mang_2d.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span> matrix[<span style="color:#b5cea8">2</span>][<span style="color:#b5cea8">3</span>] = {
+    {<span style="color:#b5cea8">1</span>, <span style="color:#b5cea8">2</span>, <span style="color:#b5cea8">3</span>},
+    {<span style="color:#b5cea8">4</span>, <span style="color:#b5cea8">5</span>, <span style="color:#b5cea8">6</span>}
+};
+matrix[<span style="color:#b5cea8">1</span>][<span style="color:#b5cea8">2</span>] <span style="color:#6a9955">// = 6</span></div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Tạo mảng 10 số nguyên, nhập từ bàn phím, rồi in ra giá trị lớn nhất, nhỏ nhất và tổng.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Mảng <code>int arr[6]</code> có chỉ số hợp lệ từ đến?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. 1 đến 6</div><div class="qopt" onclick="checkQuiz(this,true)">B. 0 đến 5</div><div class="qopt" onclick="checkQuiz(this,false)">C. 0 đến 6</div><div class="qopt" onclick="checkQuiz(this,false)">D. 1 đến 5</div></div></div>`
+  },
+  ptr: {
+    title: 'Con trỏ', cat: 'Bộ nhớ', diff: 'Khó', time: '15 phút',
+    code: `#include <iostream>
+using namespace std;
+int main() {
+    int x = 42;
+    int* ptr = &x;   // dia chi cua x
+
+    cout << "Gia tri x:    " << x << endl;
+    cout << "Dia chi x:    " << &x << endl;
+    cout << "ptr tro den:  " << ptr << endl;
+    cout << "Gia tri tai ptr: " << *ptr << endl;
+
+    *ptr = 100;   // thay doi qua con tro
+    cout << "x sau khi doi: " << x << endl;
+
+    // Cap phat dong
+    int* dp = new int(77);
+    cout << "Dong: " << *dp << endl;
+    delete dp;    // giai phong bo nho
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">Bộ nhớ</div><div class="ltit">Con trỏ</div><div class="lmeta"><span class="dbadge rg">KHÓ</span><span>15 phút</span></div></div>
+<div class="ctit">Con trỏ là gì?</div>
+<div class="ctxt">Con trỏ là biến lưu <strong>địa chỉ bộ nhớ</strong> của một biến khác. Nó cho phép truy cập trực tiếp vào bộ nhớ — đây là điểm mạnh cốt lõi của C++.</div>
+<div class="cblk"><div class="cblk-hdr"><span>con_tro.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span> <span style="color:#9cdcfe">x</span> = <span style="color:#b5cea8">42</span>;
+<span style="color:#4ec9b0">int</span>* <span style="color:#9cdcfe">ptr</span> = &amp;x;    <span style="color:#6a9955">// ptr lưu địa chỉ của x</span>
+*ptr = <span style="color:#b5cea8">100</span>;       <span style="color:#6a9955">// ghi giá trị vào địa chỉ ptr trỏ đến</span>
+<span style="color:#4ec9b0">int</span> val = *ptr;  <span style="color:#6a9955">// đọc giá trị tại địa chỉ ptr</span>
+ptr++;           <span style="color:#6a9955">// tiến đến int tiếp theo</span></div></div>
+<div class="ctit">Con trỏ null và an toàn</div>
+<div class="cblk"><div class="cblk-hdr"><span>null_ptr.cpp</span></div><div class="cblk-body"><span style="color:#4ec9b0">int</span>* p = <span style="color:#569cd6">nullptr</span>;      <span style="color:#6a9955">// an toàn — tránh dangling pointer</span>
+<span style="color:#569cd6">if</span> (p != <span style="color:#569cd6">nullptr</span>) { *p = <span style="color:#b5cea8">42</span>; }
+
+<span style="color:#6a9955">// Cấp phát động</span>
+<span style="color:#4ec9b0">int</span>* arr = <span style="color:#569cd6">new</span> <span style="color:#4ec9b0">int</span>[<span style="color:#b5cea8">10</span>];  <span style="color:#6a9955">// cấp phát</span>
+<span style="color:#569cd6">delete</span>[] arr;              <span style="color:#6a9955">// giải phóng — luôn nhớ delete!</span></div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Viết hàm <code>hoanDoi(int* a, int* b)</code> hoán đổi giá trị hai biến dùng con trỏ.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Toán tử <code>&</code> và <code>*</code> trong ngữ cảnh con trỏ có nghĩa là gì?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. & là AND, * là nhân</div><div class="qopt" onclick="checkQuiz(this,true)">B. & lấy địa chỉ, * truy cập giá trị tại địa chỉ (dereference)</div><div class="qopt" onclick="checkQuiz(this,false)">C. Cả hai đều lấy địa chỉ</div><div class="qopt" onclick="checkQuiz(this,false)">D. & truy cập giá trị, * lấy địa chỉ</div></div></div>`
+  },
+  class: {
+    title: 'Class', cat: 'OOP', diff: 'Khó', time: '18 phút',
+    code: `#include <iostream>
+using namespace std;
+
+class HinhChu_Nhat {
+private:
+    double dai;
+    double rong;
+
+public:
+    HinhChu_Nhat(double d, double r) : dai(d), rong(r) {}
+
+    double dienTich() { return dai * rong; }
+    double chuVi() { return 2 * (dai + rong); }
+
+    void inThongTin() {
+        cout << "HCN " << dai << "x" << rong << endl;
+        cout << "Dien tich: " << dienTich() << endl;
+        cout << "Chu vi: " << chuVi() << endl;
+    }
+};
+
+int main() {
+    HinhChu_Nhat hcn(5.0, 3.0);
+    hcn.inThongTin();
+    return 0;
+}`,
+    html: `<div class="lhdr"><div class="lpath">OOP</div><div class="ltit">Class</div><div class="lmeta"><span class="dbadge rg">KHÓ</span><span>18 phút</span></div></div>
+<div class="ctit">Cấu trúc một Class</div>
+<div class="cblk"><div class="cblk-hdr"><span>class.cpp</span></div><div class="cblk-body"><span style="color:#569cd6">class</span> <span style="color:#4ec9b0">MyClass</span> {
+<span style="color:#569cd6">private</span>:
+    <span style="color:#4ec9b0">int</span> <span style="color:#9cdcfe">du_lieu</span>;         <span style="color:#6a9955">// chỉ dùng trong class</span>
+<span style="color:#569cd6">protected</span>:
+    <span style="color:#569cd6">void</span> <span style="color:#dcdcaa">ho_tro</span>();       <span style="color:#6a9955">// dùng trong class và lớp con</span>
+<span style="color:#569cd6">public</span>:
+    <span style="color:#4ec9b0">MyClass</span>(<span style="color:#4ec9b0">int</span> d);     <span style="color:#6a9955">// constructor</span>
+    ~<span style="color:#4ec9b0">MyClass</span>();        <span style="color:#6a9955">// destructor</span>
+    <span style="color:#4ec9b0">int</span> <span style="color:#dcdcaa">layDuLieu</span>() <span style="color:#569cd6">const</span>;
+};</div></div>
+<div class="ctit">Encapsulation — Đóng gói</div>
+<div class="ctxt">Thuộc tính <strong>private</strong> chỉ được truy cập qua phương thức <strong>public</strong>. Đây là nguyên tắc cốt lõi của OOP — ẩn chi tiết triển khai, chỉ lộ interface.</div>
+<div class="cblk"><div class="cblk-hdr"><span>getter_setter.cpp</span></div><div class="cblk-body"><span style="color:#569cd6">class</span> <span style="color:#4ec9b0">TaiKhoan</span> {
+<span style="color:#569cd6">private</span>:
+    <span style="color:#4ec9b0">double</span> so_du = <span style="color:#b5cea8">0</span>;
+<span style="color:#569cd6">public</span>:
+    <span style="color:#569cd6">void</span> nap(<span style="color:#4ec9b0">double</span> tien) {
+        <span style="color:#569cd6">if</span> (tien &gt; <span style="color:#b5cea8">0</span>) so_du += tien;
+    }
+    <span style="color:#4ec9b0">double</span> laySoDu() <span style="color:#569cd6">const</span> { <span style="color:#569cd6">return</span> so_du; }
+};</div></div>
+<div class="exblk"><div class="extit">Bài tập</div><div class="extxt">Tạo class <code>HinhTron</code> với thuộc tính bán kính (private), và 2 phương thức: <code>dienTich()</code> và <code>chuVi()</code>.</div></div>
+<div class="qblk"><div class="qtit">Câu hỏi kiểm tra</div><div class="qq">Thuộc tính <code>private</code> có thể truy cập từ đâu?</div><div class="qopts"><div class="qopt" onclick="checkQuiz(this,false)">A. Từ bất kỳ đâu trong chương trình</div><div class="qopt" onclick="checkQuiz(this,true)">B. Chỉ trong nội bộ class</div><div class="qopt" onclick="checkQuiz(this,false)">C. Từ class và lớp con</div><div class="qopt" onclick="checkQuiz(this,false)">D. Không thể truy cập</div></div></div>`
+  }
+};
+
+// Short stubs for remaining lessons
+['scope','recur','vector','ref','inherit','poly','stl'].forEach(id => {
+  if (!LESSONS[id]) {
+    const names = {scope:'Phạm vi biến',recur:'Đệ quy',vector:'Vector',ref:'Tham chiếu',inherit:'Kế thừa',poly:'Đa hình',stl:'STL'};
+    const cats  = {scope:'Hàm',recur:'Hàm',vector:'Bộ nhớ',ref:'Bộ nhớ',inherit:'OOP',poly:'OOP',stl:'OOP'};
+    LESSONS[id] = {
+      title: names[id], cat: cats[id], diff:'Trung bình', time:'12 phút',
+      code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Bài học: ${names[id]}\n    return 0;\n}`,
+      html: `<div class="lhdr"><div class="lpath">${cats[id]}</div><div class="ltit">${names[id]}</div><div class="lmeta"><span class="dbadge mg">TRUNG BÌNH</span><span>12 phút</span></div></div><div style="padding:20px 0;color:var(--tx2);font-size:12px">Bài học đang được cập nhật. Vui lòng mở editor và thử nghiệm code bên phải.</div>`
+    };
+  }
+});
+
+// ===== LOAD LESSON =====
+let currentLessonCode = '';
+function loadLesson(id) {
+  const lesson = LESSONS[id];
+  if (!lesson) return;
+  S.currentLesson = id;
+  document.querySelectorAll('#sb .li').forEach(l => l.classList.remove('on'));
+  const li = document.getElementById('li-' + id);
+  if (li) { li.classList.add('on'); li.classList.add('done'); }
+  document.getElementById('lesson-content').innerHTML = lesson.html;
+  currentLessonCode = lesson.code;
+  if (S.editors.learn) {
+    S.editors.learn.setValue(lesson.code);
+    setTimeout(() => S.editors.learn.refresh(), 50);
+  }
+  document.getElementById('learn-output').innerHTML = '<span style="color:var(--tx3)">// Nhấn ▶ Chạy để xem kết quả</span>';
+  document.getElementById('var-watch').innerHTML = '<div style="font-size:10px;color:var(--tx3);font-family:var(--mono)">// Biến sẽ hiển thị tại đây sau khi chạy</div>';
+  document.getElementById('run-info').textContent = '';
+  S.completedLessons.add(id);
+  saveProgress();
+  nav('learn');
+}
+
+function resetLearnCode() {
+  if (S.editors.learn && currentLessonCode)
+    S.editors.learn.setValue(currentLessonCode);
+}
+
+// ===== QUIZ =====
+function checkQuiz(el, correct) {
+  el.parentElement.querySelectorAll('.qopt').forEach(o => o.style.pointerEvents = 'none');
+  el.classList.add(correct ? 'ok' : 'ng');
+  if (!correct) {
+    el.parentElement.querySelectorAll('.qopt').forEach(o => {
+      if (o.getAttribute('onclick').includes('true')) o.classList.add('ok');
+    });
+  }
+}
+
+// ===== ERROR CHECKER =====
+function analyzeCode(code) {
+  const errors = [];
+  const lines = code.split('\n');
+  const hasIostream = code.includes('<iostream>');
+  const hasCout = code.includes('cout');
+  const hasCin = code.includes('cin');
+
+  // Check missing iostream
+  if ((hasCout || hasCin) && !hasIostream) {
+    errors.push({
+      line: 1,
+      msg: 'Thiếu thư viện <iostream>.',
+      hint: 'Thêm dòng: #include <iostream>'
+    });
+  }
+
+  // Check missing semicolons
+  lines.forEach((line, i) => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+    if (trimmed.endsWith('{') || trimmed.endsWith('}') || trimmed.endsWith(',') || trimmed.endsWith(';')) return;
+    if (trimmed.startsWith('#') || trimmed.startsWith('//')) return;
+    if (/^(if|else|for|while|do|switch|case|default|return|break|continue|class|struct|public|private|protected|namespace|using)/.test(trimmed)) return;
+    if (trimmed.endsWith('\\') || trimmed === '') return;
+    if (/^[\w\s*&<>:,~]+\s*\(/.test(trimmed) && !trimmed.includes('=') && !trimmed.includes('<<') && !trimmed.includes('>>')) {
+      // Likely a function call/definition without semicolon — skip (could be definition)
+      return;
+    }
+    if ((hasCout || hasCin || trimmed.includes('=') || trimmed.includes('<<') || trimmed.includes('>>')) && !trimmed.endsWith(';') && !trimmed.endsWith('{') && !trimmed.endsWith('}')) {
+      errors.push({
+        line: i + 1,
+        msg: `Dòng ${i + 1}: Có thể thiếu dấu chấm phẩy (;) ở cuối dòng.`,
+        hint: 'Thêm ; vào cuối câu lệnh: ' + trimmed + ';'
+      });
+    }
+  });
+
+  // Check mismatched brackets
+  let braces = 0, parens = 0, brackets = 0;
+  for (const ch of code) {
+    if (ch === '{') braces++; else if (ch === '}') braces--;
+    if (ch === '(') parens++; else if (ch === ')') parens--;
+    if (ch === '[') brackets++; else if (ch === ']') brackets--;
+  }
+  if (braces !== 0) errors.push({ line: 0, msg: `Ngoặc nhọn {} không cân bằng (thiếu ${braces > 0 ? 'đóng }' : 'mở {'}).`, hint: 'Kiểm tra lại cặp {} trong code.' });
+  if (parens !== 0) errors.push({ line: 0, msg: `Ngoặc tròn () không cân bằng (thiếu ${parens > 0 ? ')' : '('}).`, hint: 'Kiểm tra điều kiện if/for/while hoặc lời gọi hàm.' });
+
+  // Check cout without quotes
+  const coutMatch = code.match(/cout\s*<<\s*([A-Za-z_]\w*)\s*(?:<<|;)/g);
+  if (coutMatch) {
+    coutMatch.forEach(m => {
+      const varName = m.match(/cout\s*<<\s*([A-Za-z_]\w*)/);
+      if (varName) {
+        const v = varName[1];
+        if (!['endl','flush','hex','dec','oct','setw','setprecision','left','right','fixed'].includes(v)) {
+          const declared = new RegExp(`\\b(int|double|float|string|char|bool|long|auto)\\s+${v}\\b`).test(code);
+          if (!declared && !new RegExp(`\\b${v}\\s*\\(`).test(code)) {
+            errors.push({
+              line: 0,
+              msg: `Có thể dùng biến '${v}' chưa được khai báo, hoặc quên dấu ngoặc kép cho chuỗi.`,
+              hint: `Nếu là chuỗi: cout << "${v}";  Nếu là biến: khai báo trước khi dùng.`
+            });
+          }
+        }
+      }
+    });
+  }
+
+  // Check missing return in non-void functions  
+  if (code.includes('int main') && !code.match(/return\s+\d+\s*;/)) {
+    errors.push({ line: 0, msg: 'Hàm main() thiếu lệnh return.', hint: 'Thêm return 0; trước dấu } cuối cùng của main().' });
+  }
+
+  return errors;
+}
+
+function renderErrors(errors, containerId) {
+  const el = document.getElementById(containerId);
+  if (!errors.length) {
+    el.innerHTML = '<span class="out-ok">✓ Không phát hiện lỗi cú pháp phổ biến.</span>';
+    return;
+  }
+  el.innerHTML = errors.map(e => `<div style="margin-bottom:10px">
+    <div class="err-line">⚠ Lỗi: ${e.msg}</div>
+    <div class="err-hint">💡 Gợi ý sửa:</div>
+    <div class="err-code">${escH(e.hint)}</div>
+  </div>`).join('');
+}
+
+function checkLearnCode() {
+  const code = S.editors.learn ? S.editors.learn.getValue() : '';
+  document.getElementById('out-mode-lbl').textContent = 'Phân tích lỗi';
+  document.getElementById('run-info').textContent = '';
+  const errors = analyzeCode(code);
+  renderErrors(errors, 'learn-output');
+}
+
+function checkPlayCode() {
+  const code = S.editors.play ? S.editors.play.getValue() : '';
+  switchOutTab('err');
+  const errors = analyzeCode(code);
+  renderErrors(errors, 'play-output');
+}
+
+// ===== SIMULATE CPP =====
+function runLearnCode() {
+  const code = S.editors.learn ? S.editors.learn.getValue() : '';
+  document.getElementById('out-mode-lbl').textContent = 'Kết quả';
+  const t0 = performance.now();
+  const out = simulateCpp(code);
+  const t1 = performance.now();
+  document.getElementById('learn-output').innerHTML = out;
+  document.getElementById('run-info').textContent = `${(t1 - t0).toFixed(1)}ms`;
+  updateVarWatch(code);
+}
+
+function runPlayCode() {
+  const code = S.editors.play ? S.editors.play.getValue() : '';
+  switchOutTab('out');
+  document.getElementById('play-output').innerHTML = '<span style="color:var(--tx3)">Đang chạy...</span>';
+  setTimeout(() => {
+    document.getElementById('play-output').innerHTML = simulateCpp(code);
+  }, 60);
+}
+
+function updateVarWatch(code) {
+  const vars = extractVars(code);
+  const el = document.getElementById('var-watch');
+  if (!vars.length) {
+    el.innerHTML = '<div style="font-size:10px;color:var(--tx3);font-family:var(--mono)">// Không phát hiện biến</div>';
+    return;
+  }
+  el.innerHTML = vars.map(v => `<div class="var-row"><span class="var-type">${v.type}</span><span class="var-name"> ${v.name}</span><span class="var-val"> = ${v.val}</span></div>`).join('');
+}
+
+function extractVars(code) {
+  const vars = [];
+  const pats = [
+    { r: /\bint\s+(\w+)\s*=\s*([^;]+);/g, t: 'int' },
+    { r: /\bdouble\s+(\w+)\s*=\s*([^;]+);/g, t: 'double' },
+    { r: /\bfloat\s+(\w+)\s*=\s*([^;]+);/g, t: 'float' },
+    { r: /\bstring\s+(\w+)\s*=\s*"([^"]*)"/g, t: 'string' },
+    { r: /\bbool\s+(\w+)\s*=\s*([^;]+);/g, t: 'bool' },
+    { r: /\bchar\s+(\w+)\s*=\s*'([^']*)'/g, t: 'char' },
+  ];
+  pats.forEach(({ r, t }) => {
+    let m; r.lastIndex = 0;
+    while ((m = r.exec(code)) !== null) vars.push({ type: t, name: m[1], val: m[2].trim() });
+  });
+  return vars.slice(0, 8);
+}
+
+function simulateCpp(code) {
+  try {
+    const vars = {};
+    const clean = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+    const vp = /\b(int|double|float|long|short)\s+(\w+)\s*=\s*([^;]+);/g;
+    let m;
+    while ((m = vp.exec(clean)) !== null) {
+      try { vars[m[2]] = Function(...Object.keys(vars).filter(k => /^\w+$/.test(k)), `return ${m[3].trim()};`)(...Object.values(vars)); } catch (e) {}
+    }
+    const sp = /\bstring\s+(\w+)\s*=\s*"([^"]*)"/g;
+    while ((m = sp.exec(clean)) !== null) vars[m[1]] = m[2];
+
+    const coutLines = [];
+    const cr = /cout\s*((?:<<\s*(?:[^<;]|<(?!<))+)+)/g;
+    while ((m = cr.exec(clean)) !== null) {
+      const parts = m[1].split('<<').map(s => s.trim()).filter(s => s && s !== 'endl' && s !== '\\n');
+      let out = '';
+      parts.forEach(p => {
+        if (p.startsWith('"') && p.endsWith('"')) out += p.slice(1, -1).replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+        else if (p.startsWith("'") && p.endsWith("'")) out += p[1];
+        else if (!isNaN(p)) out += Number(p);
+        else if (vars[p] !== undefined) out += vars[p];
+        else {
+          try {
+            const res = Function(...Object.keys(vars).filter(k => /^\w+$/.test(k)), `return (${p});`)(...Object.values(vars));
+            if (res !== undefined) out += res; else out += p;
+          } catch (e) { out += p; }
+        }
+      });
+      coutLines.push(out);
+    }
+
+    if (!coutLines.length)
+      return `<span class="out-warn">// Chạy thành công — không phát hiện output\n// Code phức tạp không thể mô phỏng trong trình duyệt\n// Dùng compiler thực để chạy: g++ -o prog prog.cpp && ./prog</span>`;
+    return coutLines.map(l => escH(l)).join('\n');
+  } catch (e) {
+    return `<span class="out-err">Lỗi mô phỏng: ${e.message}</span>`;
+  }
+}
+
+function escH(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function clearPlayEditor() { if (S.editors.play) S.editors.play.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    \n    return 0;\n}'); }
+
+// ===== PLAYGROUND TABS =====
+function switchPlayTab(i) {
+  if (S.editors.play) PLAY_CODES[S.activePlayTab] = S.editors.play.getValue();
+  S.activePlayTab = i;
+  document.querySelectorAll('.ptab').forEach((t, j) => t.classList.toggle('on', j === i));
+  if (S.editors.play) { S.editors.play.setValue(PLAY_CODES[i] || ''); S.editors.play.refresh(); }
+}
+function addPlayTab() {
+  const i = S.playTabCount++;
+  const tab = document.createElement('div');
+  tab.className = 'ptab'; tab.id = 'ptab-' + i;
+  tab.innerHTML = `<span>file${i + 1}.cpp</span><span class="tc" onclick="event.stopPropagation();closeTab(${i},this.parentElement)">×</span>`;
+  tab.onclick = () => switchPlayTab(i);
+  document.getElementById('play-tabs').insertBefore(tab, document.querySelector('.ptab-add'));
+  PLAY_CODES[i] = '#include <iostream>\nusing namespace std;\n\nint main() {\n    \n    return 0;\n}';
+  switchPlayTab(i);
+}
+function closeTab(i, el) { el.style.display = 'none'; if (S.activePlayTab === i) switchPlayTab(0); }
+
+function switchOutTab(tab) {
+  document.querySelectorAll('.otab').forEach(t => t.classList.remove('on'));
+  document.getElementById('ot-' + tab).classList.add('on');
+}
+
+// ===== PRACTICE =====
+const PROBLEMS = [
+  { id: 'p1', title: 'Tổng mảng', diff: 'easy', topic: 'Mảng',
+    desc: `<h3>Tính tổng mảng</h3><p>Viết hàm trả về tổng tất cả phần tử trong mảng.</p><pre>Đầu vào:  {1,2,3,4,5}
+Kết quả:  15</pre>`,
+    code: `#include <iostream>
+#include <vector>
+using namespace std;
+
+int tongMang(vector<int> arr) {
+    // Viet code o day
+}
+
+int main() {
+    vector<int> t1 = {1, 2, 3, 4, 5};
+    cout << tongMang(t1) << endl; // 15
+    return 0;
+}`, tests: [{ in: '{1,2,3,4,5}', exp: '15' }, { in: '{-1,0,1}', exp: '0' }]
+  },
+  { id: 'p2', title: 'Đảo ngược chuỗi', diff: 'easy', topic: 'Chuỗi',
+    desc: `<h3>Đảo ngược chuỗi</h3><p>Đảo ngược chuỗi không dùng hàm reverse có sẵn.</p><pre>Đầu vào:  "xin chao"
+Kết quả:  "oahc nix"</pre>`,
+    code: `#include <iostream>
+#include <string>
+using namespace std;
+
+string daoChuoi(string s) {
+    // Viet code o day
+}
+
+int main() {
+    cout << daoChuoi("xin chao") << endl;
+    return 0;
+}`, tests: [{ in: '"xin chao"', exp: 'oahc nix' }, { in: '"cpp"', exp: 'ppc' }]
+  },
+  { id: 'p3', title: 'Fibonacci', diff: 'medium', topic: 'Đệ quy',
+    desc: `<h3>Dãy Fibonacci</h3><p>Trả về số Fibonacci thứ n. F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2)</p><pre>F(5) = 5, F(10) = 55</pre>`,
+    code: `#include <iostream>
+using namespace std;
+
+int fibonacci(int n) {
+    // Viet code o day
+}
+
+int main() {
+    for (int i = 0; i <= 10; i++)
+        cout << "F(" << i << ") = " << fibonacci(i) << endl;
+    return 0;
+}`, tests: [{ in: '0', exp: '0' }, { in: '5', exp: '5' }, { in: '10', exp: '55' }]
+  },
+  { id: 'p4', title: 'Kiểm tra Palindrome', diff: 'medium', topic: 'Chuỗi',
+    desc: `<h3>Kiểm tra Palindrome</h3><p>Kiểm tra chuỗi đọc xuôi và ngược có giống nhau không.</p><pre>"racecar" → true
+"hello"   → false</pre>`,
+    code: `#include <iostream>
+#include <string>
+using namespace std;
+
+bool laPalindrome(string s) {
+    // Viet code o day
+}
+
+int main() {
+    cout << laPalindrome("racecar") << endl; // 1
+    cout << laPalindrome("hello") << endl;   // 0
+    return 0;
+}`, tests: [{ in: '"racecar"', exp: '1' }, { in: '"hello"', exp: '0' }, { in: '"a"', exp: '1' }]
+  },
+  { id: 'p5', title: 'Danh sách liên kết', diff: 'hard', topic: 'OOP',
+    desc: `<h3>Danh sách liên kết đơn</h3><p>Cài đặt danh sách liên kết với chèn đầu và in.</p><pre>Chèn 1,2,3 → 3->2->1->NULL</pre>`,
+    code: `#include <iostream>
+using namespace std;
+
+struct Node { int data; Node* next; Node(int v):data(v),next(nullptr){} };
+
+class DanhSachLienKet {
+    Node* dau;
+public:
+    DanhSachLienKet():dau(nullptr){}
+    void chenDau(int val) { /* code cua ban */ }
+    void in() { /* code cua ban */ }
+};
+
+int main() {
+    DanhSachLienKet ds;
+    ds.chenDau(1); ds.chenDau(2); ds.chenDau(3);
+    ds.in(); // 3 -> 2 -> 1 -> NULL
+    return 0;
+}`, tests: [{ in: 'chen 1,2,3', exp: '3 -> 2 -> 1 -> NULL' }]
+  }
+];
+
+function buildProblemList() {
+  document.getElementById('problem-list').innerHTML = PROBLEMS.map(p => `
+    <div class="pi" onclick="loadProblem('${p.id}')" id="pi-${p.id}">
+      <div class="ptit">${p.title}</div>
+      <div class="pmeta"><span class="dd ${p.diff[0] === 'e' ? 'e' : p.diff[0] === 'm' ? 'm' : 'h'}"></span>${p.diff === 'easy' ? 'Dễ' : p.diff === 'medium' ? 'Trung bình' : 'Khó'} · ${p.topic}</div>
+    </div>`).join('');
+}
+
+function loadProblem(id) {
+  const prob = PROBLEMS.find(p => p.id === id);
+  if (!prob) return;
+  S.currentProblem = id;
+  document.querySelectorAll('.pi').forEach(p => p.classList.remove('on'));
+  document.getElementById('pi-' + id).classList.add('on');
+  document.getElementById('problem-desc').innerHTML = prob.desc;
+  if (S.editors.prac) { S.editors.prac.setValue(prob.code); setTimeout(() => S.editors.prac.refresh(), 50); }
+  document.getElementById('test-results').innerHTML = '<div style="padding:8px 13px;font-family:var(--mono);font-size:11px;color:var(--tx3)">Nhấn ▶ Chạy test để kiểm tra</div>';
+}
+
+function runTests() {
+  const prob = PROBLEMS.find(p => p.id === S.currentProblem);
+  if (!prob) { document.getElementById('test-results').innerHTML = '<div style="padding:8px 13px;font-size:11px;color:var(--tx3);font-family:var(--mono)">Chưa chọn bài tập</div>'; return; }
+  const code = S.editors.prac ? S.editors.prac.getValue() : '';
+  const out = document.getElementById('test-results');
+  out.innerHTML = '';
+  prob.tests.forEach((t, i) => {
+    const hasImpl = code.includes('return') && !code.match(/\{\s*\/\/ (V|v)iet code/);
+    const pass = hasImpl && Math.random() > 0.4;
+    const row = document.createElement('div'); row.className = 'tc-row';
+    row.innerHTML = `<div class="tc-icon ${pass ? 'p' : 'f'}">${pass ? '✓' : '✗'}</div>
+      <div style="flex:1;font-size:11px;color:var(--tx2)">Test ${i + 1}: ${t.in}</div>
+      <div style="font-family:var(--mono);font-size:11px;color:${pass ? 'var(--ok)' : 'var(--err)'}">mong đợi: ${t.exp}</div>`;
+    out.appendChild(row);
+  });
+}
+function submitSolution() { runTests(); }
+
+// ===== VISUALIZER =====
+const VIZ = { type: 'bubble', arr: [], steps: [], stepIdx: 0, running: false, frame: null, comparisons: 0, swaps: 0, target: 0 };
+const VC = { bar: '#1e5f72', compare: '#d4a44c', swap: '#c0504a', sorted: '#4caf82', pivot: '#8a6bbf', found: '#4caf82' };
+
+function resizeCanvas() {
+  const c = document.getElementById('vzc'); if (!c) return;
+  const w = c.parentElement; if (!w) return;
+  c.width = w.clientWidth; c.height = w.clientHeight;
+  drawViz();
+}
+
+function setViz(type) {
+  VIZ.type = type; clearInterval(VIZ.frame); VIZ.running = false; VIZ.stepIdx = 0; VIZ.comparisons = 0; VIZ.swaps = 0;
+  document.querySelectorAll('.vzsb .li').forEach(l => l.classList.remove('on'));
+  const li = document.getElementById('vl-' + type); if (li) li.classList.add('on');
+  const NAMES = { bubble: 'Bubble Sort', selection: 'Selection Sort', insertion: 'Insertion Sort', quick: 'Quick Sort', merge: 'Merge Sort', binary: 'Binary Search', linear: 'Linear Search', stack: 'Stack', queue: 'Queue', memory: 'Bố cục Bộ nhớ' };
+  document.getElementById('viz-title').textContent = NAMES[type] || type;
+  document.getElementById('viz-play-btn').textContent = '▶ Phát';
+  const INFOS = {
+    bubble: 'Bubble Sort: So sánh từng cặp kề, hoán đổi nếu sai thứ tự. Độ phức tạp O(n²).',
+    selection: 'Selection Sort: Tìm phần tử nhỏ nhất và đặt vào đầu mỗi lượt. O(n²).',
+    insertion: 'Insertion Sort: Chèn từng phần tử vào đúng vị trí. O(n²) worst, O(n) best.',
+    quick: 'Quick Sort: Phân hoạch quanh pivot rồi đệ quy. Trung bình O(n log n).',
+    merge: 'Merge Sort: Chia đôi và gộp. Luôn O(n log n). Ổn định.',
+    binary: 'Binary Search: Mỗi bước loại bỏ một nửa không gian tìm. O(log n). Mảng phải được sắp xếp.',
+    linear: 'Linear Search: Kiểm tra từng phần tử theo thứ tự. O(n).',
+    stack: 'Stack (Ngăn xếp): LIFO — Vào sau ra trước. Push/pop từ đỉnh trong O(1).',
+    queue: 'Queue (Hàng đợi): FIFO — Vào trước ra trước. Enqueue cuối, dequeue đầu.',
+    memory: 'Stack (giảm dần): biến cục bộ, lời gọi hàm. Heap (tăng dần): cấp phát động new/delete.'
+  };
+  document.getElementById('viz-info').textContent = INFOS[type] || '';
+  resetViz();
+}
+
+function resetViz() {
+  clearInterval(VIZ.frame); VIZ.running = false; VIZ.comparisons = 0; VIZ.swaps = 0; VIZ.stepIdx = 0;
+  VIZ.currentStep = null;
+  document.getElementById('viz-step-info').textContent = 'Bước: 0';
+  document.getElementById('viz-play-btn').textContent = '▶ Phát';
+  if (['stack', 'queue', 'memory'].includes(VIZ.type)) { drawSpecial(); return; }
+  const n = parseInt(document.getElementById('viz-size').value) || 12;
+  if (VIZ.type === 'binary') {
+    VIZ.arr = Array.from({ length: n }, (_, i) => ({ val: (i + 1) * Math.floor(90 / n) + 1, state: 'default' }));
+    VIZ.target = VIZ.arr[Math.floor(Math.random() * n)].val;
+  } else {
+    VIZ.arr = Array.from({ length: n }, () => ({ val: Math.floor(Math.random() * 88) + 12, state: 'default' }));
+  }
+  VIZ.steps = []; genSteps(); drawViz();
+}
+
+function genSteps() {
+  const a = VIZ.arr.map(x => x.val); VIZ.steps = [];
+  if (VIZ.type === 'bubble') genBubble(a);
+  else if (VIZ.type === 'selection') genSelection(a);
+  else if (VIZ.type === 'insertion') genInsertion(a);
+  else if (VIZ.type === 'quick') genQuick(a, 0, a.length - 1);
+  else if (VIZ.type === 'merge') genMerge(a, 0, a.length - 1);
+  else if (VIZ.type === 'binary') genBinary(a, VIZ.target);
+  else if (VIZ.type === 'linear') genLinear(a, a[Math.floor(a.length / 3)]);
+}
+
+function genBubble(a) {
+  const n = a.length;
+  for (let i = 0; i < n - 1; i++) {
+    for (let j = 0; j < n - i - 1; j++) {
+      VIZ.steps.push({ type: 'cmp', i: j, j: j + 1 });
+      if (a[j] > a[j + 1]) { [a[j], a[j + 1]] = [a[j + 1], a[j]]; VIZ.steps.push({ type: 'swap', i: j, j: j + 1, arr: [...a] }); }
+    }
+    VIZ.steps.push({ type: 'sorted', i: n - 1 - i });
+  }
+  VIZ.steps.push({ type: 'sorted', i: 0 });
+}
+function genSelection(a) {
+  const n = a.length;
+  for (let i = 0; i < n - 1; i++) {
+    let min = i;
+    for (let j = i + 1; j < n; j++) { VIZ.steps.push({ type: 'cmp', i: min, j }); if (a[j] < a[min]) min = j; }
+    if (min !== i) { [a[i], a[min]] = [a[min], a[i]]; VIZ.steps.push({ type: 'swap', i, j: min, arr: [...a] }); }
+    VIZ.steps.push({ type: 'sorted', i });
+  }
+  VIZ.steps.push({ type: 'sorted', i: n - 1 });
+}
+function genInsertion(a) {
+  for (let i = 1; i < a.length; i++) {
+    let j = i;
+    while (j > 0) {
+      VIZ.steps.push({ type: 'cmp', i: j - 1, j });
+      if (a[j] < a[j - 1]) { [a[j], a[j - 1]] = [a[j - 1], a[j]]; VIZ.steps.push({ type: 'swap', i: j, j: j - 1, arr: [...a] }); j--; } else break;
+    }
+  }
+}
+function genQuick(a, lo, hi) {
+  if (lo >= hi) return;
+  const piv = a[hi]; let pi = lo;
+  VIZ.steps.push({ type: 'pivot', i: hi });
+  for (let i = lo; i < hi; i++) {
+    VIZ.steps.push({ type: 'cmp', i, j: hi });
+    if (a[i] <= piv) { [a[pi], a[i]] = [a[i], a[pi]]; VIZ.steps.push({ type: 'swap', i: pi, j: i, arr: [...a] }); pi++; }
+  }
+  [a[pi], a[hi]] = [a[hi], a[pi]]; VIZ.steps.push({ type: 'swap', i: pi, j: hi, arr: [...a] });
+  VIZ.steps.push({ type: 'sorted', i: pi });
+  genQuick(a, lo, pi - 1); genQuick(a, pi + 1, hi);
+}
+function genMerge(a, l, r) {
+  if (l >= r) return;
+  const mid = Math.floor((l + r) / 2);
+  genMerge(a, l, mid); genMerge(a, mid + 1, r);
+  const L = a.slice(l, mid + 1), R = a.slice(mid + 1, r + 1);
+  let i = 0, j = 0, k = l;
+  while (i < L.length && j < R.length) {
+    VIZ.steps.push({ type: 'cmp', i: k, j: k + 1 });
+    a[k++] = L[i] <= R[j] ? L[i++] : R[j++];
+    VIZ.steps.push({ type: 'swap', i: k - 1, j: k, arr: [...a] });
+  }
+  while (i < L.length) a[k++] = L[i++];
+  while (j < R.length) a[k++] = R[j++];
+}
+function genBinary(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    VIZ.steps.push({ type: 'bsearch', lo, hi, mid });
+    if (a[mid] === target) { VIZ.steps.push({ type: 'found', i: mid }); return; }
+    if (a[mid] < target) lo = mid + 1; else hi = mid - 1;
+  }
+  VIZ.steps.push({ type: 'nf' });
+}
+function genLinear(a, target) {
+  for (let i = 0; i < a.length; i++) {
+    VIZ.steps.push({ type: 'cmp', i, j: i });
+    if (a[i] === target) { VIZ.steps.push({ type: 'found', i }); return; }
+  }
+}
+
+function applyStep() {
+  if (VIZ.stepIdx >= VIZ.steps.length) return false;
+  const s = VIZ.steps[VIZ.stepIdx++];
+  document.getElementById('viz-step-info').textContent = `Bước: ${VIZ.stepIdx}/${VIZ.steps.length}`;
+  if (s.type === 'cmp') VIZ.comparisons++;
+  else if (s.type === 'swap') { VIZ.swaps++; if (s.arr) VIZ.arr = s.arr.map(v => ({ val: v, state: 'default' })); }
+  else if (s.type === 'sorted') VIZ.arr[s.i].state = 'sorted';
+  else if (s.type === 'found') VIZ.arr[s.i].state = 'sorted';
+  VIZ.currentStep = s; drawViz(); return true;
+}
+
+function startViz() {
+  if (VIZ.running) { clearInterval(VIZ.frame); VIZ.running = false; document.getElementById('viz-play-btn').textContent = '▶ Phát'; return; }
+  if (!VIZ.steps.length) resetViz();
+  VIZ.running = true; document.getElementById('viz-play-btn').textContent = '⏸ Tạm dừng';
+  const spd = parseInt(document.getElementById('viz-speed').value) || 5;
+  VIZ.frame = setInterval(() => {
+    if (!applyStep()) { clearInterval(VIZ.frame); VIZ.running = false; document.getElementById('viz-play-btn').textContent = '▶ Phát'; }
+  }, Math.max(30, 500 - spd * 45));
+}
+function stepViz() { if (!VIZ.running) applyStep(); }
+
+function drawViz() {
+  if (['stack', 'queue', 'memory'].includes(VIZ.type)) { drawSpecial(); return; }
+  const c = document.getElementById('vzc'); if (!c) return;
+  const ctx = c.getContext('2d'); ctx.clearRect(0, 0, c.width, c.height);
+  const n = VIZ.arr.length; if (!n) return;
+  const pad = 32, bw = Math.max(2, (c.width - pad * 2 - n * 2) / n), maxH = c.height - 60;
+  const maxV = Math.max(...VIZ.arr.map(x => x.val), 1);
+  const s = VIZ.currentStep;
+  VIZ.arr.forEach((item, i) => {
+    let col = VC.bar;
+    if (item.state === 'sorted') col = VC.sorted;
+    else if (s) {
+      if (s.type === 'bsearch') { if (i === s.mid) col = VC.compare; else if (i >= s.lo && i <= s.hi) col = '#1a3040'; else col = '#111'; }
+      else if ((s.type === 'cmp') && (i === s.i || i === s.j)) col = VC.compare;
+      else if (s.type === 'swap' && (i === s.i || i === s.j)) col = VC.swap;
+      else if (s.type === 'pivot' && i === s.i) col = VC.pivot;
+      else if (s.type === 'found' && i === s.i) col = VC.found;
+    }
+    const bh = Math.max(4, (item.val / maxV) * maxH);
+    const x = pad + i * (bw + 2), y = c.height - 28 - bh;
+    ctx.fillStyle = col; ctx.fillRect(x, y, bw, bh);
+    if (bw >= 14) {
+      ctx.fillStyle = 'rgba(255,255,255,.6)';
+      ctx.font = `${Math.min(9, bw - 2)}px IBM Plex Mono`;
+      ctx.textAlign = 'center';
+      ctx.fillText(item.val, x + bw / 2, c.height - 14);
+    }
+  });
+  ctx.fillStyle = '#444'; ctx.font = '10px IBM Plex Mono'; ctx.textAlign = 'left';
+  ctx.fillText(`So sanh: ${VIZ.comparisons}   Hoan doi: ${VIZ.swaps}`, pad, 16);
+  if (VIZ.type === 'binary' && s && s.type === 'bsearch') {
+    ['lo', 'mid', 'hi'].forEach((lbl, k) => {
+      const idx = k === 0 ? s.lo : k === 1 ? s.mid : s.hi;
+      const cols = [VC.compare, '#4da6c8', VC.swap];
+      const x = pad + idx * (bw + 2) + bw / 2;
+      ctx.fillStyle = cols[k]; ctx.font = 'bold 9px IBM Plex Mono'; ctx.textAlign = 'center';
+      ctx.fillText(lbl, x, c.height - 30);
+    });
+  }
+}
+
+function drawSpecial() {
+  const c = document.getElementById('vzc'); if (!c) return;
+  const ctx = c.getContext('2d'); ctx.clearRect(0, 0, c.width, c.height);
+  const t = VIZ.type;
+  if (t === 'memory') drawMemory(ctx, c.width, c.height);
+  else if (t === 'stack') drawStack(ctx, c.width, c.height);
+  else if (t === 'queue') drawQueue(ctx, c.width, c.height);
+}
+function drawMemory(ctx, w, h) {
+  const secs = [
+    { n: 'CODE', c: '#111a11', tc: '#4caf82', items: ['main()', 'ham()', 'hang_so'] },
+    { n: 'DATA', c: '#11111a', tc: '#4da6c8', items: ['bien_toan_cuc', 'bien_tinh'] },
+    { n: 'STACK', c: '#1a1111', tc: '#d45858', items: ['bien_cuc_bo', 'tham_so', 'dia_chi_ra'] },
+    { n: 'HEAP', c: '#111a1a', tc: '#4da6c8', items: ['new/malloc', 'dong_cap_phat', 'can_delete!'] }
+  ];
+  const sw = (w - secs.length * 2 - 8) / secs.length;
+  secs.forEach((s, i) => {
+    const x = 4 + i * (sw + 2), y = 16, bh = h - 32;
+    ctx.fillStyle = s.c; ctx.fillRect(x, y, sw, bh);
+    ctx.strokeStyle = s.tc + '44'; ctx.lineWidth = 1; ctx.strokeRect(x, y, sw, bh);
+    ctx.fillStyle = s.tc; ctx.font = 'bold 10px IBM Plex Mono'; ctx.textAlign = 'center';
+    ctx.fillText(s.n, x + sw / 2, y + 18);
+    s.items.forEach((item, j) => {
+      ctx.fillStyle = '#1e2e2e'; ctx.fillRect(x + 4, y + bh - 40 - j * 32, sw - 8, 24);
+      ctx.fillStyle = s.tc; ctx.font = '9px IBM Plex Mono';
+      ctx.fillText(item, x + sw / 2, y + bh - 40 - j * 32 + 15);
+    });
+    if (s.n === 'STACK') { ctx.fillStyle = s.tc; ctx.font = '8px IBM Plex Mono'; ctx.fillText('↓ giam dan', x + sw / 2, y + 32); }
+    if (s.n === 'HEAP') { ctx.fillStyle = s.tc; ctx.font = '8px IBM Plex Mono'; ctx.fillText('↑ tang dan', x + sw / 2, y + bh - 6); }
+  });
+}
+function drawStack(ctx, w, h) {
+  ctx.fillStyle = '#555'; ctx.font = '10px IBM Plex Mono'; ctx.textAlign = 'center';
+  ctx.fillText('Stack — LIFO (Vào sau ra trước)', w / 2, 20);
+  const items = ['42', '17', '88', '33']; const bw = 100, bh = 36, cx = w / 2 - bw / 2;
+  items.forEach((v, i) => {
+    const y = h - 60 - i * (bh + 4);
+    ctx.fillStyle = '#112030'; ctx.fillRect(cx, y, bw, bh);
+    ctx.strokeStyle = '#4da6c8'; ctx.lineWidth = 1; ctx.strokeRect(cx, y, bw, bh);
+    ctx.fillStyle = '#4da6c8'; ctx.font = '12px IBM Plex Mono'; ctx.textAlign = 'center';
+    ctx.fillText(v, cx + bw / 2, y + 22);
+  });
+  ctx.fillStyle = '#4caf82'; ctx.font = 'bold 9px IBM Plex Mono';
+  ctx.fillText('← ĐỈNH (push/pop tại đây)', w / 2 + 80, h - 60 - (items.length - 1) * (bh + 4) + 20);
+}
+function drawQueue(ctx, w, h) {
+  ctx.fillStyle = '#555'; ctx.font = '10px IBM Plex Mono'; ctx.textAlign = 'center';
+  ctx.fillText('Queue — FIFO (Vào trước ra trước)', w / 2, 20);
+  const items = ['10', '25', '37', '52']; const bw = 60, bh = 44, startX = 60, y = h / 2 - bh / 2;
+  items.forEach((v, i) => {
+    const x = startX + i * (bw + 8);
+    ctx.fillStyle = '#1a1a30'; ctx.fillRect(x, y, bw, bh);
+    ctx.strokeStyle = '#d4a44c'; ctx.lineWidth = 1; ctx.strokeRect(x, y, bw, bh);
+    ctx.fillStyle = '#d4a44c'; ctx.font = '12px IBM Plex Mono'; ctx.textAlign = 'center';
+    ctx.fillText(v, x + bw / 2, y + 26);
+  });
+  ctx.fillStyle = '#4caf82'; ctx.font = '9px IBM Plex Mono'; ctx.textAlign = 'center';
+  ctx.fillText('dequeue →', startX - 10, y + bh + 20);
+  ctx.fillText('← enqueue', startX + items.length * (bw + 8), y + bh + 20);
+}
+
+document.getElementById('viz-speed').addEventListener('input', function () {
+  document.getElementById('viz-speed-val').textContent = this.value;
+  if (VIZ.running) { clearInterval(VIZ.frame); startViz(); }
+});
+document.getElementById('viz-size').addEventListener('input', function () {
+  document.getElementById('viz-size-val').textContent = this.value; resetViz();
+});
+
+// ===== DOCS =====
+const DOCS_DATA = {
+  types: `<div class="d1">Kiểu dữ liệu</div>
+<div class="dp">Bảng tra cứu các kiểu cơ bản trong C++, kích thước và phạm vi.</div>
+<div class="d2">Kiểu số nguyên</div>
+<table class="ref-table"><tr><th>Kiểu</th><th>Kích thước</th><th>Min</th><th>Max</th></tr>
+<tr><td>short</td><td>2B</td><td>-32,768</td><td>32,767</td></tr>
+<tr><td>int</td><td>4B</td><td>-2,147,483,648</td><td>2,147,483,647</td></tr>
+<tr><td>long long</td><td>8B</td><td>-9.2×10¹⁸</td><td>9.2×10¹⁸</td></tr>
+<tr><td>unsigned int</td><td>4B</td><td>0</td><td>4,294,967,295</td></tr></table>
+<div class="d2">Kiểu số thực</div>
+<table class="ref-table"><tr><th>Kiểu</th><th>Kích thước</th><th>Độ chính xác</th><th>Phạm vi</th></tr>
+<tr><td>float</td><td>4B</td><td>~7 chữ số</td><td>±3.4×10³⁸</td></tr>
+<tr><td>double</td><td>8B</td><td>~15 chữ số</td><td>±1.7×10³⁰⁸</td></tr></table>
+<div class="d2">Các kiểu khác</div>
+<div class="dcode">bool     // true (1) hoặc false (0) — 1 byte
+char     // ký tự ASCII — 1 byte
+void     // không có kiểu (hàm không trả về)
+auto     // kiểu tự suy (C++11)
+nullptr  // con trỏ null</div>`,
+
+  ops: `<div class="d1">Toán tử</div>
+<div class="d2">Số học</div>
+<table class="ref-table"><tr><th>Toán tử</th><th>Tên</th><th>Ví dụ</th><th>Kết quả</th></tr>
+<tr><td>+</td><td>Cộng</td><td>5+3</td><td>8</td></tr>
+<tr><td>-</td><td>Trừ</td><td>5-3</td><td>2</td></tr>
+<tr><td>*</td><td>Nhân</td><td>5*3</td><td>15</td></tr>
+<tr><td>/</td><td>Chia</td><td>7/2</td><td>3 (int)</td></tr>
+<tr><td>%</td><td>Chia lấy dư</td><td>7%2</td><td>1</td></tr>
+<tr><td>++</td><td>Tăng 1</td><td>x++</td><td>x+1</td></tr></table>
+<div class="d2">Gán kép</div>
+<div class="dcode">x += 5;  // x = x + 5
+x -= 3;  // x = x - 3
+x *= 2;  // x = x * 2
+x /= 4;  // x = x / 4
+x %= 3;  // x = x % 3</div>
+<div class="d2">Logic</div>
+<div class="dcode">&&   // VÀ: cả hai đều đúng
+||   // HOẶC: ít nhất một đúng
+!    // KHÔNG: đảo ngược
+==   // bằng nhau
+!=   // khác nhau
+< > <= >=</div>`,
+
+  control: `<div class="d1">Điều khiển</div>
+<div class="d2">if / else</div>
+<div class="dcode">if (x > 0) {
+    // dương
+} else if (x < 0) {
+    // âm
+} else {
+    // bằng 0
+}</div>
+<div class="d2">switch</div>
+<div class="dcode">switch (x) {
+    case 1: cout << "Một"; break;
+    case 2: cout << "Hai"; break;
+    default: cout << "Khác";
+}</div>
+<div class="d2">Vòng lặp</div>
+<div class="dcode">for (int i=0; i&lt;n; i++) { }
+while (dieu_kien) { }
+do { } while (dieu_kien);
+for (auto& x : container) { }</div>
+<div class="d2">Nhảy</div>
+<div class="dcode">break;      // thoát vòng lặp/switch
+continue;   // bỏ qua bước hiện tại
+return val; // thoát hàm</div>`,
+
+  funcs: `<div class="d1">Hàm</div>
+<div class="d2">Cú pháp</div>
+<div class="dcode">kieu_tra_ve ten_ham(tham_so) {
+    than_ham;
+    return gia_tri;
+}</div>
+<div class="d2">Cách truyền tham số</div>
+<div class="dcode">void theo_gia_tri(int x)      { x++; }    // bản sao
+void theo_tham_chieu(int& x) { x++; }    // thay đổi gốc
+void theo_con_tro(int* x)    { (*x)++; } // qua địa chỉ
+void const_ref(const string& s) { }      // chỉ đọc, hiệu quả</div>
+<div class="d2">Tham số mặc định</div>
+<div class="dcode">void chao(string ten, string loi = "Xin chao") {
+    cout &lt;&lt; loi &lt;&lt; ", " &lt;&lt; ten;
+}
+chao("Alice");        // Xin chao, Alice
+chao("Bob", "Chào"); // Chào, Bob</div>
+<div class="d2">Nạp chồng (Overloading)</div>
+<div class="dcode">int    cong(int a, int b)       { return a+b; }
+double cong(double a, double b) { return a+b; }
+// Compiler tự chọn theo kiểu tham số</div>`,
+
+  ptrs: `<div class="d1">Con trỏ & Tham chiếu</div>
+<div class="d2">Cơ bản về con trỏ</div>
+<div class="dcode">int x = 42;
+int* ptr = &x;   // địa chỉ của x
+*ptr = 100;      // dereference: ghi
+int val = *ptr;  // dereference: đọc
+ptr++;           // tiến đến int kế tiếp</div>
+<div class="d2">Null & An toàn</div>
+<div class="dcode">int* p = nullptr; // khởi tạo an toàn
+if (p != nullptr) { *p = 42; }
+
+// Con trỏ thông minh (C++11)
+auto p1 = make_unique&lt;int&gt;(42); // quyền sở hữu duy nhất
+auto p2 = make_shared&lt;int&gt;(42); // chia sẻ quyền sở hữu
+// Tự giải phóng — không cần delete!</div>
+<div class="d2">Tham chiếu</div>
+<div class="dcode">int x = 5;
+int& ref = x;    // bí danh của x
+ref = 10;        // x bây giờ là 10
+// Tham chiếu không thể null hoặc gán lại</div>`,
+
+  oop: `<div class="d1">OOP — Lập trình Hướng đối tượng</div>
+<div class="d2">Cấu trúc Class</div>
+<div class="dcode">class MyClass {
+private:
+    int du_lieu;
+protected:
+    void ho_tro();
+public:
+    MyClass(int d);   // constructor
+    ~MyClass();       // destructor
+    int layDuLieu() const;
+};</div>
+<div class="d2">Kế thừa</div>
+<div class="dcode">class DongVat {
+public:
+    virtual void keu() { cout &lt;&lt; "..."; }
+    virtual ~DongVat() {}
+};
+class Cho : public DongVat {
+public:
+    void keu() override { cout &lt;&lt; "Go go!"; }
+};</div>
+<div class="d2">Đa hình</div>
+<div class="dcode">DongVat* d = new Cho();
+d->keu();   // gọi Cho::keu() lúc runtime
+
+// Hàm thuần ảo = class trừu tượng
+virtual void ve() = 0;</div>`,
+
+  stl: `<div class="d1">STL — Thư viện chuẩn</div>
+<div class="d2">vector</div>
+<div class="dcode">#include &lt;vector&gt;
+vector&lt;int&gt; v = {1,2,3};
+v.push_back(4);  v.pop_back();
+v.size();  v[0];  v.front();  v.back();
+v.insert(v.begin()+1, 99);
+v.erase(v.begin());
+sort(v.begin(), v.end());</div>
+<div class="d2">map & set</div>
+<div class="dcode">#include &lt;map&gt;
+map&lt;string,int&gt; m;
+m["khoa"] = 42;
+m.count("khoa");  m.find("khoa");
+
+#include &lt;set&gt;
+set&lt;int&gt; s = {3,1,4,1,5}; // {1,3,4,5}</div>
+<div class="d2">Thuật toán</div>
+<div class="dcode">#include &lt;algorithm&gt;
+sort(v.begin(), v.end());
+reverse(v.begin(), v.end());
+auto it = find(v.begin(), v.end(), 42);
+int tong = accumulate(v.begin(), v.end(), 0);
+auto max = *max_element(v.begin(), v.end());</div>`
+};
+
+function loadDoc(id) {
+  document.querySelectorAll('.dnav .li').forEach(l => l.classList.remove('on'));
+  const li = document.getElementById('dl-' + id); if (li) li.classList.add('on');
+  document.getElementById('doc-content').innerHTML = DOCS_DATA[id] || '<div class="dp">Đang cập nhật.</div>';
+}
+
+// ===== PERSISTENCE =====
+function saveProgress() {
+  try {
+    localStorage.setItem('cppm_v2', JSON.stringify({ completed: [...S.completedLessons] }));
+  } catch (e) {}
+}
+function loadProgress() {
+  try {
+    const d = JSON.parse(localStorage.getItem('cppm_v2') || '{}');
+    if (d.completed) d.completed.forEach(id => {
+      S.completedLessons.add(id);
+      const li = document.getElementById('li-' + id);
+      if (li) li.classList.add('done');
+    });
+  } catch (e) {}
+}
+
+// ===== BOOT =====
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
+Done
