@@ -1,0 +1,428 @@
+# Fix and Upgrade Prompt for Novel Manager Studio
+
+The current version already works, but several core features do not match the intended architecture.
+
+Please refactor and upgrade the application with the following requirements.
+
+---
+
+## 1. Real Folder Management (Critical)
+
+Current issue:
+
+* Folders only exist inside localStorage.
+* They are not actual folders on the user's computer.
+* Chapters are not saved as real files.
+
+Required:
+
+When running as Electron or Tauri desktop application:
+
+### Create Real Project Folder
+
+Example:
+
+```text
+NovelProject/
+├── Chapters/
+├── Config/
+├── Books/
+└── novel-project.json
+```
+
+When user creates a folder in the application:
+
+```text
+Quyển 1
+```
+
+A real folder must be created on disk.
+
+Example:
+
+```text
+NovelProject/
+└── Quyển 1/
+```
+
+When user creates chapters:
+
+```text
+Chương 1
+Chương 2
+```
+
+Generate real files:
+
+```text
+Quyển 1/
+├── Chuong_001.html
+├── Chuong_002.html
+└── novel-config.json
+```
+
+or
+
+```text
+Quyển 1/
+├── Chuong_001.txt
+├── Chuong_002.txt
+└── novel-config.json
+```
+
+All edits must be written directly to disk.
+
+Do NOT use localStorage as the primary storage system.
+
+localStorage may only be used for UI preferences.
+
+---
+
+## 2. Project-Specific Configuration System
+
+Current issue:
+
+The Setup tab only edits global default data.
+
+It is not linked to a specific novel folder.
+
+Required:
+
+Every novel folder must have its own configuration database.
+
+Example:
+
+```text
+Quyển 1/
+├── Chapters/
+├── novel-config.json
+```
+
+The file:
+
+```json
+{
+  "characters": [],
+  "events": [],
+  "locations": [],
+  "organizations": [],
+  "countries": [],
+  "worldRules": [],
+  "items": [],
+  "relationships": []
+}
+```
+
+must be generated automatically.
+
+---
+
+### Setup Workflow
+
+Add:
+
+```text
+[ Chọn thư mục truyện ]
+```
+
+When selecting a folder:
+
+Load:
+
+```text
+novel-config.json
+```
+
+into memory.
+
+Everything inside Setup must edit this file directly.
+
+Examples:
+
+* Character creation
+* Character editing
+* Relationships
+* World rules
+* Events
+* Locations
+
+All changes must be saved into the selected novel folder.
+
+No global shared database.
+
+Each novel project must be completely independent.
+
+---
+
+## 3. Setup Tab Improvements
+
+Current issue:
+
+The Setup tab cannot be used properly until data exists.
+
+Required:
+
+When opening Setup:
+
+If no project is selected:
+
+Show:
+
+```text
+Vui lòng chọn thư mục truyện.
+```
+
+with a project selector.
+
+After selecting:
+
+Display project data.
+
+---
+
+Add:
+
+### Character Search
+
+Search by:
+
+* name
+* nickname
+* importance
+* status
+
+---
+
+### Relationship Search
+
+Search relationships between:
+
+```text
+A -> B
+```
+
+or
+
+```text
+A <-> B
+```
+
+---
+
+### Character Statistics
+
+Show:
+
+```text
+Tổng nhân vật
+Nhân vật chính
+Nhân vật phụ
+Phản diện
+```
+
+---
+
+## 4. Book System Improvements
+
+Current issue:
+
+Generated book HTML has poor typography.
+
+Vietnamese reading experience is not optimized.
+
+Required:
+
+Use high-quality Vietnamese fonts.
+
+Priority:
+
+```css
+"Noto Serif",
+"Source Serif 4",
+"Merriweather",
+serif
+```
+
+for novel text.
+
+UI fonts:
+
+```css
+"Inter",
+"Be Vietnam Pro",
+sans-serif
+```
+
+---
+
+Book typography:
+
+```css
+font-size: 20px;
+line-height: 2;
+max-width: 800px;
+letter-spacing: 0.01em;
+```
+
+Paragraphs:
+
+```css
+text-indent: 2em;
+margin-bottom: 0.5em;
+```
+
+Optimize specifically for long-form Vietnamese reading.
+
+---
+
+## 5. Live Book Update System
+
+Current issue:
+
+Books are generated once and become disconnected.
+
+Required:
+
+Each book must keep references to chapters.
+
+Example:
+
+```json
+{
+  "bookName": "Quyển 1",
+  "chapters": [
+    "chapter001",
+    "chapter002",
+    "chapter003"
+  ]
+}
+```
+
+---
+
+When:
+
+* chapter content changes
+* chapter title changes
+* chapter order changes
+
+Book can be updated automatically.
+
+Add button:
+
+```text
+🔄 Cập nhật quyển
+```
+
+which regenerates the HTML.
+
+---
+
+Optional:
+
+Add:
+
+```text
+☑ Tự động cập nhật quyển
+```
+
+When enabled:
+
+Book HTML regenerates after chapter save.
+
+---
+
+## 6. Better Vietnamese Typography
+
+Current issue:
+
+Current editor fonts are decorative but not ideal for serious novel writing.
+
+Required:
+
+Editor font stack:
+
+```css
+font-family:
+"Be Vietnam Pro",
+"Noto Serif",
+"Source Serif 4",
+serif;
+```
+
+Writing area:
+
+```css
+font-size: 18px;
+line-height: 1.9;
+```
+
+Improve:
+
+* Vietnamese diacritics rendering
+* readability
+* chapter writing comfort
+
+---
+
+## 7. Data Safety
+
+Add:
+
+### Auto Backup
+
+Every save:
+
+```text
+Backups/
+```
+
+folder.
+
+Example:
+
+```text
+Backups/
+├── chapter001_2026-06-02_18-30.html
+├── chapter001_2026-06-02_19-00.html
+```
+
+Keep last:
+
+```text
+20 backups
+```
+
+per chapter.
+
+---
+
+## 8. Future Architecture
+
+Refactor codebase into:
+
+```text
+src/
+
+components/
+pages/
+editor/
+books/
+project/
+setup/
+filesystem/
+graph/
+utils/
+```
+
+Separate:
+
+* UI
+* file system
+* project database
+* editor
+* book generator
+
+Avoid placing everything in a single index.html file.
+
+The application should evolve from a prototype into a real desktop novel-writing software for Vietnamese authors.
