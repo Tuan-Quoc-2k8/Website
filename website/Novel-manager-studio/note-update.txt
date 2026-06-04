@@ -1,240 +1,338 @@
-# Fix and Upgrade Prompt for Novel Manager Studio
+# Book Reader UI & Navigation Redesign
 
-The current version already works, but several core features do not match the intended architecture.
+The exported Book HTML currently functions correctly, but the reading experience is poor for long novels.
 
-Please refactor and upgrade the application with the following requirements.
+Current problems:
+
+* All chapters are merged into one extremely long page.
+* Readers must scroll continuously through dozens or hundreds of chapters.
+* Table of Contents becomes difficult to use when chapter count is large.
+* The interface feels like a raw document rather than a real novel website.
+* Navigation becomes slow and tiring for long stories.
+
+Please redesign the exported Book system to behave like a modern online novel reader.
 
 ---
 
-## 1. Real Folder Management (Critical)
+# 1. Book Home Page
+
+Currently the reader opens directly into the content.
+
+Create a dedicated Novel Home Page before entering the reading interface.
+
+Layout:
+
+```text
+┌─────────────────────────────┐
+│          Cover              │
+└─────────────────────────────┘
+
+Tên truyện
+
+Mô tả truyện
+
+Thông tin tác giả
+
+Thể loại
+
+Trạng thái
+
+Số chương
+
+Ngày tạo
+
+Ngày cập nhật cuối
+
+[ Bắt đầu đọc ]
+[ Tiếp tục đọc ]
+```
+
+---
+
+## Cover Section
+
+Support:
+
+* Upload cover image
+* Responsive display
+* Auto-fit image
+
+---
+
+## Novel Information
+
+Display:
+
+```text
+Tác giả
+
+Số chương
+
+Tổng số từ
+
+Ngày tạo
+
+Ngày cập nhật
+
+Thể loại
+
+Trạng thái
+```
+
+---
+
+# 2. Chapter Separation System
 
 Current issue:
 
-* Folders only exist inside localStorage.
-* They are not actual folders on the user's computer.
-* Chapters are not saved as real files.
+All chapters are rendered into one giant page.
+
+This must be removed.
+
+---
 
 Required:
 
-When running as Electron or Tauri desktop application:
-
-### Create Real Project Folder
+Each chapter should become an independent page/view.
 
 Example:
 
 ```text
-NovelProject/
-├── Chapters/
-├── Config/
-├── Books/
-└── novel-project.json
-```
-
-When user creates a folder in the application:
-
-```text
-Quyển 1
-```
-
-A real folder must be created on disk.
-
-Example:
-
-```text
-NovelProject/
-└── Quyển 1/
-```
-
-When user creates chapters:
-
-```text
-Chương 1
-Chương 2
-```
-
-Generate real files:
-
-```text
-Quyển 1/
-├── Chuong_001.html
-├── Chuong_002.html
-└── novel-config.json
+/index.html
+/chapter-001.html
+/chapter-002.html
+/chapter-003.html
+...
 ```
 
 or
 
 ```text
-Quyển 1/
-├── Chuong_001.txt
-├── Chuong_002.txt
-└── novel-config.json
+index.html?page=chapter001
 ```
 
-All edits must be written directly to disk.
-
-Do NOT use localStorage as the primary storage system.
-
-localStorage may only be used for UI preferences.
+Either solution is acceptable.
 
 ---
 
-## 2. Project-Specific Configuration System
+Benefits:
 
-Current issue:
+* Faster loading
+* Easier navigation
+* Better reading experience
+* Scales to hundreds of chapters
 
-The Setup tab only edits global default data.
+---
 
-It is not linked to a specific novel folder.
+# 3. Reader Layout Redesign
+
+Current reader feels like a plain exported document.
+
+Redesign it to resemble modern novel websites.
+
+Layout:
+
+```text
+┌──────────────────────────────────────┐
+│ Header                               │
+└──────────────────────────────────────┘
+
+┌──────────┬───────────────────────────┐
+│ Mục lục  │                           │
+│           │      Nội dung chương      │
+│ Chương 1 │                           │
+│ Chương 2 │                           │
+│ Chương 3 │                           │
+│ ...       │                           │
+└──────────┴───────────────────────────┘
+```
+
+---
+
+# 4. Collapsible Chapter List
+
+For novels with many chapters:
+
+Current chapter list becomes extremely long.
 
 Required:
 
-Every novel folder must have its own configuration database.
+Automatically group chapters.
 
 Example:
 
 ```text
-Quyển 1/
-├── Chapters/
-├── novel-config.json
+▼ Chương 1 - 20
+
+▼ Chương 21 - 40
+
+▶ Chương 41 - 60
+
+▶ Chương 61 - 80
 ```
 
-The file:
+Only expanded groups show chapter names.
 
-```json
-{
-  "characters": [],
-  "events": [],
-  "locations": [],
-  "organizations": [],
-  "countries": [],
-  "worldRules": [],
-  "items": [],
-  "relationships": []
-}
-```
-
-must be generated automatically.
+This dramatically reduces scrolling.
 
 ---
 
-### Setup Workflow
+Alternative:
 
-Add:
+Add chapter search.
 
-```text
-[ Chọn thư mục truyện ]
-```
-
-When selecting a folder:
-
-Load:
+Example:
 
 ```text
-novel-config.json
+🔍 Tìm chương...
 ```
 
-into memory.
+Typing:
 
-Everything inside Setup must edit this file directly.
+```text
+120
+```
 
-Examples:
+Immediately jumps to:
 
-* Character creation
-* Character editing
-* Relationships
-* World rules
-* Events
-* Locations
-
-All changes must be saved into the selected novel folder.
-
-No global shared database.
-
-Each novel project must be completely independent.
+```text
+Chương 120
+```
 
 ---
 
-## 3. Setup Tab Improvements
+# 5. Floating Navigation
 
-Current issue:
+Add a floating navigation panel.
 
-The Setup tab cannot be used properly until data exists.
+Example:
 
-Required:
+```text
+↑ Đầu truyện
 
-When opening Setup:
+📑 Mục lục
 
-If no project is selected:
+← Chương trước
+
+→ Chương sau
+```
+
+Always visible.
+
+---
+
+# 6. Reading Progress
+
+Save reading progress locally.
+
+When reopening:
 
 Show:
 
 ```text
-Vui lòng chọn thư mục truyện.
+Bạn đang đọc:
+
+Chương 58
+
+[ Tiếp tục đọc ]
 ```
 
-with a project selector.
+---
 
-After selecting:
+# 7. Chapter Reader Optimization
 
-Display project data.
+Reader should only load:
+
+* current chapter
+* previous chapter
+* next chapter
+
+Do NOT load the entire novel at once.
+
+This improves performance for:
+
+* 100+ chapters
+* large projects
+* image-heavy novels
 
 ---
+
+# 8. Reading Themes
 
 Add:
 
-### Character Search
+### Theme 1
 
-Search by:
+Sáng
 
-* name
-* nickname
-* importance
-* status
-
----
-
-### Relationship Search
-
-Search relationships between:
-
-```text
-A -> B
-```
-
-or
-
-```text
-A <-> B
+```css
+background: white;
+color: black;
 ```
 
 ---
 
-### Character Statistics
+### Theme 2
 
-Show:
+Tối
 
-```text
-Tổng nhân vật
-Nhân vật chính
-Nhân vật phụ
-Phản diện
+```css
+background: #1e1e1e;
+color: #eaeaea;
 ```
 
 ---
 
-## 4. Book System Improvements
+### Theme 3
 
-Current issue:
+Giấy sách
 
-Generated book HTML has poor typography.
+```css
+background: #f5edd6;
+color: #333;
+```
 
-Vietnamese reading experience is not optimized.
+---
 
-Required:
+Reader preference should persist.
 
-Use high-quality Vietnamese fonts.
+---
 
-Priority:
+# 9. Chapter Header
+
+Each chapter page should display:
+
+```text
+Tên truyện
+
+Chương 35
+
+Ngày cập nhật
+
+Số từ chương
+```
+
+---
+
+# 10. Better Reading Experience
+
+Improve typography:
+
+```css
+max-width: 850px;
+line-height: 2;
+font-size: 20px;
+margin: auto;
+```
+
+Paragraphs:
+
+```css
+text-indent: 2em;
+margin-bottom: 0.8em;
+```
+
+Vietnamese font priority:
 
 ```css
 "Noto Serif",
@@ -243,186 +341,46 @@ Priority:
 serif
 ```
 
-for novel text.
-
-UI fonts:
-
-```css
-"Inter",
-"Be Vietnam Pro",
-sans-serif
-```
-
 ---
 
-Book typography:
+# 11. Optional Easy Features
 
-```css
-font-size: 20px;
-line-height: 2;
-max-width: 800px;
-letter-spacing: 0.01em;
-```
+These are simple to implement but greatly improve usability.
 
-Paragraphs:
-
-```css
-text-indent: 2em;
-margin-bottom: 0.5em;
-```
-
-Optimize specifically for long-form Vietnamese reading.
-
----
-
-## 5. Live Book Update System
-
-Current issue:
-
-Books are generated once and become disconnected.
-
-Required:
-
-Each book must keep references to chapters.
-
-Example:
-
-```json
-{
-  "bookName": "Quyển 1",
-  "chapters": [
-    "chapter001",
-    "chapter002",
-    "chapter003"
-  ]
-}
-```
-
----
-
-When:
-
-* chapter content changes
-* chapter title changes
-* chapter order changes
-
-Book can be updated automatically.
-
-Add button:
+### Bookmark
 
 ```text
-🔄 Cập nhật quyển
+🔖 Đánh dấu chương
 ```
-
-which regenerates the HTML.
 
 ---
 
-Optional:
-
-Add:
+### Favorite Chapters
 
 ```text
-☑ Tự động cập nhật quyển
+⭐ Yêu thích
 ```
-
-When enabled:
-
-Book HTML regenerates after chapter save.
 
 ---
 
-## 6. Better Vietnamese Typography
+### Quick Jump
 
-Current issue:
-
-Current editor fonts are decorative but not ideal for serious novel writing.
-
-Required:
-
-Editor font stack:
-
-```css
-font-family:
-"Be Vietnam Pro",
-"Noto Serif",
-"Source Serif 4",
-serif;
+```text
+Đi tới chương: [___]
 ```
 
-Writing area:
-
-```css
-font-size: 18px;
-line-height: 1.9;
-```
-
-Improve:
-
-* Vietnamese diacritics rendering
-* readability
-* chapter writing comfort
+Jump instantly without scrolling.
 
 ---
 
-## 7. Data Safety
+# Design Goal
 
-Add:
+Transform the exported Book from a long HTML document into a complete novel-reading website.
 
-### Auto Backup
+The experience should resemble modern online novel platforms, where:
 
-Every save:
-
-```text
-Backups/
-```
-
-folder.
-
-Example:
-
-```text
-Backups/
-├── chapter001_2026-06-02_18-30.html
-├── chapter001_2026-06-02_19-00.html
-```
-
-Keep last:
-
-```text
-20 backups
-```
-
-per chapter.
-
----
-
-## 8. Future Architecture
-
-Refactor codebase into:
-
-```text
-src/
-
-components/
-pages/
-editor/
-books/
-project/
-setup/
-filesystem/
-graph/
-utils/
-```
-
-Separate:
-
-* UI
-* file system
-* project database
-* editor
-* book generator
-
-Avoid placing everything in a single index.html file.
-
-The application should evolve from a prototype into a real desktop novel-writing software for Vietnamese authors.
+* The novel has a homepage.
+* Chapters are separated.
+* Navigation is fast.
+* Readers never need to scroll through hundreds of chapters.
+* The interface remains lightweight and works completely offline.
