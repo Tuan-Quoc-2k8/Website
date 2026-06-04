@@ -1,0 +1,2232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novel Manager Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0b13;--sf:#111120;--sf2:#181828;--sf3:#1e1e30;--sf4:#252540;--bd:#2a2a3e;--bd2:#363650;--ac:#c8a96e;--acl:#e0c88a;--acd:#9a7a40;--tx:#e2d8c4;--tx2:#8a8498;--tx3:#545268;--ok:#5a9478;--okb:rgba(90,148,120,.15);--wn:#c97830;--wnb:rgba(201,120,48,.15);--er:#c05050;--erb:rgba(192,80,80,.15);--in:#5080b8;--inb:rgba(80,128,184,.15);--fh:'Playfair Display',Georgia,serif;--fb:'Crimson Pro',Georgia,serif;--fu:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--fm:'JetBrains Mono',monospace;--r:6px;--r2:10px;--sw:258px;--dw:310px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--fu);background:var(--bg);color:var(--tx);font-size:13px;line-height:1.5;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--sf)}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--tx3)}
+
+/* HEADER */
+#hdr{height:48px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 14px;flex-shrink:0;gap:24px;user-select:none;z-index:10}
+.logo{font-family:var(--fh);font-size:15px;color:var(--ac);font-weight:700;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.logo-icon{font-size:18px}
+.tab-nav{display:flex;gap:2px}
+.tb{padding:5px 16px;border:none;background:transparent;color:var(--tx2);font-family:var(--fu);font-size:12.5px;cursor:pointer;border-radius:var(--r);transition:all .14s;letter-spacing:.01em}
+.tb:hover{color:var(--tx);background:var(--sf3)}
+.tb.on{color:var(--ac);background:var(--sf3);border:1px solid var(--bd);padding:4px 15px}
+.hdr-r{margin-left:auto;display:flex;gap:6px;align-items:center}
+
+/* PANELS */
+.pn{display:none;flex:1;overflow:hidden}
+.pn.on{display:flex}
+
+/* SIDEBAR */
+.sb{width:var(--sw);flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
+.sbh{padding:10px 12px 8px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sbh-title{font-size:10.5px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em}
+.sbb{flex:1;overflow-y:auto;padding:4px 0}
+
+/* ICON BUTTONS */
+.ib{width:26px;height:26px;border:none;background:transparent;color:var(--tx2);cursor:pointer;border-radius:var(--r);display:flex;align-items:center;justify-content:center;transition:all .12s;font-size:14px;flex-shrink:0}
+.ib:hover{background:var(--sf3);color:var(--tx)}
+.ib.on{color:var(--ac)}
+
+/* FOLDER TREE */
+.fi{display:flex;align-items:center;gap:4px;padding:4px 8px 4px 6px;cursor:pointer;border-radius:4px;margin:1px 4px;transition:background .1s;color:var(--tx2)}
+.fi:hover{background:var(--sf3);color:var(--tx)}
+.fi.on{background:var(--sf4);color:var(--ac)}
+.fi-icon{font-size:13px;flex-shrink:0}
+.fi-name{flex:1;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fi-acts{display:none;gap:1px}
+.fi:hover .fi-acts{display:flex}
+.ch-item{display:flex;align-items:center;gap:4px;padding:3px 8px 3px 26px;cursor:pointer;border-radius:4px;margin:1px 4px;color:var(--tx3);transition:background .1s;font-size:12px}
+.ch-item:hover{background:var(--sf3);color:var(--tx2)}
+.ch-item.on{background:var(--sf4);color:var(--ac)}
+.ch-item-dot{width:4px;height:4px;border-radius:50%;background:var(--tx3);flex-shrink:0}
+.ch-item.on .ch-item-dot{background:var(--ac)}
+
+/* EDITOR AREA */
+.ed-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.ed-toolbar{padding:6px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:3px;flex-shrink:0;background:var(--sf);flex-wrap:wrap}
+.ed-toolbar .sep{width:1px;height:18px;background:var(--bd2);margin:0 3px}
+.ed-wrap{flex:1;overflow-y:auto;padding:32px 0;display:flex;justify-content:center}
+.ed-inner{width:100%;max-width:740px;padding:0 20px}
+.ed-ch-title{width:100%;font-family:var(--fh);font-size:22px;font-weight:700;color:var(--tx);background:transparent;border:none;outline:none;margin-bottom:6px;line-height:1.3}
+.ed-ch-title::placeholder{color:var(--tx3)}
+.ed-ch-meta{font-size:11px;color:var(--tx3);margin-bottom:28px;font-family:var(--fm)}
+#editor{min-height:400px;font-family:var(--fb);font-size:17px;line-height:1.85;color:var(--tx);outline:none;caret-color:var(--ac)}
+#editor:empty::before{content:attr(data-placeholder);color:var(--tx3);font-style:italic}
+#editor h1{font-family:var(--fh);font-size:24px;margin:1.4em 0 .4em;color:var(--acl)}
+#editor h2{font-family:var(--fh);font-size:20px;margin:1.2em 0 .4em;color:var(--ac)}
+#editor h3{font-family:var(--fh);font-size:17px;margin:1em 0 .3em;color:var(--tx)}
+#editor p{margin-bottom:.6em}
+#editor strong{color:var(--acl);font-weight:600}
+#editor em{color:var(--tx2);font-style:italic}
+.note-span{background:rgba(200,169,110,.12);color:var(--acl);border-left:2px solid var(--ac);padding:1px 6px;border-radius:2px;font-size:14px}
+.char-ref{color:var(--in);border-bottom:1px dashed var(--in);cursor:pointer;font-style:italic}
+.event-ref{color:var(--ok);border-bottom:1px dashed var(--ok);cursor:pointer}
+.loc-ref{color:var(--wn);border-bottom:1px dashed var(--wn);cursor:pointer}
+
+/* STATUS BAR */
+.stbar{height:28px;background:var(--sf);border-top:1px solid var(--bd);display:flex;align-items:center;padding:0 14px;gap:18px;flex-shrink:0;font-size:11px;color:var(--tx3)}
+.stbar span{display:flex;align-items:center;gap:4px}
+.stbar .lbl{color:var(--tx3)}
+.stbar .val{color:var(--tx2);font-family:var(--fm);font-weight:500}
+.saved-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);display:inline-block}
+.unsaved-dot{width:6px;height:6px;border-radius:50%;background:var(--wn);display:inline-block}
+
+/* COMMAND DROPDOWN */
+#cmd-drop{position:fixed;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--r2);box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:200;min-width:200px;max-height:250px;overflow-y:auto;display:none}
+.cmd-item{padding:7px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--bd)}
+.cmd-item:last-child{border-bottom:none}
+.cmd-item:hover,.cmd-item.sel{background:var(--sf4)}
+.cmd-item-name{font-size:13px;color:var(--tx)}
+.cmd-item-sub{font-size:11px;color:var(--tx3)}
+.cmd-item-badge{font-size:10px;padding:1px 6px;border-radius:10px;font-weight:500}
+.badge-main{background:rgba(200,169,110,.2);color:var(--ac)}
+.badge-hero{background:rgba(80,128,184,.2);color:var(--in)}
+.badge-vil{background:rgba(192,80,80,.2);color:var(--er)}
+.badge-side{background:rgba(90,148,120,.2);color:var(--ok)}
+
+/* WARNINGS */
+#warn-panel{position:fixed;right:14px;bottom:40px;width:280px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--r2);z-index:150;overflow:hidden;display:none;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.warn-hdr{padding:8px 12px;background:var(--sf3);display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600;color:var(--wn)}
+.warn-body{max-height:200px;overflow-y:auto;padding:6px 0}
+.warn-item{padding:6px 12px;font-size:12px;color:var(--tx2);display:flex;gap:6px;border-bottom:1px solid var(--bd)}
+.warn-item:last-child{border-bottom:none}
+.warn-icon{color:var(--wn);flex-shrink:0}
+#warn-btn{padding:4px 10px;font-size:11px;background:var(--wnb);color:var(--wn);border:1px solid rgba(201,120,48,.4);border-radius:var(--r);cursor:pointer}
+
+/* SETUP TAB */
+.setup-wrap{flex:1;display:flex;overflow:hidden}
+.ent-sb{width:200px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
+.cat-item{padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tx2);border-left:2px solid transparent;transition:all .12s}
+.cat-item:hover{color:var(--tx);background:var(--sf3)}
+.cat-item.on{color:var(--ac);background:var(--sf4);border-left-color:var(--ac)}
+.cat-icon{font-size:15px;width:20px;text-align:center}
+.ent-list{flex:1;overflow-y:auto;padding:4px 0}
+.ent-item{padding:6px 14px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--tx2);margin:1px 4px;border-radius:4px}
+.ent-item:hover{background:var(--sf3);color:var(--tx)}
+.ent-item.on{background:var(--sf4);color:var(--ac)}
+.ent-dot{width:6px;height:6px;border-radius:50%;background:var(--tx3);flex-shrink:0}
+.ent-item.on .ent-dot{background:var(--ac)}
+
+/* GRAPH */
+.graph-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative}
+.graph-toolbar{padding:6px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--sf);font-size:12px}
+#graph-svg{flex:1;cursor:default}
+.g-node{cursor:pointer}
+.g-node circle{transition:all .15s}
+.g-node:hover circle{filter:brightness(1.2)}
+.g-edge{cursor:pointer}
+.g-edge line{transition:stroke .15s}
+.g-edge:hover line{stroke:var(--acl) !important}
+.g-label{font-size:11px;fill:var(--tx2);text-anchor:middle;pointer-events:none}
+.edge-label{font-size:10px;fill:var(--tx3);text-anchor:middle;pointer-events:none}
+.graph-hint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--tx3);pointer-events:none;white-space:nowrap}
+
+/* DETAIL PANEL */
+.detail-panel{width:var(--dw);flex-shrink:0;background:var(--sf);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
+.dp-hdr{padding:12px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.dp-hdr h3{font-family:var(--fh);font-size:14px;color:var(--tx)}
+.dp-body{flex:1;overflow-y:auto;padding:12px 14px}
+.dp-empty{display:flex;align-items:center;justify-content:center;flex:1;color:var(--tx3);font-size:13px;font-style:italic;text-align:center;padding:20px}
+
+/* FORMS */
+.form-group{margin-bottom:12px}
+.form-row{display:flex;gap:8px;margin-bottom:12px}
+.form-row .form-group{flex:1;margin-bottom:0}
+label{display:block;font-size:11px;color:var(--tx3);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+input[type=text],input[type=number],textarea,select{width:100%;background:var(--sf3);border:1px solid var(--bd);border-radius:var(--r);padding:6px 9px;color:var(--tx);font-family:var(--fu);font-size:13px;outline:none;transition:border-color .12s;resize:vertical}
+input[type=text]:focus,input[type=number]:focus,textarea:focus,select:focus{border-color:var(--ac)}
+textarea{min-height:70px;line-height:1.5}
+select option{background:var(--sf3)}
+
+/* BUTTONS */
+.btn{padding:6px 14px;border-radius:var(--r);border:none;cursor:pointer;font-family:var(--fu);font-size:12.5px;font-weight:500;transition:all .12s;display:inline-flex;align-items:center;gap:5px}
+.btn-primary{background:var(--ac);color:#1a1200}
+.btn-primary:hover{background:var(--acl)}
+.btn-secondary{background:var(--sf4);color:var(--tx);border:1px solid var(--bd2)}
+.btn-secondary:hover{background:var(--sf3);color:var(--tx)}
+.btn-danger{background:var(--erb);color:var(--er);border:1px solid rgba(192,80,80,.3)}
+.btn-danger:hover{background:rgba(192,80,80,.25)}
+.btn-sm{padding:4px 10px;font-size:11.5px}
+.btn-ghost{background:transparent;color:var(--tx2);border:1px solid var(--bd)}
+.btn-ghost:hover{background:var(--sf3);color:var(--tx)}
+
+/* MODAL */
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;display:none;align-items:center;justify-content:center}
+#modal.on{display:flex}
+.modal-box{background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--r2);width:520px;max-width:96vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal-box.wide{width:680px}
+.modal-hdr{padding:16px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-hdr h2{font-family:var(--fh);font-size:16px;color:var(--tx)}
+.modal-body{flex:1;overflow-y:auto;padding:18px}
+.modal-ftr{padding:12px 18px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;background:var(--sf3)}
+
+/* WORLD RULES */
+.rule-item{padding:10px 12px;border:1px solid var(--bd);border-radius:var(--r);margin-bottom:6px;display:flex;align-items:flex-start;gap:8px;background:var(--sf3);transition:border-color .12s}
+.rule-item:hover{border-color:var(--bd2)}
+.rule-text{flex:1;font-size:13px;color:var(--tx);font-family:var(--fb)}
+.rule-cat{font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(200,169,110,.15);color:var(--ac);font-weight:500;white-space:nowrap;margin-top:2px}
+
+/* BOOK TAB */
+.book-wrap{flex:1;display:flex;overflow:hidden}
+.book-list-panel{width:240px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column}
+.book-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--bd)}
+.book-item:hover{background:var(--sf3)}
+.book-item.on{background:var(--sf4);border-left:2px solid var(--ac)}
+.book-item-title{font-size:13px;color:var(--tx);font-family:var(--fh)}
+.book-item-meta{font-size:11px;color:var(--tx3);margin-top:2px}
+.book-detail{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:24px 32px}
+.book-cover-preview{width:120px;height:170px;border-radius:8px;object-fit:cover;border:1px solid var(--bd2);background:var(--sf3);display:flex;align-items:center;justify-content:center;font-size:40px}
+
+/* CHAPTER SELECT LIST */
+.ch-select-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--bd);border-radius:var(--r);margin-bottom:4px;background:var(--sf3);cursor:pointer;transition:all .12s}
+.ch-select-item:hover{border-color:var(--bd2)}
+.ch-select-item.selected{border-color:var(--ac);background:rgba(200,169,110,.08)}
+.ch-select-item input[type=checkbox]{accent-color:var(--ac);width:14px;height:14px}
+
+/* TOASTS */
+#toast-area{position:fixed;top:60px;right:14px;z-index:600;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{padding:9px 14px;border-radius:var(--r);font-size:12.5px;color:var(--tx);display:flex;align-items:center;gap:7px;animation:slideIn .2s ease;pointer-events:none;max-width:280px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.toast.ok{background:var(--sf2);border:1px solid var(--ok);border-left:3px solid var(--ok)}
+.toast.err{background:var(--sf2);border:1px solid var(--er);border-left:3px solid var(--er)}
+.toast.info{background:var(--sf2);border:1px solid var(--in);border-left:3px solid var(--in)}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+
+/* CONTEXT MENU */
+#ctx-menu{position:fixed;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--r);z-index:400;overflow:hidden;display:none;box-shadow:0 6px 20px rgba(0,0,0,.4);min-width:150px}
+.ctx-item{padding:7px 14px;cursor:pointer;font-size:12.5px;color:var(--tx2);transition:all .1s;display:flex;align-items:center;gap:7px}
+.ctx-item:hover{background:var(--sf4);color:var(--tx)}
+.ctx-item.danger{color:var(--er)}
+.ctx-item.danger:hover{background:var(--erb)}
+.ctx-sep{height:1px;background:var(--bd);margin:2px 0}
+
+/* IMPORTANCE BADGES */
+.imp-badge{font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
+.imp-0{background:rgba(200,169,110,.2);color:var(--ac)}
+.imp-1{background:rgba(80,128,184,.2);color:var(--in)}
+.imp-2{background:rgba(200,80,120,.2);color:#c05080}
+.imp-3{background:rgba(90,148,120,.2);color:var(--ok)}
+.imp-4{background:rgba(192,80,80,.2);color:var(--er)}
+.imp-5{background:rgba(84,82,104,.2);color:var(--tx3)}
+
+/* STATUS BADGES */
+.status-badge{font-size:10px;padding:1px 6px;border-radius:10px}
+.st-alive{background:var(--okb);color:var(--ok)}
+.st-dead{background:var(--erb);color:var(--er)}
+.st-missing{background:var(--wnb);color:var(--wn)}
+.st-unknown{background:rgba(84,82,104,.2);color:var(--tx3)}
+
+/* NO CONTENT */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;color:var(--tx3);font-size:13px;padding:40px;text-align:center}
+.empty-icon{font-size:36px;opacity:.4}
+
+/* TABS INSIDE DETAIL PANEL */
+.dtabs{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:12px;flex-shrink:0}
+.dtab{padding:7px 12px;font-size:12px;color:var(--tx3);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s}
+.dtab:hover{color:var(--tx2)}
+.dtab.on{color:var(--ac);border-bottom-color:var(--ac)}
+
+/* SECTIONS */
+.section-title{font-size:10.5px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin:16px 0 8px}
+.section-title:first-child{margin-top:0}
+.info-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--bd);font-size:12.5px}
+.info-row:last-child{border-bottom:none}
+.info-key{color:var(--tx3)}
+.info-val{color:var(--tx);text-align:right;max-width:60%;word-break:break-word}
+
+/* GRAPH NODE COLORS BY IMPORTANCE */
+.gn-0{fill:#a87830}
+.gn-1{fill:#3a6090}
+.gn-2{fill:#9c3060}
+.gn-3{fill:#2a7050}
+.gn-4{fill:#8c2020}
+.gn-5{fill:#48486c}
+.gn-sel{stroke:#c8a96e !important;stroke-width:3px !important}
+
+/* CONNECTING MODE */
+body.connecting{cursor:crosshair}
+body.connecting .g-node{cursor:crosshair}
+
+/* SEARCH */
+.search-box{padding:6px 8px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--bd)}
+.search-box input{flex:1;background:var(--sf3);border:1px solid var(--bd);border-radius:var(--r);padding:4px 8px;color:var(--tx);font-size:12px;outline:none}
+.search-box input:focus{border-color:var(--ac)}
+
+/* RELATIONSHIP LIST */
+.rel-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.rel-item:last-child{border-bottom:none}
+.rel-arrow{color:var(--tx3);font-size:10px}
+.rel-type{font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(200,169,110,.15);color:var(--ac)}
+
+/* SPLITTER */
+.flex-center{display:flex;align-items:center;justify-content:center}
+.gap-8{gap:8px}
+.gap-4{gap:4px}
+.mt-8{margin-top:8px}
+.mb-8{margin-bottom:8px}
+.text-muted{color:var(--tx3)}
+.text-accent{color:var(--ac)}
+.text-sm{font-size:11.5px}
+.full-width{width:100%}
+
+/* EDITOR TOOLBAR BUTTON */
+.tb-btn{padding:3px 7px;border:none;background:transparent;color:var(--tx2);cursor:pointer;border-radius:4px;font-size:12px;transition:all .1s;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.tb-btn:hover{background:var(--sf4);color:var(--tx)}
+.tb-btn.on{background:var(--sf4);color:var(--ac)}
+.tb-btn b{font-size:13px}
+.tb-btn i{font-style:italic;font-size:13px}
+.tb-select{background:var(--sf3);border:1px solid var(--bd);color:var(--tx2);font-size:11.5px;padding:2px 4px;border-radius:4px;outline:none;cursor:pointer;height:26px}
+.tb-select:focus{border-color:var(--ac)}
+
+/* COLOR INDICATOR */
+.color-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+
+/* LOADING */
+.spinning{animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* FOLD/UNFOLD TOGGLE */
+.fold-btn{font-size:10px;width:14px;height:14px;display:flex;align-items:center;justify-content:center;color:var(--tx3);flex-shrink:0;transition:transform .15s;cursor:pointer}
+.fold-btn.open{transform:rotate(90deg)}
+
+/* TOOLTIP */
+[title]{position:relative}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="hdr">
+  <div class="logo">
+    <span class="logo-icon">📖</span>
+    Novel Manager Studio
+  </div>
+  <nav class="tab-nav">
+    <button class="tb on" onclick="switchTab(0)" id="t0">Trang Chủ</button>
+    <button class="tb" onclick="switchTab(1)" id="t1">Thiết Lập</button>
+    <button class="tb" onclick="switchTab(2)" id="t2">Quyển</button>
+  </nav>
+  <div class="hdr-r">
+    <button id="warn-btn" onclick="toggleWarnings()" title="Cảnh báo">⚠ <span id="warn-count">0</span></button>
+    <button class="btn btn-sm btn-ghost" onclick="exportProject()" title="Xuất dữ liệu">↑ Xuất</button>
+  </div>
+</div>
+
+<!-- TAB 0: TRANG CHỦ -->
+<div class="pn on" id="pn0">
+  <!-- Sidebar: Folders -->
+  <div class="sb">
+    <div class="sbh">
+      <span class="sbh-title">Thư Mục</span>
+      <div style="display:flex;gap:2px">
+        <button class="ib" onclick="createFolder(null)" title="Thêm thư mục">＋</button>
+      </div>
+    </div>
+    <div class="sbb" id="folder-tree"></div>
+  </div>
+
+  <!-- Editor Area -->
+  <div class="ed-area">
+    <div class="ed-toolbar" id="ed-toolbar">
+      <select class="tb-select" onchange="execCmd('formatBlock',this.value);this.value=''" title="Kiểu đoạn">
+        <option value="">Đoạn văn</option>
+        <option value="h1">Tiêu đề 1</option>
+        <option value="h2">Tiêu đề 2</option>
+        <option value="h3">Tiêu đề 3</option>
+        <option value="p">Đoạn văn</option>
+      </select>
+      <span class="sep"></span>
+      <button class="tb-btn" onclick="execCmd('bold')" title="Đậm (Ctrl+B)" id="btn-bold"><b>B</b></button>
+      <button class="tb-btn" onclick="execCmd('italic')" title="Nghiêng (Ctrl+I)" id="btn-italic"><i>I</i></button>
+      <button class="tb-btn" onclick="execCmd('underline')" title="Gạch chân (Ctrl+U)" id="btn-ul"><u>U</u></button>
+      <button class="tb-btn" onclick="execCmd('strikeThrough')" title="Gạch ngang">S̶</button>
+      <span class="sep"></span>
+      <button class="tb-btn" onclick="execCmd('insertUnorderedList')" title="Danh sách">• —</button>
+      <button class="tb-btn" onclick="execCmd('insertOrderedList')" title="Danh sách số">1.</button>
+      <span class="sep"></span>
+      <button class="tb-btn" onclick="insertNote()" title="Chú thích [=[note:]]">📝</button>
+      <button class="tb-btn" onclick="showCmdHelper('name')" title="Chèn nhân vật [=[name:]]">👤</button>
+      <button class="tb-btn" onclick="showCmdHelper('event')" title="Chèn sự kiện [=[event:]]">⚡</button>
+      <button class="tb-btn" onclick="showCmdHelper('location')" title="Chèn địa điểm [=[location:]]">📍</button>
+      <span class="sep"></span>
+      <button class="tb-btn" onclick="execCmd('undo')" title="Hoàn tác (Ctrl+Z)">↩</button>
+      <button class="tb-btn" onclick="execCmd('redo')" title="Làm lại (Ctrl+Y)">↪</button>
+      <span style="margin-left:auto;font-size:11px;color:var(--tx3)" id="autosave-status">Chưa lưu</span>
+    </div>
+
+    <div class="ed-wrap" id="ed-wrap">
+      <div class="ed-inner" id="ed-inner">
+        <div id="no-chapter" class="empty-state">
+          <div class="empty-icon">✍</div>
+          <div>Chọn hoặc tạo một chương để bắt đầu viết</div>
+          <button class="btn btn-primary btn-sm mt-8" onclick="createFolderThenChapter()">Tạo chương đầu tiên</button>
+        </div>
+        <div id="chapter-editor" style="display:none">
+          <input type="text" id="ch-title-input" class="ed-ch-title" placeholder="Tiêu đề chương..." oninput="onChapterTitleChange()" />
+          <div class="ed-ch-meta" id="ch-meta-bar">Chương · Chưa lưu</div>
+          <div id="editor" contenteditable="true"
+               data-placeholder="Bắt đầu viết tại đây... Gõ =[name: để chèn nhân vật, =[note: để thêm ghi chú..."
+               onkeyup="onEditorKeyup(event)"
+               oninput="onEditorInput()"
+               onmouseup="updateToolbarState()"
+               onkeydown="onEditorKeydown(event)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="stbar">
+      <span><span class="lbl">Từ:</span><span class="val" id="sb-words">0</span></span>
+      <span><span class="lbl">Ký tự:</span><span class="val" id="sb-chars">0</span></span>
+      <span><span class="lbl">Đọc:</span><span class="val" id="sb-read">0 phút</span></span>
+      <span><span id="sb-dot" class="saved-dot"></span><span class="val" id="sb-saved">Chưa lưu</span></span>
+      <span style="margin-left:auto" class="text-muted text-sm" id="sb-chap">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 1: THIẾT LẬP -->
+<div class="pn" id="pn1">
+  <div class="setup-wrap">
+    <!-- Entity sidebar -->
+    <div class="ent-sb">
+      <div class="sbh">
+        <span class="sbh-title">Cơ Sở Dữ Liệu</span>
+      </div>
+      <div style="padding:6px 0;border-bottom:1px solid var(--bd)">
+        <div class="cat-item on" onclick="selectCategory('characters')" id="cat-characters">
+          <span class="cat-icon">👤</span> Nhân vật
+        </div>
+        <div class="cat-item" onclick="selectCategory('events')" id="cat-events">
+          <span class="cat-icon">⚡</span> Sự kiện
+        </div>
+        <div class="cat-item" onclick="selectCategory('locations')" id="cat-locations">
+          <span class="cat-icon">📍</span> Địa điểm
+        </div>
+        <div class="cat-item" onclick="selectCategory('organizations')" id="cat-organizations">
+          <span class="cat-icon">🏛</span> Tổ chức
+        </div>
+        <div class="cat-item" onclick="selectCategory('countries')" id="cat-countries">
+          <span class="cat-icon">🗺</span> Quốc gia
+        </div>
+        <div class="cat-item" onclick="selectCategory('worldRules')" id="cat-worldRules">
+          <span class="cat-icon">⚖</span> Quy tắc TG
+        </div>
+        <div class="cat-item" onclick="selectCategory('items')" id="cat-items">
+          <span class="cat-icon">🗡</span> Vật phẩm
+        </div>
+      </div>
+      <div class="search-box">
+        <input type="text" id="ent-search" placeholder="Tìm kiếm..." oninput="renderEntityList()">
+      </div>
+      <div class="ent-list" id="ent-list"></div>
+      <div style="padding:8px;border-top:1px solid var(--bd);flex-shrink:0">
+        <button class="btn btn-primary btn-sm full-width" onclick="createEntity()" id="add-ent-btn">+ Thêm mới</button>
+      </div>
+    </div>
+
+    <!-- Graph -->
+    <div class="graph-area" id="graph-area">
+      <div class="graph-toolbar">
+        <span style="color:var(--tx2)">Đồ thị quan hệ nhân vật</span>
+        <button class="btn btn-sm btn-ghost" onclick="startConnecting()" id="btn-connect">🔗 Kết nối</button>
+        <button class="btn btn-sm btn-ghost" onclick="cancelConnecting()" id="btn-cancel-connect" style="display:none">✕ Hủy kết nối</button>
+        <button class="btn btn-sm btn-ghost" onclick="autoLayout()">⟳ Sắp xếp</button>
+        <button class="btn btn-sm btn-ghost" onclick="resetGraphView()">⊡ Đặt lại</button>
+        <span style="margin-left:auto;font-size:11px;color:var(--tx3)" id="graph-hint-text"></span>
+      </div>
+      <svg id="graph-svg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#545268"/>
+          </marker>
+        </defs>
+        <g id="graph-edges"></g>
+        <g id="graph-nodes"></g>
+      </svg>
+      <div class="graph-hint" id="graph-hint">Kéo để di chuyển nhân vật · Click để chọn · Nhấn "Kết nối" để tạo quan hệ</div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div class="detail-panel">
+      <div id="dp-hdr" class="dp-hdr" style="display:none">
+        <h3 id="dp-title">Chi tiết</h3>
+        <div style="display:flex;gap:4px">
+          <button class="ib" onclick="editCurrentEntity()" title="Chỉnh sửa">✏</button>
+          <button class="ib" onclick="deleteCurrentEntity()" title="Xóa" style="color:var(--er)">🗑</button>
+        </div>
+      </div>
+      <div id="dp-body" class="dp-body">
+        <div class="dp-empty">Chọn một mục từ danh sách hoặc nhấp vào node trong đồ thị</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: QUYỂN -->
+<div class="pn" id="pn2">
+  <div class="book-wrap">
+    <div class="book-list-panel">
+      <div class="sbh">
+        <span class="sbh-title">Danh Sách Quyển</span>
+        <button class="ib" onclick="createBook()" title="Tạo quyển mới">＋</button>
+      </div>
+      <div id="book-list" style="flex:1;overflow-y:auto"></div>
+    </div>
+    <div id="book-detail" style="flex:1;overflow-y:auto;padding:32px;background:var(--bg)">
+      <div class="empty-state">
+        <div class="empty-icon">📚</div>
+        <div>Tạo hoặc chọn một quyển sách để bắt đầu</div>
+        <button class="btn btn-primary mt-8" onclick="createBook()">Tạo quyển mới</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMAND DROPDOWN -->
+<div id="cmd-drop"></div>
+
+<!-- WARNINGS PANEL -->
+<div id="warn-panel">
+  <div class="warn-hdr">
+    <span>⚠ Cảnh Báo</span>
+    <button class="ib" onclick="toggleWarnings()" style="color:var(--tx2)">✕</button>
+  </div>
+  <div class="warn-body" id="warn-body"></div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" onclick="closeModalIfOutside(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-hdr">
+      <h2 id="modal-title">Modal</h2>
+      <button class="ib" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-ftr" id="modal-ftr"></div>
+  </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div id="ctx-menu"></div>
+
+<!-- TOAST AREA -->
+<div id="toast-area"></div>
+
+<script>
+// ============================================================
+// DATA MODEL
+// ============================================================
+let D = {
+  folders: [],
+  chapters: {},
+  characters: [],
+  events: [],
+  locations: [],
+  organizations: [],
+  countries: [],
+  worldRules: [],
+  items: [],
+  relationships: [],
+  graphPositions: {},
+  books: []
+};
+
+const STORE_KEY = 'nms_v1_';
+
+function saveData(key) {
+  try { localStorage.setItem(STORE_KEY + key, JSON.stringify(D[key])); } catch(e) {}
+}
+
+function loadData() {
+  const keys = ['folders','chapters','characters','events','locations','organizations','countries','worldRules','items','relationships','graphPositions','books'];
+  keys.forEach(k => {
+    const s = localStorage.getItem(STORE_KEY + k);
+    if (s) try { D[k] = JSON.parse(s); } catch(e) {}
+  });
+}
+
+function saveAll() {
+  ['folders','chapters','characters','events','locations','organizations','countries','worldRules','items','relationships','graphPositions','books']
+    .forEach(k => saveData(k));
+}
+
+// ============================================================
+// UI STATE
+// ============================================================
+let UI = {
+  activeTab: 0,
+  activeFolderId: null,
+  activeChapterId: null,
+  activeCategory: 'characters',
+  activeEntityId: null,
+  activeBookId: null,
+  editorDirty: false,
+  saveTimer: null,
+  cmdMode: false,
+  cmdType: '',
+  graphConnecting: null,
+  graphDragging: null,
+  graphDragStart: null,
+  graphOffset: { x: 0, y: 0 },
+  folderOpen: {}
+};
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function dateStr(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', {hour:'2-digit',minute:'2-digit'});
+}
+
+function wordCount(text) {
+  const cleaned = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!cleaned) return 0;
+  // Vietnamese word count: count syllables/words separated by spaces
+  return cleaned.split(' ').filter(w => w.length > 0).length;
+}
+
+function readingTime(words) {
+  const mins = Math.ceil(words / 200);
+  if (mins < 1) return '< 1 phút';
+  return mins + ' phút';
+}
+
+function getEntityList(cat) {
+  if (cat === 'characters') return D.characters;
+  if (cat === 'events') return D.events;
+  if (cat === 'locations') return D.locations;
+  if (cat === 'organizations') return D.organizations;
+  if (cat === 'countries') return D.countries;
+  if (cat === 'worldRules') return D.worldRules;
+  if (cat === 'items') return D.items;
+  return [];
+}
+
+function getEntityName(cat, id) {
+  const list = getEntityList(cat);
+  const e = list.find(x => x.id === id);
+  return e ? (e.name || e.rule || '—') : '—';
+}
+
+const IMP_LABELS = ['Nhân vật chính', 'Nam chính', 'Nữ chính', 'Nhân vật phụ', 'Phản diện', 'Khác'];
+const IMP_CLASSES = ['imp-0','imp-1','imp-2','imp-3','imp-4','imp-5'];
+const STATUS_LABELS = { alive: 'Còn sống', dead: 'Đã chết', missing: 'Mất tích', unknown: 'Không rõ' };
+const STATUS_CLASSES = { alive: 'st-alive', dead: 'st-dead', missing: 'st-missing', unknown: 'st-unknown' };
+const REL_TYPES = ['Bạn bè','Người yêu','Vợ chồng','Cha','Mẹ','Con','Kẻ thù','Đồng minh','Sư phụ','Đệ tử','Anh chị em','Thầy trò','Khác'];
+const NODE_COLORS = ['#a87830','#3a6090','#9c3060','#2a7050','#8c2020','#48486c'];
+const CAT_LABELS = { characters:'Nhân vật',events:'Sự kiện',locations:'Địa điểm',organizations:'Tổ chức',countries:'Quốc gia',worldRules:'Quy tắc TG',items:'Vật phẩm' };
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, type = 'ok') {
+  const area = document.getElementById('toast-area');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = (type==='ok'?'✓':type==='err'?'✗':'ℹ') + ' ' + esc(msg);
+  area.appendChild(t);
+  setTimeout(() => { t.style.animation = 'fadeOut .3s ease forwards'; setTimeout(() => t.remove(), 300); }, 2500);
+}
+
+// ============================================================
+// TAB NAVIGATION
+// ============================================================
+function switchTab(n) {
+  UI.activeTab = n;
+  document.querySelectorAll('.pn').forEach((p,i) => p.classList.toggle('on', i===n));
+  document.querySelectorAll('.tb').forEach((b,i) => b.classList.toggle('on', i===n));
+  if (n === 1) { renderEntityList(); renderGraph(); }
+  if (n === 2) { renderBookList(); }
+}
+
+// ============================================================
+// TAB 0: FOLDERS & CHAPTERS
+// ============================================================
+function renderFolderTree() {
+  const tree = document.getElementById('folder-tree');
+  if (!D.folders.length) {
+    tree.innerHTML = '<div class="empty-state" style="padding:20px;text-align:center"><div style="color:var(--tx3);font-size:12px">Chưa có thư mục nào<br><br><button class="btn btn-sm btn-primary" onclick="createFolder(null)">Tạo thư mục</button></div></div>';
+    return;
+  }
+  const rootFolders = D.folders.filter(f => !f.parentId);
+  tree.innerHTML = rootFolders.map(f => renderFolderItem(f, 0)).join('');
+}
+
+function renderFolderItem(folder, depth) {
+  const isOpen = UI.folderOpen[folder.id] !== false;
+  const isActive = UI.activeFolderId === folder.id;
+  const chapters = Object.values(D.chapters).filter(c => c.folderId === folder.id)
+    .sort((a,b) => (a.order||0)-(b.order||0));
+  const subFolders = D.folders.filter(f => f.parentId === folder.id);
+  const indent = depth * 14;
+
+  let html = `<div class="fi ${isActive?'on':''}" style="padding-left:${6+indent}px" 
+    onclick="selectFolder('${folder.id}')"
+    oncontextmenu="folderCtxMenu(event,'${folder.id}')">
+    <span class="fold-btn ${isOpen?'open':''}" onclick="event.stopPropagation();toggleFolderOpen('${folder.id}')">▶</span>
+    <span class="fi-icon">📁</span>
+    <span class="fi-name">${esc(folder.name)}</span>
+    <div class="fi-acts">
+      <button class="ib" style="width:20px;height:20px;font-size:11px" onclick="event.stopPropagation();createChapter('${folder.id}')" title="Thêm chương">＋</button>
+      <button class="ib" style="width:20px;height:20px;font-size:11px" onclick="event.stopPropagation();renameFolder('${folder.id}')" title="Đổi tên">✎</button>
+      <button class="ib" style="width:20px;height:20px;font-size:11px;color:var(--er)" onclick="event.stopPropagation();deleteFolder('${folder.id}')" title="Xóa">✕</button>
+    </div>
+  </div>`;
+
+  if (isOpen) {
+    subFolders.forEach(sf => { html += renderFolderItem(sf, depth+1); });
+    chapters.forEach(ch => {
+      const isChActive = UI.activeChapterId === ch.id;
+      html += `<div class="ch-item ${isChActive?'on':''}" style="padding-left:${26+indent}px"
+        onclick="selectChapter('${ch.id}')"
+        oncontextmenu="chapterCtxMenu(event,'${ch.id}')">
+        <span class="ch-item-dot"></span>
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(ch.title||'Chương chưa đặt tên')}</span>
+        <span style="font-size:10px;color:var(--tx3);flex-shrink:0">${ch.wordCount||0}T</span>
+      </div>`;
+    });
+  }
+  return html;
+}
+
+function toggleFolderOpen(id) {
+  UI.folderOpen[id] = UI.folderOpen[id] === false ? true : false;
+  renderFolderTree();
+}
+
+function selectFolder(id) {
+  UI.activeFolderId = id;
+  renderFolderTree();
+}
+
+function selectChapter(id) {
+  UI.activeFolderId = D.chapters[id]?.folderId;
+  UI.activeChapterId = id;
+  loadChapterInEditor(id);
+  renderFolderTree();
+}
+
+function loadChapterInEditor(id) {
+  const ch = D.chapters[id];
+  if (!ch) return;
+  document.getElementById('no-chapter').style.display = 'none';
+  document.getElementById('chapter-editor').style.display = 'block';
+  document.getElementById('ch-title-input').value = ch.title || '';
+  document.getElementById('editor').innerHTML = ch.content || '';
+  updateMetaBar();
+  updateWordCount();
+  UI.editorDirty = false;
+  updateSavedStatus(true);
+}
+
+function updateMetaBar() {
+  const ch = D.chapters[UI.activeChapterId];
+  if (!ch) return;
+  const folder = D.folders.find(f => f.id === ch.folderId);
+  document.getElementById('ch-meta-bar').textContent =
+    (folder ? folder.name : '—') + ' · ' + (ch.updatedAt ? 'Lưu lúc ' + dateStr(ch.updatedAt) : 'Chưa lưu');
+  document.getElementById('sb-chap').textContent = ch.title || 'Chương chưa đặt tên';
+}
+
+function createFolder(parentId) {
+  showModal('Tạo thư mục mới',
+    `<div class="form-group"><label>Tên thư mục</label><input type="text" id="m-fname" placeholder="VD: Quyển 1 - Bình Minh Mới" style="width:100%"></div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Tạo', cls:'btn-primary', action:() => {
+        const name = document.getElementById('m-fname').value.trim();
+        if (!name) return toast('Nhập tên thư mục', 'err');
+        const f = { id: uid(), name, parentId: parentId||null, order: D.folders.length };
+        D.folders.push(f);
+        saveData('folders');
+        UI.activeFolderId = f.id;
+        UI.folderOpen[f.id] = true;
+        renderFolderTree();
+        closeModal();
+        toast('Đã tạo thư mục "' + name + '"');
+      }}
+    ]
+  );
+  setTimeout(() => document.getElementById('m-fname')?.focus(), 50);
+}
+
+function createFolderThenChapter() {
+  showModal('Tạo thư mục & chương đầu tiên',
+    `<div class="form-group"><label>Tên thư mục</label><input type="text" id="m-fname" value="Quyển 1" style="width:100%"></div>
+     <div class="form-group"><label>Tiêu đề chương</label><input type="text" id="m-chname" value="Chương 1" style="width:100%"></div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Tạo', cls:'btn-primary', action:() => {
+        const fname = document.getElementById('m-fname').value.trim() || 'Quyển 1';
+        const chname = document.getElementById('m-chname').value.trim() || 'Chương 1';
+        const f = { id: uid(), name: fname, parentId: null, order: D.folders.length };
+        D.folders.push(f);
+        const ch = { id: uid(), folderId: f.id, title: chname, content: '', wordCount: 0, createdAt: Date.now(), updatedAt: null, order: 0 };
+        D.chapters[ch.id] = ch;
+        saveData('folders'); saveData('chapters');
+        UI.activeFolderId = f.id;
+        UI.folderOpen[f.id] = true;
+        selectChapter(ch.id);
+        renderFolderTree();
+        closeModal();
+      }}
+    ]
+  );
+}
+
+function renameFolder(id) {
+  const f = D.folders.find(x => x.id === id);
+  if (!f) return;
+  showModal('Đổi tên thư mục',
+    `<div class="form-group"><label>Tên mới</label><input type="text" id="m-fname" value="${esc(f.name)}" style="width:100%"></div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Lưu', cls:'btn-primary', action:() => {
+        const name = document.getElementById('m-fname').value.trim();
+        if (!name) return toast('Nhập tên thư mục','err');
+        f.name = name; saveData('folders'); renderFolderTree(); closeModal(); toast('Đã đổi tên');
+      }}
+    ]
+  );
+  setTimeout(() => { const i = document.getElementById('m-fname'); if(i){i.focus();i.select();} }, 50);
+}
+
+function deleteFolder(id) {
+  const f = D.folders.find(x => x.id === id);
+  if (!f) return;
+  const chaps = Object.values(D.chapters).filter(c => c.folderId === id);
+  showModal('Xóa thư mục',
+    `<p style="color:var(--tx2)">Xóa thư mục "<strong style="color:var(--tx)">${esc(f.name)}</strong>"?<br>
+    <span style="color:var(--er);font-size:12px">Thư mục này chứa ${chaps.length} chương. Tất cả sẽ bị xóa vĩnh viễn.</span></p>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Xóa vĩnh viễn', cls:'btn-danger', action:() => {
+        chaps.forEach(c => { if(UI.activeChapterId===c.id) UI.activeChapterId=null; delete D.chapters[c.id]; });
+        D.folders = D.folders.filter(x => x.id !== id && x.parentId !== id);
+        if (UI.activeFolderId === id) UI.activeFolderId = null;
+        saveData('folders'); saveData('chapters');
+        renderFolderTree();
+        if (!UI.activeChapterId) {
+          document.getElementById('no-chapter').style.display = 'flex';
+          document.getElementById('chapter-editor').style.display = 'none';
+        }
+        closeModal(); toast('Đã xóa thư mục');
+      }}
+    ]
+  );
+}
+
+function createChapter(folderId) {
+  const existing = Object.values(D.chapters).filter(c => c.folderId === folderId);
+  showModal('Tạo chương mới',
+    `<div class="form-group"><label>Tiêu đề chương</label><input type="text" id="m-chname" placeholder="VD: Chương ${existing.length+1} - Hành trình bắt đầu" style="width:100%"></div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Tạo', cls:'btn-primary', action:() => {
+        const title = document.getElementById('m-chname').value.trim() || `Chương ${existing.length+1}`;
+        const ch = { id: uid(), folderId, title, content: '', wordCount: 0, createdAt: Date.now(), updatedAt: null, order: existing.length };
+        D.chapters[ch.id] = ch;
+        saveData('chapters');
+        UI.folderOpen[folderId] = true;
+        selectChapter(ch.id);
+        renderFolderTree();
+        closeModal();
+        toast('Đã tạo chương "' + title + '"');
+      }}
+    ]
+  );
+  setTimeout(() => document.getElementById('m-chname')?.focus(), 50);
+}
+
+function renameChapter(id) {
+  const ch = D.chapters[id];
+  if (!ch) return;
+  showModal('Đổi tên chương',
+    `<div class="form-group"><label>Tiêu đề mới</label><input type="text" id="m-chname" value="${esc(ch.title)}" style="width:100%"></div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Lưu', cls:'btn-primary', action:() => {
+        const title = document.getElementById('m-chname').value.trim();
+        if (!title) return toast('Nhập tiêu đề','err');
+        ch.title = title; saveData('chapters'); renderFolderTree();
+        if (UI.activeChapterId === id) {
+          document.getElementById('ch-title-input').value = title;
+          updateMetaBar();
+        }
+        closeModal(); toast('Đã đổi tên');
+      }}
+    ]
+  );
+  setTimeout(() => { const i = document.getElementById('m-chname'); if(i){i.focus();i.select();} },50);
+}
+
+function deleteChapter(id) {
+  const ch = D.chapters[id];
+  if (!ch) return;
+  showModal('Xóa chương',
+    `<p style="color:var(--tx2)">Xóa chương "<strong style="color:var(--tx)">${esc(ch.title)}</strong>"? Nội dung sẽ bị xóa vĩnh viễn.</p>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Xóa', cls:'btn-danger', action:() => {
+        delete D.chapters[id];
+        saveData('chapters');
+        if (UI.activeChapterId === id) {
+          UI.activeChapterId = null;
+          document.getElementById('no-chapter').style.display = 'flex';
+          document.getElementById('chapter-editor').style.display = 'none';
+        }
+        renderFolderTree(); closeModal(); toast('Đã xóa chương');
+      }}
+    ]
+  );
+}
+
+function folderCtxMenu(e, id) {
+  e.preventDefault();
+  showContextMenu(e, [
+    { label: '＋ Thêm chương', action: () => createChapter(id) },
+    { label: '✎ Đổi tên', action: () => renameFolder(id) },
+    { label: '📁 Thêm thư mục con', action: () => createFolder(id) },
+    { sep: true },
+    { label: '🗑 Xóa thư mục', danger: true, action: () => deleteFolder(id) }
+  ]);
+}
+
+function chapterCtxMenu(e, id) {
+  e.preventDefault();
+  showContextMenu(e, [
+    { label: '✎ Đổi tên', action: () => renameChapter(id) },
+    { sep: true },
+    { label: '🗑 Xóa chương', danger: true, action: () => deleteChapter(id) }
+  ]);
+}
+
+// ============================================================
+// EDITOR
+// ============================================================
+function execCmd(cmd, val) {
+  document.getElementById('editor').focus();
+  document.execCommand(cmd, false, val || null);
+  onEditorInput();
+  updateToolbarState();
+}
+
+function updateToolbarState() {
+  document.getElementById('btn-bold').classList.toggle('on', document.queryCommandState('bold'));
+  document.getElementById('btn-italic').classList.toggle('on', document.queryCommandState('italic'));
+  document.getElementById('btn-ul').classList.toggle('on', document.queryCommandState('underline'));
+}
+
+function onChapterTitleChange() {
+  if (!UI.activeChapterId) return;
+  D.chapters[UI.activeChapterId].title = document.getElementById('ch-title-input').value;
+  UI.editorDirty = true;
+  scheduleAutoSave();
+}
+
+function onEditorInput() {
+  UI.editorDirty = true;
+  updateWordCount();
+  scheduleAutoSave();
+  updateSavedStatus(false);
+  checkWritingCommands();
+}
+
+function onEditorKeydown(e) {
+  const drop = document.getElementById('cmd-drop');
+  if (drop.style.display === 'block') {
+    const items = drop.querySelectorAll('.cmd-item');
+    const sel = drop.querySelector('.cmd-item.sel');
+    let idx = sel ? Array.from(items).indexOf(sel) : -1;
+    if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx+1, items.length-1); items.forEach((x,i)=>x.classList.toggle('sel',i===idx)); items[idx]?.scrollIntoView({block:'nearest'}); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx-1, 0); items.forEach((x,i)=>x.classList.toggle('sel',i===idx)); items[idx]?.scrollIntoView({block:'nearest'}); }
+    else if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); if(sel) sel.click(); else if(items[0]) items[0].click(); }
+    else if (e.key === 'Escape') { hideCmdDrop(); }
+  }
+}
+
+function onEditorKeyup(e) {
+  if (!['ArrowDown','ArrowUp','Enter','Tab'].includes(e.key)) checkWritingCommands();
+  updateToolbarState();
+}
+
+function checkWritingCommands() {
+  const editor = document.getElementById('editor');
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  const text = range.startContainer.textContent || '';
+  const pos = range.startOffset;
+  const before = text.slice(0, pos);
+  const match = before.match(/=\[(\w+):/);
+  if (!match) { hideCmdDrop(); return; }
+  const type = match[1].toLowerCase();
+  showCmdDropdown(type, range);
+}
+
+function showCmdDropdown(type, range) {
+  const drop = document.getElementById('cmd-drop');
+  let items = [];
+  if (type === 'name') {
+    items = D.characters.slice(0, 15).map(c => ({
+      id: c.id, label: c.name, sub: IMP_LABELS[c.importance||0]||'', badge: IMP_CLASSES[c.importance||0], type: 'char'
+    }));
+  } else if (type === 'event') {
+    items = D.events.slice(0, 10).map(e => ({ id: e.id, label: e.name, sub: e.date||'', type: 'event' }));
+  } else if (type === 'location') {
+    items = D.locations.slice(0, 10).map(l => ({ id: l.id, label: l.name, sub: l.region||'', type: 'loc' }));
+  } else if (type === 'note') {
+    items = [{ id: '_note', label: 'Thêm ghi chú', sub: 'Nhập nội dung ghi chú', type: 'note' }];
+  } else if (type === 'bold') {
+    items = [{ id: '_bold', label: 'Chữ đậm', sub: 'Bôi đậm văn bản hiện tại', type: 'fmt' }];
+  } else if (type === 'italic') {
+    items = [{ id: '_italic', label: 'Chữ nghiêng', sub: 'In nghiêng văn bản hiện tại', type: 'fmt' }];
+  }
+  if (!items.length && type !== 'note' && type !== 'bold' && type !== 'italic') {
+    // Show available commands
+    items = [
+      {id:'_name',label:'=[name:]',sub:'Chèn tên nhân vật',type:'help'},
+      {id:'_note',label:'=[note:]',sub:'Thêm ghi chú',type:'help'},
+      {id:'_event',label:'=[event:]',sub:'Tham chiếu sự kiện',type:'help'},
+      {id:'_loc',label:'=[location:]',sub:'Tham chiếu địa điểm',type:'help'},
+    ];
+  }
+
+  if (!items.length) { hideCmdDrop(); return; }
+
+  const rect = range.getBoundingClientRect();
+  drop.style.display = 'block';
+  drop.style.left = Math.min(rect.left, window.innerWidth - 220) + 'px';
+  drop.style.top = (rect.bottom + 4) + 'px';
+  drop.innerHTML = items.map((it,i) => `
+    <div class="cmd-item${i===0?' sel':''}" onclick="insertCmdRef('${type}','${it.id}','${esc(it.label)}')">
+      <div style="flex:1">
+        <div class="cmd-item-name">${esc(it.label)}</div>
+        <div class="cmd-item-sub">${esc(it.sub)}</div>
+      </div>
+      ${it.badge?`<span class="cmd-item-badge ${it.badge}">${esc(IMP_LABELS[['imp-0','imp-1','imp-2','imp-3','imp-4','imp-5'].indexOf(it.badge)])}</span>`:''}
+    </div>`).join('');
+}
+
+function hideCmdDrop() {
+  document.getElementById('cmd-drop').style.display = 'none';
+}
+
+function insertCmdRef(type, id, label) {
+  hideCmdDrop();
+  const editor = document.getElementById('editor');
+  editor.focus();
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  const node = range.startContainer;
+  const text = node.textContent;
+  const pos = range.startOffset;
+  const before = text.slice(0, pos);
+  const cmdMatch = before.match(/=\[\w+:/);
+  if (!cmdMatch) return;
+  const cmdStart = before.lastIndexOf(cmdMatch[0]);
+
+  // Remove the command text and replace with styled ref
+  const newText = text.slice(0, cmdStart) + text.slice(pos);
+  node.textContent = newText;
+
+  let span = document.createElement('span');
+  if (type === 'name') {
+    span.className = 'char-ref'; span.dataset.charId = id;
+    span.textContent = label;
+    span.title = 'Nhân vật: ' + label;
+  } else if (type === 'event') {
+    span.className = 'event-ref'; span.dataset.eventId = id;
+    span.textContent = '⚡' + label;
+  } else if (type === 'location') {
+    span.className = 'loc-ref'; span.dataset.locId = id;
+    span.textContent = '📍' + label;
+  } else if (type === 'note') {
+    span.className = 'note-span';
+    span.textContent = '📝 Ghi chú';
+    span.contentEditable = 'true';
+  } else {
+    span.textContent = label;
+  }
+
+  const newRange = document.createRange();
+  newRange.setStart(node, cmdStart);
+  newRange.setEnd(node, cmdStart);
+  sel.removeAllRanges(); sel.addRange(newRange);
+
+  range.insertNode(document.createTextNode('\u00A0'));
+  range.insertNode(span);
+  range.setStartAfter(span);
+  range.setEndAfter(span);
+  sel.removeAllRanges(); sel.addRange(range);
+
+  onEditorInput();
+}
+
+function showCmdHelper(type) {
+  const editor = document.getElementById('editor');
+  editor.focus();
+  document.execCommand('insertText', false, `=[${type}:`);
+  checkWritingCommands();
+}
+
+function insertNote() {
+  const text = prompt('Nội dung ghi chú:');
+  if (!text) return;
+  const editor = document.getElementById('editor');
+  editor.focus();
+  const span = document.createElement('span');
+  span.className = 'note-span';
+  span.textContent = '📝 ' + text;
+  const sel = window.getSelection();
+  if (sel.rangeCount) {
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(span);
+    range.setStartAfter(span);
+    sel.removeAllRanges(); sel.addRange(range);
+  } else { editor.appendChild(span); }
+  onEditorInput();
+}
+
+function updateWordCount() {
+  const editor = document.getElementById('editor');
+  const text = editor.innerText || '';
+  const words = wordCount(text);
+  const chars = text.replace(/\s/g,'').length;
+  document.getElementById('sb-words').textContent = words.toLocaleString('vi-VN');
+  document.getElementById('sb-chars').textContent = chars.toLocaleString('vi-VN');
+  document.getElementById('sb-read').textContent = readingTime(words);
+  if (UI.activeChapterId && D.chapters[UI.activeChapterId]) {
+    D.chapters[UI.activeChapterId].wordCount = words;
+  }
+}
+
+function scheduleAutoSave() {
+  clearTimeout(UI.saveTimer);
+  UI.saveTimer = setTimeout(autoSave, 1500);
+}
+
+function autoSave() {
+  if (!UI.activeChapterId || !UI.editorDirty) return;
+  const ch = D.chapters[UI.activeChapterId];
+  if (!ch) return;
+  ch.content = document.getElementById('editor').innerHTML;
+  ch.title = document.getElementById('ch-title-input').value || ch.title;
+  ch.updatedAt = Date.now();
+  UI.editorDirty = false;
+  saveData('chapters');
+  updateSavedStatus(true);
+  updateMetaBar();
+  renderFolderTree();
+  runValidation();
+}
+
+function updateSavedStatus(saved) {
+  const dot = document.getElementById('sb-dot');
+  const txt = document.getElementById('sb-saved');
+  const as = document.getElementById('autosave-status');
+  if (saved) {
+    dot.className = 'saved-dot';
+    const t = D.chapters[UI.activeChapterId]?.updatedAt;
+    const timeStr = t ? new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}) : '';
+    txt.textContent = 'Đã lưu ' + timeStr;
+    as.textContent = '✓ Đã lưu ' + timeStr;
+    as.style.color = 'var(--ok)';
+  } else {
+    dot.className = 'unsaved-dot';
+    txt.textContent = 'Chưa lưu';
+    as.textContent = '● Chưa lưu...';
+    as.style.color = 'var(--wn)';
+  }
+}
+
+// ============================================================
+// VALIDATION
+// ============================================================
+function runValidation() {
+  const warns = [];
+  D.characters.forEach(c => {
+    if (!c.age) warns.push(`Nhân vật "${c.name}" chưa có tuổi.`);
+    if (!c.status) warns.push(`Nhân vật "${c.name}" chưa có trạng thái.`);
+    if (!c.description) warns.push(`Nhân vật "${c.name}" chưa có mô tả.`);
+  });
+  Object.values(D.chapters).forEach(ch => {
+    if (!ch.title || ch.title === 'Chương chưa đặt tên') warns.push(`Chương ID ${ch.id} chưa có tiêu đề.`);
+    if (!ch.content || ch.content.replace(/<[^>]*>/g,'').trim().length < 10) warns.push(`Chương "${ch.title||'?'}" trống hoặc quá ngắn.`);
+  });
+  // check duplicate char names
+  const names = D.characters.map(c => c.name.toLowerCase().trim());
+  const dupes = names.filter((n, i) => names.indexOf(n) !== i);
+  if (dupes.length) warns.push(`Có nhân vật trùng tên: ${[...new Set(dupes)].join(', ')}`);
+
+  const count = warns.length;
+  document.getElementById('warn-count').textContent = count;
+  document.getElementById('warn-btn').style.display = count > 0 ? 'flex' : 'none';
+  document.getElementById('warn-body').innerHTML = warns.slice(0,20).map(w =>
+    `<div class="warn-item"><span class="warn-icon">⚠</span><span>${esc(w)}</span></div>`
+  ).join('') || '<div class="warn-item" style="color:var(--ok)">✓ Không có cảnh báo nào</div>';
+}
+
+function toggleWarnings() {
+  const p = document.getElementById('warn-panel');
+  p.style.display = p.style.display === 'block' ? 'none' : 'block';
+  runValidation();
+}
+
+// ============================================================
+// TAB 1: ENTITY MANAGEMENT
+// ============================================================
+function selectCategory(cat) {
+  UI.activeCategory = cat;
+  UI.activeEntityId = null;
+  document.querySelectorAll('.cat-item').forEach(el => {
+    el.classList.toggle('on', el.id === 'cat-' + cat);
+  });
+  document.getElementById('ent-search').value = '';
+  const addBtn = document.getElementById('add-ent-btn');
+  addBtn.textContent = '+ Thêm ' + CAT_LABELS[cat];
+  renderEntityList();
+  renderDetailPanel(null);
+  if (cat === 'characters') renderGraph();
+}
+
+function renderEntityList() {
+  const list = document.getElementById('ent-list');
+  const q = (document.getElementById('ent-search')?.value || '').toLowerCase();
+  let items = getEntityList(UI.activeCategory);
+  if (q) items = items.filter(x => (x.name||x.rule||'').toLowerCase().includes(q));
+
+  if (!items.length) {
+    list.innerHTML = `<div class="empty-state" style="padding:20px"><div class="text-muted text-sm">Chưa có ${CAT_LABELS[UI.activeCategory]} nào</div></div>`;
+    return;
+  }
+
+  list.innerHTML = items.map(x => {
+    const name = x.name || x.rule || '—';
+    const isOn = UI.activeEntityId === x.id;
+    let sub = '';
+    if (UI.activeCategory === 'characters') sub = IMP_LABELS[x.importance||0];
+    else if (UI.activeCategory === 'events') sub = x.date || '';
+    else if (UI.activeCategory === 'locations') sub = x.region || '';
+    else if (UI.activeCategory === 'worldRules') sub = x.category || '';
+
+    return `<div class="ent-item ${isOn?'on':''}" onclick="selectEntity('${x.id}')">
+      <span class="ent-dot"></span>
+      <div style="flex:1;min-width:0">
+        <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px;color:${isOn?'var(--ac)':'var(--tx2)'}">${esc(name)}</div>
+        ${sub?`<div class="text-sm text-muted" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(sub)}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectEntity(id) {
+  UI.activeEntityId = id;
+  renderEntityList();
+  renderDetailPanel(id);
+  // Center graph on selected character
+  if (UI.activeCategory === 'characters') {
+    renderGraph();
+    highlightGraphNode(id);
+  }
+}
+
+function createEntity() {
+  if (UI.activeCategory === 'characters') createCharacterModal();
+  else if (UI.activeCategory === 'worldRules') createWorldRuleModal();
+  else createGenericEntityModal();
+}
+
+function editCurrentEntity() {
+  if (!UI.activeEntityId) return;
+  if (UI.activeCategory === 'characters') editCharacterModal(UI.activeEntityId);
+  else if (UI.activeCategory === 'worldRules') editWorldRuleModal(UI.activeEntityId);
+  else editGenericEntityModal(UI.activeEntityId);
+}
+
+function deleteCurrentEntity() {
+  if (!UI.activeEntityId) return;
+  const list = getEntityList(UI.activeCategory);
+  const e = list.find(x => x.id === UI.activeEntityId);
+  if (!e) return;
+  const name = e.name || e.rule || '?';
+  showModal('Xóa mục này?',
+    `<p style="color:var(--tx2)">Xóa "<strong style="color:var(--tx)">${esc(name)}</strong>" khỏi ${CAT_LABELS[UI.activeCategory]}? Hành động này không thể hoàn tác.</p>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Xóa', cls:'btn-danger', action:() => {
+        const idx = list.findIndex(x => x.id === UI.activeEntityId);
+        if (idx > -1) list.splice(idx, 1);
+        if (UI.activeCategory === 'characters') {
+          D.relationships = D.relationships.filter(r => r.source !== UI.activeEntityId && r.target !== UI.activeEntityId);
+          delete D.graphPositions[UI.activeEntityId];
+          saveData('relationships'); saveData('graphPositions');
+        }
+        saveData(UI.activeCategory);
+        UI.activeEntityId = null;
+        renderEntityList(); renderDetailPanel(null); renderGraph();
+        closeModal(); toast('Đã xóa');
+      }}
+    ]
+  );
+}
+
+// ============================================================
+// CHARACTER MODAL
+// ============================================================
+function characterFormHTML(c = {}) {
+  return `
+  <div class="form-row">
+    <div class="form-group"><label>Tên nhân vật *</label><input type="text" id="cf-name" value="${esc(c.name||'')}" placeholder="Tên đầy đủ"></div>
+    <div class="form-group"><label>Biệt danh</label><input type="text" id="cf-alias" value="${esc(c.alias||'')}" placeholder="Biệt danh / tên khác"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Độ quan trọng</label>
+      <select id="cf-imp">
+        ${IMP_LABELS.map((l,i)=>`<option value="${i}" ${(c.importance===i||(c.importance===undefined&&i===0))?'selected':''}>${l}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label>Tình trạng</label>
+      <select id="cf-status">
+        <option value="alive" ${c.status==='alive'||!c.status?'selected':''}>Còn sống</option>
+        <option value="dead" ${c.status==='dead'?'selected':''}>Đã chết</option>
+        <option value="missing" ${c.status==='missing'?'selected':''}>Mất tích</option>
+        <option value="unknown" ${c.status==='unknown'?'selected':''}>Không rõ</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Tuổi</label><input type="text" id="cf-age" value="${esc(c.age||'')}" placeholder="VD: 22 tuổi"></div>
+    <div class="form-group"><label>Chiều cao</label><input type="text" id="cf-height" value="${esc(c.height||'')}" placeholder="VD: 172cm"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Ngày sinh</label><input type="text" id="cf-bdate" value="${esc(c.birthDate||'')}" placeholder="VD: 15/03/năm X"></div>
+    <div class="form-group"><label>Nghề nghiệp</label><input type="text" id="cf-job" value="${esc(c.occupation||'')}" placeholder="VD: Kiếm khách, Thương nhân"></div>
+  </div>
+  <div class="form-group"><label>Tính cách</label><input type="text" id="cf-pers" value="${esc(c.personality||'')}" placeholder="VD: Lạnh lùng, thông minh, bí ẩn"></div>
+  <div class="form-group"><label>Ngoại hình</label><textarea id="cf-appear" placeholder="Mô tả ngoại hình cơ bản...">${esc(c.appearance||'')}</textarea></div>
+  <div class="form-group"><label>Phe phái</label><input type="text" id="cf-faction" value="${esc(c.faction||'')}" placeholder="VD: Thiên Long Môn, Trung lập"></div>
+  <div class="form-group"><label>Năng lực / Kỹ năng</label><textarea id="cf-abil" placeholder="Mô tả năng lực, kỹ năng đặc biệt...">${esc(c.abilities||'')}</textarea></div>
+  <div class="form-group"><label>Mô tả nhân vật</label><textarea id="cf-desc" rows="4" placeholder="Mô tả đầy đủ về nhân vật, lý lịch, vai trò trong câu chuyện...">${esc(c.description||'')}</textarea></div>`;
+}
+
+function getCharacterFormData() {
+  return {
+    name: document.getElementById('cf-name').value.trim(),
+    alias: document.getElementById('cf-alias').value.trim(),
+    importance: parseInt(document.getElementById('cf-imp').value),
+    status: document.getElementById('cf-status').value,
+    age: document.getElementById('cf-age').value.trim(),
+    height: document.getElementById('cf-height').value.trim(),
+    birthDate: document.getElementById('cf-bdate').value.trim(),
+    occupation: document.getElementById('cf-job').value.trim(),
+    personality: document.getElementById('cf-pers').value.trim(),
+    appearance: document.getElementById('cf-appear').value.trim(),
+    faction: document.getElementById('cf-faction').value.trim(),
+    abilities: document.getElementById('cf-abil').value.trim(),
+    description: document.getElementById('cf-desc').value.trim()
+  };
+}
+
+function createCharacterModal() {
+  document.getElementById('modal-box').classList.add('wide');
+  showModal('Thêm nhân vật mới', characterFormHTML(), [
+    {label:'Hủy', cls:'btn-ghost', action:() => { document.getElementById('modal-box').classList.remove('wide'); closeModal(); }},
+    {label:'Lưu nhân vật', cls:'btn-primary', action:() => {
+      const data = getCharacterFormData();
+      if (!data.name) return toast('Nhập tên nhân vật', 'err');
+      const c = { id: uid(), ...data };
+      D.characters.push(c);
+      saveData('characters');
+      renderEntityList(); renderGraph();
+      document.getElementById('modal-box').classList.remove('wide');
+      closeModal(); toast('Đã thêm nhân vật "' + data.name + '"');
+      runValidation();
+    }}
+  ]);
+}
+
+function editCharacterModal(id) {
+  const c = D.characters.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('modal-box').classList.add('wide');
+  showModal('Chỉnh sửa nhân vật', characterFormHTML(c), [
+    {label:'Hủy', cls:'btn-ghost', action:() => { document.getElementById('modal-box').classList.remove('wide'); closeModal(); }},
+    {label:'Lưu', cls:'btn-primary', action:() => {
+      const data = getCharacterFormData();
+      if (!data.name) return toast('Nhập tên nhân vật','err');
+      Object.assign(c, data);
+      saveData('characters');
+      renderEntityList(); renderDetailPanel(id); renderGraph();
+      document.getElementById('modal-box').classList.remove('wide');
+      closeModal(); toast('Đã cập nhật nhân vật');
+      runValidation();
+    }}
+  ]);
+}
+
+// ============================================================
+// GENERIC ENTITY MODAL
+// ============================================================
+function getGenericFields(cat) {
+  if (cat === 'events') return [
+    {id:'name', label:'Tên sự kiện *', type:'text', placeholder:'VD: Trận Đại Chiến Vân Môn'},
+    {id:'date', label:'Thời điểm', type:'text', placeholder:'VD: Năm thứ 3 Triều Bình'},
+    {id:'location', label:'Địa điểm', type:'text', placeholder:'Địa điểm xảy ra'},
+    {id:'description', label:'Mô tả', type:'textarea', placeholder:'Mô tả chi tiết sự kiện...'}
+  ];
+  if (cat === 'locations') return [
+    {id:'name', label:'Tên địa điểm *', type:'text', placeholder:'VD: Thành Thiên Long'},
+    {id:'region', label:'Khu vực', type:'text', placeholder:'VD: Phía Bắc Đế Quốc'},
+    {id:'climate', label:'Khí hậu', type:'text', placeholder:'VD: Lạnh, tuyết phủ quanh năm'},
+    {id:'description', label:'Mô tả', type:'textarea', placeholder:'Mô tả chi tiết địa điểm...'}
+  ];
+  if (cat === 'organizations') return [
+    {id:'name', label:'Tên tổ chức *', type:'text'},
+    {id:'type', label:'Loại', type:'text', placeholder:'VD: Môn phái, Thương đoàn, Hoàng tộc'},
+    {id:'leader', label:'Thủ lĩnh', type:'text'},
+    {id:'members', label:'Thành viên', type:'text', placeholder:'Tóm tắt thành viên chính'},
+    {id:'description', label:'Mô tả', type:'textarea'}
+  ];
+  if (cat === 'countries') return [
+    {id:'name', label:'Tên quốc gia *', type:'text'},
+    {id:'capital', label:'Thủ đô', type:'text'},
+    {id:'ruler', label:'Người cầm quyền', type:'text'},
+    {id:'description', label:'Mô tả', type:'textarea'}
+  ];
+  if (cat === 'items') return [
+    {id:'name', label:'Tên vật phẩm *', type:'text'},
+    {id:'type', label:'Loại', type:'text', placeholder:'VD: Thần binh, Đơn dược, Bảo vật'},
+    {id:'owner', label:'Chủ sở hữu', type:'text'},
+    {id:'description', label:'Mô tả', type:'textarea'}
+  ];
+  return [];
+}
+
+function genericFormHTML(cat, data = {}) {
+  return getGenericFields(cat).map(f =>
+    `<div class="form-group"><label>${f.label}</label>
+    ${f.type==='textarea'
+      ? `<textarea id="gf-${f.id}" placeholder="${f.placeholder||''}" rows="3">${esc(data[f.id]||'')}</textarea>`
+      : `<input type="text" id="gf-${f.id}" value="${esc(data[f.id]||'')}" placeholder="${f.placeholder||''}">`
+    }</div>`
+  ).join('');
+}
+
+function getGenericFormData(cat) {
+  const data = {};
+  getGenericFields(cat).forEach(f => {
+    const el = document.getElementById('gf-' + f.id);
+    if (el) data[f.id] = el.value.trim();
+  });
+  return data;
+}
+
+function createGenericEntityModal() {
+  showModal('Thêm ' + CAT_LABELS[UI.activeCategory], genericFormHTML(UI.activeCategory), [
+    {label:'Hủy', cls:'btn-ghost', action:closeModal},
+    {label:'Lưu', cls:'btn-primary', action:() => {
+      const data = getGenericFormData(UI.activeCategory);
+      if (!data.name) return toast('Nhập tên', 'err');
+      const e = { id: uid(), ...data };
+      getEntityList(UI.activeCategory).push(e);
+      saveData(UI.activeCategory);
+      renderEntityList(); closeModal(); toast('Đã thêm');
+    }}
+  ]);
+}
+
+function editGenericEntityModal(id) {
+  const list = getEntityList(UI.activeCategory);
+  const e = list.find(x => x.id === id);
+  if (!e) return;
+  showModal('Chỉnh sửa ' + CAT_LABELS[UI.activeCategory], genericFormHTML(UI.activeCategory, e), [
+    {label:'Hủy', cls:'btn-ghost', action:closeModal},
+    {label:'Lưu', cls:'btn-primary', action:() => {
+      const data = getGenericFormData(UI.activeCategory);
+      if (!data.name) return toast('Nhập tên','err');
+      Object.assign(e, data);
+      saveData(UI.activeCategory);
+      renderEntityList(); renderDetailPanel(id); closeModal(); toast('Đã cập nhật');
+    }}
+  ]);
+}
+
+// ============================================================
+// WORLD RULES
+// ============================================================
+function createWorldRuleModal() {
+  showModal('Thêm quy tắc thế giới',
+    `<div class="form-group"><label>Phân loại</label>
+      <input type="text" id="wr-cat" placeholder="VD: Ma pháp, Sinh tử, Vũ trụ" style="width:100%">
+    </div>
+    <div class="form-group"><label>Quy tắc *</label>
+      <textarea id="wr-rule" rows="3" placeholder="VD: Người chết không thể sử dụng ma thuật."></textarea>
+    </div>
+    <div class="form-group"><label>Giải thích</label>
+      <textarea id="wr-desc" rows="3" placeholder="Giải thích chi tiết về quy tắc này..."></textarea>
+    </div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Thêm quy tắc', cls:'btn-primary', action:() => {
+        const rule = document.getElementById('wr-rule').value.trim();
+        if (!rule) return toast('Nhập quy tắc','err');
+        const e = { id: uid(), category: document.getElementById('wr-cat').value.trim(), rule, description: document.getElementById('wr-desc').value.trim() };
+        D.worldRules.push(e);
+        saveData('worldRules');
+        renderEntityList(); closeModal(); toast('Đã thêm quy tắc');
+      }}
+    ]
+  );
+  setTimeout(() => document.getElementById('wr-rule')?.focus(), 50);
+}
+
+function editWorldRuleModal(id) {
+  const e = D.worldRules.find(x => x.id === id);
+  if (!e) return;
+  showModal('Chỉnh sửa quy tắc',
+    `<div class="form-group"><label>Phân loại</label><input type="text" id="wr-cat" value="${esc(e.category||'')}" style="width:100%"></div>
+     <div class="form-group"><label>Quy tắc</label><textarea id="wr-rule" rows="3">${esc(e.rule||'')}</textarea></div>
+     <div class="form-group"><label>Giải thích</label><textarea id="wr-desc" rows="3">${esc(e.description||'')}</textarea></div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Lưu', cls:'btn-primary', action:() => {
+        e.category = document.getElementById('wr-cat').value.trim();
+        e.rule = document.getElementById('wr-rule').value.trim();
+        e.description = document.getElementById('wr-desc').value.trim();
+        saveData('worldRules');
+        renderEntityList(); renderDetailPanel(id); closeModal(); toast('Đã cập nhật');
+      }}
+    ]
+  );
+}
+
+// ============================================================
+// DETAIL PANEL
+// ============================================================
+function renderDetailPanel(id) {
+  const hdr = document.getElementById('dp-hdr');
+  const body = document.getElementById('dp-body');
+  if (!id) {
+    hdr.style.display = 'none';
+    body.innerHTML = '<div class="dp-empty">Chọn một mục từ danh sách hoặc nhấp vào node trong đồ thị</div>';
+    return;
+  }
+  hdr.style.display = 'flex';
+  const cat = UI.activeCategory;
+  if (cat === 'characters') renderCharacterDetail(id);
+  else if (cat === 'worldRules') renderWorldRuleDetail(id);
+  else renderGenericDetail(id);
+}
+
+function renderCharacterDetail(id) {
+  const c = D.characters.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('dp-title').textContent = c.name || '—';
+  const rels = D.relationships.filter(r => r.source === id || r.target === id);
+
+  document.getElementById('dp-body').innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <div style="width:44px;height:44px;border-radius:50%;background:${NODE_COLORS[c.importance||0]};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0">${(c.name||'?')[0]}</div>
+      <div>
+        <div style="font-family:var(--fh);font-size:16px;color:var(--tx)">${esc(c.name)}</div>
+        ${c.alias?`<div class="text-sm text-muted">"${esc(c.alias)}"</div>`:''}
+        <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">
+          <span class="imp-badge ${IMP_CLASSES[c.importance||0]}">${IMP_LABELS[c.importance||0]}</span>
+          <span class="status-badge ${STATUS_CLASSES[c.status||'unknown']}">${STATUS_LABELS[c.status||'unknown']}</span>
+        </div>
+      </div>
+    </div>
+    <div class="dtabs" id="ctabs">
+      <div class="dtab on" onclick="switchCharTab(0)">Thông tin</div>
+      <div class="dtab" onclick="switchCharTab(1)">Quan hệ (${rels.length})</div>
+    </div>
+    <div id="ctab-0">
+      ${c.age?`<div class="info-row"><span class="info-key">Tuổi</span><span class="info-val">${esc(c.age)}</span></div>`:''}
+      ${c.height?`<div class="info-row"><span class="info-key">Chiều cao</span><span class="info-val">${esc(c.height)}</span></div>`:''}
+      ${c.birthDate?`<div class="info-row"><span class="info-key">Ngày sinh</span><span class="info-val">${esc(c.birthDate)}</span></div>`:''}
+      ${c.occupation?`<div class="info-row"><span class="info-key">Nghề nghiệp</span><span class="info-val">${esc(c.occupation)}</span></div>`:''}
+      ${c.faction?`<div class="info-row"><span class="info-key">Phe phái</span><span class="info-val">${esc(c.faction)}</span></div>`:''}
+      ${c.personality?`<div class="section-title">Tính cách</div><div style="font-size:13px;color:var(--tx2)">${esc(c.personality)}</div>`:''}
+      ${c.appearance?`<div class="section-title">Ngoại hình</div><div style="font-size:13px;color:var(--tx2)">${esc(c.appearance)}</div>`:''}
+      ${c.abilities?`<div class="section-title">Năng lực</div><div style="font-size:13px;color:var(--tx2)">${esc(c.abilities)}</div>`:''}
+      ${c.description?`<div class="section-title">Mô tả</div><div style="font-size:13px;color:var(--tx2);line-height:1.6">${esc(c.description)}</div>`:''}
+      ${!c.age&&!c.personality&&!c.description?'<div class="text-muted text-sm">Nhân vật chưa có thông tin chi tiết. Nhấn ✏ để chỉnh sửa.</div>':''}
+    </div>
+    <div id="ctab-1" style="display:none">
+      ${rels.length ? rels.map(r => {
+        const otherId = r.source === id ? r.target : r.source;
+        const other = D.characters.find(x => x.id === otherId);
+        const arrow = r.source === id ? '→' : '←';
+        return `<div class="rel-item">
+          <div style="width:28px;height:28px;border-radius:50%;background:${NODE_COLORS[other?.importance||0]};display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0">${(other?.name||'?')[0]}</div>
+          <div style="flex:1">
+            <div style="font-size:12.5px;color:var(--tx)">${esc(other?.name||'Không rõ')}</div>
+            <div style="font-size:11px;color:var(--tx3)">${arrow} <span class="rel-type">${esc(r.type)}</span></div>
+          </div>
+          <button class="ib" onclick="deleteRelationship('${r.id}')" style="color:var(--er)" title="Xóa quan hệ">✕</button>
+        </div>`;
+      }).join('') : '<div class="text-muted text-sm" style="padding:8px 0">Chưa có quan hệ. Dùng đồ thị để kết nối nhân vật.</div>'}
+      <div style="margin-top:12px">
+        <button class="btn btn-ghost btn-sm" onclick="startConnecting()">+ Thêm quan hệ</button>
+      </div>
+    </div>`;
+}
+
+function switchCharTab(n) {
+  document.querySelectorAll('#dp-body .dtab').forEach((t,i) => t.classList.toggle('on', i===n));
+  document.getElementById('ctab-0').style.display = n===0 ? 'block' : 'none';
+  document.getElementById('ctab-1').style.display = n===1 ? 'block' : 'none';
+}
+
+function renderWorldRuleDetail(id) {
+  const e = D.worldRules.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('dp-title').textContent = 'Quy tắc';
+  document.getElementById('dp-body').innerHTML = `
+    ${e.category?`<div style="margin-bottom:8px"><span class="rule-cat">${esc(e.category)}</span></div>`:''}
+    <div style="font-family:var(--fb);font-size:15px;color:var(--tx);line-height:1.6;margin-bottom:12px">${esc(e.rule)}</div>
+    ${e.description?`<div class="section-title">Giải thích</div><div style="font-size:13px;color:var(--tx2);line-height:1.6">${esc(e.description)}</div>`:''}`;
+}
+
+function renderGenericDetail(id) {
+  const list = getEntityList(UI.activeCategory);
+  const e = list.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('dp-title').textContent = e.name || '—';
+  const fields = getGenericFields(UI.activeCategory);
+  document.getElementById('dp-body').innerHTML = fields.map(f => {
+    const val = e[f.id];
+    if (!val) return '';
+    if (f.type === 'textarea') return `<div class="section-title">${f.label.replace(' *','')}</div><div style="font-size:13px;color:var(--tx2);line-height:1.6">${esc(val)}</div>`;
+    return `<div class="info-row"><span class="info-key">${f.label.replace(' *','')}</span><span class="info-val">${esc(val)}</span></div>`;
+  }).join('') || '<div class="text-muted text-sm">Chưa có thông tin chi tiết.</div>';
+}
+
+function deleteRelationship(id) {
+  D.relationships = D.relationships.filter(r => r.id !== id);
+  saveData('relationships');
+  renderGraph();
+  renderDetailPanel(UI.activeEntityId);
+  toast('Đã xóa quan hệ');
+}
+
+// ============================================================
+// RELATIONSHIP GRAPH
+// ============================================================
+let graphSVG, graphNodes, graphEdges, graphW, graphH;
+
+function initGraph() {
+  graphSVG = document.getElementById('graph-svg');
+  graphNodes = document.getElementById('graph-nodes');
+  graphEdges = document.getElementById('graph-edges');
+  const rect = graphSVG.getBoundingClientRect();
+  graphW = rect.width || 600; graphH = rect.height || 400;
+}
+
+function renderGraph() {
+  if (!graphSVG) initGraph();
+  if (UI.activeCategory !== 'characters') { graphNodes.innerHTML = ''; graphEdges.innerHTML = ''; return; }
+  const chars = D.characters;
+  if (!chars.length) {
+    graphNodes.innerHTML = ''; graphEdges.innerHTML = '';
+    document.getElementById('graph-hint').style.display = 'block';
+    return;
+  }
+  document.getElementById('graph-hint').style.display = chars.length < 2 ? 'block' : 'none';
+
+  // Assign default positions for new nodes
+  chars.forEach((c, i) => {
+    if (!D.graphPositions[c.id]) {
+      const angle = (i / chars.length) * 2 * Math.PI;
+      const r = Math.min(graphW, graphH) * 0.3;
+      D.graphPositions[c.id] = {
+        x: graphW/2 + r * Math.cos(angle),
+        y: graphH/2 + r * Math.sin(angle)
+      };
+    }
+  });
+
+  // Draw edges
+  graphEdges.innerHTML = D.relationships.map(r => {
+    const p1 = D.graphPositions[r.source];
+    const p2 = D.graphPositions[r.target];
+    if (!p1 || !p2) return '';
+    const mx = (p1.x + p2.x) / 2;
+    const my = (p1.y + p2.y) / 2;
+    return `<g class="g-edge" onclick="selectRelationship('${r.id}')">
+      <line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="${UI.activeEntityId===r.source||UI.activeEntityId===r.target?'#c8a96e':'#363650'}" stroke-width="${UI.activeEntityId===r.source||UI.activeEntityId===r.target?'2':'1.5'}"/>
+      <text class="edge-label" x="${mx}" y="${my-5}">${esc(r.type||'')}</text>
+    </g>`;
+  }).join('');
+
+  // Draw nodes
+  graphNodes.innerHTML = chars.map(c => {
+    const pos = D.graphPositions[c.id];
+    const col = NODE_COLORS[c.importance||0];
+    const isSelected = UI.activeEntityId === c.id;
+    const isConnecting = UI.graphConnecting === c.id;
+    return `<g class="g-node" id="gn-${c.id}"
+      onmousedown="graphNodeMouseDown(event,'${c.id}')"
+      onclick="graphNodeClick('${c.id}')">
+      <circle cx="${pos.x}" cy="${pos.y}" r="${isSelected?22:18}"
+        fill="${col}" opacity="${isConnecting?0.5:0.85}"
+        stroke="${isSelected?'#c8a96e':isConnecting?'#e0c88a':'#2a2a3e'}"
+        stroke-width="${isSelected?3:1.5}"/>
+      <text class="g-label" x="${pos.x}" y="${pos.y+4}" fill="${isSelected?'#fff':'#e2d8c4'}" font-size="${isSelected?'12':'11'}" font-weight="${isSelected?'600':'400'}">${esc((c.name||'?').slice(0,6))}</text>
+    </g>`;
+  }).join('');
+
+  setupGraphDrag();
+}
+
+function highlightGraphNode(id) {
+  // Re-render to show selection
+  renderGraph();
+}
+
+function graphNodeClick(id) {
+  if (UI.graphConnecting !== null) {
+    if (UI.graphConnecting === id) { cancelConnecting(); return; }
+    // Create relationship
+    showRelationshipDialog(UI.graphConnecting, id);
+    cancelConnecting();
+    return;
+  }
+  UI.activeEntityId = id;
+  UI.activeCategory = 'characters';
+  renderEntityList();
+  renderDetailPanel(id);
+  renderGraph();
+}
+
+function selectRelationship(id) {
+  // Show relationship info
+  const r = D.relationships.find(x => x.id === id);
+  if (!r) return;
+  const s = D.characters.find(x => x.id === r.source);
+  const t = D.characters.find(x => x.id === r.target);
+  toast(`${s?.name||'?'} ↔ ${t?.name||'?'}: ${r.type}`, 'info');
+}
+
+function setupGraphDrag() {
+  const nodes = graphNodes.querySelectorAll('.g-node');
+  nodes.forEach(node => {
+    node.addEventListener('mousedown', (e) => {
+      if (UI.graphConnecting) return;
+      e.preventDefault();
+    });
+  });
+}
+
+function graphNodeMouseDown(e, id) {
+  if (UI.graphConnecting) return;
+  e.stopPropagation();
+  UI.graphDragging = id;
+  const svg = graphSVG.getBoundingClientRect();
+  UI.graphDragStart = { mouseX: e.clientX, mouseY: e.clientY, nodeX: D.graphPositions[id].x, nodeY: D.graphPositions[id].y };
+}
+
+document.addEventListener('mousemove', (e) => {
+  if (!UI.graphDragging) return;
+  const dx = e.clientX - UI.graphDragStart.mouseX;
+  const dy = e.clientY - UI.graphDragStart.mouseY;
+  D.graphPositions[UI.graphDragging] = {
+    x: UI.graphDragStart.nodeX + dx,
+    y: UI.graphDragStart.nodeY + dy
+  };
+  renderGraph();
+});
+
+document.addEventListener('mouseup', () => {
+  if (UI.graphDragging) {
+    saveData('graphPositions');
+    UI.graphDragging = null;
+  }
+});
+
+function startConnecting() {
+  UI.graphConnecting = '_waiting';
+  document.getElementById('btn-connect').style.display = 'none';
+  document.getElementById('btn-cancel-connect').style.display = 'inline-flex';
+  document.getElementById('graph-hint-text').textContent = 'Nhấp vào nhân vật nguồn...';
+  document.body.classList.add('connecting');
+  graphNodes.querySelectorAll('.g-node').forEach(n => {
+    n.style.cursor = 'crosshair';
+  });
+}
+
+function cancelConnecting() {
+  UI.graphConnecting = null;
+  document.getElementById('btn-connect').style.display = 'inline-flex';
+  document.getElementById('btn-cancel-connect').style.display = 'none';
+  document.getElementById('graph-hint-text').textContent = '';
+  document.body.classList.remove('connecting');
+  renderGraph();
+}
+
+// Override graphNodeClick for connecting mode
+const _origGNC = graphNodeClick;
+window.graphNodeClick = function(id) {
+  if (UI.graphConnecting === '_waiting') {
+    UI.graphConnecting = id;
+    document.getElementById('graph-hint-text').textContent = 'Nhấp vào nhân vật đích...';
+    renderGraph();
+    return;
+  }
+  if (UI.graphConnecting !== null && UI.graphConnecting !== '_waiting') {
+    if (UI.graphConnecting === id) { cancelConnecting(); return; }
+    showRelationshipDialog(UI.graphConnecting, id);
+    cancelConnecting();
+    return;
+  }
+  // Normal click
+  UI.activeEntityId = id;
+  UI.activeCategory = 'characters';
+  renderEntityList();
+  renderDetailPanel(id);
+  renderGraph();
+};
+
+function showRelationshipDialog(srcId, tgtId) {
+  const src = D.characters.find(x => x.id === srcId);
+  const tgt = D.characters.find(x => x.id === tgtId);
+  if (!src || !tgt) return;
+  showModal(`Quan hệ: ${src.name} ↔ ${tgt.name}`,
+    `<div style="text-align:center;margin-bottom:16px;color:var(--tx2)">
+      <div style="display:flex;align-items:center;justify-content:center;gap:16px">
+        <div style="text-align:center"><div style="width:40px;height:40px;border-radius:50%;background:${NODE_COLORS[src.importance||0]};margin:0 auto 4px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700">${src.name[0]}</div><div style="font-size:12px">${esc(src.name)}</div></div>
+        <div style="font-size:20px;color:var(--ac)">↔</div>
+        <div style="text-align:center"><div style="width:40px;height:40px;border-radius:50%;background:${NODE_COLORS[tgt.importance||0]};margin:0 auto 4px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700">${tgt.name[0]}</div><div style="font-size:12px">${esc(tgt.name)}</div></div>
+      </div>
+    </div>
+    <div class="form-group"><label>Loại quan hệ</label>
+      <select id="rel-type">
+        ${REL_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
+        <option value="_custom">Tùy chỉnh...</option>
+      </select>
+    </div>
+    <div class="form-group" id="rel-custom-wrap" style="display:none">
+      <label>Quan hệ tùy chỉnh</label>
+      <input type="text" id="rel-custom" placeholder="Nhập loại quan hệ">
+    </div>
+    <div class="form-group"><label>Ghi chú</label><input type="text" id="rel-note" placeholder="Ghi chú thêm về mối quan hệ này"></div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Tạo quan hệ', cls:'btn-primary', action:() => {
+        let type = document.getElementById('rel-type').value;
+        if (type === '_custom') type = document.getElementById('rel-custom').value.trim();
+        if (!type) return toast('Chọn loại quan hệ','err');
+        const note = document.getElementById('rel-note').value.trim();
+        const r = { id: uid(), source: srcId, target: tgtId, type, note };
+        D.relationships.push(r);
+        saveData('relationships');
+        renderGraph();
+        if (UI.activeEntityId === srcId || UI.activeEntityId === tgtId) renderDetailPanel(UI.activeEntityId);
+        closeModal(); toast('Đã tạo quan hệ');
+      }}
+    ]
+  );
+  setTimeout(() => {
+    const sel = document.getElementById('rel-type');
+    if (sel) sel.addEventListener('change', () => {
+      document.getElementById('rel-custom-wrap').style.display = sel.value === '_custom' ? 'block' : 'none';
+    });
+  }, 50);
+}
+
+function autoLayout() {
+  const chars = D.characters;
+  if (!chars.length) return;
+  const rect = graphSVG.getBoundingClientRect();
+  const w = rect.width || 600, h = rect.height || 400;
+  const cols = Math.ceil(Math.sqrt(chars.length));
+  chars.forEach((c, i) => {
+    const row = Math.floor(i / cols), col = i % cols;
+    D.graphPositions[c.id] = {
+      x: 80 + col * ((w - 160) / Math.max(cols-1, 1)),
+      y: 80 + row * ((h - 160) / Math.max(Math.ceil(chars.length/cols)-1, 1))
+    };
+  });
+  saveData('graphPositions');
+  renderGraph();
+  toast('Đã sắp xếp đồ thị');
+}
+
+function resetGraphView() {
+  D.graphPositions = {};
+  saveData('graphPositions');
+  renderGraph();
+}
+
+// ============================================================
+// TAB 2: BOOKS
+// ============================================================
+function renderBookList() {
+  const list = document.getElementById('book-list');
+  if (!D.books.length) {
+    list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--tx3);font-size:12px">Chưa có quyển sách nào<br><button class="btn btn-primary btn-sm mt-8" onclick="createBook()">Tạo quyển đầu tiên</button></div>`;
+    return;
+  }
+  list.innerHTML = D.books.map(b => `
+    <div class="book-item ${UI.activeBookId===b.id?'on':''}" onclick="selectBook('${b.id}')">
+      <div class="book-item-title">${esc(b.title||'Chưa đặt tên')}</div>
+      <div class="book-item-meta">${esc(b.author||'—')} · ${(b.chapters||[]).length} chương</div>
+    </div>`).join('');
+}
+
+function selectBook(id) {
+  UI.activeBookId = id;
+  renderBookList();
+  renderBookDetail();
+}
+
+function createBook() {
+  showModal('Tạo quyển sách mới',
+    `<div class="form-group"><label>Tên quyển sách *</label><input type="text" id="bk-title" placeholder="VD: Thiên Long Hành" style="width:100%"></div>
+     <div class="form-group"><label>Tác giả</label><input type="text" id="bk-author" placeholder="Tên tác giả" style="width:100%"></div>
+     <div class="form-group"><label>Mô tả</label><textarea id="bk-desc" placeholder="Tóm tắt nội dung quyển sách..."></textarea></div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Tạo', cls:'btn-primary', action:() => {
+        const title = document.getElementById('bk-title').value.trim();
+        if (!title) return toast('Nhập tên sách','err');
+        const b = { id: uid(), title, author: document.getElementById('bk-author').value.trim(), description: document.getElementById('bk-desc').value.trim(), chapters: [], createdAt: Date.now(), theme: 'dark' };
+        D.books.push(b);
+        saveData('books');
+        UI.activeBookId = b.id;
+        renderBookList(); renderBookDetail();
+        closeModal(); toast('Đã tạo quyển "' + title + '"');
+      }}
+    ]
+  );
+  setTimeout(() => document.getElementById('bk-title')?.focus(), 50);
+}
+
+function renderBookDetail() {
+  const det = document.getElementById('book-detail');
+  if (!UI.activeBookId) { det.innerHTML = `<div class="empty-state"><div class="empty-icon">📚</div><div>Tạo hoặc chọn một quyển sách</div><button class="btn btn-primary mt-8" onclick="createBook()">Tạo quyển mới</button></div>`; return; }
+  const b = D.books.find(x => x.id === UI.activeBookId);
+  if (!b) return;
+
+  const allChapters = Object.values(D.chapters).sort((a,z) => (a.order||0)-(z.order||0));
+  const selectedIds = new Set(b.chapters || []);
+
+  det.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap">
+      <div style="flex:1">
+        <div style="font-family:var(--fh);font-size:22px;color:var(--tx);margin-bottom:4px">${esc(b.title)}</div>
+        ${b.author?`<div style="color:var(--tx2);font-size:14px">✍ ${esc(b.author)}</div>`:''}
+        ${b.description?`<div style="color:var(--tx3);font-size:13px;margin-top:6px;line-height:1.5">${esc(b.description)}</div>`:''}
+        <div style="margin-top:8px;display:flex;gap:6px">
+          <span class="imp-badge imp-0">${selectedIds.size} chương đã chọn</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+        <button class="btn btn-primary" onclick="exportBookHTML()">📥 Xuất HTML</button>
+        <button class="btn btn-ghost btn-sm" onclick="editBook('${b.id}')">✏ Chỉnh sửa</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteBook('${b.id}')">🗑 Xóa</button>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Chọn chương</div>
+    ${allChapters.length ? allChapters.map(ch => {
+      const folder = D.folders.find(f => f.id === ch.folderId);
+      return `<div class="ch-select-item ${selectedIds.has(ch.id)?'selected':''}" onclick="toggleBookChapter('${ch.id}')">
+        <input type="checkbox" ${selectedIds.has(ch.id)?'checked':''} onclick="event.stopPropagation();toggleBookChapter('${ch.id}')">
+        <div style="flex:1">
+          <div style="font-size:13px;color:var(--tx)">${esc(ch.title||'Chương chưa đặt tên')}</div>
+          <div style="font-size:11px;color:var(--tx3)">${esc(folder?.name||'—')} · ${ch.wordCount||0} từ</div>
+        </div>
+      </div>`;
+    }).join('') : '<div class="text-muted text-sm">Chưa có chương nào. Tạo chương ở tab "Trang Chủ".</div>'}`;
+}
+
+function toggleBookChapter(chId) {
+  const b = D.books.find(x => x.id === UI.activeBookId);
+  if (!b) return;
+  b.chapters = b.chapters || [];
+  const idx = b.chapters.indexOf(chId);
+  if (idx > -1) b.chapters.splice(idx, 1);
+  else b.chapters.push(chId);
+  saveData('books');
+  renderBookDetail();
+  renderBookList();
+}
+
+function editBook(id) {
+  const b = D.books.find(x => x.id === id);
+  if (!b) return;
+  showModal('Chỉnh sửa quyển sách',
+    `<div class="form-group"><label>Tên quyển *</label><input type="text" id="bk-title" value="${esc(b.title)}" style="width:100%"></div>
+     <div class="form-group"><label>Tác giả</label><input type="text" id="bk-author" value="${esc(b.author||'')}" style="width:100%"></div>
+     <div class="form-group"><label>Mô tả</label><textarea id="bk-desc">${esc(b.description||'')}</textarea></div>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Lưu', cls:'btn-primary', action:() => {
+        const title = document.getElementById('bk-title').value.trim();
+        if (!title) return toast('Nhập tên','err');
+        b.title = title; b.author = document.getElementById('bk-author').value.trim();
+        b.description = document.getElementById('bk-desc').value.trim();
+        saveData('books'); renderBookList(); renderBookDetail(); closeModal(); toast('Đã cập nhật');
+      }}
+    ]
+  );
+}
+
+function deleteBook(id) {
+  const b = D.books.find(x => x.id === id);
+  showModal('Xóa quyển sách',
+    `<p style="color:var(--tx2)">Xóa quyển "<strong style="color:var(--tx)">${esc(b?.title||'?')}</strong>"? Các chương không bị xóa.</p>`,
+    [
+      {label:'Hủy', cls:'btn-ghost', action:closeModal},
+      {label:'Xóa', cls:'btn-danger', action:() => {
+        D.books = D.books.filter(x => x.id !== id);
+        saveData('books'); UI.activeBookId = null;
+        renderBookList(); renderBookDetail(); closeModal(); toast('Đã xóa');
+      }}
+    ]
+  );
+}
+
+function exportBookHTML() {
+  const b = D.books.find(x => x.id === UI.activeBookId);
+  if (!b) return;
+  const chapters = (b.chapters || []).map(id => D.chapters[id]).filter(Boolean);
+  if (!chapters.length) return toast('Chọn ít nhất 1 chương để xuất', 'err');
+
+  const toc = chapters.map((ch, i) => `<li><a href="#ch-${i+1}">${esc(ch.title||`Chương ${i+1}`)}</a></li>`).join('');
+  const content = chapters.map((ch, i) => `
+    <section id="ch-${i+1}" class="chapter">
+      <h2 class="ch-title">${esc(ch.title||`Chương ${i+1}`)}</h2>
+      <div class="ch-body">${ch.content||''}</div>
+    </section>`).join('\n');
+
+  const html = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>${esc(b.title)}</title>
+<style>
+  :root{--bg:#0f0e14;--tx:#e2d8c4;--tx2:#9090a8;--ac:#c8a96e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--tx);font-family:'Georgia',serif;font-size:18px;line-height:1.8;max-width:700px;margin:0 auto;padding:40px 24px}
+  h1{font-size:32px;color:var(--ac);text-align:center;margin-bottom:8px}
+  .author{text-align:center;color:var(--tx2);font-size:16px;margin-bottom:40px}
+  .desc{color:var(--tx2);font-size:15px;line-height:1.6;text-align:center;margin-bottom:40px;font-style:italic}
+  nav{background:rgba(255,255,255,.04);border-radius:8px;padding:20px 24px;margin-bottom:40px}
+  nav h3{font-size:14px;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+  nav ol{padding-left:20px}
+  nav li{margin-bottom:6px}
+  nav a{color:var(--ac);text-decoration:none;font-size:15px}
+  nav a:hover{text-decoration:underline}
+  .chapter{margin-bottom:60px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08)}
+  .ch-title{font-size:24px;color:var(--ac);margin-bottom:20px;font-family:'Georgia',serif}
+  .ch-body{font-size:17px;line-height:1.85;color:var(--tx)}
+  .ch-body p{margin-bottom:.8em}
+  .ch-body strong{color:#e0c88a}
+  .ch-body em{color:var(--tx2)}
+  .note-span{background:rgba(200,169,110,.12);color:#e0c88a;border-left:2px solid var(--ac);padding:1px 6px;border-radius:2px}
+  .char-ref{color:#5080b8;border-bottom:1px dashed #5080b8}
+  @media(prefers-color-scheme:light){:root{--bg:#f8f4ec;--tx:#2a2010;--tx2:#6a5e4a;--ac:#8a6020}}
+</style>
+</head>
+<body>
+  <h1>${esc(b.title)}</h1>
+  ${b.author?`<div class="author">${esc(b.author)}</div>`:''}
+  ${b.description?`<div class="desc">${esc(b.description)}</div>`:''}
+  <nav><h3>Mục Lục</h3><ol>${toc}</ol></nav>
+  <main>${content}</main>
+  <footer style="text-align:center;color:var(--tx2);font-size:13px;margin-top:60px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08)">
+    Xuất từ Novel Manager Studio · ${new Date().toLocaleDateString('vi-VN')}
+  </footer>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = (b.title || 'book').replace(/[^a-zA-Z0-9_\-\.]/g,'_') + '.html';
+  a.click(); URL.revokeObjectURL(url);
+  toast('Đã xuất file HTML thành công!', 'ok');
+}
+
+// ============================================================
+// EXPORT PROJECT
+// ============================================================
+function exportProject() {
+  const data = JSON.stringify(D, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'novel_project_' + Date.now() + '.json';
+  a.click(); URL.revokeObjectURL(url);
+  toast('Đã xuất dữ liệu dự án');
+}
+
+// ============================================================
+// MODAL SYSTEM
+// ============================================================
+function showModal(title, body, buttons) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('modal-ftr').innerHTML = buttons.map((b, i) =>
+    `<button class="btn ${b.cls}" id="mb-${i}">${b.label}</button>`
+  ).join('');
+  buttons.forEach((b, i) => {
+    document.getElementById('mb-' + i).addEventListener('click', b.action);
+  });
+  document.getElementById('modal').classList.add('on');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('on');
+  document.getElementById('modal-box').classList.remove('wide');
+}
+
+function closeModalIfOutside(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+
+// ============================================================
+// CONTEXT MENU
+// ============================================================
+function showContextMenu(e, items) {
+  const menu = document.getElementById('ctx-menu');
+  menu.innerHTML = items.map(item => item.sep
+    ? `<div class="ctx-sep"></div>`
+    : `<div class="ctx-item ${item.danger?'danger':''}">${item.label}</div>`
+  ).join('');
+  const clickableItems = menu.querySelectorAll('.ctx-item');
+  const actions = items.filter(i => !i.sep);
+  clickableItems.forEach((el, i) => {
+    el.addEventListener('click', () => { hideContextMenu(); actions[i].action(); });
+  });
+  menu.style.display = 'block';
+  menu.style.left = Math.min(e.clientX, window.innerWidth - 180) + 'px';
+  menu.style.top = Math.min(e.clientY, window.innerHeight - menu.offsetHeight - 10) + 'px';
+}
+
+function hideContextMenu() { document.getElementById('ctx-menu').style.display = 'none'; }
+document.addEventListener('click', hideContextMenu);
+document.addEventListener('contextmenu', (e) => { if (!e.target.closest('.fi') && !e.target.closest('.ch-item')) hideContextMenu(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { hideContextMenu(); hideCmdDrop(); } });
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey||e.metaKey) && e.key === 's') { e.preventDefault(); autoSave(); toast('Đã lưu'); }
+  if ((e.ctrlKey||e.metaKey) && e.key === 'b' && document.activeElement.id === 'editor') execCmd('bold');
+  if ((e.ctrlKey||e.metaKey) && e.key === 'i' && document.activeElement.id === 'editor') execCmd('italic');
+  if ((e.ctrlKey||e.metaKey) && e.key === 'u' && document.activeElement.id === 'editor') { e.preventDefault(); execCmd('underline'); }
+});
+
+// ============================================================
+// DEMO DATA
+// ============================================================
+function loadDemoData() {
+  if (D.characters.length > 0) return; // already has data
+
+  // Demo characters
+  const chars = [
+    { id: uid(), name: 'Lạc Thiên', alias: 'Thiên Vương', importance: 0, status: 'alive', age: '22', personality: 'Lạnh lùng, thông minh, ẩn chứa bí ẩn', appearance: 'Cao 180cm, tóc đen dài, mắt bạc', faction: 'Trung lập', description: 'Nhân vật chính của truyện, mang trong mình huyết mạch thần bí.' },
+    { id: uid(), name: 'An Nhiên', alias: 'Tiểu Nhiên', importance: 2, status: 'alive', age: '19', personality: 'Hồn nhiên, dũng cảm, tốt bụng', appearance: 'Cao 162cm, tóc nâu, mắt xanh lá', faction: 'Thiên Long Môn', description: 'Nữ chính, đệ tử xuất sắc của Thiên Long Môn.' },
+    { id: uid(), name: 'Huyết Vương', alias: 'Ác Ma Chi Vương', importance: 4, status: 'alive', age: '500+', personality: 'Tàn ác, kiêu ngạo, mưu mô', appearance: 'Tóc trắng, đôi mắt đỏ rực', faction: 'Huyết Minh Giáo', description: 'Phản diện chính, kẻ thù truyền kiếp của Lạc Thiên.' },
+    { id: uid(), name: 'Minh Khang', alias: '', importance: 1, status: 'alive', age: '25', personality: 'Trung thành, mạnh mẽ, ngay thẳng', faction: 'Thiên Long Môn', description: 'Nam chính phụ, bạn thân và đồng hành của Lạc Thiên.' }
+  ];
+  D.characters = chars;
+
+  // Demo relationships
+  D.relationships = [
+    { id: uid(), source: chars[0].id, target: chars[1].id, type: 'Người yêu', note: 'Tình cảm phát triển dần' },
+    { id: uid(), source: chars[0].id, target: chars[2].id, type: 'Kẻ thù', note: 'Mối thù truyền kiếp' },
+    { id: uid(), source: chars[0].id, target: chars[3].id, type: 'Bạn bè', note: 'Kết nghĩa huynh đệ' },
+    { id: uid(), source: chars[1].id, target: chars[3].id, type: 'Đồng môn', note: 'Cùng môn phái' }
+  ];
+
+  // Demo world rules
+  D.worldRules = [
+    { id: uid(), category: 'Ma pháp', rule: 'Người chết không thể sử dụng ma thuật.', description: 'Huyết mạch sức mạnh sẽ tiêu tan sau khi chết.' },
+    { id: uid(), category: 'Sinh vật', rule: 'Rồng chỉ sống tối đa 1000 năm.', description: 'Sau 1000 năm rồng sẽ hóa thành đá.' },
+    { id: uid(), category: 'Ma pháp', rule: 'Ma pháp lửa không hoạt động dưới nước sâu hơn 10 trượng.', description: 'Môi trường nước ức chế hoàn toàn nguyên tố lửa.' }
+  ];
+
+  // Demo locations
+  D.locations = [
+    { id: uid(), name: 'Thành Thiên Long', region: 'Trung Nguyên', climate: 'Ôn hòa', description: 'Thủ đô của Thiên Long Môn, nằm giữa hai dãy núi hùng vĩ.' },
+    { id: uid(), name: 'Huyết Minh Động', region: 'Phía Bắc', climate: 'Băng giá', description: 'Sào huyệt của Huyết Vương, nơi không bao giờ có ánh mặt trời.' }
+  ];
+
+  // Demo folder + chapter
+  const folderId = uid();
+  D.folders = [{ id: folderId, name: 'Quyển 1 - Bình Minh Mới', parentId: null, order: 0 }];
+  const chId = uid();
+  D.chapters[chId] = {
+    id: chId, folderId, title: 'Chương 1 - Sự Khởi Đầu',
+    content: `<p>Thiên Vương đứng trên đỉnh núi Huyền Sơn, ánh mắt lạnh lùng nhìn về phía thành Thiên Long xa xa. Gió đêm lạnh buốt thổi qua, tà áo đen phất phới trong không trung.</p><p>— <em>Đã đến lúc rồi...</em> — Lạc Thiên lầm bầm trong miệng, giọng trầm thấp đến đáng sợ.</p><p>Phía sau, tiếng bước chân nhanh nhẹn vang lên. <span class="char-ref">An Nhiên</span> chạy đến, gương mặt hồng hào vì leo núi, ánh mắt sáng lên khi nhìn thấy bóng dáng quen thuộc đó.</p><p>— Lạc Thiên! Ta tìm ngươi cả buổi chiều. — Cô gái thở hổn hển, tay vịn vào tảng đá lớn để lấy lại sức. — Sư phụ bảo ngươi về Thiên Long Môn ngay hôm nay.</p><p>Lạc Thiên không quay đầu lại, đôi mắt bạc vẫn nhìn về phía chân trời xa.</p><p>— <span class="note-span">📝 Ghi chú: Cần thêm chi tiết về bối cảnh lịch sử của buổi tối này</span></p>`,
+    wordCount: 145, createdAt: Date.now() - 86400000, updatedAt: Date.now() - 3600000, order: 0
+  };
+
+  UI.folderOpen[folderId] = true;
+
+  saveAll();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  loadData();
+  loadDemoData();
+  runValidation();
+  renderFolderTree();
+  renderEntityList();
+  renderBookList();
+
+  // Init graph after DOM is ready
+  setTimeout(() => {
+    initGraph();
+    renderGraph();
+  }, 100);
+
+  // Click outside cmd dropdown
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#cmd-drop') && !e.target.closest('#editor')) hideCmdDrop();
+  });
+
+  // Handle graph resize
+  window.addEventListener('resize', () => {
+    if (graphSVG) {
+      const rect = graphSVG.getBoundingClientRect();
+      graphW = rect.width; graphH = rect.height;
+    }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
