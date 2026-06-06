@@ -278,7 +278,7 @@ body{font-family:'Be Vietnam Pro',-apple-system,BlinkMacSystemFont,sans-serif;ba
 /* ════════════════════════════════════════════════
    SETUP TAB
    ════════════════════════════════════════════════ */
-.setup-wrap{flex:1;display:flex;overflow:hidden}
+.setup-wrap{flex:1;display:flex;overflow:hidden;min-height:0}
 .ent-sb{width:200px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;transition:background .3s,border-color .3s}
 .cat-item{padding:7px 12px;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tx2);border-left:2px solid transparent;transition:all .12s}
 .cat-item:hover{color:var(--tx);background:var(--sf3)}
@@ -303,7 +303,7 @@ body{font-family:'Be Vietnam Pro',-apple-system,BlinkMacSystemFont,sans-serif;ba
 /* ════════════════════════════════════════════════
    GRAPH
    ════════════════════════════════════════════════ */
-.graph-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative;transition:background .3s}
+.graph-area{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative;transition:background .3s}
 .graph-bar{padding:5px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px;flex-shrink:0;background:var(--sf);flex-wrap:wrap}
 #graph-svg{flex:1}
 .g-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--tx3);pointer-events:none}
@@ -564,6 +564,19 @@ select option{background:var(--sf3)}
       <span class="sep"></span>
       <button class="tb-btn" onclick="execCmd('undo')" title="Hoàn tác Ctrl+Z">↩</button>
       <button class="tb-btn" onclick="execCmd('redo')" title="Làm lại">↪</button>
+      <span class="sep"></span>
+      <button class="tb-btn" id="btn-AL" onclick="execCmd('justifyLeft')"   title="Căn trái">
+        <svg width="13" height="10" viewBox="0 0 13 10" fill="currentColor"><rect x="0" y="0" width="13" height="2" rx="1"/><rect x="0" y="4" width="8"  height="2" rx="1"/><rect x="0" y="8" width="11" height="2" rx="1"/></svg>
+      </button>
+      <button class="tb-btn" id="btn-AC" onclick="execCmd('justifyCenter')" title="Căn giữa">
+        <svg width="13" height="10" viewBox="0 0 13 10" fill="currentColor"><rect x="0" y="0" width="13" height="2" rx="1"/><rect x="2.5" y="4" width="8" height="2" rx="1"/><rect x="1" y="8" width="11" height="2" rx="1"/></svg>
+      </button>
+      <button class="tb-btn" id="btn-AR" onclick="execCmd('justifyRight')"  title="Căn phải">
+        <svg width="13" height="10" viewBox="0 0 13 10" fill="currentColor"><rect x="0" y="0" width="13" height="2" rx="1"/><rect x="5" y="4" width="8"  height="2" rx="1"/><rect x="2" y="8" width="11" height="2" rx="1"/></svg>
+      </button>
+      <button class="tb-btn" id="btn-AJ" onclick="execCmd('justifyFull')"   title="Căn đều hai bên">
+        <svg width="13" height="10" viewBox="0 0 13 10" fill="currentColor"><rect x="0" y="0" width="13" height="2" rx="1"/><rect x="0" y="4" width="13" height="2" rx="1"/><rect x="0" y="8" width="13" height="2" rx="1"/></svg>
+      </button>
       <button class="tb-btn" onclick="toggleFocusMode()" title="Focus Mode F11" style="margin-left:4px">⛶</button>
       <div class="as-info">
         <span class="as-dot as-saved" id="as-dot"></span>
@@ -603,6 +616,22 @@ select option{background:var(--sf3)}
       <span style="color:var(--tx3)">·</span>
       <span>Đoạn: <span class="stbar-v" id="sb-p">0</span></span>
       <div class="stats-btn" onclick="toggleStatsPanel()">📊 Chi tiết</div>
+    </div>
+    <!-- BACKUP STATUS ROW -->
+    <div class="bk-status-row" id="bk-row">
+      <span id="bk-last-lbl">💾 Chưa có bản sao lưu</span>
+      <span id="bk-count-pill" class="bk-pill bk-none" style="display:none"></span>
+      <span style="margin-left:auto;display:flex;align-items:center;gap:5px">
+        <span style="color:var(--tx3)">Tự động sao lưu:</span>
+        <select class="bk-interval-sel" id="bk-interval" onchange="setBkInterval(this.value)">
+          <option value="10">10 giây</option>
+          <option value="30">30 giây</option>
+          <option value="60">1 phút</option>
+          <option value="300" selected>5 phút</option>
+          <option value="600">10 phút</option>
+          <option value="0">Tắt</option>
+        </select>
+      </span>
     </div>
   </div>
 </div>
@@ -649,11 +678,21 @@ select option{background:var(--sf3)}
         <button class="btn btn-sm btn-ghost" onclick="autoLayout()">⟳ Sắp xếp</button>
         <button class="btn btn-sm btn-ghost" onclick="clearGraphPos()">⊡ Đặt lại</button>
         <span style="font-size:11px;color:var(--tx3);margin-left:4px" id="conn-hint"></span>
+        <div class="zoom-btns">
+          <button class="z-btn" onclick="zoomGraph(-0.2)" title="Thu nhỏ">−</button>
+          <span class="z-level" id="z-level">100%</span>
+          <button class="z-btn" onclick="zoomGraph(0.2)" title="Phóng to">+</button>
+          <button class="z-btn" onclick="resetZoom()" title="Đặt lại">⊡</button>
+        </div>
       </div>
-      <svg id="g-svg" xmlns="http://www.w3.org/2000/svg">
+      <svg id="g-svg" xmlns="http://www.w3.org/2000/svg" onwheel="onGWheel(event)">
         <defs><filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-        <g id="g-edges"></g><g id="g-nodes"></g>
+        <g id="g-root"><g id="g-edges"></g><g id="g-nodes"></g></g>
       </svg>
+    </div>
+    <div class="resize-handle" id="rh-left" onmousedown="startResize(event,'rh-left')"></div>
+    <div class="resize-handle" id="rh-right" onmousedown="startResize(event,'rh-right')"></div>
+    <div class="dp" id="dp-panel-wrap">
       <div class="g-empty" id="g-empty" style="display:none"><div style="font-size:30px;opacity:.2">🕸</div><div>Thêm nhân vật để xem đồ thị</div></div>
     </div>
 
@@ -820,12 +859,37 @@ async function loadConfig(){
 async function saveChFile(ch,content){
   if(PRJ.mode!=='filesystem')return;
   const f=D.folders.find(x=>x.id===ch.folderId);if(!f)return;
-  try{const fd=await FS.mkdir(PRJ.handle,f.name);await FS.write(fd,ch.filename,content);await doBackup(ch,content);}catch(e){console.warn(e);}
+  try{const fd=await FS.mkdir(PRJ.handle,f.name);await FS.write(fd,ch.filename,content);}catch(e){console.warn(e);}
 }
 async function loadChFile(ch){
   if(PRJ.mode!=='filesystem')return ch.content||'';
   const f=D.folders.find(x=>x.id===ch.folderId);if(!f)return'';
   try{const fd=await FS.mkdir(PRJ.handle,f.name);return await FS.read(fd,ch.filename)||'';}catch{return'';}
+}
+function setBkInterval(val){
+  localStorage.setItem('nms3_bk_interval',val);
+  restartBkTimer();
+}
+function restartBkTimer(){
+  clearInterval(_bkTimer);
+  const iv=parseInt(localStorage.getItem('nms3_bk_interval')||'300');
+  const sel=document.getElementById('bk-interval');
+  if(sel)sel.value=String(iv);
+  if(iv===0)return;
+  _bkTimer=setInterval(()=>{ if(UI.dirty)triggerBackup(); },iv*1000);
+}
+function triggerBackup(){
+  const ch=D.chapters[UI.activeChID];if(!ch)return;
+  const content=document.getElementById('editor')?.innerHTML||'';
+  if(content===_lastBkContent)return; // unchanged
+  _lastBkContent=content;
+  doBackup(ch,content);
+}
+function updateBkUI(){
+  const lbl=document.getElementById('bk-last-lbl');
+  const pill=document.getElementById('bk-count-pill');
+  if(lbl)lbl.textContent='💾 Sao lưu lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  if(pill){pill.style.display='inline-flex';pill.className='bk-pill bk-ok';pill.textContent='Có '+_bkCount+' bản sao';}
 }
 async function doBackup(ch,content){
   try{
@@ -843,6 +907,7 @@ async function doBackup(ch,content){
 // ════════════════════════════════════════════════════════════
 // UI STATE
 // ════════════════════════════════════════════════════════════
+let _lastBkContent='',_bkTimer=null,_bkCount=0;
 let UI={
   tab:0,activeFolderID:null,activeChID:null,
   activeCat:'characters',activeEntID:null,activeBookID:null,
@@ -1054,6 +1119,7 @@ async function selectChapter(id){
   document.getElementById('editor').innerHTML=content||(ch.content||'');
   updateMetaBar();updateWC();setDirty(false);
   UI.writingStartTime=Date.now();
+  _bkCount=0; updateBkUI();
   renderFolderTree();renderRecentList();
 }
 function updateMetaBar(){
@@ -1167,7 +1233,12 @@ function cCtx(e,id){e.preventDefault();showCtx(e,[{l:'✎ Đổi tên',a:()=>ren
 // EDITOR
 // ════════════════════════════════════════════════════════════
 function execCmd(c,v){document.getElementById('editor').focus();document.execCommand(c,false,v||null);onEdInput();refreshTB();}
-function refreshTB(){['B','I','U'].forEach(c=>{const el=document.getElementById('btn-'+c);if(!el)return;el.classList.toggle('on',document.queryCommandState({B:'bold',I:'italic',U:'underline'}[c]));});}
+function refreshTB(){
+  ['B','I','U'].forEach(c=>{const el=document.getElementById('btn-'+c);if(!el)return;el.classList.toggle('on',document.queryCommandState({B:'bold',I:'italic',U:'underline'}[c]));});
+  // Alignment state
+  const alMap={AL:'justifyLeft',AC:'justifyCenter',AR:'justifyRight',AJ:'justifyFull'};
+  Object.entries(alMap).forEach(([id,cmd])=>{const el=document.getElementById('btn-'+id);if(el)el.classList.toggle('on',document.queryCommandState(cmd));});
+}
 function onTitleChange(){if(!UI.activeChID)return;D.chapters[UI.activeChID].title=document.getElementById('ch-ti').value;setDirty(true);}
 function onEdInput(){setDirty(true);updateWC();schedSave();checkCmds();}
 function onEdKeyup(e){if(!['ArrowDown','ArrowUp','Enter','Tab'].includes(e.key))checkCmds();refreshTB();}
@@ -1210,6 +1281,7 @@ async function autoSave(manual=false){
   if(PRJ.mode==='filesystem')await saveChFile(ch,ch.content);
   UI.dirty=false;await saveConfig();setDirty(false);updateMetaBar();renderFolderTree();renderRecentList();renderDashMini();
   runValidation();triggerBookAutoUpdate();updateStatsPanel();
+  if(PRJ.mode==='localStorage'){_bkCount++;_lastBkContent=document.getElementById('editor')?.innerHTML||'';updateBkUI();}
   if(manual)toast('Đã lưu ✓');
 }
 
@@ -1321,7 +1393,7 @@ function showDrop(type,range){
   drop.style.cssText=`display:block;left:${Math.min(rect.left,window.innerWidth-220)}px;top:${rect.bottom+4}px`;
   drop.innerHTML=items.slice(0,12).map((it,i)=>`<div class="cmd-item${i===0?' sel':''}" onclick="insertRef('${type}','${it.id}','${esc(it.label)}')"><div style="flex:1"><div class="cmd-nm">${esc(it.label)}</div><div class="cmd-sub">${esc(it.sub)}</div></div>${it.badge?`<span class="imp-badge ${it.badge}">${IMP_L[IMP_C.indexOf(it.badge)]}</span>`:''}</div>`).join('')||'<div class="cmd-item"><div class="cmd-nm" style="color:var(--tx3)">Không có dữ liệu</div></div>';
 }
-function hideDrop(){document.getElementById('cmd-drop').style.display='none';}
+function hideDrop(){const el=document.getElementById('cmd-drop');if(el)el.style.display='none';}
 function insertRef(type,id,label){
   hideDrop();const ed=document.getElementById('editor');ed.focus();
   const sel=window.getSelection();if(!sel.rangeCount)return;
@@ -1345,7 +1417,7 @@ function insertNoteDialog(){const t=prompt('Nội dung ghi chú:');if(!t)return;
 // ════════════════════════════════════════════════════════════
 // CHAPTER STATS PANEL
 // ════════════════════════════════════════════════════════════
-function toggleStatsPanel(){const p=document.getElementById('stats-panel');p.style.display=p.style.display==='block'?'none':'block';updateStatsPanel();}
+function toggleStatsPanel(){const p=document.getElementById('stats-panel');if(!p)return;p.style.display=p.style.display==='block'?'none':'block';updateStatsPanel();}
 function updateStatsPanel(){
   if(document.getElementById('stats-panel').style.display!=='block')return;
   const ed=document.getElementById('editor'),txt=ed.innerText||'';
@@ -1378,7 +1450,7 @@ function runValidation(){
   const wb=document.getElementById('warn-btn');if(wb){wb.style.display=n?'inline-flex':'none';document.getElementById('warn-cnt').textContent=n;}
   document.getElementById('warn-body').innerHTML=warns.slice(0,25).map(w=>`<div class="warn-item"><span style="color:var(--wn)">⚠</span><span>${esc(w)}</span></div>`).join('')||'<div class="warn-item" style="color:var(--ok)">✓ Không có cảnh báo</div>';
 }
-function toggleWarnings(){const p=document.getElementById('warn-panel');p.style.display=p.style.display==='block'?'none':'block';}
+function toggleWarnings(){const p=document.getElementById('warn-panel');if(!p)return;p.style.display=p.style.display==='block'?'none':'block';}
 
 // ════════════════════════════════════════════════════════════
 // SETUP TAB
@@ -1553,6 +1625,33 @@ async function delRel(id){D.relationships=D.relationships.filter(r=>r.id!==id);a
 // GRAPH
 // ════════════════════════════════════════════════════════════
 let gSVG,gN,gE;
+let gZ=1, gPX=0, gPY=0;   // zoom & pan state
+
+function applyGTransform(){
+  const root=document.getElementById('g-root');
+  if(!root)return;
+  root.setAttribute('transform',`translate(\${gPX},\${gPY}) scale(\${gZ})`);
+  const lbl=document.getElementById('z-level');
+  if(lbl)lbl.textContent=Math.round(gZ*100)+'%';
+}
+function zoomGraph(delta){
+  gZ=Math.max(0.2,Math.min(4,gZ+delta));
+  applyGTransform();
+}
+function resetZoom(){gZ=1;gPX=0;gPY=0;applyGTransform();}
+function onGWheel(e){
+  e.preventDefault();
+  const delta=e.deltaY>0?-0.1:0.1;
+  // Zoom toward cursor position
+  const rect=gSVG.getBoundingClientRect();
+  const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  const prevZ=gZ; gZ=Math.max(0.2,Math.min(4,gZ+delta));
+  gPX+=(mx-gPX)*(1-gZ/prevZ);
+  gPY+=(my-gPY)*(1-gZ/prevZ);
+  applyGTransform();
+}
+// SVG pan (drag background)
+let _gPanStart=null;
 function initGraph(){gSVG=document.getElementById('g-svg');gN=document.getElementById('g-nodes');gE=document.getElementById('g-edges');if(!gSVG)return;const r=gSVG.getBoundingClientRect();UI.gW=r.width||600;UI.gH=r.height||400;}
 function renderGraph(){
   if(!gSVG)initGraph();if(!gSVG)return;
@@ -1561,6 +1660,7 @@ function renderGraph(){
   if(!chars.length){gN.innerHTML='';gE.innerHTML='';if(empty)empty.style.display='flex';return;}
   if(empty)empty.style.display='none';
   chars.forEach((c,i)=>{if(!D.graphPositions[c.id]){const a=(i/chars.length)*2*Math.PI,r=Math.min(UI.gW,UI.gH)*.3;D.graphPositions[c.id]={x:UI.gW/2+r*Math.cos(a-Math.PI/2),y:UI.gH/2+r*Math.sin(a-Math.PI/2)};}});
+  applyGTransform();
   gE.innerHTML=D.relationships.map(r=>{const p1=D.graphPositions[r.source],p2=D.graphPositions[r.target];if(!p1||!p2)return'';const sel=UI.activeEntID===r.source||UI.activeEntID===r.target,mx=(p1.x+p2.x)/2,my=(p1.y+p2.y)/2;return`<g class="g-edge" onclick="clickEdge('${r.id}')"><line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="${sel?'#c8a96e':'#2e2e4a'}" stroke-width="${sel?2:1.5}" stroke-opacity="${sel?.9:.5}"/><text x="${mx}" y="${my-5}" text-anchor="middle" font-size="10" fill="${sel?'#8a7050':'#404060'}" font-family="'Be Vietnam Pro',sans-serif">${esc(r.type||'')}</text></g>`;}).join('');
   gN.innerHTML=chars.map(c=>{const pos=D.graphPositions[c.id],sel=UI.activeEntID===c.id,conn=UI.gConn===c.id,rv=sel?24:19;return`<g class="g-node" id="gn-${c.id}" onmousedown="gDown(event,'${c.id}')" onclick="gClick('${c.id}')"><circle cx="${pos.x}" cy="${pos.y}" r="${rv}" fill="${NC[c.importance||0]}" opacity="${conn?.4:.85}" stroke="${sel?'#c8a96e':conn?'#e0c88a':'rgba(255,255,255,.08)'}" stroke-width="${sel?3:1}" ${sel?'filter="url(#glow)"':''}/>` +
     `<text x="${pos.x}" y="${pos.y+4}" text-anchor="middle" font-size="${sel?12:11}" fill="${sel?'#fff':'rgba(226,216,196,.85)'}" font-weight="${sel?600:400}" font-family="'Be Vietnam Pro',sans-serif">${esc((c.name||'?').slice(0,7))}</text></g>`;}).join('');
@@ -1679,8 +1779,17 @@ async function removeCover(bookId){const b=D.books.find(x=>x.id===bookId);if(!b)
 async function toggleBkCh(id){const b=D.books.find(x=>x.id===UI.activeBookID);if(!b)return;b.chapters=b.chapters||[];const i=b.chapters.indexOf(id);if(i>-1)b.chapters.splice(i,1);else b.chapters.push(id);await saveConfig();renderLandingPage();renderBookList();}
 async function toggleAutoUpd(bookId,val){const b=D.books.find(x=>x.id===bookId);if(!b)return;b.autoUpdate=val;await saveConfig();renderBookList();toast(val?'Tự động cập nhật bật':'Tự động cập nhật tắt','info');}
 function triggerBookAutoUpdate(){D.books.forEach(b=>{if(b.autoUpdate)genBookHTML(b,false);});}
-async function updateBook(){const b=D.books.find(x=>x.id===UI.activeBookID);if(!b)return;await genBookHTML(b,true);}
-async function exportBook(){const b=D.books.find(x=>x.id===UI.activeBookID);if(!b)return;await genBookHTML(b,true);}
+async function updateBook(){
+  const b=D.books.find(x=>x.id===UI.activeBookID);if(!b)return;
+  if(!(b.chapters||[]).length)return toast('Chọn chương trước khi cập nhật','warn');
+  await genBookHTML(b,false);   // no download — only writes to Books/ folder or memory
+  toast('🔄 Đã cập nhật quyển "'+b.title+'"');
+}
+async function exportBook(){
+  const b=D.books.find(x=>x.id===UI.activeBookID);if(!b)return;
+  if(!(b.chapters||[]).length)return toast('Chọn chương trước khi xuất','warn');
+  await genBookHTML(b,true);    // triggers browser download
+}
 
 function editBook(id){
   const b=D.books.find(x=>x.id===id);if(!b)return;
@@ -1936,6 +2045,45 @@ button{cursor:pointer;font-family:'Be Vietnam Pro',sans-serif;transition:all .13
   .cover-placeholder,.cover-img{width:140px}
   #float-nav{right:12px;bottom:60px}
 }
+
+/* ── TEXT ALIGNMENT IN EDITOR ──────────────────────────── */
+#editor p[style*="text-align: center"],
+#editor div[style*="text-align: center"]{ text-indent:0!important }
+#editor p[style*="text-align: right"],
+#editor div[style*="text-align: right"] { text-indent:0!important }
+#editor [style*="text-align: justify"]  { text-align:justify }
+
+/* ── RESIZE HANDLES ────────────────────────────────────── */
+.resize-handle{
+  flex-shrink:0;width:4px;background:transparent;cursor:col-resize;
+  transition:background .15s;position:relative;z-index:10
+}
+.resize-handle:hover,.resize-handle.dragging{ background:var(--ac) }
+
+/* ── GRAPH ZOOM CONTROLS ───────────────────────────────── */
+.zoom-btns{display:flex;align-items:center;gap:2px;margin-left:auto}
+.z-btn{width:26px;height:26px;border:1px solid var(--bd);border-radius:4px;
+  background:var(--sf3);color:var(--tx2);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .12s}
+.z-btn:hover{background:var(--sf4);color:var(--ac);border-color:var(--ac)}
+.z-level{font-size:10.5px;color:var(--tx3);min-width:32px;text-align:center;
+  font-family:'JetBrains Mono','Consolas',monospace}
+
+/* ── BACKUP STATUS ─────────────────────────────────────── */
+.bk-status-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:4px 10px;background:var(--sf3);border-top:1px solid var(--bd);
+  font-size:10.5px;color:var(--tx3);flex-shrink:0}
+.bk-pill{font-size:10px;padding:1px 7px;border-radius:10px;font-weight:500}
+.bk-ok{background:var(--okb);color:var(--ok)}
+.bk-none{background:rgba(84,82,104,.15);color:var(--tx3)}
+.bk-interval-sel{background:var(--sf3);border:1px solid var(--bd);color:var(--tx2);
+  font-size:10.5px;border-radius:4px;padding:1px 4px;outline:none;cursor:pointer}
+
+/* ── h-desc justify ─────────────────────────────────────── */
+.h-desc{text-align:justify}
+
+/* ── Alignment button active state ─────────────────────── */
+#btn-AL.on,#btn-AC.on,#btn-AR.on,#btn-AJ.on{ background:var(--sf4);color:var(--ac) }
 </style>
 </head>
 <body>
@@ -2383,7 +2531,7 @@ function modalOut(e){if(e.target===document.getElementById('modal'))closeModal()
 // CONTEXT MENU
 // ════════════════════════════════════════════════════════════
 function showCtx(e,items){const m=document.getElementById('ctx');m.innerHTML=items.map(it=>it.sep?'<div class="cx-sep"></div>':`<div class="cx-item${it.danger?' danger':''}">${it.l}</div>`).join('');const clickable=m.querySelectorAll('.cx-item'),acts=items.filter(x=>!x.sep);clickable.forEach((el,i)=>el.addEventListener('click',()=>{hideCtx();acts[i].a();}));m.style.cssText=`display:block;left:${Math.min(e.clientX,window.innerWidth-170)}px;top:${Math.min(e.clientY,window.innerHeight-items.length*32)}px`;}
-function hideCtx(){document.getElementById('ctx').style.display='none';}
+function hideCtx(){const el=document.getElementById('ctx');if(el)el.style.display='none';}
 document.addEventListener('click',hideCtx);
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){hideCtx();hideDrop();closeModal();}
@@ -2393,6 +2541,38 @@ document.addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&e.key==='u'&&document.activeElement.id==='editor'){e.preventDefault();execCmd('underline');}
 });
 document.addEventListener('click',e=>{if(!e.target.closest('#cmd-drop')&&!e.target.closest('#editor'))hideDrop();});
+
+
+// ── RESIZABLE PANELS ──────────────────────────────────────────
+function startResize(e, handleId){
+  e.preventDefault();
+  const handle=document.getElementById(handleId);
+  if(handle)handle.classList.add('dragging');
+  const isLeft=(handleId==='rh-left');
+  const startX=e.clientX;
+  const eSb=document.querySelector('.ent-sb');
+  const dp=document.getElementById('dp-panel-wrap')||document.querySelector('.dp');
+  const startW=isLeft?(eSb?eSb.offsetWidth:200):(dp?dp.offsetWidth:310);
+  function onMove(ev){
+    const dx=ev.clientX-startX;
+    if(isLeft){
+      const newW=Math.max(160,Math.min(340,startW+dx));
+      if(eSb)eSb.style.width=newW+'px';
+    } else {
+      const newW=Math.max(220,Math.min(480,startW-dx));
+      if(dp){dp.style.width=newW+'px';dp.style.flexShrink='0';}
+    }
+  }
+  function onUp(){
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    if(handle)handle.classList.remove('dragging');
+    // Refresh graph size after panel resize
+    if(gSVG){const r=gSVG.getBoundingClientRect();UI.gW=r.width;UI.gH=r.height;}
+  }
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
 
 // ════════════════════════════════════════════════════════════
 // DEMO DATA
@@ -2419,7 +2599,7 @@ function loadDemoData(){
 // INIT
 // ════════════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded',()=>{
-  loadTheme();showStartup();
+  loadTheme();showStartup();restartBkTimer();
   window.addEventListener('resize',()=>{if(gSVG){const r=gSVG.getBoundingClientRect();UI.gW=r.width;UI.gH=r.height;}});
 });
 </script>
